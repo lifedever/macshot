@@ -238,7 +238,10 @@ class FloatingThumbnailController: NSObject, NSDraggingSource, QLPreviewPanelDat
 
     static func currentThumbnailSize() -> NSSize {
         let scale = CGFloat(UserDefaults.standard.object(forKey: "thumbnailScale") as? Double ?? 1.0)
-        return NSSize(width: round(240 * scale), height: round(160 * scale))
+        // 168×112 rather than the upstream 240×160: the preview is a confirmation that the
+        // capture happened, not something you read, and a larger card crowds the corner.
+        // Settings › thumbnail scale still multiplies this.
+        return NSSize(width: round(168 * scale), height: round(112 * scale))
     }
 
     // MARK: - Show
@@ -700,15 +703,21 @@ private class ThumbnailView: NSView {
     var onContextMenu: ((NSEvent, NSView) -> Void)?
     var dismissesTowardLeft: Bool = false
     @objc dynamic var dismissContentBaseX: CGFloat = 0 {
-        didSet { needsDisplay = true }
+        didSet { needsDisplay = true; needsLayout = true }
     }
     @objc dynamic var dismissContentOffsetX: CGFloat = 0 {
-        didSet { needsDisplay = true }
+        didSet { needsDisplay = true; needsLayout = true }
     }
 
     private var image: NSImage
     private let thumbSize: NSSize
-    private let fitsImageInPreview = UserDefaults.standard.bool(forKey: "thumbnailLetterbox")
+    /// Show the whole capture inside the card rather than cropping it to fill. Defaults on:
+    /// a cropped preview of a wide window is a meaningless strip of pixels, and the inset
+    /// leaves room for the card to read as a surface the shot is sitting on.
+    private let fitsImageInPreview = UserDefaults.standard.object(forKey: "thumbnailLetterbox") as? Bool ?? true
+    // Note: the card surface is painted in `draw`, not by an NSVisualEffectView subview.
+    // Subviews render above their superview's own drawing, so a vibrancy view here covers
+    // the screenshot and the hover chrome entirely — the card comes out empty.
     private var dragStartScreenPoint: NSPoint?
     private var dragMode: DragMode = .idle
     private var dismissDragOffset: CGFloat = 0
@@ -838,36 +847,61 @@ private class ThumbnailView: NSView {
 
     // MARK: - Drawing
 
+    /// Card geometry. The shot sits inset on the card with its own corner radius and drop
+    /// shadow, so it reads as a photo resting on a surface instead of a cropped fill.
+    static let cardCornerRadius: CGFloat = 14
+    private var shotCornerRadius: CGFloat { scaled(7, minimum: 4) }
+    private var shotInset: CGFloat { fitsImageInPreview ? scaled(11, minimum: 6) : 0 }
+
+    /// Rect the capture itself is drawn into, preserving aspect ratio.
+    private var shotRect: NSRect {
+        let content = thumbnailDrawRect.insetBy(dx: shotInset, dy: shotInset)
+        guard image.size.width > 0, image.size.height > 0 else { return content }
+        let scale = fitsImageInPreview
+            ? min(content.width / image.size.width, content.height / image.size.height)
+            : max(content.width / image.size.width, content.height / image.size.height)
+        let w = image.size.width * scale
+        let h = image.size.height * scale
+        return NSRect(x: content.midX - w / 2, y: content.midY - h / 2, width: w, height: h)
+    }
+
     override func draw(_ dirtyRect: NSRect) {
         let r = thumbnailDrawRect
-        let cr: CGFloat = 12
+        let cr = Self.cardCornerRadius
 
-        // Rounded clip for entire thumbnail
+        // Card surface. Slightly translucent so it sits on the desktop rather than punching
+        // a flat rectangle out of it, but opaque enough to stay a readable backing for the
+        // shot on a busy wallpaper.
         let path = NSBezierPath(roundedRect: r, xRadius: cr, yRadius: cr)
         path.addClip()
+        NSColor(white: 0.13, alpha: 0.94).setFill()
+        path.fill()
 
-        // Dark background doubles as the letterbox surface when fitting the image.
-        NSColor(white: 0.12, alpha: 1.0).setFill()
-        NSBezierPath(roundedRect: r, xRadius: cr, yRadius: cr).fill()
+        let shot = shotRect
+        let shotPath = NSBezierPath(roundedRect: shot, xRadius: shotCornerRadius, yRadius: shotCornerRadius)
 
-        let scale = fitsImageInPreview
-            ? min(r.width / image.size.width, r.height / image.size.height)
-            : max(r.width / image.size.width, r.height / image.size.height)
-        let drawW = image.size.width * scale
-        let drawH = image.size.height * scale
-        let drawRect = NSRect(
-            x: r.midX - drawW / 2,
-            y: r.midY - drawH / 2,
-            width: drawW,
-            height: drawH
-        )
-        image.draw(in: drawRect, from: .zero, operation: .copy, fraction: 1.0)
+        if fitsImageInPreview {
+            // Lift the shot off the card. Drawn in its own graphics state so the shadow
+            // does not bleed onto the hover chrome painted afterwards.
+            NSGraphicsContext.saveGraphicsState()
+            let shadow = NSShadow()
+            shadow.shadowColor = NSColor.black.withAlphaComponent(0.5)
+            shadow.shadowBlurRadius = scaled(9, minimum: 4)
+            shadow.shadowOffset = NSSize(width: 0, height: -scaled(2, minimum: 1))
+            shadow.set()
+            NSColor.black.setFill()
+            shotPath.fill()
+            NSGraphicsContext.restoreGraphicsState()
+        }
 
-        // White border
-        NSColor.white.withAlphaComponent(0.4).setStroke()
-        let border = NSBezierPath(roundedRect: r.insetBy(dx: 0.5, dy: 0.5), xRadius: cr, yRadius: cr)
-        border.lineWidth = 1.5
-        border.stroke()
+        NSGraphicsContext.saveGraphicsState()
+        shotPath.addClip()
+        image.draw(in: shot, from: .zero, operation: .copy, fraction: 1.0)
+        NSGraphicsContext.restoreGraphicsState()
+
+        // No outline on either the shot or the card: the drop shadow already separates the
+        // capture from the card, and the card from the desktop. A rim on top of that reads
+        // as a sticker cutout.
 
         guard isHovering else { return }
 
