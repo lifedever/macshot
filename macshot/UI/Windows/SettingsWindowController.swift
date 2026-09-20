@@ -84,6 +84,7 @@ class SettingsWindowController: NSWindowController, NSToolbarDelegate, NSWindowD
     private var historySizeField: NSTextField!
     private var historySizeStepper: NSStepper!
     private var snapGuidesCheckbox: NSButton!
+    private var snapHapticsCheckbox: NSButton!
     private var boundarySnapCheckbox: NSButton!
     private var browserElementSnapCheckbox: NSButton!
     private var captureCursorCheckbox: NSButton!
@@ -507,13 +508,16 @@ class SettingsWindowController: NSWindowController, NSToolbarDelegate, NSWindowD
         stack.addArrangedSubview(indented(urlSchemeRow))
         stack.setCustomSpacing(6, after: stack.arrangedSubviews.last!)
 
+        // Both controls are still created — `loadSettings` and the actions reference them
+        // unconditionally — but they are only shown when the updater exists.
         autoUpdateCheckbox = NSButton(checkboxWithTitle: L("Check for updates automatically"), target: self, action: #selector(autoUpdateChanged(_:)))
-        stack.addArrangedSubview(indented(autoUpdateCheckbox))
-        stack.setCustomSpacing(4, after: stack.arrangedSubviews.last!)
-
         betaUpdateCheckbox = NSButton(checkboxWithTitle: L("Check for beta updates"), target: self, action: #selector(betaUpdateChanged(_:)))
-        stack.addArrangedSubview(indented(betaUpdateCheckbox))
-        stack.setCustomSpacing(20, after: stack.arrangedSubviews.last!)
+        if BuildVariant.softwareUpdatesEnabled {
+            stack.addArrangedSubview(indented(autoUpdateCheckbox))
+            stack.setCustomSpacing(4, after: stack.arrangedSubviews.last!)
+            stack.addArrangedSubview(indented(betaUpdateCheckbox))
+            stack.setCustomSpacing(20, after: stack.arrangedSubviews.last!)
+        }
 
         // ── Appearance ───────────────────────────────────────
         stack.addArrangedSubview(sectionHeader(L("Appearance")))
@@ -781,6 +785,7 @@ class SettingsWindowController: NSWindowController, NSToolbarDelegate, NSWindowD
         thumbnailCheckbox = NSButton(checkboxWithTitle: L("Show floating thumbnail after capture"), target: self, action: #selector(thumbnailChanged(_:)))
         snapGuidesCheckbox = NSButton(checkboxWithTitle: L("Show snap alignment guides"), target: self, action: #selector(snapGuidesChanged(_:)))
         boundarySnapCheckbox = NSButton(checkboxWithTitle: L("Snap selection edges to image boundaries"), target: self, action: #selector(boundarySnapChanged(_:)))
+        snapHapticsCheckbox = NSButton(checkboxWithTitle: L("Haptic feedback when snapping"), target: self, action: #selector(snapHapticsChanged(_:)))
         browserElementSnapCheckbox = NSButton(
             checkboxWithTitle: L("Enhance browser and Electron element snapping"),
             target: self,
@@ -866,6 +871,8 @@ class SettingsWindowController: NSWindowController, NSToolbarDelegate, NSWindowD
         stack.addArrangedSubview(indented(snapGuidesCheckbox))
         stack.setCustomSpacing(6, after: stack.arrangedSubviews.last!)
         stack.addArrangedSubview(indented(boundarySnapCheckbox))
+        stack.setCustomSpacing(6, after: stack.arrangedSubviews.last!)
+        stack.addArrangedSubview(indented(snapHapticsCheckbox))
         stack.setCustomSpacing(6, after: stack.arrangedSubviews.last!)
 
         stack.addArrangedSubview(indented(browserElementSnapCheckbox))
@@ -2626,6 +2633,8 @@ class SettingsWindowController: NSWindowController, NSToolbarDelegate, NSWindowD
         snapGuidesCheckbox.state = snapGuides ? .on : .off
         let boundarySnap = UserDefaults.standard.object(forKey: "boundarySnapEnabled") as? Bool ?? true
         boundarySnapCheckbox.state = boundarySnap ? .on : .off
+        let snapHaptics = UserDefaults.standard.object(forKey: SnapHapticFeedback.enabledKey) as? Bool ?? true
+        snapHapticsCheckbox.state = snapHaptics ? .on : .off
         let browserElementSnap = UserDefaults.standard.object(
             forKey: OverlayView.browserElementSnapEnabledKey) as? Bool ?? true
         browserElementSnapCheckbox.state = browserElementSnap ? .on : .off
@@ -3079,6 +3088,9 @@ class SettingsWindowController: NSWindowController, NSToolbarDelegate, NSWindowD
     }
     @objc private func boundarySnapChanged(_ sender: NSButton) {
         UserDefaults.standard.set(sender.state == .on, forKey: "boundarySnapEnabled")
+    }
+    @objc private func snapHapticsChanged(_ sender: NSButton) {
+        UserDefaults.standard.set(sender.state == .on, forKey: SnapHapticFeedback.enabledKey)
     }
     @objc private func browserElementSnapChanged(_ sender: NSButton) {
         UserDefaults.standard.set(

@@ -33,7 +33,7 @@
 "Pin from Clipboard" = "Pin from Clipboard";
 "Settings..." = "Settings...";
 "Check for Updates..." = "Check for Updates...";
-"Quit macshot" = "Quit macshot";
+"Quit macshot" = "Quit MacShot";
 "No recent captures" = "No recent captures";
 "Clear History" = "Clear History";
 
@@ -223,6 +223,10 @@
 "Launch at login" = "Launch at login";
 "Show snap alignment guides" = "Show snap alignment guides";
 "Snap selection edges to image boundaries" = "Snap selection edges to image boundaries";
+"Haptic feedback when snapping" = "Haptic feedback when snapping";
+"Press C to copy" = "Press C to copy";
+"Use desktop wallpaper" = "Use desktop wallpaper";
+"Choose image…" = "Choose image…";
 "Enhance browser and Electron element snapping" = "Enhance browser and Electron element snapping";
 "Builds the target app's accessibility tree in Element mode. Disable this if a browser or Electron app becomes slow or has input issues." = "Builds the target app's accessibility tree in Element mode. Disable this if a browser or Electron app becomes slow or has input issues.";
 "Capture mouse cursor in screenshot" = "Capture mouse cursor in screenshot";

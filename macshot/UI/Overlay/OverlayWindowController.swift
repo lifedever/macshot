@@ -56,7 +56,19 @@ private final class ScreenshotOverlayRootView: NSView {
 
     func clearScreenshotPreview() {
         previewLayer.contents = nil
+        previewLayer.isHidden = false
         overlayView.usesExternalScreenshotPreview = false
+    }
+
+    /// Hide the preview layer while the overlay canvas is zoomed — see
+    /// `OverlayView.externalScreenshotPreviewVisibilitySetter`. The layer keeps its contents
+    /// so unhiding is instant and doesn't re-upload the image.
+    func setScreenshotPreviewHidden(_ hidden: Bool) {
+        guard previewLayer.isHidden != hidden else { return }
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        previewLayer.isHidden = hidden
+        CATransaction.commit()
     }
 }
 
@@ -83,6 +95,7 @@ protocol OverlayWindowControllerDelegate: AnyObject {
     func overlayDidFinishRemoteResize(_ controller: OverlayWindowController, globalRect: NSRect)
     func overlayCrossScreenImage(_ controller: OverlayWindowController) -> NSImage?
     func overlayDidChangeSnapMode(_ controller: OverlayWindowController)
+    func overlayDidRequestPointerColorPick(_ controller: OverlayWindowController)
 }
 
 /// Manages one fullscreen overlay per screen.
@@ -177,6 +190,9 @@ class OverlayWindowController {
             } else {
                 rootView?.clearScreenshotPreview()
             }
+        }
+        view.externalScreenshotPreviewVisibilitySetter = { [weak rootView] visible in
+            rootView?.setScreenshotPreviewHidden(!visible)
         }
 
         window.contentView = rootView
@@ -765,6 +781,16 @@ extension OverlayWindowController: OverlayViewDelegate {
 
     func overlayViewDidChangeSnapMode() {
         overlayDelegate?.overlayDidChangeSnapMode(self)
+    }
+
+    func overlayViewDidRequestPointerColorPick() {
+        overlayDelegate?.overlayDidRequestPointerColorPick(self)
+    }
+
+    /// Try to sample at a global point; true when this controller's screen owns it.
+    @discardableResult
+    func copyColorAtGlobalPoint(_ point: NSPoint) -> Bool {
+        overlayView?.copyColorAtGlobalPoint(point) ?? false
     }
 
     func overlayViewDidRequestAddCapture() {}  // editor-only

@@ -290,11 +290,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
         // something references ScreenshotHistory.shared.
         _ = ScreenshotHistory.shared
 
-        updaterController = SPUStandardUpdaterController(startingUpdater: true, updaterDelegate: self, userDriverDelegate: nil)
-        // Disable silent update downloads — updates should only apply
-        // via explicit user action ("Check for Updates..." / Install),
-        // so an automatic update can't be mistaken for a silent crash.
-        updaterController.updater.automaticallyDownloadsUpdates = false
+        if BuildVariant.softwareUpdatesEnabled {
+            updaterController = SPUStandardUpdaterController(startingUpdater: true, updaterDelegate: self, userDriverDelegate: nil)
+            // Disable silent update downloads — updates should only apply
+            // via explicit user action ("Check for Updates..." / Install),
+            // so an automatic update can't be mistaken for a silent crash.
+            updaterController.updater.automaticallyDownloadsUpdates = false
+        }
         setupMainMenu()
         setupStatusBar()
         DistributedNotificationCenter.default().addObserver(
@@ -683,6 +685,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
     static let statusBarIconModeKey = "statusBarIconMode"
     static let statusBarIconSymbolNameKey = "statusBarIconSymbolName"
 
+    /// Point size for SF Symbol menu bar icons. Symbols carry their own internal padding,
+    /// so they can fill the 22pt status bar slot without looking oversized.
+    private static let statusBarSymbolSize: CGFloat = 18
+    /// The bundled `StatusBarIcon` asset is drawn edge-to-edge (its SVG viewBox is cropped
+    /// tight to the artwork), so rendering it at the symbol size would make it visibly larger
+    /// than every neighbouring menu bar item. Shrink it to match a symbol's actual ink height.
+    private static let statusBarAssetSize: CGFloat = 16
+
     private func applyNormalStatusBarIcon() {
         if let button = statusItem.button {
             applyPreferredIconImage(to: button)
@@ -707,12 +717,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
         if mode == "symbol", !symbolName.isEmpty,
            let symbol = NSImage(systemSymbolName: symbolName, accessibilityDescription: "macshot") {
             symbol.isTemplate = true
-            symbol.size = NSSize(width: 22, height: 22)
+            let side = Self.statusBarSymbolSize
+            symbol.size = NSSize(width: side, height: side)
             button.image = symbol
             button.title = ""
-        } else if let img = NSImage(named: "StatusBarIcon") {
+        } else if let img = NSImage(named: "StatusBarIcon")?.copy() as? NSImage {
+            // Copy first: `NSImage(named:)` hands back a shared cached instance, and resizing
+            // it in place would mutate the asset for every other consumer.
             img.isTemplate = true
-            img.size = NSSize(width: 22, height: 22)
+            let side = Self.statusBarAssetSize
+            img.size = NSSize(width: side, height: side)
             button.image = img
             button.title = ""
         } else {
@@ -856,10 +870,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
         prefsItem.image = NSImage(systemSymbolName: "gear", accessibilityDescription: nil)
         menu.addItem(prefsItem)
 
-        let updateItem = NSMenuItem(title: L("Check for Updates..."), action: #selector(checkForUpdates), keyEquivalent: "")
-        updateItem.target = self
-        updateItem.image = NSImage(systemSymbolName: "arrow.triangle.2.circlepath", accessibilityDescription: nil)
-        menu.addItem(updateItem)
+        if BuildVariant.softwareUpdatesEnabled {
+            let updateItem = NSMenuItem(title: L("Check for Updates..."), action: #selector(checkForUpdates), keyEquivalent: "")
+            updateItem.target = self
+            updateItem.image = NSImage(systemSymbolName: "arrow.triangle.2.circlepath", accessibilityDescription: nil)
+            menu.addItem(updateItem)
+        }
 
         menu.addItem(NSMenuItem.separator())
 
@@ -2349,6 +2365,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
     // MARK: - Quit
 
     @objc private func checkForUpdates() {
+        // `updaterController` is nil when updates are off; the menu item is hidden then, but
+        // the URL-scheme handler can also reach this.
+        guard BuildVariant.softwareUpdatesEnabled, let updaterController else { return }
         NSApp.activate(ignoringOtherApps: true)
         updaterController.checkForUpdates(nil)
     }
@@ -2828,7 +2847,8 @@ extension AppDelegate: OverlayWindowControllerDelegate {
         if let button = statusItem.button {
             button.image = NSImage(systemSymbolName: "stop.circle.fill", accessibilityDescription: "Stop Recording")
             button.image?.isTemplate = true
-            button.image?.size = NSSize(width: 22, height: 22)
+            let side = Self.statusBarSymbolSize
+            button.image?.size = NSSize(width: side, height: side)
         }
         statusItem.menu = nil
         statusItem.button?.target = self
@@ -3224,6 +3244,33 @@ extension AppDelegate: OverlayWindowControllerDelegate {
         for other in overlayControllers where other !== controller {
             other.refreshSnapMode()
         }
+    }
+
+    /// Copy the colour under the pointer, then end the capture.
+    ///
+    /// The overlay that received the keystroke is whichever one is key — on a multi-display
+    /// setup that is frequently *not* the one the pointer is over, and only that one holds
+    /// the right screenshot. So ask each overlay in turn to sample the global pointer
+    /// position and let the one that owns that screen answer.
+    func overlayDidRequestPointerColorPick(_ controller: OverlayWindowController) {
+        let pointer = NSEvent.mouseLocation
+        var picked = controller.copyColorAtGlobalPoint(pointer)
+        if !picked {
+            for other in overlayControllers where other !== controller {
+                if other.copyColorAtGlobalPoint(pointer) {
+                    picked = true
+                    break
+                }
+            }
+        }
+        // Only tear down the capture once a colour was actually read — otherwise a miss
+        // (pointer between displays, screenshot not ready) would silently cancel the capture
+        // and leave the user with neither a colour nor a screenshot.
+        guard picked else { return }
+        // The confirmation is a ToastCenter panel, which outlives the overlay — so the
+        // capture can come down immediately instead of being held open to keep a message
+        // visible.
+        dismissOverlays()
     }
 
     private func handleScrollCaptureCompleted(finalImage: NSImage?) {

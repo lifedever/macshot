@@ -589,6 +589,9 @@ extension DetachedEditorWindowController: OverlayViewDelegate {
     func overlayViewDidRequestAccessibilityPermission() {}
     func overlayViewDidRequestInputMonitoringPermission() {}
     func overlayViewDidChangeSnapMode() {}  // Not applicable in editor mode
+    // The pre-selection colour picker only exists on the capture overlay; the editor has the
+    // Color Picker tool instead.
+    func overlayViewDidRequestPointerColorPick() {}
 
     func overlayViewDidRequestAddCapture() {
         guard let editorWindow = window else { return }
@@ -766,4 +769,7 @@ private class AddCaptureOverlayHandler: NSObject, OverlayWindowControllerDelegat
             other.refreshSnapMode()
         }
     }
+
+    // "Add Capture" overlays are for picking a region to merge in, not for colour picking.
+    func overlayDidRequestPointerColorPick(_ controller: OverlayWindowController) {}
 }

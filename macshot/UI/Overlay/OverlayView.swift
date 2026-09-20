@@ -31,6 +31,9 @@ protocol OverlayViewDelegate: AnyObject {
     func overlayViewDidBeginSelection()
     func overlayViewRemoteSelectionDidChange(_ rect: NSRect)
     func overlayViewDidChangeSnapMode()
+    /// Copy the colour under the pointer and end the capture. Routed through the delegate
+    /// because the pointer can be on a different screen than the overlay that got the key.
+    func overlayViewDidRequestPointerColorPick()
     func overlayViewRemoteSelectionDidFinish(_ rect: NSRect)
     func overlayViewDidRequestAddCapture()
 }
@@ -137,6 +140,14 @@ class OverlayView: NSView {
     }
     var captureSourceImage: NSImage?
     var externalScreenshotPreviewUpdater: ((CGImage?) -> Void)?
+    /// Hides the external preview layer while the canvas is zoomed.
+    ///
+    /// That layer is a plain CALayer sitting *behind* this view, so it cannot follow the
+    /// canvas zoom transform — left visible during a beautify fit it would show the capture
+    /// at full size underneath the scaled-down one this view draws. Hiding it hands drawing
+    /// back to `draw(_:)`, which does honour the transform. Costs a full-frame redraw while
+    /// zoomed, which is what the beautify preview does anyway.
+    var externalScreenshotPreviewVisibilitySetter: ((Bool) -> Void)?
     var usesExternalScreenshotPreview = false {
         didSet { needsDisplay = true }
     }
@@ -616,8 +627,32 @@ class OverlayView: NSView {
     private var loupeCursorPoint: NSPoint = .zero
     var drawingCursorPoint: NSPoint = .zero
     private var smartMarkerLineHeight: CGFloat?  // detected text line height at cursor (smart marker)
+    /// Whether this view currently owns an `NSCursor.hide()`. The call is reference-counted,
+    /// so every hide must be balanced exactly once — an unbalanced one leaves the user with
+    /// no pointer anywhere in the system until they log out.
+    private var pickerCursorHidden = false
+    /// Where `drawIdleHelperText` last drew its panel, so mouse tracking can tell when the
+    /// pointer is over it and fade it out.
+    private var idleHelperRect: NSRect = .zero
+    /// True when the pointer is close enough to the idle instructions that they'd obstruct
+    /// whatever is being aimed at. The margin is generous because the colour magnifier is
+    /// drawn offset from the pointer and would otherwise overlap the panel before the
+    /// pointer itself does.
+    private var isPointerNearIdleHelper: Bool {
+        guard idleHelperRect.width > 1, let win = window else { return false }
+        let p = convert(win.mouseLocationOutsideOfEventStream, from: nil)
+        return idleHelperRect.insetBy(dx: -140, dy: -90).contains(p)
+    }
     private var colorSamplerPoint: NSPoint = .zero  // canvas space, for color picker tool
     private var colorSamplerBitmap: NSBitmapImageRep?  // cached bitmap for fast pixel sampling
+    /// The magnifier shown before anything is selected. Always on rather than a mode you
+    /// switch into: its main job is reading the pixel under the cursor, and having to arm
+    /// that first defeats the point. It is display-only — clicking and dragging still do
+    /// their normal capture work, and `c` copies the hex.
+    private var isPreSelectionSampling: Bool {
+        state == .idle && !isRecording && !isScrollCapturing
+            && !isEditorMode && screenshotImage != nil
+    }
     // Auto-measure preview (live while holding 1 or 2 key)
     private var autoMeasurePreview: Annotation?  // temporary, drawn but not in annotations[]
     private var autoMeasureVertical: Bool = true  // true = "1" key, false = "2" key
@@ -629,6 +664,10 @@ class OverlayView: NSView {
     var snapGuideX: CGFloat? = nil  // vertical guide line X
     var snapGuideY: CGFloat? = nil  // horizontal guide line Y
     private let snapThreshold: CGFloat = 5
+    /// Trackpad tap when a drag latches onto a guide. Annotation snapping and selection
+    /// boundary snapping are separate gestures, so they keep separate latch state.
+    private var annotationSnapHaptics = SnapHapticFeedback()
+    private var boundarySnapHaptics = SnapHapticFeedback()
     private var snapGuidesEnabled: Bool {
         UserDefaults.standard.object(forKey: "snapGuidesEnabled") as? Bool ?? true
     }
@@ -1119,6 +1158,25 @@ class OverlayView: NSView {
     }
 
     /// Invalidate only the rect around a cursor preview (old + new position) instead of the whole view.
+    /// Invalidate everything the pre-selection picker draws: the crosshair plus the
+    /// magnifier panel offset from it. Both are local to the pointer, so one generous box
+    /// around the old and new positions covers it.
+    private func invalidateColorPickerChrome(oldCanvas: NSPoint, newCanvas: NSPoint) {
+        let slop: CGFloat = 240    // magnifier panel + its offset + crosshair arms
+        func dirty(_ canvasPoint: NSPoint) {
+            guard canvasPoint != .zero else { return }
+            let p = canvasToView(canvasPoint)
+            setNeedsDisplay(NSRect(x: p.x - slop, y: p.y - slop, width: slop * 2, height: slop * 2))
+        }
+        dirty(oldCanvas)
+        dirty(newCanvas)
+        // The centre instructions fade in/out as the pointer nears them, so their panel has
+        // to be redrawn on pointer movement too — it sits far outside the boxes above.
+        if idleHelperRect.width > 1 {
+            setNeedsDisplay(idleHelperRect.insetBy(dx: -150, dy: -100))
+        }
+    }
+
     private func invalidateCursorPreview(oldCanvas: NSPoint, newCanvas: NSPoint, radius: CGFloat) {
         let margin: CGFloat = 4
         // Scale canvas-space radius to view-space pixels (zoom factor)
@@ -1260,18 +1318,22 @@ class OverlayView: NSView {
         }
 
         // Track cursor for color sampler tool (canvas space)
-        if state == .selected && currentTool == .colorSampler && !isRecording {
+        if isPreSelectionSampling || (state == .selected && currentTool == .colorSampler && !isRecording) {
             let canvasPoint = viewToCanvas(point)
             if canvasPoint != colorSamplerPoint {
                 let oldPt = colorSamplerPoint
                 colorSamplerPoint = canvasPoint
-                invalidateCursorPreview(oldCanvas: oldPt, newCanvas: canvasPoint, radius: 200)
+                if isPreSelectionSampling {
+                    invalidateColorPickerChrome(oldCanvas: oldPt, newCanvas: canvasPoint)
+                } else {
+                    invalidateCursorPreview(oldCanvas: oldPt, newCanvas: canvasPoint, radius: 200)
+                }
             }
         } else if colorSamplerPoint != .zero {
             let oldPt = colorSamplerPoint
             colorSamplerPoint = .zero
             colorSamplerBitmap = nil
-            invalidateCursorPreview(oldCanvas: oldPt, newCanvas: oldPt, radius: 200)
+            invalidateColorPickerChrome(oldCanvas: oldPt, newCanvas: oldPt)
         }
 
         // Toolbar hover handled by ToolbarButtonView (real NSView subviews)
@@ -1313,6 +1375,13 @@ class OverlayView: NSView {
         // from resetting our custom cursors.
     }
 
+    deinit {
+        // Last line of defence: a hidden cursor outlives this view and leaves the whole
+        // machine without a pointer. MainActor-isolated state can't be touched from deinit,
+        // so balance the CoreGraphics call directly.
+        if pickerCursorHidden { CGDisplayShowCursor(CGMainDisplayID()) }
+    }
+
     override func resetCursorRects() {
         super.resetCursorRects()
         if !isEditorMode && !isScrollCapturing && !isRecording && (state == .idle || state == .selecting) {
@@ -1323,9 +1392,34 @@ class OverlayView: NSView {
         }
     }
 
+    /// Hide the system pointer so only the drawn crosshair is visible.
+    ///
+    /// `NSCursor.hide()` — like `NSCursor.set()` and cursor rects — only takes effect for the
+    /// *active* application. This overlay belongs to a non-activating panel of an LSUIElement
+    /// app, which is never active, so all three silently do nothing: that is why the arrow
+    /// kept showing through. The CoreGraphics call operates at the display level and has no
+    /// such gate.
+    private func hideSystemCursorForPicker() {
+        guard !pickerCursorHidden else { return }
+        CGDisplayHideCursor(CGMainDisplayID())
+        pickerCursorHidden = true
+    }
+
+    /// Balances `hideSystemCursorForPicker`. Safe to call unconditionally — and it must be
+    /// reached on every exit path, since a leaked hide leaves the machine with no pointer.
+    func restoreSystemCursorAfterPicker() {
+        guard pickerCursorHidden else { return }
+        CGDisplayShowCursor(CGMainDisplayID())
+        pickerCursorHidden = false
+    }
+
     /// Imperative cursor management. Called from mouseMoved and a 30fps timer.
     /// Simplified: arrow for chrome, resize cursors for handles, tool cursor for canvas.
     private func updateCursorForPoint(_ point: NSPoint) {
+        // Any state that isn't the idle colour picker gets the pointer back. This runs from
+        // the 30fps cursor timer too, so it doubles as the recovery path if some exit route
+        // forgets to restore it.
+        if !isPreSelectionSampling { restoreSystemCursorAfterPicker() }
         // Arrow cursor when mouse is over an open popover
         if PopoverHelper.isMouseInsidePopover {
             NSCursor.arrow.set()
@@ -1353,6 +1447,8 @@ class OverlayView: NSView {
                 NSCursor.arrow.set()
                 return
             }
+
+
             // Show resize cursor for remote selection handles
             if state == .idle && remoteSelectionRect.width >= 1 && remoteSelectionRect.height >= 1 {
                 let remoteHandle = hitTestRemoteHandle(at: point)
@@ -1381,7 +1477,7 @@ class OverlayView: NSView {
         // The color sampler always acts on the rendered canvas, including over
         // existing annotations. Do not let annotation hover hit-testing replace
         // its crosshair with manipulation cursors such as the open hand.
-        if currentTool == .colorSampler {
+        if isPreSelectionSampling || currentTool == .colorSampler {
             NSCursor.crosshair.set()
             return
         }
@@ -1573,10 +1669,13 @@ class OverlayView: NSView {
     }
 
     /// Returns the appropriate resize cursor if the point is on a selection handle, nil otherwise.
-    private func resizeHandleCursor(at point: NSPoint) -> NSCursor? {
+    private func resizeHandleCursor(at viewPoint: NSPoint) -> NSCursor? {
+        // Mirrors hitTestHandle: rects are canvas space, slop is screen space.
+        let point = viewToCanvas(viewPoint)
+        let zoomCompensation = zoomLevel > 0 ? 1 / zoomLevel : 1
         let r = selectionRect
-        let hs = handleSize + 4
-        let edgeT: CGFloat = 6
+        let hs = handleSize + 4 * zoomCompensation
+        let edgeT: CGFloat = 6 * zoomCompensation
         // Corner handles
         if NSRect(x: r.minX - hs / 2, y: r.maxY - hs / 2, width: hs, height: hs).contains(point)
             || NSRect(x: r.maxX - hs / 2, y: r.minY - hs / 2, width: hs, height: hs).contains(point)
@@ -1625,11 +1724,11 @@ class OverlayView: NSView {
     /// Check if a view-space point is within the image/selection area.
     /// In overlay mode, compares directly. In editor mode, converts to canvas space first.
     func pointIsInSelection(_ viewPoint: NSPoint) -> Bool {
-        if isEditorMode {
-            let canvasPoint = viewToCanvas(viewPoint)
-            return selectionRect.contains(canvasPoint)
-        }
-        return selectionRect.contains(viewPoint)
+        // `selectionRect` is canvas space in both modes, so the point has to be converted in
+        // both. At 1× — which the overlay was until the beautify fit zoom — `viewToCanvas` is
+        // the identity, which is why the overlay branch used to get away with comparing raw
+        // view coordinates.
+        selectionRect.contains(viewToCanvas(viewPoint))
     }
 
     /// Override point for editor background drawing. Base does nothing (overlay has no editor background).
@@ -1689,6 +1788,12 @@ class OverlayView: NSView {
 
         guard let context = NSGraphicsContext.current else { return }
 
+        // Keep the beautify fit zoom in sync before anything is drawn with it. Driven from
+        // here rather than from each of the controls that can change the composition's size
+        // (padding slider, mode switch, selection resize); it early-outs unless the required
+        // scale actually changed, so the common frame costs a couple of comparisons.
+        updateBeautifyFitZoom()
+
         // In editor mode: dark background, draw image centered at natural size (no stretch).
         // selectionRect stays at (0, 0, imgW, imgH) — annotations always use image-relative coords.
         if isEditorMode {
@@ -1714,7 +1819,10 @@ class OverlayView: NSView {
             }
         }
 
-        // Snap-target highlight (drawn before helper text so text appears on top)
+        // Snap-target highlight (drawn before helper text so text appears on top).
+        // Kept even while the colour magnifier is up: it is the primary feedback for the
+        // capture flow. The magnifier samples the screenshot data rather than the composited
+        // screen, so the highlight tint never leaks into the reading.
         drawSnapHighlight()
 
         // Helper text (capture instructions). Suppressed when the user has
@@ -1734,6 +1842,12 @@ class OverlayView: NSView {
             } else {
                 hidePreSelectionPresetButton()
             }
+        }
+
+        // Colour picker for the idle overlay. Drawn after the helper text so the crosshair
+        // and magnifier float above everything else on screen.
+        if isPreSelectionSampling && colorSamplerPoint != .zero {
+            drawPreSelectionColorPicker(at: colorSamplerPoint)
         }
 
         // Draw remote selection region (cross-screen drag from another overlay)
@@ -1773,10 +1887,13 @@ class OverlayView: NSView {
             // In editor mode this is already handled by the detached draw block above.
             if shouldClipSelectionImage() {
                 context.saveGraphicsState()
-                NSBezierPath(rect: selectionRect).setClip()
+                // The clip is set before any zoom transform, so it has to be in view space.
+                // At 1× the two spaces coincide, which is why this read `selectionRect`
+                // directly until the beautify fit zoom made them diverge.
+                NSBezierPath(rect: canvasToView(selectionRect)).setClip()
                 if !isScrollCapturing, !isRecording, usesExternalScreenshotPreview, zoomLevel == 1 {
                     context.cgContext.setBlendMode(.clear)
-                    NSBezierPath(rect: selectionRect).fill()
+                    NSBezierPath(rect: canvasToView(selectionRect)).fill()
                 } else if !isScrollCapturing, !isRecording, let image = screenshotImage {
                     applyZoomTransform(to: context)
                     image.draw(in: bounds, from: .zero, operation: .copy, fraction: 1.0)
@@ -2322,9 +2439,24 @@ class OverlayView: NSView {
         let bgX = bounds.midX - bgWidth / 2
         let bgY = bounds.midY - bgHeight / 2
         let bgRect = NSRect(x: bgX, y: bgY, width: bgWidth, height: bgHeight)
+        idleHelperRect = bgRect
 
-        NSColor.black.withAlphaComponent(0.65).setFill()
+        // Get out of the way when the pointer comes near. This panel sits dead centre, which
+        // is exactly where the thing being aimed at usually is — most visibly with the colour
+        // picker, where it covers the pixels being sampled. Fading rather than hiding keeps
+        // the instructions findable: back the pointer off and they return.
+        let pointerNearby = isPointerNearIdleHelper
+        let panelAlpha: CGFloat = pointerNearby ? 0.12 : 1.0
+
+        NSColor.black.withAlphaComponent(0.65 * panelAlpha).setFill()
         NSBezierPath(roundedRect: bgRect, xRadius: 8, yRadius: 8).fill()
+
+        // Text and button fade with the panel.
+        NSGraphicsContext.current?.compositingOperation = .sourceOver
+        let fadeGuard = NSGraphicsContext.current
+        fadeGuard?.saveGraphicsState()
+        defer { fadeGuard?.restoreGraphicsState() }
+        if pointerNearby { NSGraphicsContext.current?.cgContext.setAlpha(panelAlpha) }
 
         if showPresetButton {
             let buttonFrame = NSRect(
@@ -2333,6 +2465,7 @@ class OverlayView: NSView {
                 width: buttonSize.width,
                 height: buttonSize.height)
             showPreSelectionPresetButton(frame: buttonFrame)
+            preSelectionPresetButton?.alphaValue = panelAlpha
         } else {
             hidePreSelectionPresetButton()
         }
@@ -3099,11 +3232,63 @@ class OverlayView: NSView {
     /// The expanded rect including beautify padding (for live preview).
 
 
+    /// Beautify chrome metrics for the current selection, in canvas space.
+    ///
+    /// Single source of truth for the three places that need them — the live preview, the
+    /// toolbar anchor, and the fit-to-screen zoom. They used to each re-derive padding and
+    /// title-bar height from `beautifyConfig` with their own constants, which is how the
+    /// toolbar ended up anchored to a differently-sized rect than the preview it framed.
+    ///
+    /// The same proportional scaling the final render applies (see
+    /// `BeautifyRenderer.geometryScale`). Here it is computed from the selection in view
+    /// points, there from the capture's pixel size; both describe the full extent of the
+    /// same content, so the proportions come out equal.
+    var beautifyMetrics: (scale: CGFloat, padding: CGFloat, titleBarHeight: CGFloat) {
+        let config = beautifyConfig
+        let scale = BeautifyRenderer.geometryScale(for: selectionRect.size)
+        let titleBar: CGFloat = (config.mode == .window && !config.isWindowSnap) ? 28 * scale : 0
+        return (scale, config.padding * scale, titleBar)
+    }
+
+    /// The whole beautified composition — capture plus chrome — in canvas space.
+    /// Tracks the *current* padding, so this is what the toolbars anchor to.
+    var beautifyCompositionRect: NSRect {
+        let m = beautifyMetrics
+        return NSRect(
+            x: selectionRect.minX - m.padding,
+            y: selectionRect.minY - m.padding,
+            width: selectionRect.width + m.padding * 2,
+            height: selectionRect.height + m.titleBarHeight + m.padding * 2)
+    }
+
+    /// The composition at the *largest* padding the slider can reach.
+    ///
+    /// This, not the current composition, is what the fit-to-screen zoom measures against.
+    /// Fitting the current size would make every padding change rescale the whole canvas:
+    /// the preview jumps under the pointer while the slider is dragged, and the frame you
+    /// are judging the padding against keeps moving. Reserving the worst case up front makes
+    /// the zoom depend only on the selection, so dragging padding just moves the background
+    /// in and out inside a frame that holds still.
+    var beautifyFitReservationRect: NSRect {
+        let m = beautifyMetrics
+        let reserved = BeautifyConfig.maxPadding * m.scale
+        return NSRect(
+            x: selectionRect.minX - reserved,
+            y: selectionRect.minY - reserved,
+            width: selectionRect.width + reserved * 2,
+            height: selectionRect.height + m.titleBarHeight + reserved * 2)
+    }
+
     private func drawBeautifyPreview(context: NSGraphicsContext) {
         let config = beautifyConfig
-        let pad = config.padding
-        let cornerRadius = config.isWindowSnap ? 10 : config.cornerRadius  // native macOS corner radius for snapped windows
-        let shadowRadius = config.shadowRadius
+        let m = beautifyMetrics
+        let scale = m.scale
+        let pad = m.padding
+        // A snapped window keeps macOS's real 10pt corner radius — it belongs to the captured
+        // window itself, not to the beautify chrome, so it must not scale.
+        let cornerRadius = config.isWindowSnap ? 10 : config.cornerRadius * scale
+        let shadowRadius = config.shadowRadius * scale
+        let titleBarH: CGFloat = 28 * scale
         let shadowOffset = BeautifyRenderer.shadowOffset(for: shadowRadius)
 
         // Compute the expanded frame around the selection.
@@ -3111,7 +3296,6 @@ class OverlayView: NSView {
         let shadowBleed = shadowRadius + shadowOffset
         let expandedRect: NSRect
         if config.mode == .window && !config.isWindowSnap {
-            let titleBarH: CGFloat = 28
             expandedRect = NSRect(
                 x: selectionRect.minX - pad - shadowBleed,
                 y: selectionRect.minY - pad - shadowBleed,
@@ -3149,7 +3333,6 @@ class OverlayView: NSView {
         // Draw gradient background (inner rect without shadow bleed)
         let bgRect: NSRect
         if config.mode == .window && !config.isWindowSnap {
-            let titleBarH: CGFloat = 28
             bgRect = NSRect(
                 x: innerX, y: innerY, width: selectionRect.width + pad * 2,
                 height: selectionRect.height + titleBarH + pad * 2)
@@ -3171,7 +3354,6 @@ class OverlayView: NSView {
         let windowRect: NSRect
 
         if config.mode == .window && !config.isWindowSnap {
-            let titleBarH: CGFloat = 28
             let windowW = selectionRect.width
             let windowH = selectionRect.height + titleBarH
             windowRect = NSRect(
@@ -3442,6 +3624,156 @@ class OverlayView: NSView {
     // MARK: - Color Sampler Preview
 
     /// Sample the visible canvas color at `canvasPoint` and draw a live preview.
+    /// Sample at a point given in global screen coordinates. Used for the cross-display
+    /// routing above; returns false when the point isn't over this overlay's screen or the
+    /// pixel can't be read, so the caller can leave the capture running.
+    @discardableResult
+    func copyColorAtGlobalPoint(_ globalPoint: NSPoint) -> Bool {
+        guard let window, screenshotImage != nil else { return false }
+        let windowPoint = window.convertPoint(fromScreen: globalPoint)
+        let viewPoint = convert(windowPoint, from: nil)
+        guard bounds.contains(viewPoint) else { return false }
+        guard sampleCanvasColor(at: viewToCanvas(viewPoint)) != nil else { return false }
+        copySampledColor(at: viewToCanvas(viewPoint))
+        restoreSystemCursorAfterPicker()
+        return true
+    }
+
+    /// Read the colour under `canvasPoint`, put its hex on the pasteboard, and remember it in
+    /// the custom colour slots so a capture started right afterwards can draw with it.
+    private func copySampledColor(at canvasPoint: NSPoint) {
+        guard let result = sampleCanvasColor(at: canvasPoint) else { return }
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(result.hex, forType: .string)
+
+        currentColor = result.color
+        currentColorOpacity = 1.0
+        OverlayView.lastUsedOpacity = 1.0
+        UserDefaults.standard.set(1.0, forKey: "lastUsedColorOpacity")
+        if selectedColorSlot >= 0 && selectedColorSlot < customColors.count {
+            customColors[selectedColorSlot] = result.color.withAlphaComponent(1.0)
+            saveCustomColors()
+            let nextSlot = selectedColorSlot + 1
+            if nextSlot < customColors.count { selectedColorSlot = nextSlot }
+        }
+        // Toast rather than `showOverlayError`: picking a colour tears down the overlay, and
+        // an in-overlay message would vanish with it before it could be read. The swatch
+        // shows which colour was taken without having to decode the hex.
+        ToastCenter.shared.show(String(format: L("Copied %@"), result.hex), swatch: result.color)
+        needsDisplay = true
+    }
+
+    /// Full-screen crosshair + pixel magnifier shown before a selection exists.
+    ///
+    /// The system arrow cursor is hidden while this is up (see `updateCursorForPoint`): an
+    /// arrow has no precise tip to aim with, and the whole point here is landing on one
+    /// specific pixel. Lines span the screen so the target can be aligned against distant
+    /// edges, and they are drawn as a dark line under a light one so they stay visible on
+    /// any background.
+    private func drawPreSelectionColorPicker(at canvasPoint: NSPoint) {
+        guard let context = NSGraphicsContext.current else { return }
+        guard let sample = sampleCanvasColor(at: canvasPoint) else { return }
+
+        context.saveGraphicsState()
+        defer { context.restoreGraphicsState() }
+
+        // ── Magnifier ──
+        let radius = 7                       // 15×15 pixels
+        let cell: CGFloat = 9
+        let side = CGFloat(radius * 2 + 1) * cell
+        let gap: CGFloat = 18
+        let infoH: CGFloat = 38
+        let panelW = side
+        let panelH = side + infoH
+
+        // Keep the panel on screen: flip to the other side of the cursor near an edge.
+        var panelX = canvasPoint.x + gap
+        var panelY = canvasPoint.y - panelH - gap
+        if panelX + panelW > bounds.maxX - 8 { panelX = canvasPoint.x - gap - panelW }
+        if panelY < bounds.minY + 8 { panelY = canvasPoint.y + gap }
+        let panel = NSRect(x: panelX, y: panelY, width: panelW, height: panelH)
+
+        let panelPath = NSBezierPath(roundedRect: panel, xRadius: 8, yRadius: 8)
+        NSColor.black.withAlphaComponent(0.88).setFill()
+        panelPath.fill()
+
+        let gridRect = NSRect(x: panel.minX, y: panel.maxY - side, width: side, height: side)
+        context.saveGraphicsState()
+        NSBezierPath(roundedRect: NSRect(x: gridRect.minX, y: gridRect.minY,
+                                         width: gridRect.width, height: gridRect.height),
+                     xRadius: 8, yRadius: 8).addClip()
+
+        if let rows = samplePixelBlock(around: canvasPoint, radius: radius) {
+            for (r, line) in rows.enumerated() {
+                for (c, colour) in line.enumerated() {
+                    guard let colour else { continue }
+                    let cellRect = NSRect(
+                        x: gridRect.minX + CGFloat(c) * cell,
+                        y: gridRect.maxY - CGFloat(r + 1) * cell,
+                        width: cell, height: cell)
+                    colour.setFill()
+                    cellRect.fill()
+                }
+            }
+            // Grid lines, subtle — they make individual pixels countable.
+            NSColor.white.withAlphaComponent(0.08).setStroke()
+            let grid = NSBezierPath()
+            for i in 1...(radius * 2) {
+                let o = CGFloat(i) * cell
+                grid.move(to: NSPoint(x: gridRect.minX + o, y: gridRect.minY))
+                grid.line(to: NSPoint(x: gridRect.minX + o, y: gridRect.maxY))
+                grid.move(to: NSPoint(x: gridRect.minX, y: gridRect.minY + o))
+                grid.line(to: NSPoint(x: gridRect.maxX, y: gridRect.minY + o))
+            }
+            grid.lineWidth = 1
+            grid.stroke()
+        }
+
+        // Centre cell — the pixel actually being read.
+        let centre = NSRect(
+            x: gridRect.minX + CGFloat(radius) * cell,
+            y: gridRect.minY + CGFloat(radius) * cell,
+            width: cell, height: cell)
+        NSColor.black.withAlphaComponent(0.8).setStroke()
+        let centreOuter = NSBezierPath(rect: centre.insetBy(dx: -1, dy: -1))
+        centreOuter.lineWidth = 1
+        centreOuter.stroke()
+        NSColor.white.setStroke()
+        let centreBox = NSBezierPath(rect: centre)
+        centreBox.lineWidth = 1
+        centreBox.stroke()
+        context.restoreGraphicsState()
+
+        // ── Readout: hex + cursor position ──
+        let hexFont = NSFont.monospacedSystemFont(ofSize: 12, weight: .semibold)
+        let subFont = NSFont.monospacedSystemFont(ofSize: 10, weight: .regular)
+        let hexAttrs: [NSAttributedString.Key: Any] = [
+            .font: hexFont, .foregroundColor: NSColor.white,
+        ]
+        let subAttrs: [NSAttributedString.Key: Any] = [
+            .font: subFont, .foregroundColor: NSColor.white.withAlphaComponent(0.55),
+        ]
+
+        let swatch = NSRect(x: panel.minX + 8, y: panel.minY + infoH / 2 - 6, width: 12, height: 12)
+        sample.color.setFill()
+        NSBezierPath(roundedRect: swatch, xRadius: 2, yRadius: 2).fill()
+        NSColor.white.withAlphaComponent(0.35).setStroke()
+        let swatchEdge = NSBezierPath(roundedRect: swatch, xRadius: 2, yRadius: 2)
+        swatchEdge.lineWidth = 0.5
+        swatchEdge.stroke()
+
+        (sample.hex as NSString).draw(
+            at: NSPoint(x: swatch.maxX + 6, y: panel.minY + infoH - 17), withAttributes: hexAttrs)
+
+        // Report the pixel in image coordinates, which is what the user is aiming at —
+        // not view points, which differ on a Retina display.
+        let px = Int((canvasPoint.x - captureDrawRect.origin.x).rounded())
+        let py = Int((canvasPoint.y - captureDrawRect.origin.y).rounded())
+        let flippedY = Int(captureDrawRect.height.rounded()) - py
+        ("\(px), \(flippedY)  ·  " + L("Press C to copy") as NSString).draw(
+            at: NSPoint(x: swatch.maxX + 6, y: panel.minY + 5), withAttributes: subAttrs)
+    }
+
     private func drawColorSamplerPreview(at canvasPoint: NSPoint) {
         guard let result = sampleCanvasColor(at: canvasPoint) else { return }
         let sampledColor = result.color
@@ -3460,7 +3792,7 @@ class OverlayView: NSView {
         ]
 
         let hexSize = (hexStr as NSString).size(withAttributes: hexAttrs)
-        let copyText = L("Right-click to copy")
+        let copyText = L("Press C to copy")
         let copySize = (copyText as NSString).size(withAttributes: copyAttrs)
 
         let swatchSize: CGFloat = 16
@@ -3511,6 +3843,78 @@ class OverlayView: NSView {
 
     /// Sample a pixel color from an image at the given canvas-space point.
     /// Returns (NSColor for display, hex string with raw sRGB values matching what other tools report).
+    /// Read a square block of pixels centred on `canvasPoint`, for the magnifier grid.
+    ///
+    /// Drawn in one shot into a small sRGB context rather than calling `sampleColor` per
+    /// pixel: the grid is re-read on every mouse move, and 121 separate one-pixel context
+    /// allocations per frame is enough to be felt while dragging.
+    ///
+    /// Returns rows top-to-bottom so the caller can draw them directly in flipped order.
+    /// Pixels outside the image come back nil, which the caller renders as empty cells —
+    /// that is what makes the grid stay put at the screen edges instead of sliding.
+    private func samplePixelBlock(around canvasPoint: NSPoint, radius: Int) -> [[NSColor?]]? {
+        guard let image = screenshotImage,
+              let cgImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil)
+        else { return nil }
+
+        let imgSize = image.size
+        let drawRect = captureDrawRect
+        guard drawRect.width > 0, drawRect.height > 0, imgSize.width > 0, imgSize.height > 0
+        else { return nil }
+
+        let scaleX = CGFloat(cgImage.width) / drawRect.width
+        let scaleY = CGFloat(cgImage.height) / drawRect.height
+        let centreX = Int(((canvasPoint.x - drawRect.origin.x) * scaleX).rounded(.down))
+        // CGImage is top-left origin; the canvas is bottom-left.
+        let centreY = Int((CGFloat(cgImage.height) - (canvasPoint.y - drawRect.origin.y) * scaleY).rounded(.down))
+
+        let side = radius * 2 + 1
+        let originX = centreX - radius
+        let originY = centreY - radius
+
+        let srgb = CGColorSpace(name: CGColorSpace.sRGB)!
+        guard let ctx = CGContext(
+            data: nil, width: side, height: side,
+            bitsPerComponent: 8, bytesPerRow: side * 4,
+            space: srgb,
+            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
+        else { return nil }
+        ctx.interpolationQuality = .none
+        // Shift the image so the wanted block lands on the context's origin.
+        ctx.draw(cgImage, in: CGRect(
+            x: -CGFloat(originX),
+            y: -(CGFloat(cgImage.height) - CGFloat(originY) - CGFloat(side)),
+            width: CGFloat(cgImage.width), height: CGFloat(cgImage.height)))
+        guard let data = ctx.data else { return nil }
+        let ptr = data.assumingMemoryBound(to: UInt8.self)
+
+        var rows: [[NSColor?]] = []
+        rows.reserveCapacity(side)
+        for row in 0..<side {
+            var line: [NSColor?] = []
+            line.reserveCapacity(side)
+            for col in 0..<side {
+                let srcX = originX + col
+                let srcY = originY + row
+                guard srcX >= 0, srcX < cgImage.width, srcY >= 0, srcY < cgImage.height else {
+                    line.append(nil)
+                    continue
+                }
+                // Context rows run bottom-up relative to the block we requested.
+                let o = ((side - 1 - row) * side + col) * 4
+                let a = CGFloat(ptr[o + 3]) / 255
+                guard a > 0 else { line.append(nil); continue }
+                line.append(NSColor(
+                    srgbRed: min(1, CGFloat(ptr[o]) / 255 / a),
+                    green: min(1, CGFloat(ptr[o + 1]) / 255 / a),
+                    blue: min(1, CGFloat(ptr[o + 2]) / 255 / a),
+                    alpha: 1))
+            }
+            rows.append(line)
+        }
+        return rows
+    }
+
     private func sampleColor(from image: NSImage, at canvasPoint: NSPoint) -> (
         color: NSColor, hex: String
     )? {
@@ -3888,6 +4292,7 @@ class OverlayView: NSView {
         guard snapGuidesEnabled else {
             snapGuideX = nil
             snapGuideY = nil
+            annotationSnapHaptics.reset()
             return point
         }
 
@@ -3926,6 +4331,7 @@ class OverlayView: NSView {
             result.y = point.y
         }
 
+        annotationSnapHaptics.report(guideX: snapGuideX, guideY: snapGuideY)
         return result
     }
 
@@ -3937,6 +4343,7 @@ class OverlayView: NSView {
         guard snapGuidesEnabled else {
             snapGuideX = nil
             snapGuideY = nil
+            annotationSnapHaptics.reset()
             return (0, 0)
         }
 
@@ -3981,6 +4388,7 @@ class OverlayView: NSView {
             snapDy = 0
         }
 
+        annotationSnapHaptics.report(guideX: snapGuideX, guideY: snapGuideY)
         return (snapDx, snapDy)
     }
 
@@ -4327,6 +4735,75 @@ class OverlayView: NSView {
         zoomLevel = 1.0
         zoomAnchorCanvas = .zero
         zoomAnchorView = .zero
+    }
+
+    /// Enabling this required the overlay's hit-testing to stop assuming an unscaled canvas:
+    /// `pointIsInSelection`, `hitTestHandle` and `resizeHandleCursor` all compared raw
+    /// view-space points against canvas-space rects, which is harmless at 1× and wrong at
+    /// any other scale (selection resize and dragging stop responding). They now convert.
+    static let beautifyFitZoomEnabled = true
+
+    /// Margin kept between the beautified composition and the screen edge so the result
+    /// still reads as a floating preview rather than something jammed against the bezel.
+    private static let beautifyFitMargin: CGFloat = 24
+
+    /// Scale the whole canvas down so the beautified composition fits on screen.
+    ///
+    /// Beautify grows the result beyond the selection: a window capture plus its padding is
+    /// routinely larger than the screen it was taken on, and the preview would just be
+    /// clipped at the screen edge — hiding exactly the padding the user is adjusting.
+    ///
+    /// Scaling the preview drawing alone would desynchronise everything else: the selection
+    /// frame, the annotations, the toolbars and the mouse mapping would all stay at full
+    /// size. So this drives the existing canvas zoom instead — drawing, hit-testing and
+    /// `viewToCanvas`/`canvasToView` already run through `zoomLevel`/`zoomAnchor*`, so they
+    /// stay consistent for free. The overlay never zooms for any other reason (see
+    /// `resetZoom`), so there is no user zoom state to clobber here.
+    ///
+    /// Only ever scales down; a composition that already fits is left at 1×.
+    func updateBeautifyFitZoom() {
+        guard Self.beautifyFitZoomEnabled else { return }
+        guard !isInsideScrollView else { return }
+
+        let active = beautifyEnabled && state == .selected && !isScrollCapturing && !isRecording
+        guard active, selectionRect.width > 0, selectionRect.height > 0 else {
+            if zoomLevel != 1.0 {
+                resetZoom()
+                externalScreenshotPreviewVisibilitySetter?(true)
+                rebuildToolbarLayout()
+            }
+            return
+        }
+
+        let composition = beautifyFitReservationRect
+        let available = bounds.insetBy(dx: Self.beautifyFitMargin, dy: Self.beautifyFitMargin)
+        guard composition.width > 0, composition.height > 0,
+              available.width > 0, available.height > 0 else { return }
+
+        let fit = min(1.0, min(available.width / composition.width,
+                               available.height / composition.height))
+
+        // Re-running layout on every draw would thrash the toolbars; only react to a real change.
+        guard abs(fit - zoomLevel) > 0.001 else { return }
+
+        if fit >= 1.0 {
+            resetZoom()
+        } else {
+            zoomLevel = fit
+            // Pin the composition's centre to the view's centre so the shrunken preview sits
+            // in the middle of the screen instead of drifting toward a corner.
+            zoomAnchorCanvas = NSPoint(x: composition.midX, y: composition.midY)
+            zoomAnchorView = NSPoint(x: bounds.midX, y: bounds.midY)
+        }
+        externalScreenshotPreviewVisibilitySetter?(zoomLevel == 1.0)
+        rebuildToolbarLayout()
+    }
+
+    /// Canvas-space rect → view space, honouring the current zoom.
+    func canvasToView(_ r: NSRect) -> NSRect {
+        let origin = canvasToView(r.origin)
+        let far = canvasToView(NSPoint(x: r.maxX, y: r.maxY))
+        return NSRect(x: origin.x, y: origin.y, width: far.x - origin.x, height: far.y - origin.y)
     }
 
     /// Crop the screenshot to `viewRect` (view-space, within selectionRect),
@@ -5176,31 +5653,32 @@ class OverlayView: NSView {
             return
         }
 
-        // Anchor rect: beautify-expanded when active, selection otherwise
-        let config = beautifyConfig
-        let bPad = config.padding
-        let titleBarH: CGFloat = config.mode == .window ? 28 : 0
-        let expandedAnchor = NSRect(
-            x: selectionRect.minX - bPad, y: selectionRect.minY - bPad,
-            width: selectionRect.width + bPad * 2,
-            height: selectionRect.height + titleBarH + bPad * 2)
-        let anchorRect: NSRect
+        // Anchor rect: beautify-expanded when active, selection otherwise.
+        // Uses the same scaled metrics the preview draws with, so the toolbars frame what
+        // is actually on screen rather than an unscaled approximation of it.
+        let expandedAnchor = beautifyCompositionRect
+        let anchorRectCanvas: NSRect
         if beautifyToolbarAnimProgress < 1.0 {
             let t = beautifyToolbarAnimProgress
             let eased = 1.0 - (1.0 - t) * (1.0 - t)
             let fromRect = beautifyToolbarAnimTarget ? selectionRect : expandedAnchor
             let toRect = beautifyToolbarAnimTarget ? expandedAnchor : selectionRect
-            anchorRect = NSRect(
+            anchorRectCanvas = NSRect(
                 x: fromRect.minX + (toRect.minX - fromRect.minX) * eased,
                 y: fromRect.minY + (toRect.minY - fromRect.minY) * eased,
                 width: fromRect.width + (toRect.width - fromRect.width) * eased,
                 height: fromRect.height + (toRect.height - fromRect.height) * eased
             )
         } else if beautifyEnabled && !isScrollCapturing && !isRecording {
-            anchorRect = expandedAnchor
+            anchorRectCanvas = expandedAnchor
         } else {
-            anchorRect = selectionRect
+            anchorRectCanvas = selectionRect
         }
+
+        // Everything above is canvas space; the toolbars below are real subviews positioned
+        // in view space. The two coincide at 1×, which is why this conversion was never
+        // needed before — the beautify fit zoom is what makes them diverge.
+        let anchorRect = canvasToView(anchorRectCanvas)
 
         let rightSize = rightStrip.frame.size
 
@@ -5431,9 +5909,15 @@ class OverlayView: NSView {
         ]
     }
 
-    private func hitTestHandle(at point: NSPoint) -> ResizeHandle {
+    private func hitTestHandle(at viewPoint: NSPoint) -> ResizeHandle {
+        // Handle rects come from `selectionRect`, i.e. canvas space — convert the click.
+        let point = viewToCanvas(viewPoint)
+        // Hit slop is a screen-space affordance (how close the pointer must get, in points on
+        // the display). Dividing by the zoom keeps that distance constant on screen instead of
+        // shrinking along with the canvas.
+        let zoomCompensation = zoomLevel > 0 ? 1 / zoomLevel : 1
         // Use the same hit area as resizeHandleCursor so cursor and click zones match
-        let hitPad: CGFloat = 2  // handle rect is already handleSize; expand by 2 to match cursor zone
+        let hitPad: CGFloat = 2 * zoomCompensation  // handle rect is already handleSize; expand by 2 to match cursor zone
         // Check corner handles first (they take priority over edges)
         for (handle, rect) in allHandleRects() {
             switch handle {
@@ -5447,7 +5931,7 @@ class OverlayView: NSView {
         }
 
         // Check full edges/borders (not just the handle dots)
-        let edgeThickness: CGFloat = 6  // match resizeHandleCursor's edgeT
+        let edgeThickness: CGFloat = 6 * zoomCompensation  // match resizeHandleCursor's edgeT
         let r = selectionRect
         // Top edge
         if NSRect(x: r.minX, y: r.maxY - edgeThickness / 2, width: r.width, height: edgeThickness)
@@ -5537,6 +6021,7 @@ class OverlayView: NSView {
     override func mouseDown(with event: NSEvent) {
         let point = convert(event.locationInWindow, from: nil)
         justDismissedTextEditor = false  // reset per click; set below if we commit one
+
 
         // Anchored selection commit: a left-click while the right-click-
         // anchored tracker is live finalizes the selection and returns to
@@ -6442,6 +6927,12 @@ class OverlayView: NSView {
         boundarySnapGuideX = nil
         boundarySnapGuideY = nil
 
+        // Drop the haptic latch state with them. Without this, a drag that ends while
+        // snapped to a guide would swallow the tap when the *next* drag snaps to that
+        // same guide — the most common case, since guides come from fixed geometry.
+        boundarySnapHaptics.reset()
+        annotationSnapHaptics.reset()
+
         // Clean up long-press timer
         longPressTimer?.invalidate()
         longPressTimer = nil
@@ -6699,12 +7190,22 @@ class OverlayView: NSView {
             // Only whole-window snaps use the independent capture that preserves
             // transparent corners. Element snaps are ordinary screen crops.
             if selectionIsWindowSnap, let wid = hoveredSnapWindowID, let screen = window?.screen {
-                Task {
+                // Quick Capture delivers the image the instant the selection is made, which
+                // is before this asynchronous window grab can finish — it would fall back to
+                // the plain rectangular crop and ship corners full of background. Hold its
+                // trigger until the grab lands. The interactive path doesn't need this: the
+                // user has to reach for a toolbar button, by which time the image is here.
+                let deferredQuickSave = autoQuickSaveMode
+                if deferredQuickSave { autoQuickSaveMode = false }
+                Task { @MainActor in
                     if let cgImage = await ScreenCaptureManager.captureWindow(windowID: wid, screen: screen) {
                         self.snappedWindowImage = NSImage(cgImage: cgImage,
                             size: NSSize(width: CGFloat(cgImage.width) / screen.backingScaleFactor,
                                          height: CGFloat(cgImage.height) / screen.backingScaleFactor))
                         self.needsDisplay = true
+                    }
+                    if deferredQuickSave {
+                        self.overlayDelegate?.overlayViewDidRequestQuickSave()
                     }
                 }
             }
@@ -6778,9 +7279,13 @@ class OverlayView: NSView {
     /// (reposition anchor). Shared between drag-to-select (mouseDragged)
     /// and right-click-anchored select (mouseMoved) so both flows produce
     /// identical geometry.
-    private func updateSelectionRect(to point: NSPoint, shiftHeld: Bool,
+    private func updateSelectionRect(to viewPoint: NSPoint, shiftHeld: Bool,
                                      modifiers: NSEvent.ModifierFlags = []) {
-        var point = point
+        // Every caller hands over a raw view-space point from an NSEvent, while everything
+        // below mutates `selectionRect` / `selectionStart`, which are canvas space. Convert
+        // once here instead of at each call site. Identity at 1×, which is why the overlay
+        // worked before the beautify fit zoom introduced a second scale.
+        var point = viewToCanvas(viewPoint)
         if spaceRepositioning {
             let dx = point.x - spaceRepositionLast.x
             let dy = point.y - spaceRepositionLast.y
@@ -7213,6 +7718,7 @@ class OverlayView: NSView {
 
         boundarySnapGuideX = guideX
         boundarySnapGuideY = guideY
+        boundarySnapHaptics.report(guideX: guideX, guideY: guideY)
         return NSRect(x: minX, y: minY, width: maxX - minX, height: maxY - minY)
     }
 
@@ -7228,6 +7734,7 @@ class OverlayView: NSView {
                 boundarySnapGuideX = nil
                 boundarySnapGuideY = nil
             }
+            boundarySnapHaptics.reset()
             return rect
         }
         let radius = boundarySnapRadiusPoints
@@ -7261,6 +7768,7 @@ class OverlayView: NSView {
 
         boundarySnapGuideX = guideX
         boundarySnapGuideY = guideY
+        boundarySnapHaptics.report(guideX: guideX, guideY: guideY)
         return rect.offsetBy(dx: dx, dy: dy)
     }
 
@@ -7285,6 +7793,7 @@ class OverlayView: NSView {
         }
         boundarySnapGuideX = guideX
         boundarySnapGuideY = guideY
+        boundarySnapHaptics.report(guideX: guideX, guideY: guideY)
         return p
     }
 
@@ -9120,6 +9629,24 @@ class OverlayView: NSView {
             return
         }
 
+        // `c` picks the colour under the crosshair and ends the capture — reaching for the
+        // picker means the colour *is* the goal, so leaving the overlay up afterwards just
+        // makes the user dismiss it by hand.
+        //
+        // Deliberately gated on as little as possible: the previous version also required a
+        // non-zero cached sample point and a mode flag, and any one of those being stale
+        // silently swallowed the key. The pointer position is read live instead.
+        if state == .idle, !isEditorMode, screenshotImage != nil,
+           KeyboardShortcutMatcher.matches(event, character: "c", modifiers: [])
+        {
+            // Multi-display: key events only ever reach the key window, but the pointer may
+            // well be over a different screen's overlay. Resolve from the global pointer
+            // location and let the delegate route it to whichever overlay owns that screen,
+            // rather than sampling this one — which would read the wrong display, or nothing.
+            overlayDelegate?.overlayViewDidRequestPointerColorPick()
+            return
+        }
+
         // Character-based so the shortcut follows QWERTZ/AZERTY/Dvorak.
         if state == .idle && snapMode != .off
             && KeyboardShortcutMatcher.matches(event, character: "f", modifiers: [])
@@ -9702,6 +10229,10 @@ class OverlayView: NSView {
         if let cached = cachedCompositedImage { return cached }
         guard let screenshot = captureSourceImage ?? screenshotImage else { return nil }
         if annotations.isEmpty { return screenshot }
+        // Note: this composites against the full-screen shot on purpose — it backs
+        // pixelate/blur sampling and colour picking, which need the pixels actually on
+        // screen. The window-snap alpha handling lives in `renderSelectedRegion`, which is
+        // what produces the delivered image.
 
         let drawRect = captureDrawRect
         let dimBounds = highlightDimBounds
@@ -9807,7 +10338,27 @@ class OverlayView: NSView {
         NSGraphicsContext.saveGraphicsState()
         NSGraphicsContext.current = nsContext
 
-        if let screenshot = captureSourceImage ?? screenshotImage {
+        if selectionIsWindowSnap,
+           let windowImg = snappedWindowImage,
+           let maskCG = windowImg.cgImage(forProposedRect: nil, context: nil, hints: nil),
+           let screenshot = captureSourceImage ?? screenshotImage {
+            // Window snap: take the *shape* from the window's own capture and the *pixels*
+            // from the full-screen shot.
+            //
+            // Neither source is right on its own. Cropping the window's rect out of the
+            // screen shot bakes whatever sits behind the window into its rounded corners.
+            // But drawing the independent window capture instead loses the composite behind
+            // translucent chrome — a vibrancy sidebar has nothing to blend with once the
+            // window is detached from the desktop, so it renders noticeably paler than what
+            // was on screen.
+            //
+            // Clipping the screen shot through the window capture's alpha gets both: true
+            // rounded corners, and every pixel exactly as the user saw it.
+            cgCtx.saveGState()
+            cgCtx.clip(to: selectionRect, mask: maskCG)
+            screenshot.draw(in: captureDrawRect, from: .zero, operation: .copy, fraction: 1.0)
+            cgCtx.restoreGState()
+        } else if let screenshot = captureSourceImage ?? screenshotImage {
             // In editor mode the image is at selectionRect (natural size);
             // in overlay mode it fills bounds (full screen).
             let drawRect = captureDrawRect
@@ -10075,6 +10626,7 @@ class OverlayView: NSView {
     }
 
     func reset() {
+        restoreSystemCursorAfterPicker()
         state = .idle
         selectionRect = .zero
         selectionIsWindowSnap = false
