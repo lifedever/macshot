@@ -49,16 +49,17 @@
 	<string>macshot can record microphone audio during screen recordings.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>macshot can show a webcam overlay during screen recordings.</string>
-	<key>SUFeedURL</key>
-	<string>https://raw.githubusercontent.com/sw33tLie/macshot/main/appcast.xml</string>
-	<key>SUPublicEDKey</key>
-	<string>+5RTT9lGyoeOYAYuNfCdPhxugmruYvRDyFXgk6VPY1c=</string>
-	<key>SUScheduledCheckInterval</key>
-	<integer>86400</integer>
+	<key>CFBundleName</key>
+	<string>MacShot</string>
+	<key>CFBundleDisplayName</key>
+	<string>MacShot</string>
+	<!-- Sparkle is deliberately unconfigured in this fork. The upstream appcast advertises
+	     the official build: accepting an update would replace this locally-built, locally-signed
+	     app with sw33tLie's DMG, silently discarding every local change and resetting the TCC
+	     grants tied to our signing identity. Update by rebuilding from source instead
+	     (scripts/build-install.sh). Without SUFeedURL, Sparkle has nothing to check. -->
 	<key>SUEnableAutomaticChecks</key>
-	<true/>
-	<key>SUEnableInstallerLauncherService</key>
-	<true/>
+	<false/>
 	<key>NSSupportsAutomaticTermination</key>
 	<false/>
 </dict>
