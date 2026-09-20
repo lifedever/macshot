@@ -238,10 +238,9 @@ class FloatingThumbnailController: NSObject, NSDraggingSource, QLPreviewPanelDat
 
     static func currentThumbnailSize() -> NSSize {
         let scale = CGFloat(UserDefaults.standard.object(forKey: "thumbnailScale") as? Double ?? 1.0)
-        // 168×112 rather than the upstream 240×160: the preview is a confirmation that the
-        // capture happened, not something you read, and a larger card crowds the corner.
-        // Settings › thumbnail scale still multiplies this.
-        return NSSize(width: round(168 * scale), height: round(112 * scale))
+        // Base size stays at upstream's 240×160 — Settings › "preview size" is the knob for
+        // this, and shrinking the base too would compound with the user's percentage.
+        return NSSize(width: round(240 * scale), height: round(160 * scale))
     }
 
     // MARK: - Show
