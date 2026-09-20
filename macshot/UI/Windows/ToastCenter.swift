@@ -41,8 +41,16 @@ final class ToastCenter {
 
     /// Resting distance from the bottom of the visible frame, matching PasteMemo.
     private static let bottomMargin: CGFloat = 72
-    /// How far the pill travels during the slide-in.
+    /// How far the pill travels — the same rise on the way in and drop on the way out, so
+    /// the exit mirrors the entrance instead of merely resembling it.
     private static let slideDistance: CGFloat = 24
+    private static let slideDuration: TimeInterval = 0.34
+    /// Quick off the mark, settling at the end. Shared by both directions: giving the exit
+    /// its own (ease-in) curve made it start slowly, which read as sluggish next to the
+    /// entrance.
+    private static var slideCurve: CAMediaTimingFunction {
+        CAMediaTimingFunction(controlPoints: 0.16, 1.02, 0.30, 1.0)
+    }
 
     private var panel: NSPanel?
     private var dismissTask: DispatchWorkItem?
@@ -74,8 +82,8 @@ final class ToastCenter {
         // Spring-ish rise, matching the feel of PasteMemo's
         // `.spring(response: 0.48, dampingFraction: 0.7)`.
         NSAnimationContext.runAnimationGroup { ctx in
-            ctx.duration = 0.34
-            ctx.timingFunction = CAMediaTimingFunction(controlPoints: 0.16, 1.02, 0.30, 1.0)
+            ctx.duration = Self.slideDuration
+            ctx.timingFunction = Self.slideCurve
             panel.animator().setFrame(NSRect(x: x, y: restingY, width: size.width, height: size.height),
                                       display: true)
             panel.animator().alphaValue = 1
@@ -90,12 +98,11 @@ final class ToastCenter {
         dismissTask?.cancel()
         dismissTask = nil
         guard let panel, panel.isVisible else { return }
-        // Mirror the entrance: sink back down while fading, instead of blinking out in
-        // place. Slightly further than the rise so the exit reads as falling away.
-        let sunk = panel.frame.offsetBy(dx: 0, dy: -(Self.slideDistance + 8))
+        // Exact mirror of the entrance: same distance, same duration, same curve.
+        let sunk = panel.frame.offsetBy(dx: 0, dy: -Self.slideDistance)
         NSAnimationContext.runAnimationGroup({ ctx in
-            ctx.duration = 0.26
-            ctx.timingFunction = CAMediaTimingFunction(name: .easeIn)
+            ctx.duration = Self.slideDuration
+            ctx.timingFunction = Self.slideCurve
             panel.animator().setFrame(sunk, display: true)
             panel.animator().alphaValue = 0
         }, completionHandler: {
