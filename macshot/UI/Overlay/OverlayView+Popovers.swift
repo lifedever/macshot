@@ -167,6 +167,10 @@ extension OverlayView {
             PopoverHelper.dismiss()
             self?.pickCustomBeautifyBackground()
         }
+        picker.onUseWallpaper = { [weak self] in
+            PopoverHelper.dismiss()
+            self?.useDesktopWallpaperAsBeautifyBackground()
+        }
         if let anchor = anchorView {
             PopoverHelper.show(
                 picker, size: picker.preferredSize, relativeTo: anchor.bounds, of: anchor,
@@ -207,6 +211,67 @@ extension OverlayView {
             self.updateBeautifySwatch(styleIndex: -1)
             self.rebuildToolbarLayout()
         }
+    }
+
+    /// Capture the current desktop wallpaper and use it as the beautify background.
+    /// Feeds the existing custom-background pipeline, so the blur slider, persistence and
+    /// the picker's thumbnail all work without special-casing wallpapers.
+    func useDesktopWallpaperAsBeautifyBackground() {
+        guard #available(macOS 14.0, *) else { return }
+        let screen = window?.screen ?? NSScreen.main
+        guard let screen else { return }
+
+        Task { @MainActor [weak self] in
+            guard let image = await DesktopWallpaper.capture(for: screen) else {
+                // Leave whatever background is configured in place — replacing it with a
+                // blank one would silently look like the wallpaper is a black image.
+                return
+            }
+            guard let self else { return }
+
+            // A wallpaper is a full-resolution screen image; stored raw it bloats the
+            // preferences plist by several megabytes. It only ever renders behind a
+            // capture, often blurred, so downsampled JPEG is indistinguishable here.
+            if let data = Self.compactBackgroundData(from: image) {
+                UserDefaults.standard.set(data, forKey: "beautifyCustomBgImageData")
+            }
+            self.customBeautifyBackground = image
+            self.prepareBeautifyBackgroundCache()
+            self.beautifyStyleIndex = -1
+            UserDefaults.standard.set(-1, forKey: "beautifyStyleIndex")
+            self.cachedCompositedImage = nil
+            self.needsDisplay = true
+            self.updateBeautifySwatch(styleIndex: -1)
+            self.rebuildToolbarLayout()
+            self.onContentChanged?()
+        }
+    }
+
+    /// Downsample to at most `maxEdge` on the long side and encode as JPEG.
+    /// Returns nil if the image can't be rasterized, in which case the caller keeps the
+    /// in-memory image and simply doesn't persist it.
+    private static func compactBackgroundData(from image: NSImage, maxEdge: CGFloat = 1920) -> Data? {
+        guard let cg = image.cgImage(forProposedRect: nil, context: nil, hints: nil) else { return nil }
+        let w = CGFloat(cg.width), h = CGFloat(cg.height)
+        let scale = min(1, maxEdge / max(w, h))
+        let target = NSSize(width: round(w * scale), height: round(h * scale))
+
+        guard let rep = NSBitmapImageRep(
+            bitmapDataPlanes: nil, pixelsWide: Int(target.width), pixelsHigh: Int(target.height),
+            bitsPerSample: 8, samplesPerPixel: 4, hasAlpha: true, isPlanar: false,
+            colorSpaceName: .deviceRGB, bytesPerRow: 0, bitsPerPixel: 0) else { return nil }
+        rep.size = target
+
+        NSGraphicsContext.saveGraphicsState()
+        defer { NSGraphicsContext.restoreGraphicsState() }
+        guard let ctx = NSGraphicsContext(bitmapImageRep: rep) else { return nil }
+        NSGraphicsContext.current = ctx
+        ctx.imageInterpolation = .high
+        image.draw(in: NSRect(origin: .zero, size: target),
+                   from: .zero, operation: .copy, fraction: 1.0)
+        ctx.flushGraphics()
+
+        return rep.representation(using: .jpeg, properties: [.compressionFactor: 0.85])
     }
 
     func loadCustomBeautifyBackground() {

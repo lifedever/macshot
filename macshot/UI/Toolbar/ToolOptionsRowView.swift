@@ -1318,7 +1318,7 @@ class ToolOptionsRowView: NSView {
         }
 
         // Padding slider
-        curX = addBeautifySlider(at: curX, label: L("Padding"), value: ov.beautifyPadding, min: 16, max: 96, isEnabled: controlsEnabled, action: #selector(beautifyPaddingChanged(_:)))
+        curX = addBeautifySlider(at: curX, label: L("Padding"), value: ov.beautifyPadding, min: BeautifyConfig.minPadding, max: BeautifyConfig.maxPadding, isEnabled: controlsEnabled, action: #selector(beautifyPaddingChanged(_:)))
 
         // Corner radius slider — hidden for snapped windows (native corners are baked in)
         if !isSnap {

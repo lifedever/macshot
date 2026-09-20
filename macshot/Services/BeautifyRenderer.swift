@@ -35,7 +35,12 @@ struct BeautifyStyle {
 struct BeautifyConfig {
     var mode: BeautifyMode = .window
     var styleIndex: Int = 0
-    var padding: CGFloat = 48       // 16..96
+    /// Range of the Padding slider. `maxPadding` is also what the overlay reserves room for
+    /// when fitting the preview to the screen, so that sliding padding doesn't rescale the
+    /// whole canvas — see `OverlayView.beautifyFitReservationRect`.
+    static let minPadding: CGFloat = 16
+    static let maxPadding: CGFloat = 96
+    var padding: CGFloat = 48
     var cornerRadius: CGFloat = 10  // 0..30
     var shadowRadius: CGFloat = 20  // 0..100
     var bgRadius: CGFloat = 8      // 0..30 (outer background corner radius)
@@ -81,6 +86,29 @@ struct BeautifyConfig {
 }
 
 class BeautifyRenderer {
+
+    /// Capture size the beautify sliders are authored against. A 48pt padding is a generous
+    /// 10% margin on a capture this size.
+    private static let referenceShortEdge: CGFloat = 480
+
+    /// Beautify's geometry — padding, corner radius, shadow, title bar — is expressed in
+    /// points but applied to captures that range from a 200pt crop to a 2000pt window shot.
+    /// Used literally, the composition collapses at the top of that range: 48pt of padding
+    /// around a 1700pt-wide window is a 3% margin, which reads as no padding at all, and the
+    /// 10pt corner radius disappears entirely. Scaling every geometric value by the capture's
+    /// short edge keeps the proportions identical at any size, which is what makes the result
+    /// look designed rather than sized by accident.
+    ///
+    /// The clamps only guard degenerate inputs; the live overlay preview computes this from
+    /// the selection in points while the final render computes it from the capture's own
+    /// (possibly 2x) pixel size, so the range must stay wide enough that neither side hits a
+    /// limit the other doesn't — clamping one but not the other is what would make the
+    /// preview stop matching the result.
+    static func geometryScale(for imageSize: NSSize) -> CGFloat {
+        let shortEdge = min(imageSize.width, imageSize.height)
+        guard shortEdge.isFinite, shortEdge > 0 else { return 1 }
+        return min(max(shortEdge / referenceShortEdge, 0.5), 8.0)
+    }
 
     private static func meshStyle(points: [SIMD2<Float>], colors: [NSColor], fallbackStops: [(NSColor, CGFloat)], fallbackAngle: CGFloat = 135) -> BeautifyStyle {
         BeautifyStyle(
@@ -735,10 +763,13 @@ class BeautifyRenderer {
     private static func renderWindow(image: NSImage, config: BeautifyConfig) -> NSImage {
         let style = config.style
         let imgSize = image.size
-        let padding = config.padding
-        let windowCornerRadius = config.cornerRadius
-        let shadowRadius = config.shadowRadius
-        let titleBarHeight: CGFloat = 28
+        let scale = geometryScale(for: imgSize)
+        let padding = config.padding * scale
+        let windowCornerRadius = config.cornerRadius * scale
+        let shadowRadius = config.shadowRadius * scale
+        // Scales with the rest of the chrome: a fixed 28pt bar looks like a hairline once the
+        // capture is a few thousand points wide.
+        let titleBarHeight: CGFloat = 28 * scale
 
         let windowWidth = imgSize.width
         let windowHeight = imgSize.height + titleBarHeight
@@ -839,10 +870,9 @@ class BeautifyRenderer {
     /// background with a drop shadow — no synthetic elements needed.
     private static func renderSnappedWindow(image: NSImage, config: BeautifyConfig) -> NSImage {
         let imgSize = image.size
-        let padding = config.padding
-        let shadowRadius = config.shadowRadius
-        // macOS window corner radius is 10pt
-        let nativeCornerRadius: CGFloat = 10
+        let scale = geometryScale(for: imgSize)
+        let padding = config.padding * scale
+        let shadowRadius = config.shadowRadius * scale
 
         let totalWidth = imgSize.width + padding * 2
         let totalHeight = imgSize.height + padding * 2
@@ -896,9 +926,10 @@ class BeautifyRenderer {
 
     private static func renderRounded(image: NSImage, config: BeautifyConfig) -> NSImage {
         let imgSize = image.size
-        let padding = config.padding
-        let cornerRadius = config.cornerRadius
-        let shadowRadius = config.shadowRadius
+        let scale = geometryScale(for: imgSize)
+        let padding = config.padding * scale
+        let cornerRadius = config.cornerRadius * scale
+        let shadowRadius = config.shadowRadius * scale
 
         let totalWidth = imgSize.width + padding * 2
         let totalHeight = imgSize.height + padding * 2

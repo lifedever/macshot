@@ -8,6 +8,8 @@ class GradientPickerView: NSView {
     var onSelect: ((Int) -> Void)?
     /// Called when the user clicks the custom image swatch — caller shows file picker.
     var onCustomImage: (() -> Void)?
+    /// Called when the user picks the wallpaper swatch — caller captures the desktop.
+    var onUseWallpaper: (() -> Void)?
 
     private let styles = BeautifyRenderer.styles
     private let cols = 6
@@ -18,10 +20,39 @@ class GradientPickerView: NSView {
     private var hasCustomImage: Bool {
         UserDefaults.standard.data(forKey: "beautifyCustomBgImageData") != nil
     }
+    /// Trailing action swatches, in the order they are laid out after the gradients (and
+    /// after the custom-image thumbnail, when one exists). Kept as one list so `draw` and
+    /// `mouseDown` can't drift apart on index arithmetic.
+    private enum ActionSwatch: CaseIterable {
+        case wallpaper
+        case pickFile
+
+        var symbolName: String {
+            switch self {
+            case .wallpaper: return "macwindow.on.rectangle"
+            case .pickFile:  return "photo.badge.plus"
+            }
+        }
+        var tooltip: String {
+            switch self {
+            case .wallpaper: return L("Use desktop wallpaper")
+            case .pickFile:  return L("Choose image…")
+            }
+        }
+    }
+
+    /// Wallpaper capture needs `SCScreenshotManager` (macOS 14+); below that the swatch is
+    /// omitted entirely rather than shown as a control that does nothing.
+    private static var availableActions: [ActionSwatch] {
+        if #available(macOS 14.0, *) { return ActionSwatch.allCases }
+        return [.pickFile]
+    }
+    private var actions: [ActionSwatch] { Self.availableActions }
+
     init(selectedIndex: Int) {
         self.selectedIndex = selectedIndex
         let hasCustom = UserDefaults.standard.data(forKey: "beautifyCustomBgImageData") != nil
-        let total = BeautifyRenderer.styles.count + (hasCustom ? 1 : 0) + 1
+        let total = BeautifyRenderer.styles.count + (hasCustom ? 1 : 0) + Self.availableActions.count
         let rows = (total + 5) / 6
         let w = 8 * 2 + CGFloat(6) * 28 + CGFloat(5) * 4
         let h = 8 * 2 + CGFloat(rows) * 28 + CGFloat(max(0, rows - 1)) * 4
@@ -82,25 +113,28 @@ class GradientPickerView: NSView {
             idx += 1
         }
 
-        // "+" button — always present, always opens file picker
-        let pr = rectForIndex(idx)
-        let plusPath = NSBezierPath(roundedRect: pr, xRadius: 6, yRadius: 6)
-        ToolbarLayout.iconColor.withAlphaComponent(0.15).setFill()
-        plusPath.fill()
+        // Action swatches — always present: grab the desktop wallpaper, or pick a file.
         let symbolConfig = NSImage.SymbolConfiguration(pointSize: 14, weight: .medium)
-        if let plusIcon = NSImage(systemSymbolName: "photo.badge.plus", accessibilityDescription: nil)?
-            .withSymbolConfiguration(symbolConfig) {
-            let tinted = plusIcon.copy() as! NSImage
-            tinted.lockFocus()
-            ToolbarLayout.iconColor.set()
-            NSRect(origin: .zero, size: tinted.size).fill(using: .sourceAtop)
-            tinted.unlockFocus()
-            let iconSize = tinted.size
-            let iconRect = NSRect(
-                x: pr.midX - iconSize.width / 2,
-                y: pr.midY - iconSize.height / 2,
-                width: iconSize.width, height: iconSize.height)
-            tinted.draw(in: iconRect, from: .zero, operation: .sourceOver, fraction: 0.7)
+        for action in actions {
+            let pr = rectForIndex(idx)
+            let bgPath = NSBezierPath(roundedRect: pr, xRadius: 6, yRadius: 6)
+            ToolbarLayout.iconColor.withAlphaComponent(0.15).setFill()
+            bgPath.fill()
+            if let icon = NSImage(systemSymbolName: action.symbolName, accessibilityDescription: action.tooltip)?
+                .withSymbolConfiguration(symbolConfig) {
+                let tinted = icon.copy() as! NSImage
+                tinted.lockFocus()
+                ToolbarLayout.iconColor.set()
+                NSRect(origin: .zero, size: tinted.size).fill(using: .sourceAtop)
+                tinted.unlockFocus()
+                let iconSize = tinted.size
+                let iconRect = NSRect(
+                    x: pr.midX - iconSize.width / 2,
+                    y: pr.midY - iconSize.height / 2,
+                    width: iconSize.width, height: iconSize.height)
+                tinted.draw(in: iconRect, from: .zero, operation: .sourceOver, fraction: 0.7)
+            }
+            idx += 1
         }
     }
 
@@ -132,10 +166,17 @@ class GradientPickerView: NSView {
             idx += 1
         }
 
-        // Check "+" button
-        let pr = rectForIndex(idx)
-        if pr.insetBy(dx: -2, dy: -2).contains(pt) {
-            onCustomImage?()
+        // Check the action swatches, in the same order `draw` laid them out.
+        for action in actions {
+            let pr = rectForIndex(idx)
+            if pr.insetBy(dx: -2, dy: -2).contains(pt) {
+                switch action {
+                case .wallpaper: onUseWallpaper?()
+                case .pickFile:  onCustomImage?()
+                }
+                return
+            }
+            idx += 1
         }
     }
 
