@@ -1753,15 +1753,18 @@ class OverlayView: NSView {
         let r = selectionRect
         let hs = handleSize + 4 * zoomCompensation
         let edgeT: CGFloat = 6 * zoomCompensation
-        // Corner handles
-        if NSRect(x: r.minX - hs / 2, y: r.maxY - hs / 2, width: hs, height: hs).contains(point)
-            || NSRect(x: r.maxX - hs / 2, y: r.minY - hs / 2, width: hs, height: hs).contains(point)
-        {
+        // Corner handles — same boxes the click path uses, so the cursor never
+        // promises a resize the click then interprets differently.
+        let (thickness, arm, _) = handleGeometry
+        let half = thickness / 2
+        let topLeft = NSRect(x: r.minX - half, y: r.maxY + half - arm, width: arm, height: arm)
+        let topRight = NSRect(x: r.maxX + half - arm, y: r.maxY + half - arm, width: arm, height: arm)
+        let bottomLeft = NSRect(x: r.minX - half, y: r.minY - half, width: arm, height: arm)
+        let bottomRight = NSRect(x: r.maxX + half - arm, y: r.minY - half, width: arm, height: arm)
+        if topLeft.contains(point) || bottomRight.contains(point) {
             return Self.nwseCursor
         }
-        if NSRect(x: r.maxX - hs / 2, y: r.maxY - hs / 2, width: hs, height: hs).contains(point)
-            || NSRect(x: r.minX - hs / 2, y: r.minY - hs / 2, width: hs, height: hs).contains(point)
-        {
+        if topRight.contains(point) || bottomLeft.contains(point) {
             return Self.neswCursor
         }
         // Edge handles
@@ -2303,8 +2306,16 @@ class OverlayView: NSView {
                 && !showBeautifyPreview && !showEffectsPreview
             {
                 let borderPath = NSBezierPath(rect: selectionRect)
-                borderPath.lineWidth = isScrollCapturing ? 2.5 : 2.0
-                (isScrollCapturing ? NSColor.systemRed : ToolbarLayout.accentColor).setStroke()
+                if isScrollCapturing {
+                    borderPath.lineWidth = 2.5
+                    NSColor.systemRed.setStroke()
+                } else {
+                    // The corner brackets carry the affordance now. This line
+                    // only has to keep the edge findable when the user has
+                    // turned the outside scrim off, so it stays out of the way.
+                    borderPath.lineWidth = 1
+                    ToolbarLayout.accentColor.withAlphaComponent(0.35).setStroke()
+                }
                 borderPath.stroke()
             }
 
@@ -3301,11 +3312,85 @@ class OverlayView: NSView {
         needsDisplay = true
     }
 
+    /// Corner brackets and edge pills, the shape a capture selection is marked
+    /// with everywhere else on this platform.
+    ///
+    /// They straddle the edge instead of sitting inside it. Half of every
+    /// handle then falls on the dimmed scrim, which is what keeps a white
+    /// handle visible over a white document — drawn wholly inside, they
+    /// disappear against light content.
+    ///
+    /// Hit testing still goes through `allHandleRects()`, which is centred on
+    /// the same points; the grab area is deliberately a little larger than the
+    /// mark it belongs to.
+    private static let handleThickness: CGFloat = 5
+    private static let handleArmLength: CGFloat = 18
+    private static let handleEdgePillLength: CGFloat = 20
+
+    /// One source of truth for handle geometry, read by the drawing code and by
+    /// both hit-testers. They used to size themselves independently, which is
+    /// how a bracket could be drawn 18pt long with only its 14pt tip grabbable.
+    ///
+    /// Everything shrinks with the selection, or a small crop ends up with its
+    /// four brackets welded into one solid frame.
+    var handleGeometry: (thickness: CGFloat, arm: CGFloat, pill: CGFloat) {
+        let shortSide = min(selectionRect.width, selectionRect.height)
+        let thickness = max(2, min(Self.handleThickness, shortSide / 8))
+        return (thickness,
+                max(thickness, min(Self.handleArmLength, shortSide / 3)),
+                max(thickness, min(Self.handleEdgePillLength, shortSide / 3)))
+    }
+
     private func drawResizeHandles() {
-        for (_, rect) in allHandleRects() {
-            ToolbarLayout.handleColor.setFill()
-            NSBezierPath(ovalIn: rect).fill()
+        let r = selectionRect
+        guard r.width > 0, r.height > 0 else { return }
+
+        let (thickness, arm, pill) = handleGeometry
+        let radius = thickness / 2
+        let half = thickness / 2
+
+        // White body, accent outline. The outline is what gives the handle an
+        // edge of its own: filled flat white it dissolves into light content
+        // and into the border line it sits on. It is also where the theme
+        // colour lives now that the border itself has receded.
+        var handles: [NSBezierPath] = []
+        for (cx, cy) in [(r.minX, r.minY), (r.maxX, r.minY), (r.minX, r.maxY), (r.maxX, r.maxY)] {
+            let left = cx == r.minX
+            let bottom = cy == r.minY
+            handles.append(NSBezierPath(roundedRect: NSRect(x: left ? cx - half : cx + half - arm,
+                                                            y: cy - half, width: arm, height: thickness),
+                                        xRadius: radius, yRadius: radius))
+            handles.append(NSBezierPath(roundedRect: NSRect(x: cx - half,
+                                                            y: bottom ? cy - half : cy + half - arm,
+                                                            width: thickness, height: arm),
+                                        xRadius: radius, yRadius: radius))
         }
+        for edge in [NSRect(x: r.midX - pill / 2, y: r.maxY - half, width: pill, height: thickness),
+                     NSRect(x: r.midX - pill / 2, y: r.minY - half, width: pill, height: thickness),
+                     NSRect(x: r.minX - half, y: r.midY - pill / 2, width: thickness, height: pill),
+                     NSRect(x: r.maxX - half, y: r.midY - pill / 2, width: thickness, height: pill)] {
+            handles.append(NSBezierPath(roundedRect: edge, xRadius: radius, yRadius: radius))
+        }
+
+        let outline = handleOutlineColor
+        for path in handles {
+            NSColor.white.setFill()
+            path.fill()
+            outline.setStroke()
+            path.lineWidth = 1
+            path.stroke()
+        }
+    }
+
+    /// The accent colour, darkened as it approaches white. A pale accent would
+    /// otherwise outline a white handle in something nearly white, which is the
+    /// same as having no outline at all.
+    private var handleOutlineColor: NSColor {
+        let accent = ToolbarLayout.accentColor
+        guard let rgb = accent.usingColorSpace(.sRGB) else { return accent }
+        let luma = 0.2126 * rgb.redComponent + 0.7152 * rgb.greenComponent + 0.0722 * rgb.blueComponent
+        guard luma > 0.7 else { return accent }
+        return accent.blended(withFraction: (luma - 0.7) / 0.3 * 0.55, of: .black) ?? accent
     }
     /// Compare two colors by RGB components (ignoring minor floating point differences)    /// Convert NSColor to hex string like "FF3B30"
     private func colorToHexString(_ color: NSColor) -> String {
@@ -6025,11 +6110,17 @@ class OverlayView: NSView {
     private func allHandleRects() -> [(ResizeHandle, NSRect)] {
         let r = selectionRect
         let s = handleSize
+        // A corner's grab area is the whole drawn bracket, not its tip: the
+        // mark is L-shaped and the pointer is aimed at any part of it. Capped
+        // at a third of the short side, so the two corners of a narrow
+        // selection can never meet and squeeze out its edge handles.
+        let (thickness, arm, _) = handleGeometry
+        let half = thickness / 2
         return [
-            (.topLeft, NSRect(x: r.minX - s / 2, y: r.maxY - s / 2, width: s, height: s)),
-            (.topRight, NSRect(x: r.maxX - s / 2, y: r.maxY - s / 2, width: s, height: s)),
-            (.bottomLeft, NSRect(x: r.minX - s / 2, y: r.minY - s / 2, width: s, height: s)),
-            (.bottomRight, NSRect(x: r.maxX - s / 2, y: r.minY - s / 2, width: s, height: s)),
+            (.topLeft, NSRect(x: r.minX - half, y: r.maxY + half - arm, width: arm, height: arm)),
+            (.topRight, NSRect(x: r.maxX + half - arm, y: r.maxY + half - arm, width: arm, height: arm)),
+            (.bottomLeft, NSRect(x: r.minX - half, y: r.minY - half, width: arm, height: arm)),
+            (.bottomRight, NSRect(x: r.maxX + half - arm, y: r.minY - half, width: arm, height: arm)),
             (.top, NSRect(x: r.midX - s / 2, y: r.maxY - s / 2, width: s, height: s)),
             (.bottom, NSRect(x: r.midX - s / 2, y: r.minY - s / 2, width: s, height: s)),
             (.left, NSRect(x: r.minX - s / 2, y: r.midY - s / 2, width: s, height: s)),
