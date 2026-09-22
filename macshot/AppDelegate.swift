@@ -1787,14 +1787,27 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
         let padding: CGFloat = 16
         let gap: CGFloat = 8
         let corner = thumbnailCorner()
-        let thumbSize = FloatingThumbnailController.currentThumbnailSize()
-        let xOrigin = thumbnailX(for: thumbSize.width, in: screenFrame, corner: corner, padding: padding)
+        // Sized from this capture: cards follow their shot's aspect ratio now, so
+        // the stacking maths has to use the real height, not a nominal one.
+        //
+        // Padding and gap describe the *card*, but the window is larger by the
+        // shadow margin on every side — that margin is transparent, so counting
+        // it would push the card away from the screen edge and space the stack
+        // too far apart. Lay out in card terms, then expand to the window.
+        let margin = FloatingThumbnailController.shadowMargin
+        let cardSize = FloatingThumbnailController.thumbnailSize(for: image)
+        let thumbSize = FloatingThumbnailController.windowSize(for: image)
+        let xOrigin = thumbnailX(for: cardSize.width, in: screenFrame, corner: corner, padding: padding) - margin
 
         // Compute Y: bottom corners stack upward, top corners stack downward.
-        var yOrigin = corner.isTop ? screenFrame.maxY - thumbSize.height - padding : screenFrame.minY + padding
+        var yOrigin = corner.isTop
+            ? screenFrame.maxY - cardSize.height - padding - margin
+            : screenFrame.minY + padding - margin
         if let topController = thumbnailControllers.last {
-            let topFrame = topController.windowFrame
-            yOrigin = corner.isTop ? topFrame.minY - thumbSize.height - gap : topFrame.maxY + gap
+            let topCard = topController.windowFrame.insetBy(dx: margin, dy: margin)
+            yOrigin = corner.isTop
+                ? topCard.minY - gap - cardSize.height - margin
+                : topCard.maxY + gap - margin
         }
 
         let controller = FloatingThumbnailController(image: image)
@@ -1944,18 +1957,21 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
         let gap: CGFloat = 8
         let frame = screen.visibleFrame
         let corner = thumbnailCorner()
+        // Positions are card-relative; the window extends past the card by the
+        // transparent shadow margin on each side.
+        let margin = FloatingThumbnailController.shadowMargin
         var y = corner.isTop ? frame.maxY - padding : frame.minY + padding
         for c in thumbnailControllers {
-            let size = c.windowFrame.size
-            let x = thumbnailX(for: size.width, in: frame, corner: corner, padding: padding)
+            let card = c.windowFrame.insetBy(dx: margin, dy: margin).size
+            let x = thumbnailX(for: card.width, in: frame, corner: corner, padding: padding) - margin
             let yOrigin: CGFloat
             if corner.isTop {
-                y -= size.height
-                yOrigin = y
+                y -= card.height
+                yOrigin = y - margin
                 y -= gap
             } else {
-                yOrigin = y
-                y += size.height + gap
+                yOrigin = y - margin
+                y += card.height + gap
             }
             c.moveTo(origin: NSPoint(x: x, y: yOrigin))
         }

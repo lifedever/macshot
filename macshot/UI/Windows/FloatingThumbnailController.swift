@@ -214,6 +214,7 @@ class FloatingThumbnailController: NSObject, NSDraggingSource, QLPreviewPanelDat
     private var isInteractiveDismissActive = false
     private var isScrollDismissHostActive = false
     private var quickLookURL: URL?
+    private var quickLookCloseObserver: NSObjectProtocol?
     var onDismiss: (() -> Void)?
 
     // Action callbacks
@@ -236,11 +237,46 @@ class FloatingThumbnailController: NSObject, NSDraggingSource, QLPreviewPanelDat
         super.init()
     }
 
-    static func currentThumbnailSize() -> NSSize {
+    /// Card size for a capture, following the capture's own aspect ratio.
+    ///
+    /// A fixed 240×160 card meant every shot that was not 3:2 sat inside it with
+    /// a margin of card showing, which reads as a frame around the image. Sizing
+    /// the card to the shot lets the shot fill it edge to edge.
+    ///
+    /// The short edge is floored so the hover controls still fit: two pills plus
+    /// their gap need ~130pt, and the corner discs need room beside them.
+    /// Transparent margin around the card, so the drop shadow has somewhere to
+    /// land. The window's own `hasShadow` is off: it is computed from the
+    /// window's opaque region, which for a translucent rounded card produced a
+    /// bright seam along the edge instead of a shadow under it.
+    static let shadowMargin: CGFloat = 22
+
+    /// Window size for a capture: the card plus the shadow margin.
+    static func windowSize(for image: NSImage) -> NSSize {
+        let card = thumbnailSize(for: image)
+        return NSSize(width: card.width + shadowMargin * 2,
+                      height: card.height + shadowMargin * 2)
+    }
+
+    static func thumbnailSize(for image: NSImage) -> NSSize {
         let scale = CGFloat(UserDefaults.standard.object(forKey: "thumbnailScale") as? Double ?? 1.0)
-        // Base size stays at upstream's 240×160 — Settings › "preview size" is the knob for
-        // this, and shrinking the base too would compound with the user's percentage.
-        return NSSize(width: round(240 * scale), height: round(160 * scale))
+        // Long edge stays at upstream's 240 — Settings › "preview size" is the
+        // knob for this, and shrinking the base too would compound with it.
+        let maxEdge = round(240 * scale)
+        // Floor is what the hover controls need: two pills plus their gap, with
+        // room for the corner discs beside them.
+        let minEdge = round(126 * scale)
+        let w = image.size.width, h = image.size.height
+        guard w > 0, h > 0 else { return NSSize(width: maxEdge, height: round(160 * scale)) }
+
+        var size = w >= h
+            ? NSSize(width: maxEdge, height: round(maxEdge * h / w))
+            : NSSize(width: round(maxEdge * w / h), height: maxEdge)
+        // Panoramic or very tall shots would otherwise produce a card too thin to
+        // hold the controls; those fall back to a clamped card and a filled crop.
+        size.width = max(size.width, minEdge)
+        size.height = max(size.height, minEdge)
+        return size
     }
 
     // MARK: - Show
@@ -256,7 +292,7 @@ class FloatingThumbnailController: NSObject, NSDraggingSource, QLPreviewPanelDat
         guard image.size.width > 0 && image.size.height > 0 else { return }
 
         // Fixed thumbnail size scaled by user preference (default 1.0 = 240x160)
-        let thumbSize = Self.currentThumbnailSize()
+        let thumbSize = Self.windowSize(for: image)
 
         // Clamp so the thumbnail always fits within the visible screen.
         let clampedX = min(origin.x, screenFrame.maxX - thumbSize.width - padding)
@@ -275,7 +311,7 @@ class FloatingThumbnailController: NSObject, NSDraggingSource, QLPreviewPanelDat
         panel.level = .floating
         panel.isOpaque = false
         panel.backgroundColor = .clear
-        panel.hasShadow = true
+        panel.hasShadow = false   // drawn in the view so it follows the card's corners
         panel.isReleasedWhenClosed = false
         panel.hidesOnDeactivate = false
         panel.collectionBehavior = [.canJoinAllSpaces, .stationary]
@@ -293,7 +329,10 @@ class FloatingThumbnailController: NSObject, NSDraggingSource, QLPreviewPanelDat
         view.onDismissDragCancelled = { [weak self] in self?.cancelDismissDrag() }
         view.onContextMenu = { [weak self] event, view in self?.showContextMenu(event: event, in: view) }
         view.onClose    = { [weak self] in self?.dismiss() }
-        view.onCopy     = { [weak self] in self?.onCopy?();     self?.dismiss() }
+        // Viewing isn't a terminal action the way copying or saving is — the
+        // thumbnail stays up so Save / Pin / Edit are still one click away once
+        // the preview closes. Its auto-dismiss is held for the same reason.
+        view.onQuickLook = { [weak self] in self?.showQuickLook() }
         view.onSave     = { [weak self] in self?.onSave?();     self?.dismiss() }
         view.onPin      = { [weak self] in self?.onPin?();      self?.dismiss() }
         view.onEdit     = { [weak self] in self?.onEdit?();     self?.dismiss() }
@@ -342,6 +381,8 @@ class FloatingThumbnailController: NSObject, NSDraggingSource, QLPreviewPanelDat
     func dismiss() {
         dismissTask?.cancel()
         dismissTask = nil
+        quickLookCloseObserver.map(NotificationCenter.default.removeObserver)
+        quickLookCloseObserver = nil
         isInteractiveDismissActive = false
         isScrollDismissHostActive = false
         dismissDragStartFrame = nil
@@ -445,13 +486,31 @@ class FloatingThumbnailController: NSObject, NSDraggingSource, QLPreviewPanelDat
         onTransform?(transformed)
     }
 
-    @objc private func contextQuickLook() {
+    @objc private func contextQuickLook() { showQuickLook() }
+
+    /// Open the capture in Quick Look, holding the thumbnail's auto-dismiss for
+    /// as long as the preview is up — otherwise the thumbnail (and with it this
+    /// controller, which is the panel's data source) can disappear mid-preview.
+    private func showQuickLook() {
         quickLookURL = makeCurrentImageFileURL()
         guard quickLookURL != nil, let panel = QLPreviewPanel.shared() else { return }
+        pauseAutoDismiss()
         panel.dataSource = self
         panel.delegate = self
         panel.reloadData()
         panel.makeKeyAndOrderFront(nil)
+
+        quickLookCloseObserver.map(NotificationCenter.default.removeObserver)
+        quickLookCloseObserver = NotificationCenter.default.addObserver(
+            forName: NSWindow.willCloseNotification, object: panel, queue: .main
+        ) { [weak self] _ in
+            MainActor.assumeIsolated {
+                guard let self else { return }
+                self.quickLookCloseObserver.map(NotificationCenter.default.removeObserver)
+                self.quickLookCloseObserver = nil
+                self.scheduleAutoDismiss()
+            }
+        }
     }
 
     @objc private func contextOpenWith(_ sender: NSMenuItem) {
@@ -681,9 +740,24 @@ class FloatingThumbnailController: NSObject, NSDraggingSource, QLPreviewPanelDat
 
 private class ThumbnailView: NSView {
 
+    /// Hover-chrome palette, sampled from CleanShot X's thumbnail card. Every
+    /// control on the card — the four corner discs and the two centre pills —
+    /// shares one treatment: a light opaque fill carrying a dark glyph. Opaque
+    /// rather than translucent-white so the buttons read the same over a bright
+    /// shot as over a dark one instead of drifting with whatever is behind them.
+    /// Control surface for the pre-Liquid-Glass fallback. Fixed, not semantic:
+    /// these sit on the hover plate, which is mid grey to dark in either system
+    /// theme, so the light-surface/dark-glyph pairing holds both ways.
+    fileprivate static let buttonFill = NSColor(white: 0.847, alpha: 1)
+    fileprivate static let buttonFillHover = NSColor(white: 0.93, alpha: 1)
+    fileprivate static let buttonInk = NSColor(white: 0.16, alpha: 1)
+
+    fileprivate var chromeHost: NSView?
+    fileprivate var chromeButtons: [ChromeGlassButton] = []
+
     var onDragStarted: ((NSEvent) -> Void)?
     var onClose:    (() -> Void)?
-    var onCopy:     (() -> Void)?
+    var onQuickLook: (() -> Void)?
     var onSave:     (() -> Void)?
     var onPin:      (() -> Void)?
     var onEdit:     (() -> Void)?
@@ -734,9 +808,9 @@ private class ThumbnailView: NSView {
     private var pinBtnRect:    NSRect = .zero
     private var editBtnRect:   NSRect = .zero
     #if !OFFLINE
-    private var uploadBtnRect: NSRect = .zero
+    private var quickLookDiscRect: NSRect = .zero
     #endif
-    private var copyBtnRect:   NSRect = .zero
+    private var uploadPillRect: NSRect = .zero
     private var saveBtnRect:   NSRect = .zero
 
     private var hoveredRect: NSRect = .zero
@@ -769,18 +843,24 @@ private class ThumbnailView: NSView {
         needsDisplay = true
     }
 
+    fileprivate var isDarkMode: Bool {
+        effectiveAppearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
+    }
+
     private var controlScale: CGFloat {
         guard thumbSize.width > 0, thumbSize.height > 0 else { return 1 }
         let baseScale = min(bounds.width / 240, bounds.height / 160)
         return min(max(baseScale, 0.55), 2.0)
     }
 
+    /// The card itself, inset from the view by the shadow margin.
     private var thumbnailDrawRect: NSRect {
-        NSRect(
-            x: dismissContentBaseX + dismissContentOffsetX,
-            y: 0,
-            width: thumbSize.width,
-            height: thumbSize.height
+        let m = FloatingThumbnailController.shadowMargin
+        return NSRect(
+            x: dismissContentBaseX + dismissContentOffsetX + m,
+            y: m,
+            width: thumbSize.width - m * 2,
+            height: thumbSize.height - m * 2
         )
     }
 
@@ -821,6 +901,7 @@ private class ThumbnailView: NSView {
     override func mouseEntered(with event: NSEvent) {
         isHovering = true
         needsDisplay = true
+        syncChromeViews()
         onHoverEnter?()
     }
 
@@ -828,19 +909,31 @@ private class ThumbnailView: NSView {
         isHovering = false
         hoveredRect = .zero
         needsDisplay = true
+        syncChromeViews()
         onHoverExit?()
+    }
+
+    override func layout() {
+        super.layout()
+        syncChromeViews()
+    }
+
+    override func viewDidChangeEffectiveAppearance() {
+        super.viewDidChangeEffectiveAppearance()
+        needsDisplay = true
     }
 
     override func mouseMoved(with event: NSEvent) {
         let p = convert(event.locationInWindow, from: nil)
-        var rects = [closeBtnRect, pinBtnRect, editBtnRect, copyBtnRect, saveBtnRect]
+        var rects = [closeBtnRect, pinBtnRect, editBtnRect, uploadPillRect, saveBtnRect]
         #if !OFFLINE
-        rects.insert(uploadBtnRect, at: 3)
+        rects.insert(quickLookDiscRect, at: 3)
         #endif
         let hit = rects.first { $0.contains(p) } ?? .zero
         if hit != hoveredRect {
             hoveredRect = hit
             needsDisplay = true
+            syncChromeViews()
         }
     }
 
@@ -849,8 +942,9 @@ private class ThumbnailView: NSView {
     /// Card geometry. The shot sits inset on the card with its own corner radius and drop
     /// shadow, so it reads as a photo resting on a surface instead of a cropped fill.
     static let cardCornerRadius: CGFloat = 14
-    private var shotCornerRadius: CGFloat { scaled(7, minimum: 4) }
-    private var shotInset: CGFloat { fitsImageInPreview ? scaled(11, minimum: 6) : 0 }
+    /// The shot is the card, so it takes the card's corner radius and no inset.
+    private var shotCornerRadius: CGFloat { Self.cardCornerRadius }
+    private var shotInset: CGFloat { 0 }
 
     /// Rect the capture itself is drawn into, preserving aspect ratio.
     private var shotRect: NSRect {
@@ -868,30 +962,26 @@ private class ThumbnailView: NSView {
         let r = thumbnailDrawRect
         let cr = Self.cardCornerRadius
 
-        // Card surface. Slightly translucent so it sits on the desktop rather than punching
-        // a flat rectangle out of it, but opaque enough to stay a readable backing for the
-        // shot on a busy wallpaper.
+        // Drop shadow, drawn here rather than by the window: `hasShadow` derives
+        // the shape from the window's opaque region, which for a rounded card
+        // left a bright seam tracing the edge. Drawing it means it follows the
+        // corner radius exactly.
         let path = NSBezierPath(roundedRect: r, xRadius: cr, yRadius: cr)
-        path.addClip()
-        NSColor(white: 0.13, alpha: 0.94).setFill()
+        NSGraphicsContext.saveGraphicsState()
+        let shadow = NSShadow()
+        shadow.shadowColor = NSColor.black.withAlphaComponent(isDarkMode ? 0.55 : 0.22)
+        shadow.shadowBlurRadius = 14
+        shadow.shadowOffset = NSSize(width: 0, height: -4)
+        shadow.set()
+        // Opaque: a translucent card let the shadow show through its own fill.
+        (isDarkMode ? NSColor(white: 0.16, alpha: 1) : NSColor.white).setFill()
         path.fill()
+        NSGraphicsContext.restoreGraphicsState()
+
+        path.addClip()
 
         let shot = shotRect
         let shotPath = NSBezierPath(roundedRect: shot, xRadius: shotCornerRadius, yRadius: shotCornerRadius)
-
-        if fitsImageInPreview {
-            // Lift the shot off the card. Drawn in its own graphics state so the shadow
-            // does not bleed onto the hover chrome painted afterwards.
-            NSGraphicsContext.saveGraphicsState()
-            let shadow = NSShadow()
-            shadow.shadowColor = NSColor.black.withAlphaComponent(0.5)
-            shadow.shadowBlurRadius = scaled(9, minimum: 4)
-            shadow.shadowOffset = NSSize(width: 0, height: -scaled(2, minimum: 1))
-            shadow.set()
-            NSColor.black.setFill()
-            shotPath.fill()
-            NSGraphicsContext.restoreGraphicsState()
-        }
 
         NSGraphicsContext.saveGraphicsState()
         shotPath.addClip()
@@ -904,100 +994,160 @@ private class ThumbnailView: NSView {
 
         guard isHovering else { return }
 
-        // Semi-transparent dark overlay
-        NSColor.black.withAlphaComponent(0.45).setFill()
+        // Hover turns the card into a near-solid plate rather than veiling the
+        // shot: mid grey on a light Mac, #434343 on a dark one. Both values are
+        // sampled from CleanShot, whose buttons read the same in either theme
+        // because this plate — not the system background — is what they sit on.
+        // The buttons themselves are real Liquid Glass views layered on top
+        // (see `syncChromeViews`) — glass can only be produced by the compositor.
+        (isDarkMode ? NSColor(white: 0.26, alpha: 0.94) : NSColor(white: 0.5, alpha: 0.94)).setFill()
         NSBezierPath(roundedRect: r, xRadius: cr, yRadius: cr).fill()
 
-        let pad = scaled(10, minimum: 5)
-        let cornerD = scaled(28, minimum: 18)
+        let layout = chromeLayout()
+        closeBtnRect = layout.discs.count > 0 ? layout.discs[0].rect : .zero
+        pinBtnRect = layout.discs.count > 1 ? layout.discs[1].rect : .zero
+        editBtnRect = layout.discs.count > 2 ? layout.discs[2].rect : .zero
+        #if !OFFLINE
+        quickLookDiscRect = layout.discs.count > 3 ? layout.discs[3].rect : .zero
+        #endif
+        uploadPillRect = layout.pills.count > 0 ? layout.pills[0].rect : .zero
+        saveBtnRect = layout.pills.count > 1 ? layout.pills[1].rect : .zero
+    }
 
-        // Corner button definitions: (center, symbol, keyPath to write rect)
-        var cornerDefs: [(NSPoint, String)] = [
+    // MARK: - Hover chrome
+
+    /// Geometry of the hover chrome. Computed in one place so the glass views
+    /// and the hit-testing rects can never drift apart.
+    fileprivate struct ChromeLayout {
+        var discs: [(rect: NSRect, symbol: String)] = []
+        var pills: [(rect: NSRect, title: String)] = []
+        var symbolPointSize: CGFloat = 9
+        var titleFont: NSFont = .systemFont(ofSize: 13, weight: .medium)
+    }
+
+    fileprivate func chromeLayout() -> ChromeLayout {
+        var layout = ChromeLayout()
+        let r = thumbnailDrawRect
+        let pad = scaled(10, minimum: 5)
+        // Floors matter more than the nominal size: on a small thumbnail the
+        // control scale used to shrink these discs to 19pt with an 8pt glyph,
+        // which is well past the point where the icon still says anything.
+        let cornerD = scaled(24, minimum: 20)
+        // ~38% of the disc. Sized against the disc rather than for maximum
+        // legibility: a glyph filling most of its circle reads as a cramped icon
+        // button instead of a soft control.
+        layout.symbolPointSize = scaled(9, minimum: 8)
+
+        var centres: [(NSPoint, String)] = [
             (NSPoint(x: r.minX + pad + cornerD/2, y: r.maxY - pad - cornerD/2), "xmark"),
             (NSPoint(x: r.maxX - pad - cornerD/2, y: r.maxY - pad - cornerD/2), "pin.fill"),
-            (NSPoint(x: r.minX + pad + cornerD/2, y: r.minY + pad + cornerD/2), "pencil"),
+            // `pencil` alone is a bare diagonal stroke — at this size it reads
+            // as a stray line rather than an action. `square.and.pencil` is the
+            // standard macOS edit glyph and holds its shape when small.
+            (NSPoint(x: r.minX + pad + cornerD/2, y: r.minY + pad + cornerD/2), "square.and.pencil"),
         ]
         #if !OFFLINE
-        cornerDefs.append((NSPoint(x: r.maxX - pad - cornerD/2, y: r.minY + pad + cornerD/2), "icloud.and.arrow.up"))
+        // Quick Look sits in the corner and upload takes a centre pill: uploading
+        // is the consequential action of the two, and the pills are the ones that
+        // read as primary.
+        centres.append((NSPoint(x: r.maxX - pad - cornerD/2, y: r.minY + pad + cornerD/2), "eye"))
         #endif
-
-        var cornerRects: [NSRect] = []
-        for (center, symbol) in cornerDefs {
-            let circleRect = NSRect(x: center.x - cornerD/2, y: center.y - cornerD/2, width: cornerD, height: cornerD)
-            cornerRects.append(circleRect)
-            let isHit = circleRect == hoveredRect
-
-            let circlePath = NSBezierPath(ovalIn: circleRect)
-            (isHit ? NSColor.white.withAlphaComponent(0.35) : NSColor.white.withAlphaComponent(0.18)).setFill()
-            circlePath.fill()
-            NSColor.white.withAlphaComponent(0.5).setStroke()
-            circlePath.lineWidth = 1
-            circlePath.stroke()
-
-            if let sym = NSImage(systemSymbolName: symbol, accessibilityDescription: nil) {
-                let cfg = NSImage.SymbolConfiguration(pointSize: scaled(11, minimum: 8), weight: .semibold)
-                let colored = sym.withSymbolConfiguration(cfg) ?? sym
-                let tinted = tintedWhite(colored)
-                let iconSide = scaled(13, minimum: 9)
-                let iconSize = NSSize(width: iconSide, height: iconSide)
-                let iconRect = NSRect(x: center.x - iconSize.width/2, y: center.y - iconSize.height/2,
-                                     width: iconSize.width, height: iconSize.height)
-                tinted.draw(in: iconRect, from: NSRect.zero, operation: .sourceOver, fraction: 1.0)
-            }
-        }
-        if cornerRects.count >= 3 {
-            closeBtnRect  = cornerRects[0]
-            pinBtnRect    = cornerRects[1]
-            editBtnRect   = cornerRects[2]
-            #if !OFFLINE
-            uploadBtnRect = cornerRects[3]
-            #endif
+        layout.discs = centres.map {
+            (NSRect(x: $0.0.x - cornerD/2, y: $0.0.y - cornerD/2, width: cornerD, height: cornerD), $0.1)
         }
 
-        // Center action buttons: Copy + Save
-        let centerBtnH = scaled(32, minimum: 18)
-        let centerGap = scaled(8, minimum: 4)
-        let fontSize = scaled(13, minimum: 9)
-        let titleFont = NSFont.systemFont(ofSize: fontSize, weight: .medium)
-        let titleAttrs: [NSAttributedString.Key: Any] = [.font: titleFont]
+        // Proportions measured off CleanShot X's card: the pill is short and
+        // stout (roughly 1.9:1) rather than a wide bar. Expressed against the
+        // same 240x160 base the control scale uses.
+        // Sized to the label rather than to a fixed bar: CJK titles are two
+        // glyphs wide, so the old 74pt floor left them floating in a third of
+        // the pill and the whole control read as bloated. Longer localisations
+        // still widen it through the `max` below.
+        let pillH = scaled(32, minimum: 22)
+        let gap = scaled(12, minimum: 6)
+        // ~30% of the pill height, matching the reference — 13pt left the label
+        // nearly touching the capsule's curve.
+        layout.titleFont = NSFont.systemFont(ofSize: scaled(12, minimum: 9), weight: .medium)
+        let attrs: [NSAttributedString.Key: Any] = [.font: layout.titleFont]
+        // The offline build has no upload, so Quick Look keeps the primary pill
+        // there rather than leaving the card with a single button.
+        #if OFFLINE
+        let primaryTitle = L("View")
+        #else
+        let primaryTitle = L("Upload")
+        #endif
         let maxTitleW = max(
-            (L("Copy") as NSString).size(withAttributes: titleAttrs).width,
-            (L("Save") as NSString).size(withAttributes: titleAttrs).width
+            (primaryTitle as NSString).size(withAttributes: attrs).width,
+            (L("Save") as NSString).size(withAttributes: attrs).width
         )
-        let horizontalTextPadding = scaled(32, minimum: 18)
-        let preferredCenterW = max(scaled(110, minimum: 64), ceil(maxTitleW + horizontalTextPadding))
-        let centerBtnW = min(r.width - pad * 2, preferredCenterW)
-        let totalH = centerBtnH * 2 + centerGap
-        let btnsY = r.midY - totalH/2
+        let pillW = min(r.width - pad * 2,
+                        max(scaled(60, minimum: 52), ceil(maxTitleW + scaled(22, minimum: 14))))
+        let totalH = pillH * 2 + gap
+        let y0 = r.midY - totalH/2
+        layout.pills = [
+            (NSRect(x: r.midX - pillW/2, y: y0 + pillH + gap, width: pillW, height: pillH), primaryTitle),
+            (NSRect(x: r.midX - pillW/2, y: y0, width: pillW, height: pillH), L("Save")),
+        ]
+        return layout
+    }
 
-        let copyRect = NSRect(x: r.midX - centerBtnW/2, y: btnsY + centerBtnH + centerGap, width: centerBtnW, height: centerBtnH)
-        let saveRect = NSRect(x: r.midX - centerBtnW/2, y: btnsY,                  width: centerBtnW, height: centerBtnH)
-        copyBtnRect = copyRect
-        saveBtnRect = saveRect
+    /// Create or update the Liquid Glass buttons that sit on top of the card.
+    ///
+    /// Glass is a compositor effect: it cannot be produced from `draw(_:)`, so
+    /// the chrome lives in real subviews. They are parked in a host view that
+    /// refuses hit testing, which keeps every click, drag and scroll landing on
+    /// this view — the dismiss gestures and button dispatch below are unchanged.
+    fileprivate func syncChromeViews() {
+        guard isHovering, thumbnailDrawRect.width > 1 else {
+            chromeHost?.isHidden = true
+            return
+        }
+        let layout = chromeLayout()
 
-        for (rect, title) in [(copyRect, L("Copy")), (saveRect, L("Save"))] {
-            let isHit = rect == hoveredRect
-            let bg = NSBezierPath(roundedRect: rect, xRadius: centerBtnH/2, yRadius: centerBtnH/2)
-            if isHit {
-                NSColor.white.withAlphaComponent(0.95).setFill()
-            } else {
-                NSColor.white.withAlphaComponent(0.85).setFill()
+        let host: NSView
+        if let existing = chromeHost {
+            host = existing
+        } else {
+            let created = ChromePassthroughView()
+            // No pinned appearance: the scrim below follows the system theme, so
+            // the glass and its `labelColor` glyphs should resolve against the
+            // same theme rather than being forced dark on a light Mac.
+            addSubview(created)
+            chromeHost = created
+            host = created
+        }
+        host.isHidden = false
+        host.frame = bounds
+
+        let specs: [(NSRect, CGFloat, NSImage?, String?)] =
+            layout.discs.map { disc in
+                let cfg = NSImage.SymbolConfiguration(pointSize: layout.symbolPointSize, weight: .semibold)
+                let image = NSImage(systemSymbolName: disc.symbol, accessibilityDescription: nil)?
+                    .withSymbolConfiguration(cfg)
+                return (disc.rect, disc.rect.height / 2, image, nil)
             }
-            bg.fill()
+            + layout.pills.map { ($0.rect, $0.rect.height / 2, nil, $0.title) }
 
-            let attrs: [NSAttributedString.Key: Any] = [
-                .font: titleFont,
-                .foregroundColor: isHit ? NSColor.black : NSColor(white: 0.1, alpha: 1),
-            ]
-            let str = title as NSString
-            let strSize = str.size(withAttributes: attrs)
-            str.draw(at: NSPoint(x: rect.midX - strSize.width/2, y: rect.midY - strSize.height/2), withAttributes: attrs)
+        while chromeButtons.count < specs.count {
+            let button = ChromeGlassButton()
+            host.addSubview(button)
+            chromeButtons.append(button)
+        }
+        while chromeButtons.count > specs.count {
+            chromeButtons.removeLast().removeFromSuperview()
+        }
+
+        for (button, spec) in zip(chromeButtons, specs) {
+            let (rect, radius, image, title) = spec
+            button.frame = rect
+            button.apply(cornerRadius: radius, image: image, title: title,
+                         font: layout.titleFont, isHighlighted: rect == hoveredRect)
         }
     }
 
-    private func tintedWhite(_ img: NSImage) -> NSImage {
+    private func tinted(_ img: NSImage, _ color: NSColor) -> NSImage {
         let result = NSImage(size: img.size, flipped: false) { rect in
-            NSColor.white.setFill()
+            color.setFill()
             rect.fill()
             img.draw(in: rect, from: .zero, operation: .destinationIn, fraction: 1.0)
             return true
@@ -1067,9 +1217,16 @@ private class ThumbnailView: NSView {
         if pinBtnRect.contains(p)    { onPin?();    return }
         if editBtnRect.contains(p)   { onEdit?();   return }
         #if !OFFLINE
-        if uploadBtnRect.contains(p) { onUpload?(); return }
+        if quickLookDiscRect.contains(p) { onQuickLook?(); return }
         #endif
-        if copyBtnRect.contains(p)   { onCopy?();   return }
+        if uploadPillRect.contains(p) {
+            #if OFFLINE
+            onQuickLook?()
+            #else
+            onUpload?()
+            #endif
+            return
+        }
         if saveBtnRect.contains(p)   { onSave?();   return }
 
         // Click anywhere else on thumbnail — dismiss
@@ -1151,9 +1308,9 @@ private class ThumbnailView: NSView {
     }
 
     private func actionButtonRect(containing point: NSPoint) -> NSRect? {
-        var rects = [closeBtnRect, pinBtnRect, editBtnRect, copyBtnRect, saveBtnRect]
+        var rects = [closeBtnRect, pinBtnRect, editBtnRect, uploadPillRect, saveBtnRect]
         #if !OFFLINE
-        rects.insert(uploadBtnRect, at: 3)
+        rects.insert(quickLookDiscRect, at: 3)
         #endif
         return rects.first { !$0.isEmpty && $0.contains(point) }
     }
@@ -1235,5 +1392,97 @@ private class ThumbnailView: NSView {
 
     override func rightMouseDown(with event: NSEvent) {
         onContextMenu?(event, self)
+    }
+}
+
+// MARK: - Liquid Glass chrome
+
+/// Hosts the glass chrome without taking part in hit testing, so the thumbnail
+/// view underneath keeps receiving every click, drag and scroll exactly as it
+/// did when the buttons were painted in `draw(_:)`.
+private final class ChromePassthroughView: NSView {
+    override func hitTest(_ point: NSPoint) -> NSView? { nil }
+}
+
+/// One hover-chrome button.
+///
+/// On macOS 26+ the surface is a real `NSGlassEffectView`; the compositor gives
+/// it the refraction and specular edge that no amount of hand-drawn fill can
+/// reproduce. On 27 it also picks up `effectIsInteractive`, which adds the
+/// system's own press response. Older systems fall back to the flat light disc
+/// this used to draw.
+private final class ChromeGlassButton: NSView {
+    private let glyph = ChromeGlyphView()
+    private var surface: NSView?
+
+    override init(frame frameRect: NSRect) {
+        super.init(frame: frameRect)
+        // A solid surface, not `NSGlassEffectView`. These buttons sit on an
+        // opaque hover plate, so there is nothing behind them worth refracting —
+        // untinted glass just showed the grey plate through and read as a grey
+        // slab, and tinting it only stains the same transparency. The reference
+        // this is modelled on uses a flat light fill for exactly this reason.
+        let fill = NSView()
+        fill.wantsLayer = true
+        fill.layer?.backgroundColor = ThumbnailView.buttonFill.cgColor
+        fill.autoresizingMask = [.width, .height]
+        glyph.autoresizingMask = [.width, .height]
+        fill.addSubview(glyph)
+        addSubview(fill)
+        surface = fill
+        glyph.ink = ThumbnailView.buttonInk
+    }
+
+    required init?(coder: NSCoder) { fatalError() }
+
+    override func hitTest(_ point: NSPoint) -> NSView? { nil }
+
+    func apply(cornerRadius: CGFloat, image: NSImage?, title: String?,
+               font: NSFont, isHighlighted: Bool) {
+        surface?.frame = bounds
+        glyph.frame = bounds
+        surface?.layer?.cornerRadius = cornerRadius
+        surface?.layer?.cornerCurve = .continuous
+        surface?.layer?.backgroundColor = (isHighlighted
+            ? ThumbnailView.buttonFillHover
+            : ThumbnailView.buttonFill).cgColor
+        glyph.image = image
+        glyph.title = title
+        glyph.font = font
+        glyph.needsDisplay = true
+    }
+}
+
+/// The content riding inside a glass button: either a symbol or a label.
+private final class ChromeGlyphView: NSView {
+    var image: NSImage?
+    var title: String?
+    var font: NSFont = .systemFont(ofSize: 13, weight: .medium)
+    var ink: NSColor = .labelColor
+
+    override func hitTest(_ point: NSPoint) -> NSView? { nil }
+
+    override func draw(_ dirtyRect: NSRect) {
+        if let image {
+            // Draw at the symbol's natural size. Forcing it into a square
+            // stretched every non-square glyph and thinned its strokes unevenly.
+            let tintedImage = NSImage(size: image.size, flipped: false) { rect in
+                self.ink.setFill()
+                rect.fill()
+                image.draw(in: rect, from: .zero, operation: .destinationIn, fraction: 1.0)
+                return true
+            }
+            let size = tintedImage.size
+            tintedImage.draw(in: NSRect(x: (bounds.width - size.width) / 2,
+                                        y: (bounds.height - size.height) / 2,
+                                        width: size.width, height: size.height),
+                             from: .zero, operation: .sourceOver, fraction: 1.0)
+        } else if let title {
+            let attrs: [NSAttributedString.Key: Any] = [.font: font, .foregroundColor: ink]
+            let size = (title as NSString).size(withAttributes: attrs)
+            (title as NSString).draw(at: NSPoint(x: (bounds.width - size.width) / 2,
+                                                 y: (bounds.height - size.height) / 2),
+                                     withAttributes: attrs)
+        }
     }
 }
