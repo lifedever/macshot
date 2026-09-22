@@ -232,9 +232,19 @@ class FloatingThumbnailController: NSObject, NSDraggingSource, QLPreviewPanelDat
     var onTransform: ((NSImage) -> Void)?
     var onOCR: (() -> Void)?
 
+    /// Set when the card stands for a recording rather than a still: the shot
+    /// is the poster frame, so the card carries a play badge, Quick Look
+    /// previews the movie itself, and the actions operate on the file.
+    private(set) var videoURL: URL?
+
     init(image: NSImage) {
         self.image = image
         super.init()
+    }
+
+    convenience init(videoURL: URL, poster: NSImage) {
+        self.init(image: poster)
+        self.videoURL = videoURL
     }
 
     /// Card size for a capture, following the capture's own aspect ratio.
@@ -492,7 +502,8 @@ class FloatingThumbnailController: NSObject, NSDraggingSource, QLPreviewPanelDat
     /// as long as the preview is up — otherwise the thumbnail (and with it this
     /// controller, which is the panel's data source) can disappear mid-preview.
     private func showQuickLook() {
-        quickLookURL = makeCurrentImageFileURL()
+        // A recording previews from its own file — Quick Look plays it.
+        quickLookURL = videoURL ?? makeCurrentImageFileURL()
         guard quickLookURL != nil, let panel = QLPreviewPanel.shared() else { return }
         pauseAutoDismiss()
         panel.dataSource = self

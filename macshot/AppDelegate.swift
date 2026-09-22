@@ -1817,6 +1817,98 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
         alert.runModal()
     }
 
+    /// Where the next card goes, and in which corner. Screenshots and
+    /// recordings share it so they stack in one column rather than landing on
+    /// top of each other.
+    ///
+    /// Cards follow their shot's aspect ratio, so the stacking maths uses the
+    /// real height. Padding and gap describe the *card*, but the window is
+    /// larger by the transparent shadow margin on every side — counting that
+    /// would push the card off the screen edge and space the stack too far
+    /// apart. Lay out in card terms, then expand to the window.
+    private func nextThumbnailSlot(for image: NSImage)
+        -> (x: CGFloat, y: CGFloat, corner: FloatingThumbnailCorner)? {
+        guard let screen = NSScreen.preferred else { return nil }
+        let screenFrame = screen.visibleFrame
+        let padding: CGFloat = 16
+        let gap: CGFloat = 8
+        let corner = thumbnailCorner()
+        let margin = FloatingThumbnailController.shadowMargin
+        let cardSize = FloatingThumbnailController.thumbnailSize(for: image)
+        let xOrigin = thumbnailX(for: cardSize.width, in: screenFrame, corner: corner, padding: padding) - margin
+
+        // Bottom corners stack upward, top corners stack downward.
+        var yOrigin = corner.isTop
+            ? screenFrame.maxY - cardSize.height - padding - margin
+            : screenFrame.minY + padding - margin
+        if let topController = thumbnailControllers.last {
+            let topCard = topController.windowFrame.insetBy(dx: margin, dy: margin)
+            yOrigin = corner.isTop
+                ? topCard.minY - gap - cardSize.height - margin
+                : topCard.maxY + gap - margin
+        }
+        return (xOrigin, yOrigin, corner)
+    }
+
+    /// The card for a finished recording: poster frame with a play badge, and
+    /// actions that operate on the movie rather than on a still.
+    private func showRecordingThumbnail(url: URL) {
+        let enabled = UserDefaults.standard.object(forKey: "showFloatingThumbnail") as? Bool ?? true
+        guard enabled else { return }
+
+        Task { @MainActor [weak self] in
+            guard let self, let poster = await Self.posterFrame(for: url) else { return }
+
+            let stacking = UserDefaults.standard.object(forKey: "thumbnailStacking") as? Bool ?? true
+            if !stacking {
+                self.thumbnailControllers.forEach { $0.dismiss() }
+                self.thumbnailControllers.removeAll()
+            }
+            guard let slot = self.nextThumbnailSlot(for: poster) else { return }
+
+            let controller = FloatingThumbnailController(videoURL: url, poster: poster)
+            controller.onDismiss = { [weak self] in
+                self?.thumbnailControllers.removeAll { $0 === controller }
+                self?.reflowThumbnails()
+            }
+            controller.onCopy = { [weak self] in self?.copyRecordingToClipboard(url: url) }
+            // The take is already in the save folder by the time this card
+            // appears, so Save means "put a copy somewhere else".
+            controller.onSave = { [weak self] in self?.promptToSaveRecording(tmpURL: url) }
+            controller.onSaveAs = { [weak self] in self?.promptToSaveRecording(tmpURL: url) }
+            // Pin takes the poster frame: there is nothing else about a movie
+            // that can sit still on the screen.
+            controller.onPin = { [weak self] in self?.showPin(image: poster) }
+            controller.onEdit = { VideoEditorWindowController.open(url: url) }
+            #if !OFFLINE
+            controller.onUpload = { [weak self] in self?.uploadRecording(url: url) }
+            #endif
+            controller.onCloseAll = { [weak self] in
+                guard let self else { return }
+                let all = self.thumbnailControllers
+                self.thumbnailControllers.removeAll()
+                for c in all { c.dismiss() }
+            }
+            self.thumbnailControllers.append(controller)
+            controller.show(at: NSPoint(x: slot.x, y: slot.y), corner: slot.corner)
+        }
+    }
+
+    /// First frame of a recording, for the thumbnail card. Nil when the movie
+    /// has no readable video track — a mic-only take, or a file still being
+    /// finalized.
+    private static func posterFrame(for url: URL) async -> NSImage? {
+        let asset = AVURLAsset(url: url)
+        let generator = AVAssetImageGenerator(asset: asset)
+        generator.appliesPreferredTrackTransform = true
+        generator.maximumSize = CGSize(width: 960, height: 960)
+        // Not frame zero: a recording often starts on a frame the capture
+        // pipeline has not filled in yet, which reads as a black card.
+        let time = CMTime(seconds: 0.15, preferredTimescale: 600)
+        guard let cgImage = try? await generator.image(at: time).image else { return nil }
+        return NSImage(cgImage: cgImage, size: NSSize(width: cgImage.width, height: cgImage.height))
+    }
+
     func showFloatingThumbnail(image: NSImage, annotationData: CaptureAnnotationData? = nil, historyEntryID: String? = nil) {
         let enabled = UserDefaults.standard.object(forKey: "showFloatingThumbnail") as? Bool ?? true
         guard enabled else { return }
@@ -1828,33 +1920,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
             thumbnailControllers.removeAll()
         }
 
-        guard let screen = NSScreen.preferred else { return }
-        let screenFrame = screen.visibleFrame
-        let padding: CGFloat = 16
-        let gap: CGFloat = 8
-        let corner = thumbnailCorner()
-        // Sized from this capture: cards follow their shot's aspect ratio now, so
-        // the stacking maths has to use the real height, not a nominal one.
-        //
-        // Padding and gap describe the *card*, but the window is larger by the
-        // shadow margin on every side — that margin is transparent, so counting
-        // it would push the card away from the screen edge and space the stack
-        // too far apart. Lay out in card terms, then expand to the window.
-        let margin = FloatingThumbnailController.shadowMargin
-        let cardSize = FloatingThumbnailController.thumbnailSize(for: image)
-        let thumbSize = FloatingThumbnailController.windowSize(for: image)
-        let xOrigin = thumbnailX(for: cardSize.width, in: screenFrame, corner: corner, padding: padding) - margin
-
-        // Compute Y: bottom corners stack upward, top corners stack downward.
-        var yOrigin = corner.isTop
-            ? screenFrame.maxY - cardSize.height - padding - margin
-            : screenFrame.minY + padding - margin
-        if let topController = thumbnailControllers.last {
-            let topCard = topController.windowFrame.insetBy(dx: margin, dy: margin)
-            yOrigin = corner.isTop
-                ? topCard.minY - gap - cardSize.height - margin
-                : topCard.maxY + gap - margin
-        }
+        guard let slot = nextThumbnailSlot(for: image) else { return }
+        let (xOrigin, yOrigin, corner) = slot
 
         let controller = FloatingThumbnailController(image: image)
         controller.historyEntryID = historyEntryID
@@ -2147,6 +2214,55 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
     }
 
     #if !OFFLINE
+    /// Upload a finished recording, mirroring `showUploadProgress(image:)`.
+    /// imgbb takes images only, so it is not offered a movie.
+    func uploadRecording(url: URL) {
+        let provider = UserDefaults.standard.string(forKey: "uploadProvider") ?? "imgbb"
+
+        func fail(_ message: String) {
+            ToastCenter.shared.show(message, icon: .info, duration: 3.5)
+        }
+        func succeed(_ link: String) {
+            NSPasteboard.general.clearContents()
+            NSPasteboard.general.setString(link, forType: .string)
+            ToastCenter.shared.show(
+                String(format: L("Link copied: %@"), link),
+                action: URL(string: link).map { target in
+                    .init(title: L("Open")) { NSWorkspace.shared.open(target) }
+                },
+                duration: 2.2)
+        }
+        func finish(_ result: Result<String, Error>) {
+            switch result {
+            case .success(let link): succeed(link)
+            case .failure(let error): fail(error.localizedDescription)
+            }
+        }
+
+        switch provider {
+        case "gdrive":
+            guard GoogleDriveUploader.shared.isSignedIn else {
+                fail(L("Google Drive not signed in")); return
+            }
+            ToastCenter.shared.show(L("Uploading…"), icon: .info, duration: 120)
+            GoogleDriveUploader.shared.uploadVideo(url: url, completion: finish)
+        case "s3":
+            guard S3Uploader.shared.isConfigured else {
+                fail(L("S3 not configured — check Settings")); return
+            }
+            ToastCenter.shared.show(L("Uploading…"), icon: .info, duration: 120)
+            S3Uploader.shared.uploadVideo(url: url, completion: finish)
+        case "github":
+            guard GitHubUploader.shared.isConfigured else {
+                fail(L("GitHub upload is not configured — check Settings.")); return
+            }
+            ToastCenter.shared.show(L("Uploading…"), icon: .info, duration: 120)
+            GitHubUploader.shared.uploadVideo(url: url, completion: finish)
+        default:
+            fail(L("Video upload requires Google Drive, S3 or GitHub"))
+        }
+    }
+
     private func showUploadProgress(image: NSImage) {
         let provider = UserDefaults.standard.string(forKey: "uploadProvider") ?? "imgbb"
 
@@ -2822,15 +2938,20 @@ extension AppDelegate: OverlayWindowControllerDelegate {
                 let deliverRecording: (URL) -> Void = { [weak self] finalURL in
                     guard let self = self else { return }
                     let onStop = onStopOverride ?? UserDefaults.standard.string(forKey: "recordingOnStop") ?? "editor"
-                    switch onStop {
-                    case "finder":
-                        // Publish a user-visible copy while keeping the
-                        // original take available in the recording library.
-                        self.revealRecordingInFinder(tmpURL: finalURL)
-                    case "clipboard":
-                        self.copyRecordingToClipboard(url: finalURL)
-                    default:
-                        VideoEditorWindowController.open(url: finalURL)
+                    // Publish first, whatever happens next: a recording belongs
+                    // in the save folder the same way a screenshot does. The
+                    // original take stays in the recording library either way.
+                    self.publishRecording(finalURL) { [weak self] publishedURL in
+                        guard let self = self else { return }
+                        self.showRecordingThumbnail(url: publishedURL)
+                        switch onStop {
+                        case "finder":
+                            NSWorkspace.shared.activateFileViewerSelecting([publishedURL])
+                        case "clipboard":
+                            self.copyRecordingToClipboard(url: publishedURL)
+                        default:
+                            VideoEditorWindowController.open(url: publishedURL)
+                        }
                     }
                 }
 
@@ -3005,20 +3126,45 @@ extension AppDelegate: OverlayWindowControllerDelegate {
     /// On a collision at the destination, we append " (N)" to the filename
     /// so nothing gets silently overwritten.
     private func revealRecordingInFinder(tmpURL: URL) {
+        publishRecording(tmpURL) { url in
+            NSWorkspace.shared.activateFileViewerSelecting([url])
+        }
+    }
+
+    /// Copy a finished recording into the configured save folder, the way a
+    /// screenshot is saved, and report where it landed.
+    ///
+    /// Every recording goes through here, not just "Show in Finder". A take
+    /// used to stay in the recording library — a UUID directory under
+    /// Application Support — unless that one option was picked, so the folder
+    /// set under Output did nothing for the other two.
+    ///
+    /// With no folder configured, or if the copy fails, the completion still
+    /// runs with the library URL: the take is never lost, it just has not been
+    /// published anywhere the user can see.
+    private func publishRecording(_ source: URL, completion: @escaping (URL) -> Void) {
         guard let directory = SaveDirectoryAccess.resolveIfAccessible() else {
-            promptToSaveRecording(tmpURL: tmpURL)
+            promptToSaveRecording(tmpURL: source)
+            completion(source)
             return
         }
         let access = SaveDirectoryLease(alreadyAccessing: directory)
-        saveRecordingCopy(source: tmpURL, destination: directory.appendingPathComponent(tmpURL.lastPathComponent),
-            avoidCollisions: true, access: access) { [weak self] error in
-            guard !(error is CancellationError) else { return }
-            if self?.terminationCoordinator.isWaiting != true {
-                self?.promptToSaveRecording(tmpURL: tmpURL)
-            } else {
-                self?.showFailureToast(L("Save failed") + ": " + error.localizedDescription)
-            }
-        }
+        saveRecordingCopy(source: source,
+                          destination: directory.appendingPathComponent(source.lastPathComponent),
+                          avoidCollisions: true, access: access,
+                          onSuccess: { url in
+                              AppDelegate.showSavedToast(for: url)
+                              completion(url)
+                          },
+                          onFailure: { [weak self] error in
+                              guard !(error is CancellationError) else { return }
+                              if self?.terminationCoordinator.isWaiting != true {
+                                  self?.promptToSaveRecording(tmpURL: source)
+                              } else {
+                                  self?.showFailureToast(L("Save failed") + ": " + error.localizedDescription)
+                              }
+                              completion(source)
+                          })
     }
 
     /// Cancelling Save leaves the original in the recording library.
@@ -3039,7 +3185,9 @@ extension AppDelegate: OverlayWindowControllerDelegate {
     }
 
     private func saveRecordingCopy(source: URL, destination: URL, avoidCollisions: Bool,
-                                   access: SaveDirectoryLease? = nil, onFailure: @escaping (Error) -> Void) {
+                                   access: SaveDirectoryLease? = nil,
+                                   onSuccess: ((URL) -> Void)? = nil,
+                                   onFailure: @escaping (Error) -> Void) {
         var publishedURL = destination
         let job = MediaExportCoordinator.shared.start(title: destination.lastPathComponent, status: L("Saving..."),
             operation: { cancellation, progress in
@@ -3067,7 +3215,12 @@ extension AppDelegate: OverlayWindowControllerDelegate {
             }, completion: { result in
                 withExtendedLifetime(access) {}
                 switch result {
-                case .success: NSWorkspace.shared.activateFileViewerSelecting([publishedURL])
+                case .success:
+                    if let onSuccess {
+                        onSuccess(publishedURL)
+                    } else {
+                        NSWorkspace.shared.activateFileViewerSelecting([publishedURL])
+                    }
                 case .failure(let error): onFailure(error)
                 }
             })
