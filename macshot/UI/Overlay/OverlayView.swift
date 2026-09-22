@@ -10954,12 +10954,76 @@ class OverlayView: NSView {
         // beautifyConfig getter) so reads during draw never mutate state.
         customBeautifyBackground = nil
         ensureCustomBeautifyBackgroundLoaded()
-        currentLineStyle = LineStyle(rawValue: defaults.integer(forKey: "currentLineStyle")) ?? .solid
-        currentArrowStyle = ArrowStyle(rawValue: defaults.integer(forKey: "currentArrowStyle")) ?? .single
-        currentRectFillStyle = RectFillStyle(rawValue: defaults.integer(forKey: "currentRectFillStyle")) ?? .stroke
-        currentRectCornerRadius = CGFloat(defaults.object(forKey: "currentRectCornerRadius") as? Double ?? 0)
-        currentMeasureInPoints = defaults.bool(forKey: "measureInPoints")
-        currentMeasureClampToSelection = defaults.object(forKey: "measureClampToSelection") as? Bool ?? true
+        // Everything the toolbar can change is restored here, and "remember
+        // the last tool" decides whether it comes back as the last capture
+        // left it or at its default.
+        //
+        // This has to happen on the instance, not just in the defaults. The
+        // view is pooled — one instance serves every capture for the lifetime
+        // of the app — and its properties read the defaults exactly once, when
+        // the pool was warmed at launch. `startCapture` clearing the stored
+        // values therefore did nothing to an instance already holding the old
+        // ones: with the switch off, a saturation slider nudged once still
+        // tinted every later capture, and nothing in the UI said a filter was
+        // on. The same was true of colour, width and every style below.
+        //
+        // Beautify is deliberately not here: its values belong to the Beautify
+        // settings pane, not to the last capture.
+        if defaults.object(forKey: "rememberLastTool") as? Bool ?? true {
+            if let data = defaults.data(forKey: "lastUsedColor"),
+               let stored = try? NSKeyedUnarchiver.unarchivedObject(ofClass: NSColor.self, from: data) {
+                currentColor = stored
+            }
+            currentColorOpacity = CGFloat(defaults.object(forKey: "lastUsedColorOpacity") as? Double ?? 1)
+            currentStrokeWidth = CGFloat(defaults.object(forKey: "currentStrokeWidth") as? Double ?? 3)
+            currentNumberSize = CGFloat(defaults.object(forKey: "numberStrokeWidth") as? Double ?? 3)
+            currentMarkerSize = CGFloat(defaults.object(forKey: "markerStrokeWidth") as? Double ?? 3)
+            currentLoupeSize = CGFloat(defaults.object(forKey: "loupeSize") as? Double ?? 120)
+            currentStampSize = CGFloat(defaults.object(forKey: "stampSize") as? Double ?? 64)
+            currentLineStyle = LineStyle(rawValue: defaults.integer(forKey: "currentLineStyle")) ?? .solid
+            currentArrowStyle = ArrowStyle(rawValue: defaults.integer(forKey: "currentArrowStyle")) ?? .single
+            currentRectFillStyle = RectFillStyle(rawValue: defaults.integer(forKey: "currentRectFillStyle")) ?? .stroke
+            currentRectCornerRadius = CGFloat(defaults.object(forKey: "currentRectCornerRadius") as? Double ?? 0)
+            currentMeasureInPoints = defaults.bool(forKey: "measureInPoints")
+            currentMeasureClampToSelection = defaults.object(forKey: "measureClampToSelection") as? Bool ?? true
+            textEditor.fontSize = defaults.object(forKey: "textFontSize") as? CGFloat ?? 20
+            textEditor.fontFamily = defaults.string(forKey: "textFontFamily") ?? "System"
+            effectsPreset = ImageEffectPreset(rawValue: defaults.integer(forKey: "effectsPreset")) ?? .none
+            effectsBrightness = Float(defaults.object(forKey: "effectsBrightness") as? Double ?? 0)
+            effectsContrast = Float(defaults.object(forKey: "effectsContrast") as? Double ?? 1)
+            effectsSaturation = Float(defaults.object(forKey: "effectsSaturation") as? Double ?? 1)
+            effectsSharpness = Float(defaults.object(forKey: "effectsSharpness") as? Double ?? 0)
+        } else {
+            // Assigning `currentColor` writes it back to the defaults through
+            // its own didSet. That is fine: with the switch off nothing is
+            // meant to carry over, so the stored value has no reader.
+            currentColor = .systemRed
+            currentColorOpacity = 1
+            currentStrokeWidth = 3
+            currentNumberSize = 3
+            currentMarkerSize = 3
+            currentLoupeSize = 120
+            currentStampSize = 64
+            currentLineStyle = .solid
+            currentArrowStyle = .single
+            currentRectFillStyle = .stroke
+            currentRectCornerRadius = 0
+            currentMeasureInPoints = false
+            currentMeasureClampToSelection = true
+            textEditor.fontSize = 20
+            textEditor.fontFamily = "System"
+            effectsPreset = .none
+            effectsBrightness = 0
+            effectsContrast = 1
+            effectsSaturation = 1
+            effectsSharpness = 0
+        }
+        textEditor.bold = false
+        textEditor.italic = false
+        textEditor.underline = false
+        textEditor.strikethrough = false
+        textEditor.alignment = .left
+        cachedEffectsScreenshot = nil
     }
 
     func reset() {
