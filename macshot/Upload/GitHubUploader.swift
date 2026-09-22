@@ -60,9 +60,17 @@ final class GitHubUploader {
     /// Progress callback (0.0–1.0), called on the main thread.
     var onProgress: ((Double) -> Void)?
 
+    /// The Contents API takes the whole file base64-encoded inside a JSON body.
+    /// There is no streaming form of it — unlike S3 and Drive, which upload
+    /// from disk in chunks — so a long recording would be held in memory three
+    /// times over (file, base64, serialized request) before GitHub rejected it
+    /// anyway. Refuse early, with somewhere else to send it.
+    static let maximumUploadBytes = 25 * 1024 * 1024
+
     enum GitHubError: LocalizedError {
         case notConfigured
         case encodingFailed
+        case tooLarge(Int)
         case http(Int, String)
         case malformedResponse
 
@@ -72,6 +80,9 @@ final class GitHubUploader {
                 return L("GitHub upload is not configured — check Settings.")
             case .encodingFailed:
                 return L("Could not encode the image.")
+            case .tooLarge(let bytes):
+                let size = ByteCountFormatter.string(fromByteCount: Int64(bytes), countStyle: .file)
+                return String(format: L("%@ is too large for a GitHub repository — upload it to S3 or Google Drive instead."), size)
             case .http(let code, let message):
                 // 401/403 is nearly always the token; saying so beats echoing
                 // GitHub's generic "Bad credentials".
@@ -103,7 +114,12 @@ final class GitHubUploader {
 
     func uploadVideo(url: URL, completion: @escaping (Result<String, Error>) -> Void) {
         do {
-            let data = try Data(contentsOf: url)
+            let size = try url.resourceValues(forKeys: [.fileSizeKey]).fileSize ?? 0
+            guard size <= Self.maximumUploadBytes else {
+                completion(.failure(GitHubError.tooLarge(size)))
+                return
+            }
+            let data = try Data(contentsOf: url, options: .mappedIfSafe)
             upload(data: data, filename: url.lastPathComponent, completion: completion)
         } catch {
             completion(.failure(error))

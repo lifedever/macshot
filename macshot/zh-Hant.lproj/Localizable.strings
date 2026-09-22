@@ -228,6 +228,10 @@
 "Show floating thumbnail after capture" = "擷取後顯示浮動縮圖";
 "Launch at login" = "登入時啟動";
 "Show snap alignment guides" = "顯示對齊輔助線";
+"Haptic feedback when snapping" = "吸附時觸感回饋";
+"Press C to copy" = "按 C 拷貝";
+"Use desktop wallpaper" = "用桌面桌布";
+"Choose image…" = "選擇圖片…";
 "Snap selection edges to image boundaries" = "將選取範圍邊緣貼齊影像邊界";
 "Enhance browser and Electron element snapping" = "增強瀏覽器與 Electron 元素吸附";
 "Builds the target app's accessibility tree in Element mode. Disable this if a browser or Electron app becomes slow or has input issues." = "在元素模式下建立目標應用程式的輔助使用樹狀結構。如果瀏覽器或 Electron 應用程式變慢或出現輸入問題，請關閉此選項。";
@@ -700,8 +704,6 @@
 /* Settings — SwiftUI panes */
 "Menu bar icon" = "選單列圖示";
 "Theme" = "主題";
-"Transfer settings" = "遷移設定";
-"Settings file" = "設定檔";
 "No SF Symbol by that name — the default icon is used." = "沒有這個名字的 SF Symbol，用的是預設圖示。";
 "%d fps" = "%d fps";
 "10 seconds" = "10 秒";
@@ -737,6 +739,7 @@
 "GitHub repository" = "GitHub 倉庫";
 "GitHub repository (images + videos)" = "GitHub 倉庫（圖片 + 影片）";
 "GitHub returned a response macshot could not read." = "GitHub 回傳了 macshot 讀不懂的內容。";
+"%@ is too large for a GitHub repository — upload it to S3 or Google Drive instead." = "%@ 太大了，GitHub 倉庫放不下，改用 S3 或 Google Drive。";
 "GitHub upload is not configured — check Settings." = "還沒設定 GitHub 上傳，去設定裡填。";
 "Google" = "Google";
 "History size" = "歷史數量";

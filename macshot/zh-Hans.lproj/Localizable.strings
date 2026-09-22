@@ -704,8 +704,6 @@
 /* Settings — SwiftUI panes */
 "Menu bar icon" = "菜单栏图标";
 "Theme" = "主题";
-"Transfer settings" = "迁移设置";
-"Settings file" = "设置文件";
 "No SF Symbol by that name — the default icon is used." = "没有这个名字的 SF Symbol，用的是默认图标。";
 "%d fps" = "%d fps";
 "10 seconds" = "10 秒";
@@ -741,6 +739,7 @@
 "GitHub repository" = "GitHub 仓库";
 "GitHub repository (images + videos)" = "GitHub 仓库（图片 + 视频）";
 "GitHub returned a response macshot could not read." = "GitHub 返回了 macshot 读不懂的内容。";
+"%@ is too large for a GitHub repository — upload it to S3 or Google Drive instead." = "%@ 太大了，GitHub 仓库放不下，改用 S3 或 Google Drive。";
 "GitHub upload is not configured — check Settings." = "还没配置 GitHub 上传，去设置里填。";
 "Google" = "Google";
 "History size" = "历史数量";

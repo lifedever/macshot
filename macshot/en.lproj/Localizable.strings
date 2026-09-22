@@ -699,8 +699,6 @@
 /* Settings — SwiftUI panes */
 "Menu bar icon" = "Menu bar icon";
 "Theme" = "Theme";
-"Transfer settings" = "Transfer settings";
-"Settings file" = "Settings file";
 "No SF Symbol by that name — the default icon is used." = "No SF Symbol by that name — the default icon is used.";
 "%d fps" = "%d fps";
 "10 seconds" = "10 seconds";
@@ -736,6 +734,7 @@
 "GitHub repository" = "GitHub repository";
 "GitHub repository (images + videos)" = "GitHub repository (images + videos)";
 "GitHub returned a response macshot could not read." = "GitHub returned a response macshot could not read.";
+"%@ is too large for a GitHub repository — upload it to S3 or Google Drive instead." = "%@ is too large for a GitHub repository — upload it to S3 or Google Drive instead.";
 "GitHub upload is not configured — check Settings." = "GitHub upload is not configured — check Settings.";
 "Google" = "Google";
 "History size" = "History size";
