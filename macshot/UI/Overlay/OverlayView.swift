@@ -3871,8 +3871,42 @@ class OverlayView: NSView {
         let cell: CGFloat = 9
         let side = CGFloat(radius * 2 + 1) * cell
         let gap: CGFloat = 18
-        let infoH: CGFloat = 38
-        let panelW = side
+        // Three rows: value, position, hint. On one line the position and the
+        // hint needed about 160pt against the 109pt the magnifier's width left
+        // them, and they ran off the right edge of their own background.
+        // Stacked, they fit under the magnifier in almost every language, so
+        // the panel keeps the magnifier's width instead of growing black
+        // margins either side of it.
+        let infoH: CGFloat = 54
+
+        // Measured before the panel is sized.
+        let hexFont = NSFont.monospacedSystemFont(ofSize: 12, weight: .semibold)
+        let subFont = NSFont.monospacedSystemFont(ofSize: 10, weight: .regular)
+        let hexAttrs: [NSAttributedString.Key: Any] = [
+            .font: hexFont, .foregroundColor: NSColor.white,
+        ]
+        // Two weights on one line: the coordinates are a reading, the hint is
+        // an instruction, and they should not compete.
+        let coordAttrs: [NSAttributedString.Key: Any] = [
+            .font: subFont, .foregroundColor: NSColor.white.withAlphaComponent(0.7),
+        ]
+        let hintAttrs: [NSAttributedString.Key: Any] = [
+            .font: subFont, .foregroundColor: NSColor.white.withAlphaComponent(0.42),
+        ]
+
+        // Report the pixel in image coordinates, which is what the user is aiming at —
+        // not view points, which differ on a Retina display.
+        let px = Int((canvasPoint.x - captureDrawRect.origin.x).rounded())
+        let py = Int((canvasPoint.y - captureDrawRect.origin.y).rounded())
+        let flippedY = Int(captureDrawRect.height.rounded()) - py
+        let coordStr = "\(px), \(flippedY)"
+        let hintStr = L("Press C to copy")
+        let coordW = (coordStr as NSString).size(withAttributes: coordAttrs).width
+        let hintW = (hintStr as NSString).size(withAttributes: hintAttrs).width
+        let hexW = (sample.hex as NSString).size(withAttributes: hexAttrs).width
+
+        let textInset: CGFloat = 8 + 12 + 6      // padding + swatch + gap
+        let panelW = max(side, textInset + max(hexW, coordW, hintW) + 10)
         let panelH = side + infoH
 
         // Keep the panel on screen: flip to the other side of the cursor near an edge.
@@ -3886,7 +3920,9 @@ class OverlayView: NSView {
         NSColor.black.withAlphaComponent(0.88).setFill()
         panelPath.fill()
 
-        let gridRect = NSRect(x: panel.minX, y: panel.maxY - side, width: side, height: side)
+        // Centred, since the panel may now be wider than the magnifier.
+        let gridRect = NSRect(x: panel.minX + (panelW - side) / 2, y: panel.maxY - side,
+                              width: side, height: side)
         context.saveGraphicsState()
         NSBezierPath(roundedRect: NSRect(x: gridRect.minX, y: gridRect.minY,
                                          width: gridRect.width, height: gridRect.height),
@@ -3933,17 +3969,10 @@ class OverlayView: NSView {
         centreBox.stroke()
         context.restoreGraphicsState()
 
-        // ── Readout: hex + cursor position ──
-        let hexFont = NSFont.monospacedSystemFont(ofSize: 12, weight: .semibold)
-        let subFont = NSFont.monospacedSystemFont(ofSize: 10, weight: .regular)
-        let hexAttrs: [NSAttributedString.Key: Any] = [
-            .font: hexFont, .foregroundColor: NSColor.white,
-        ]
-        let subAttrs: [NSAttributedString.Key: Any] = [
-            .font: subFont, .foregroundColor: NSColor.white.withAlphaComponent(0.55),
-        ]
-
-        let swatch = NSRect(x: panel.minX + 8, y: panel.minY + infoH / 2 - 6, width: 12, height: 12)
+        // ── Readout: value, position, hint ──
+        // The swatch sits on the value's line, not centred on the whole block,
+        // so colour and hex read as one statement.
+        let swatch = NSRect(x: panel.minX + 8, y: panel.minY + infoH - 16, width: 12, height: 12)
         sample.color.setFill()
         NSBezierPath(roundedRect: swatch, xRadius: 2, yRadius: 2).fill()
         NSColor.white.withAlphaComponent(0.35).setStroke()
@@ -3951,16 +3980,13 @@ class OverlayView: NSView {
         swatchEdge.lineWidth = 0.5
         swatchEdge.stroke()
 
+        let textX = swatch.maxX + 6
         (sample.hex as NSString).draw(
-            at: NSPoint(x: swatch.maxX + 6, y: panel.minY + infoH - 17), withAttributes: hexAttrs)
-
-        // Report the pixel in image coordinates, which is what the user is aiming at —
-        // not view points, which differ on a Retina display.
-        let px = Int((canvasPoint.x - captureDrawRect.origin.x).rounded())
-        let py = Int((canvasPoint.y - captureDrawRect.origin.y).rounded())
-        let flippedY = Int(captureDrawRect.height.rounded()) - py
-        ("\(px), \(flippedY)  ·  " + L("Press C to copy") as NSString).draw(
-            at: NSPoint(x: swatch.maxX + 6, y: panel.minY + 5), withAttributes: subAttrs)
+            at: NSPoint(x: textX, y: panel.minY + infoH - 17), withAttributes: hexAttrs)
+        (coordStr as NSString).draw(
+            at: NSPoint(x: textX, y: panel.minY + infoH - 32), withAttributes: coordAttrs)
+        (hintStr as NSString).draw(
+            at: NSPoint(x: textX, y: panel.minY + 6), withAttributes: hintAttrs)
     }
 
     private func drawColorSamplerPreview(at canvasPoint: NSPoint) {
