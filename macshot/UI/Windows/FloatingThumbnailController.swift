@@ -339,10 +339,9 @@ class FloatingThumbnailController: NSObject, NSDraggingSource, QLPreviewPanelDat
         view.onDismissDragCancelled = { [weak self] in self?.cancelDismissDrag() }
         view.onContextMenu = { [weak self] event, view in self?.showContextMenu(event: event, in: view) }
         view.onClose    = { [weak self] in self?.dismiss() }
-        // Viewing isn't a terminal action the way copying or saving is — the
-        // thumbnail stays up so Save / Pin / Edit are still one click away once
-        // the preview closes. Its auto-dismiss is held for the same reason.
-        view.onQuickLook = { [weak self] in self?.showQuickLook() }
+        // Handing the capture to another app ends this card's job, same as
+        // uploading or saving does.
+        view.onQuickLook = { [weak self] in self?.openInDefaultApp(); self?.dismiss() }
         view.onSave     = { [weak self] in self?.onSave?();     self?.dismiss() }
         view.onPin      = { [weak self] in self?.onPin?();      self?.dismiss() }
         view.onEdit     = { [weak self] in self?.onEdit?();     self?.dismiss() }
@@ -497,6 +496,19 @@ class FloatingThumbnailController: NSObject, NSDraggingSource, QLPreviewPanelDat
     }
 
     @objc private func contextQuickLook() { showQuickLook() }
+
+    /// Hand the capture to whatever app owns its type — Preview for a
+    /// screenshot, the default player for a recording. This is what the card's
+    /// corner button does; Quick Look is still on the context menu for a
+    /// glance that does not leave the desktop.
+    ///
+    /// The file is the same scratch copy Quick Look used. It survives until
+    /// the next launch, which sweeps that folder — long enough for the app
+    /// that opened it.
+    private func openInDefaultApp() {
+        guard let url = videoURL ?? makeCurrentImageFileURL() else { return }
+        NSWorkspace.shared.open(url)
+    }
 
     /// Open the capture in Quick Look, holding the thumbnail's auto-dismiss for
     /// as long as the preview is up — otherwise the thumbnail (and with it this
