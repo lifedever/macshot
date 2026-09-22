@@ -1905,8 +1905,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
         // Not frame zero: a recording often starts on a frame the capture
         // pipeline has not filled in yet, which reads as a black card.
         let time = CMTime(seconds: 0.15, preferredTimescale: 600)
-        guard let cgImage = try? await generator.image(at: time).image else { return nil }
-        return NSImage(cgImage: cgImage, size: NSSize(width: cgImage.width, height: cgImage.height))
+        do {
+            let cgImage = try await generator.image(at: time).image
+            return NSImage(cgImage: cgImage, size: NSSize(width: cgImage.width, height: cgImage.height))
+        } catch {
+            // Worth logging: a nil here means the card silently never appears,
+            // and the cause is usually a path the sandbox cannot read.
+            NSLog("macshot: no poster frame for %@ — %@",
+                  url.lastPathComponent, error.localizedDescription)
+            return nil
+        }
     }
 
     func showFloatingThumbnail(image: NSImage, annotationData: CaptureAnnotationData? = nil, historyEntryID: String? = nil) {
@@ -2943,14 +2951,22 @@ extension AppDelegate: OverlayWindowControllerDelegate {
                     // original take stays in the recording library either way.
                     self.publishRecording(finalURL) { [weak self] publishedURL in
                         guard let self = self else { return }
-                        self.showRecordingThumbnail(url: publishedURL)
+                        // Everything macshot opens itself reads the library
+                        // original. The published copy sits outside the
+                        // sandbox, reachable only through the save's
+                        // security-scoped lease — and that lease dies with the
+                        // save. Anything asynchronous (the card's poster frame
+                        // is generated with `await`) finds it unreadable and
+                        // silently gives up. Finder needs no scope from us, so
+                        // it is the one thing pointed at the published copy.
+                        self.showRecordingThumbnail(url: finalURL)
                         switch onStop {
                         case "finder":
                             NSWorkspace.shared.activateFileViewerSelecting([publishedURL])
                         case "clipboard":
-                            self.copyRecordingToClipboard(url: publishedURL)
+                            self.copyRecordingToClipboard(url: finalURL)
                         default:
-                            VideoEditorWindowController.open(url: publishedURL)
+                            VideoEditorWindowController.open(url: finalURL)
                         }
                     }
                 }
