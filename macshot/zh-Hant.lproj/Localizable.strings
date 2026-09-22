@@ -41,7 +41,6 @@
 
 /* History Panel */
 "Copy" = "拷貝";
-"Save As..." = "另存新檔⋯";
 "Open in Editor" = "在編輯器中開啟";
 "Pin to Screen" = "釘選至螢幕";
 "Quick Look" = "快速查看";
@@ -54,7 +53,6 @@
 
 /* Floating Thumbnail */
 "Close All" = "全部關閉";
-"Save All to Folder…" = "全部儲存至檔案夾⋯";
 "Save" = "儲存";
 "View" = "查看";
 
@@ -428,6 +426,7 @@
 /* Recording Toast */
 "Recording saved" = "錄製已儲存";
 "%@ • Recording saved" = "%@ · 錄製已儲存";
+"Recording failed: %@" = "錄製失敗：%@";
 "Copy Path" = "拷貝路徑";
 "Path copied!" = "路徑已拷貝！";
 
@@ -438,6 +437,9 @@
 "Export failed" = "輸出失敗";
 "Saved to %@" = "已儲存至 %@";
 "Save failed" = "儲存失敗";
+"Could not encode the screenshot." = "無法編碼螢幕截圖。";
+"Could not save the screenshot: %@" = "無法儲存螢幕截圖：%@";
+"Could not save the screenshot to history." = "無法將螢幕截圖儲存到歷史記錄。";
 
 /* Barcode Detector */
 /* "Open" and "Copy" are shared with other sections */
@@ -477,7 +479,7 @@
 
 /* Recording — Input Monitoring Permission */
 "Input Monitoring Required" = "需要輸入監控權限";
-"macshot needs Input Monitoring permission to show keystrokes during recording. Please grant access in System Settings, then try again." = "macshot 需要「輸入監控」權限才能在錄製時顯示按鍵。請在 System Settings 中授予權限，然後再試一次。";
+"macshot needs Input Monitoring permission to highlight mouse clicks or show keystrokes during recording. Please grant access in System Settings, then try again." = "macshot 需要「輸入監控」權限才能在錄製時醒目顯示滑鼠點擊或顯示按鍵。請在系統設定中授予權限，然後再試一次。";
 "macshot needs Accessibility permission to snap to individual interface elements. Please grant access in System Settings, then try again." = "macshot 需要輔助使用權限才能貼齊個別介面元素。請在系統設定中授予存取權限，然後重試。";
 
 /* Recording — Keystroke Overlay */
@@ -711,7 +713,7 @@
 "Access Key" = "Access Key";
 "Account" = "帳戶";
 "Apple" = "Apple";
-"Ask before uploading" = "上传前询问";
+"Ask before uploading" = "上傳前詢問";
 "Branch" = "分支";
 "Bucket" = "Bucket";
 "Checking…" = "正在檢查…";
@@ -780,3 +782,22 @@
 "Corner radius" = "圓角半徑";
 "Background blur" = "背景模糊";
 "Places the capture on a background with rounded corners and a drop shadow." = "把截圖放在背景上，加圓角和投影。";
+"Saving..." = "正在儲存…";
+
+"Show Recordings in Finder" = "在Finder中顯示錄製檔案";
+
+"Cancelled" = "已取消";
+
+"Cancelling..." = "正在取消...";
+"Preparing video..." = "正在準備影片...";
+"History is busy saving. Please try again shortly." = "正在儲存歷史記錄。請稍後再試。";
+
+// Video editor accessibility
+"Play" = "播放";
+"Mute" = "靜音";
+"Unmute" = "取消靜音";
+
+/* Upload status */
+"Uploading…" = "正在上傳…";
+"Google Drive not signed in" = "還沒登入 Google Drive";
+"S3 not configured — check Settings" = "還沒設定 S3 上傳，去設定裡填。";

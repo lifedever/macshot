@@ -31,7 +31,6 @@
 "Open Image..." = "Open Image...";
 "Open from Clipboard" = "Open from Clipboard";
 "Pin from Clipboard" = "Pin from Clipboard";
-"Settings..." = "Settings...";
 "Check for Updates..." = "Check for Updates...";
 "Quit macshot" = "Quit MacShot";
 "No recent captures" = "No recent captures";
@@ -39,7 +38,6 @@
 
 /* History Panel */
 "Copy" = "Copy";
-"Save As..." = "Save As...";
 "Open in Editor" = "Open in Editor";
 "Pin to Screen" = "Pin to Screen";
 "Quick Look" = "Quick Look";
@@ -52,7 +50,6 @@
 
 /* Floating Thumbnail */
 "Close All" = "Close All";
-"Save All to Folder…" = "Save All to Folder…";
 "Save Recording" = "Save Recording";
 "Save" = "Save";
 "View" = "View";
@@ -495,7 +492,7 @@
 
 /* Recording — Input Monitoring Permission */
 "Input Monitoring Required" = "Input Monitoring Required";
-"macshot needs Input Monitoring permission to show keystrokes during recording. Please grant access in System Settings, then try again." = "macshot needs Input Monitoring permission to show keystrokes during recording. Please grant access in System Settings, then try again.";
+"macshot needs Input Monitoring permission to highlight mouse clicks or show keystrokes during recording. Please grant access in System Settings, then try again." = "macshot needs Input Monitoring permission to highlight mouse clicks or show keystrokes during recording. Please grant access in System Settings, then try again.";
 "macshot needs Accessibility permission to snap to individual interface elements. Please grant access in System Settings, then try again." = "macshot needs Accessibility permission to snap to individual interface elements. Please grant access in System Settings, then try again.";
 
 /* Recording — Keystroke Overlay */
@@ -784,3 +781,27 @@
 "Corner radius" = "Corner radius";
 "Background blur" = "Background blur";
 "Places the capture on a background with rounded corners and a drop shadow." = "Places the capture on a background with rounded corners and a drop shadow.";
+"Recording failed: %@" = "Recording failed: %@";
+"Could not encode the screenshot." = "Could not encode the screenshot.";
+"Could not save the screenshot: %@" = "Could not save the screenshot: %@";
+"Could not save the screenshot to history." = "Could not save the screenshot to history.";
+
+"Saving..." = "Saving...";
+
+"Show Recordings in Finder" = "Show Recordings in Finder";
+
+"Cancelled" = "Cancelled";
+
+"Cancelling..." = "Cancelling...";
+"Preparing video..." = "Preparing video...";
+"History is busy saving. Please try again shortly." = "History is busy saving. Please try again shortly.";
+
+// Video editor accessibility
+"Play" = "Play";
+"Mute" = "Mute";
+"Unmute" = "Unmute";
+
+/* Upload status */
+"Uploading…" = "Uploading…";
+"Google Drive not signed in" = "Google Drive not signed in";
+"S3 not configured — check Settings" = "S3 not configured — check Settings";

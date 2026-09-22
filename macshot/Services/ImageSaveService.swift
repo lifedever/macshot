@@ -34,6 +34,26 @@ enum ImageSaveService {
     /// no-overwrite retry can rename the file out from under the caller.
     typealias Completion = (URL?) -> Void
 
+    /// Called with a user-facing message when a save fails. AppDelegate wires
+    /// this to a toast at launch. Before it existed, a failed write was logged
+    /// in DEBUG only and every call site ignored the `false` completion — the
+    /// overlay dismissed, the thumbnail animated, and the screenshot was gone
+    /// with no indication it had ever been lost.
+    nonisolated(unsafe) static var onFailure: ((String) -> Void)?
+
+    static func reportFailure(_ message: String) {
+        DispatchQueue.main.async { onFailure?(message) }
+    }
+
+    /// Writes a screenshot into `directory` without overwriting an existing
+    /// file. Exposed for tests; the app goes through `save`.
+    static func writeImageForTesting(_ image: NSImage, toDirectory directory: URL,
+                                     filename: String, completion: Completion?) {
+        guard let prepared = prepare(image, completion: completion) else { return }
+        writePreparedImage(prepared, to: directory.appendingPathComponent(filename),
+                           chooseAvailableName: true, completion: completion)
+    }
+
     static func save(
         _ image: NSImage,
         using action: SaveActionPreference = .current,
@@ -71,9 +91,11 @@ enum ImageSaveService {
         activateApp: Bool = true,
         completion: Completion? = nil
     ) {
-        let filename = defaultFilename(windowTitle: windowTitle)
+        guard let prepared = prepare(image, completion: completion) else { return }
+        let filename = defaultFilename(windowTitle: windowTitle, format: prepared.format)
         if let dirURL = SaveDirectoryAccess.resolveIfAccessible() {
-            writeImage(image, toDirectory: dirURL, filename: filename, securityScoped: true, completion: completion)
+            writePreparedImage(prepared, to: dirURL.appendingPathComponent(filename), chooseAvailableName: true,
+                               lease: SaveDirectoryLease(alreadyAccessing: dirURL), completion: completion)
             return
         }
 
@@ -82,7 +104,9 @@ enum ImageSaveService {
             sheetWindow: sheetWindow,
             activateApp: activateApp
         ) { dirURL, securityScoped in
-            writeImage(image, toDirectory: dirURL, filename: filename, securityScoped: securityScoped, completion: completion)
+            guard let dirURL else { completionOnMain(completion, nil); return }
+            writePreparedImage(prepared, to: dirURL.appendingPathComponent(filename), chooseAvailableName: true,
+                               lease: SaveDirectoryLease(alreadyAccessing: securityScoped ? dirURL : nil), completion: completion)
         }
     }
 
@@ -95,9 +119,10 @@ enum ImageSaveService {
         activateApp: Bool = true,
         completion: Completion? = nil
     ) {
+        guard let prepared = prepare(image, completion: completion) else { return }
         let panel = NSSavePanel()
-        panel.allowedContentTypes = [ImageEncoder.utType]
-        panel.nameFieldStringValue = suggestedFilename ?? defaultFilename(windowTitle: windowTitle)
+        panel.allowedContentTypes = [prepared.format.utType]
+        panel.nameFieldStringValue = suggestedFilename ?? defaultFilename(windowTitle: windowTitle, format: prepared.format)
         panel.directoryURL = SaveDirectoryAccess.directoryHint()
         panel.canCreateDirectories = true
         panel.isExtensionHidden = false
@@ -106,63 +131,80 @@ enum ImageSaveService {
         }
 
         let handler: (NSApplication.ModalResponse) -> Void = { response in
-            guard response == .OK, let url = panel.url, let imageData = ImageEncoder.encode(image) else {
+            // Cancelling the panel is not a failure — don't report it.
+            guard response == .OK, let url = panel.url else {
                 completionOnMain(completion, nil)
                 return
             }
-            DispatchQueue.global(qos: .userInitiated).async {
-                do {
-                    try imageData.write(to: url)
-                    completionOnMain(completion, url)
-                } catch {
-                    #if DEBUG
-                    NSLog("macshot: failed to save screenshot to \(url.path): \(error.localizedDescription)")
-                    #endif
-                    completionOnMain(completion, nil)
-                }
-            }
+            let accessing = url.startAccessingSecurityScopedResource()
+            writePreparedImage(prepared, to: url, chooseAvailableName: false,
+                               lease: SaveDirectoryLease(alreadyAccessing: accessing ? url : nil), completion: completion)
         }
 
         presentPanel(panel, sheetWindow: sheetWindow, activateApp: activateApp, completionHandler: handler)
     }
 
-    private static func defaultFilename(windowTitle: String?) -> String {
+    private static func defaultFilename(windowTitle: String?, format: ImageEncoder.Format) -> String {
         let template = UserDefaults.standard.string(forKey: FilenameFormatter.userDefaultsKey) ?? FilenameFormatter.defaultTemplate
         let base = FilenameFormatter.format(template: template, windowTitle: windowTitle)
-        return "\(base).\(ImageEncoder.fileExtension)"
+        return "\(base).\(format.fileExtension)"
     }
 
-    private static func writeImage(
-        _ image: NSImage,
-        toDirectory dirURL: URL,
-        filename: String,
-        securityScoped: Bool,
-        completion: Completion?
-    ) {
-        DispatchQueue.global(qos: .userInitiated).async {
-            defer { if securityScoped { SaveDirectoryAccess.stopAccessing(url: dirURL) } }
-            guard let imageData = ImageEncoder.encode(image) else {
-                completionOnMain(completion, nil)
-                return
-            }
-
-            do {
-                let savedURL = try writeWithoutOverwriting(imageData, in: dirURL, filename: filename)
-                completionOnMain(completion, savedURL)
-            } catch {
-                #if DEBUG
-                NSLog("macshot: failed to save screenshot in \(dirURL.path): \(error.localizedDescription)")
-                #endif
-                completionOnMain(completion, nil)
-            }
+    private static func prepare(_ image: NSImage, completion: Completion?) -> ImageEncoder.PreparedImage? {
+        do { return try ImageEncoder.PreparedImage(image) }
+        catch {
+            reportFailure(L("Could not encode the screenshot."))
+            completionOnMain(completion, nil)
+            return nil
         }
+    }
+
+    /// Carries the written path out of the export operation, which the
+    /// coordinator types as returning `Void`. Written once inside the job and
+    /// read in its completion, which the coordinator runs strictly afterwards.
+    private final class SavedDestination: @unchecked Sendable {
+        var url: URL?
+    }
+
+    /// The same prepared operation handles Save and Save As. The app owns it
+    /// through completion (including quit), and the destination is only replaced
+    /// after the fully encoded file has been flushed successfully.
+    static func writePreparedImage(_ prepared: ImageEncoder.PreparedImage, to url: URL,
+                                   chooseAvailableName: Bool, lease: SaveDirectoryLease? = nil,
+                                   completion: Completion?) {
+        let destination = SavedDestination()
+        MediaExportCoordinator.shared.start(title: url.lastPathComponent, status: L("Saving..."), operation: { cancellation, _ in
+            destination.url = try await MediaExportIO.perform {
+                defer { withExtendedLifetime(lease) {} }
+                return try autoreleasepool { () -> URL in
+                    try cancellation.check()
+                    guard let data = prepared.encode() else { throw CocoaError(.fileWriteUnknown) }
+                    if chooseAvailableName {
+                        return try writeWithoutOverwriting(data, in: url.deletingLastPathComponent(),
+                                                           filename: url.lastPathComponent,
+                                                           beforePublish: cancellation.beginPublication)
+                    }
+                    let transaction = try AtomicMediaSave(destinationURL: url)
+                    try data.write(to: transaction.stagingURL)
+                    try transaction.commit(beforePublish: cancellation.beginPublication)
+                    return url
+                }
+            }
+        }, completion: { result in
+            switch result {
+            case .success: completion?(destination.url)
+            case .failure(let error):
+                reportFailure(String(format: L("Could not save the screenshot: %@"), error.localizedDescription))
+                completion?(nil)
+            }
+        })
     }
 
     private static func requestSaveDirectoryAccess(
         panelLevel: NSWindow.Level?,
         sheetWindow: NSWindow?,
         activateApp: Bool,
-        completion: @escaping (URL, Bool) -> Void
+        completion: @escaping (URL?, Bool) -> Void
     ) {
         let panel = NSOpenPanel()
         panel.canChooseDirectories = true
@@ -176,7 +218,7 @@ enum ImageSaveService {
         }
 
         let handler: (NSApplication.ModalResponse) -> Void = { response in
-            guard response == .OK, let url = panel.url else { return }
+            guard response == .OK, let url = panel.url else { completion(nil, false); return }
             SaveDirectoryAccess.save(url: url)
             if let scopedURL = SaveDirectoryAccess.resolveIfAccessible() {
                 completion(scopedURL, true)
@@ -217,9 +259,11 @@ enum ImageSaveService {
     /// free path and race, silently replacing one capture.
     /// Returns the URL the data was written to — not necessarily
     /// `dirURL/filename`, since a name clash appends a counter.
-    private static func writeWithoutOverwriting(_ data: Data,
+    nonisolated private static func writeWithoutOverwriting(_ data: Data,
                                                 in dirURL: URL,
-                                                filename: String) throws -> URL {
+                                                filename: String,
+                                                beforePublish: () throws -> Void) throws -> URL {
+        try beforePublish()
         let base = (filename as NSString).deletingPathExtension
         let ext = (filename as NSString).pathExtension
         var candidate = dirURL.appendingPathComponent(filename)
@@ -227,12 +271,15 @@ enum ImageSaveService {
 
         while true {
             do {
-                try data.write(to: candidate, options: .withoutOverwriting)
+                let transaction = try AtomicMediaSave(destinationURL: candidate)
+                try data.write(to: transaction.stagingURL)
+                // Exclusive rename arbitrates concurrent saves of the same name.
+                try transaction.commit(overwritingExisting: false)
                 return candidate
             } catch {
                 let nsError = error as NSError
-                guard nsError.domain == NSCocoaErrorDomain,
-                      nsError.code == CocoaError.Code.fileWriteFileExists.rawValue else {
+                guard (nsError.domain == NSPOSIXErrorDomain && nsError.code == Int(EEXIST)) ||
+                      (nsError.domain == NSCocoaErrorDomain && nsError.code == CocoaError.Code.fileWriteFileExists.rawValue) else {
                     throw error
                 }
                 if counter < 1000 {

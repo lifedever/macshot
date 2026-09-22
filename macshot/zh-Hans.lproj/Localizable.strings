@@ -41,7 +41,6 @@
 
 /* History Panel */
 "Copy" = "拷贝";
-"Save As..." = "存储为...";
 "Open in Editor" = "在编辑器中打开";
 "Pin to Screen" = "固定到屏幕";
 "Quick Look" = "快速预览";
@@ -54,7 +53,6 @@
 
 /* Floating Thumbnail */
 "Close All" = "关闭全部";
-"Save All to Folder…" = "全部存储到文件夹…";
 "Save" = "存储";
 "View" = "查看";
 
@@ -421,6 +419,7 @@
 /* Recording Toast */
 "Recording saved" = "录制已保存";
 "%@ • Recording saved" = "%@ · 录制已保存";
+"Recording failed: %@" = "录制失败: %@";
 "Copy Path" = "拷贝路径";
 "Path copied!" = "路径已拷贝！";
 
@@ -431,6 +430,9 @@
 "Export failed" = "导出失败";
 "Saved to %@" = "已存储到 %@";
 "Save failed" = "存储失败";
+"Could not encode the screenshot." = "无法编码截图。";
+"Could not save the screenshot: %@" = "无法存储截图: %@";
+"Could not save the screenshot to history." = "无法将截图存储到历史记录。";
 
 /* Barcode Detector */
 /* "Open" and "Copy" are shared with other sections */
@@ -470,7 +472,7 @@
 
 /* Recording — Input Monitoring Permission */
 "Input Monitoring Required" = "需要输入监控权限";
-"macshot needs Input Monitoring permission to show keystrokes during recording. Please grant access in System Settings, then try again." = "macshot 需要输入监控权限才能在录制时显示按键。请在 System Settings 中授予权限，然后重试。";
+"macshot needs Input Monitoring permission to highlight mouse clicks or show keystrokes during recording. Please grant access in System Settings, then try again." = "macshot 需要输入监控权限才能在录制时高亮显示鼠标点击或显示按键。请在系统设置中授予权限，然后重试。";
 "macshot needs Accessibility permission to snap to individual interface elements. Please grant access in System Settings, then try again." = "macshot 需要辅助功能权限才能吸附到单个界面元素。请在系统设置中授予访问权限，然后重试。";
 
 /* Recording — Keystroke Overlay */
@@ -784,3 +786,22 @@
 "Corner radius" = "圆角半径";
 "Background blur" = "背景模糊";
 "Places the capture on a background with rounded corners and a drop shadow." = "把截图放在背景上，加圆角和投影。";
+"Saving..." = "正在保存…";
+
+"Show Recordings in Finder" = "在访达中显示录制文件";
+
+"Cancelled" = "已取消";
+
+"Cancelling..." = "正在取消...";
+"Preparing video..." = "正在准备视频...";
+"History is busy saving. Please try again shortly." = "正在保存历史记录。请稍后重试。";
+
+// Video editor accessibility
+"Play" = "播放";
+"Mute" = "静音";
+"Unmute" = "取消静音";
+
+/* Upload status */
+"Uploading…" = "正在上传…";
+"Google Drive not signed in" = "还没登录 Google Drive";
+"S3 not configured — check Settings" = "还没配置 S3 上传，去设置里填。";

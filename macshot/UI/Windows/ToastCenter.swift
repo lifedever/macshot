@@ -82,8 +82,7 @@ final class ToastCenter {
         // stay click-through so they never swallow a click on what is behind.
         let effectiveDuration = action == nil ? duration : duration + Self.actionDurationBonus
 
-        let screen = NSScreen.main ?? NSScreen.screens[0]
-        let frame = screen.visibleFrame
+        let frame = NSScreen.preferredVisibleFrame
         let restingY = frame.minY + Self.bottomMargin
         let x = frame.midX - size.width / 2
 
