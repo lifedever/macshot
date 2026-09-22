@@ -83,6 +83,12 @@ struct OverlayEditorState {
 
 class OverlayView: NSView {
 
+    /// Dimming applied outside the selection. Shared so the capture overlay,
+    /// the recording-mode overlay and the recording border panel all match —
+    /// they are the same visual idea at three points in one flow.
+    static let selectionScrimAlpha: CGFloat = 0.45
+
+
     // MARK: - Properties
 
     weak var overlayDelegate: OverlayViewDelegate?
@@ -1855,13 +1861,32 @@ class OverlayView: NSView {
                     image.draw(in: bounds, from: .zero, operation: .copy, fraction: 1.0)
                 }
                 if !selectionOutsideShadowDisabled {
-                    NSColor.black.withAlphaComponent(0.45).setFill()
+                    NSColor.black.withAlphaComponent(Self.selectionScrimAlpha).setFill()
                     NSBezierPath(rect: bounds).fill()
                 }
             } else {
                 // No screenshot yet — fully transparent. User sees live desktop
                 // through the overlay and can start selecting immediately.
                 context.cgContext.clear(bounds)
+            }
+        } else {
+            // Recording mode, before the recording actually starts. The region
+            // stays clear so the user can see (and arrange) the live screen they
+            // are about to record, while everything outside it keeps the same
+            // scrim the selection had a moment ago.
+            //
+            // Once recording begins this view is torn down and
+            // `SelectionBorderOverlay` draws the same scrim, so the dimming is
+            // continuous across the whole flow.
+            context.cgContext.clear(bounds)
+            if !selectionOutsideShadowDisabled, selectionRect.width > 0, selectionRect.height > 0 {
+                let outside = NSBezierPath(rect: bounds)
+                outside.append(NSBezierPath(rect: selectionRect))
+                // Even-odd leaves the region untouched; a full-screen recording
+                // therefore dims nothing, which is what it should do.
+                outside.windingRule = .evenOdd
+                NSColor.black.withAlphaComponent(Self.selectionScrimAlpha).setFill()
+                outside.fill()
             }
         }
 
