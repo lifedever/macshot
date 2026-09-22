@@ -688,10 +688,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
     /// Point size for SF Symbol menu bar icons. Symbols carry their own internal padding,
     /// so they can fill the 22pt status bar slot without looking oversized.
     private static let statusBarSymbolSize: CGFloat = 18
-    /// The bundled `StatusBarIcon` asset is drawn edge-to-edge (its SVG viewBox is cropped
-    /// tight to the artwork), so rendering it at the symbol size would make it visibly larger
-    /// than every neighbouring menu bar item. Shrink it to match a symbol's actual ink height.
-    private static let statusBarAssetSize: CGFloat = 16
+    /// The bundled `StatusBarIcon` asset carries its own padding inside a 22pt viewBox, the
+    /// same way an SF Symbol does, so it takes the symbol size — at the old, smaller size its
+    /// artwork ended up shorter than every neighbouring item's.
+    private static let statusBarAssetSize: CGFloat = 18
 
     private func applyNormalStatusBarIcon() {
         if let button = statusItem.button {
