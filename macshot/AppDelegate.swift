@@ -199,12 +199,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
     private var delayCountdownWindow: NSWindow?
     private var delayTimer: Timer?
     private var delayEscMonitor: Any?
-    #if !OFFLINE
-    private var uploadToastController: UploadToastController?
-    #endif
-    /// Transient toast for failures that would otherwise be invisible — a save
-    /// that couldn't be written, a recording that produced no file.
-    private var errorToastController: UploadToastController?
     private var recordingEngine: RecordingEngine?
     private var terminatingAfterRecording = false
     private let terminationCoordinator = ApplicationTerminationCoordinator()
@@ -2139,14 +2133,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
     /// Reports a failure the user needs to know about. Losing a capture without
     /// any indication is worse than any error message.
     func showFailureToast(_ message: String) {
-        errorToastController?.dismiss()
-        let toast = UploadToastController()
-        errorToastController = toast
-        toast.onDismiss = { [weak self] in
-            self?.errorToastController = nil
-        }
-        toast.show(status: message)
-        toast.showError(message: message, asUploadFailure: false)
+        ToastCenter.shared.show(message, icon: .info, duration: 6)
     }
 
     func showPin(image: NSImage) {
@@ -2170,8 +2157,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
             let pasteboard = NSPasteboard.general
             pasteboard.clearContents()
             pasteboard.setString(link, forType: .string)
+            // Show the link itself: it is the result of the upload, and seeing
+            // it is how the user checks it went to the right host and path.
             ToastCenter.shared.show(
-                L("URL copied to the clipboard"),
+                String(format: L("Link copied: %@"), link),
                 action: URL(string: link).map { target in
                     .init(title: L("Open")) { NSWorkspace.shared.open(target) }
                 },

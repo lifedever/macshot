@@ -212,8 +212,22 @@ private final class ToastPillView: NSView {
 
     private var font: NSFont { .systemFont(ofSize: 13, weight: .medium) }
 
+    /// A save path or an upload link is long enough to stretch the pill past
+    /// the screen edge. Cap it and truncate in the middle, which keeps both
+    /// ends — the host and the filename are what identify a link.
+    private var maxTextWidth: CGFloat {
+        max(260, NSScreen.preferredVisibleFrame.width * 0.5)
+    }
+
+    private var paragraphStyle: NSParagraphStyle {
+        let style = NSMutableParagraphStyle()
+        style.lineBreakMode = .byTruncatingMiddle
+        return style
+    }
+
     private var textSize: NSSize {
-        (message as NSString).size(withAttributes: [.font: font])
+        let natural = (message as NSString).size(withAttributes: [.font: font])
+        return NSSize(width: min(ceil(natural.width), maxTextWidth), height: natural.height)
     }
 
     override var intrinsicContentSize: NSSize {
@@ -269,8 +283,9 @@ private final class ToastPillView: NSView {
             ? NSColor(srgbRed: 0.93, green: 0.93, blue: 0.94, alpha: 1)
             : NSColor(srgbRed: 0.08, green: 0.09, blue: 0.11, alpha: 1)
         (message as NSString).draw(
-            at: NSPoint(x: x, y: pill.midY - textSize.height / 2),
-            withAttributes: [.font: font, .foregroundColor: color])
+            in: NSRect(x: x, y: pill.midY - textSize.height / 2,
+                       width: textSize.width, height: textSize.height),
+            withAttributes: [.font: font, .foregroundColor: color, .paragraphStyle: paragraphStyle])
         x += ceil(textSize.width)
 
         // Swatch trails the text: leading it would put two glyphs in a row before the

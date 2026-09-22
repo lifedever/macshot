@@ -380,7 +380,6 @@
 "Works with AWS S3, Cloudflare R2, MinIO, DigitalOcean Spaces, Backblaze B2, and other S3-compatible services. Supports images and videos." = "Works with AWS S3, Cloudflare R2, MinIO, DigitalOcean Spaces, Backblaze B2, and other S3-compatible services. Supports images and videos.";
 "Configure S3 in Preferences" = "Configure S3 in Preferences";
 "Sign in to Google Drive in Preferences" = "Sign in to Google Drive in Preferences";
-"Video upload requires Google Drive or S3" = "Video upload requires Google Drive or S3";
 
 /* Preferences - About */
 "macshot" = "macshot";
@@ -805,3 +804,5 @@
 "Uploading…" = "Uploading…";
 "Google Drive not signed in" = "Google Drive not signed in";
 "S3 not configured — check Settings" = "S3 not configured — check Settings";
+"Link copied: %@" = "Link copied: %@";
+"Video upload requires Google Drive, S3 or GitHub" = "Video upload requires Google Drive, S3 or GitHub";

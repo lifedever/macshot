@@ -1674,6 +1674,15 @@ private final class VideoEditorView: NSView {
         AppDelegate.showSavedToast(for: url)
     }
 
+    /// Completion toast for an upload, matching what an image upload shows.
+    private func showUploadedStatus(link: String) {
+        ToastCenter.shared.show(
+            String(format: L("Link copied: %@"), link),
+            action: URL(string: link).map { target in
+                .init(title: L("Open")) { NSWorkspace.shared.open(target) }
+            })
+    }
+
     /// One app-owned lifecycle for every editor export. The native progress
     /// window remains usable after this view has been released.
     private func startExport(status: String, title: String,
@@ -2383,12 +2392,21 @@ private final class VideoEditorView: NSView {
             showStatus(L("Configure S3 in Settings"), isError: true)
             return
         }
-        if provider != "gdrive" && provider != "s3" {
-            showStatus(L("Video upload requires Google Drive or S3"), isError: true)
+        if provider == "github" && !GitHubUploader.shared.isConfigured {
+            showStatus(L("GitHub upload is not configured — check Settings."), isError: true)
+            return
+        }
+        if provider != "gdrive" && provider != "s3" && provider != "github" {
+            showStatus(L("Video upload requires Google Drive, S3 or GitHub"), isError: true)
             return
         }
 
-        let providerLabel = provider == "s3" ? "S3" : "Drive"
+        let providerLabel: String
+        switch provider {
+        case "s3":     providerLabel = "S3"
+        case "github": providerLabel = "GitHub"
+        default:       providerLabel = "Drive"
+        }
         showStatus(String(format: L("Uploading to %@... %d%%"), providerLabel, 0))
 
         let progressHandler: @MainActor @Sendable (Double) -> Void = { [weak self] fraction in
@@ -2400,7 +2418,7 @@ private final class VideoEditorView: NSView {
             case .success(let link):
                 NSPasteboard.general.clearContents()
                 NSPasteboard.general.setString(link, forType: .string)
-                self?.showStatus(L("Uploaded! Link copied."))
+                self?.showUploadedStatus(link: link)
             case .failure(let error):
                 self?.showStatus(String(format: L("Upload failed: %@"), error.localizedDescription), isError: true)
             }
@@ -2413,9 +2431,13 @@ private final class VideoEditorView: NSView {
                 if isTemp { try? FileManager.default.removeItem(at: fileURL) }
                 completionHandler(result)
             }
-            if provider == "s3" {
+            switch provider {
+            case "s3":
                 S3Uploader.shared.uploadVideo(url: fileURL, progress: progressHandler, completion: wrappedCompletion)
-            } else {
+            case "github":
+                // The Contents API is one PUT, so there is no progress to report.
+                GitHubUploader.shared.uploadVideo(url: fileURL, completion: wrappedCompletion)
+            default:
                 GoogleDriveUploader.shared.uploadVideo(url: fileURL, progress: progressHandler, completion: wrappedCompletion)
             }
         }

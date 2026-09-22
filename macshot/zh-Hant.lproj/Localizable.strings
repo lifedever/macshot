@@ -367,7 +367,6 @@
 "Works with AWS S3, Cloudflare R2, MinIO, DigitalOcean Spaces, Backblaze B2, and other S3-compatible services. Supports images and videos." = "支援 AWS S3、Cloudflare R2、MinIO、DigitalOcean Spaces、Backblaze B2 及其他 S3 相容服務。支援影像和影片。";
 "Configure S3 in Preferences" = "在偏好設定中設定 S3";
 "Sign in to Google Drive in Preferences" = "在偏好設定中登入 Google Drive";
-"Video upload requires Google Drive or S3" = "影片上傳需要 Google Drive 或 S3";
 
 /* Preferences - About */
 "macshot" = "macshot";
@@ -801,3 +800,5 @@
 "Uploading…" = "正在上傳…";
 "Google Drive not signed in" = "還沒登入 Google Drive";
 "S3 not configured — check Settings" = "還沒設定 S3 上傳，去設定裡填。";
+"Link copied: %@" = "連結已拷貝：%@";
+"Video upload requires Google Drive, S3 or GitHub" = "影片上傳需要 Google Drive、S3 或 GitHub";
