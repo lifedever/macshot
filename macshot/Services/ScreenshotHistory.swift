@@ -9,6 +9,10 @@ struct HistoryEntry {
     var pixelWidth: Int
     var pixelHeight: Int
     var hasAnnotations: Bool = false  // true if editable raw data is saved alongside
+    /// Title of the window the capture came from, when one was identifiable.
+    /// Without it the Recent Captures menu is a list of dimensions and ages,
+    /// which says nothing about which shot is which.
+    var windowTitle: String? = nil
     var thumbnail: NSImage?  // lazily cached, tiny
 
     /// The time used for "order by last edit": the most recent of edit/creation.
@@ -95,7 +99,7 @@ class ScreenshotHistory {
     ///   - rawImage: The raw screenshot without annotations (optional — for editable history).
     ///   - annotations: Live annotation objects (optional — serialized to JSON for editable history).
     ///   - editState: Live post-processing settings (optional — serialized for non-destructive editing).
-    func add(image: NSImage, rawImage: NSImage? = nil, annotations: [Annotation]? = nil, editState: CaptureEditState? = nil) {
+    func add(image: NSImage, rawImage: NSImage? = nil, annotations: [Annotation]? = nil, editState: CaptureEditState? = nil, windowTitle: String? = nil) {
         let max = maxEntries
         guard max > 0 else { return }
 
@@ -118,6 +122,7 @@ class ScreenshotHistory {
             pixelWidth: Int(size.width * scale),
             pixelHeight: Int(size.height * scale),
             hasAnnotations: hasEditableData,
+            windowTitle: windowTitle,
             thumbnail: NSImage(size: NSSize(width: 1, height: 1))
         )
         entries.insert(entry, at: 0)
@@ -431,6 +436,7 @@ class ScreenshotHistory {
         let pixelHeight: Int
         var hasAnnotations: Bool?  // optional for backward compat with old index files
         var lastEditedAt: Date?    // optional for backward compat (nil = never edited)
+        var windowTitle: String?   // optional for backward compat (nil = unknown source)
     }
 
     private func saveIndex() {
@@ -438,7 +444,8 @@ class ScreenshotHistory {
             IndexEntry(id: $0.id, fileExtension: $0.fileExtension, timestamp: $0.timestamp,
                        pixelWidth: $0.pixelWidth, pixelHeight: $0.pixelHeight,
                        hasAnnotations: $0.hasAnnotations ? true : nil,
-                       lastEditedAt: $0.lastEditedAt)
+                       lastEditedAt: $0.lastEditedAt,
+                       windowTitle: $0.windowTitle)
         }
         if let data = try? JSONEncoder().encode(indexEntries) {
             try? data.write(to: indexFile, options: .atomic)
@@ -454,7 +461,7 @@ class ScreenshotHistory {
             let ext = ie.fileExtension
             let fileURL = historyDir.appendingPathComponent("\(ie.id).\(ext)")
             guard FileManager.default.fileExists(atPath: fileURL.path) else { return nil }
-            return HistoryEntry(id: ie.id, fileExtension: ext, timestamp: ie.timestamp, lastEditedAt: ie.lastEditedAt, pixelWidth: ie.pixelWidth, pixelHeight: ie.pixelHeight, hasAnnotations: ie.hasAnnotations ?? false, thumbnail: nil)
+            return HistoryEntry(id: ie.id, fileExtension: ext, timestamp: ie.timestamp, lastEditedAt: ie.lastEditedAt, pixelWidth: ie.pixelWidth, pixelHeight: ie.pixelHeight, hasAnnotations: ie.hasAnnotations ?? false, windowTitle: ie.windowTitle, thumbnail: nil)
         }
 
         // Apply the persisted ordering preference on load so the panel reflects

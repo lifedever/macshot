@@ -2445,7 +2445,8 @@ extension AppDelegate: OverlayWindowControllerDelegate {
                 image: image,
                 rawImage: annotationData?.rawImage,
                 annotations: annotationData?.annotations,
-                editState: annotationData?.editState)
+                editState: annotationData?.editState,
+                windowTitle: capturedWindowTitle)
             captureTimingTrace?.mark("screenshot added to history")
             // The entry just added is at index 0
             let entryID = ScreenshotHistory.shared.entries.first?.id
@@ -2542,7 +2543,8 @@ extension AppDelegate: OverlayWindowControllerDelegate {
             image: image,
             rawImage: annotationData?.rawImage,
             annotations: annotationData?.annotations,
-            editState: annotationData?.editState
+            editState: annotationData?.editState,
+            windowTitle: capturedWindowTitle
         )
         let appToRefocus = previousApp
         dismissOverlays(refocusPreviousApp: false)
@@ -2585,7 +2587,8 @@ extension AppDelegate: OverlayWindowControllerDelegate {
             image: image,
             rawImage: annotationData?.rawImage,
             annotations: annotationData?.annotations,
-            editState: annotationData?.editState
+            editState: annotationData?.editState,
+            windowTitle: capturedWindowTitle
         )
         let appToRefocus = previousApp
         dismissOverlays(refocusPreviousApp: false)
@@ -3380,7 +3383,13 @@ extension AppDelegate: NSMenuDelegate {
         }
 
         for (i, entry) in entries.enumerated() {
-            let title = "\(entry.pixelWidth) \u{00D7} \(entry.pixelHeight)  —  \(entry.timeAgoString)"
+            // Lead with where the shot came from when we know: a column of
+            // dimensions and ages gives no way to tell one capture from another.
+            let source = entry.windowTitle?.trimmingCharacters(in: .whitespacesAndNewlines)
+            let dimensions = "\(entry.pixelWidth) \u{00D7} \(entry.pixelHeight)"
+            let title = (source?.isEmpty == false)
+                ? "\(source!)  —  \(dimensions)  —  \(entry.timeAgoString)"
+                : "\(dimensions)  —  \(entry.timeAgoString)"
             let item = NSMenuItem(title: title, action: #selector(copyHistoryEntry(_:)), keyEquivalent: "")
             item.target = self
             item.tag = i
@@ -3394,6 +3403,32 @@ extension AppDelegate: NSMenuDelegate {
         clearItem.target = self
         clearItem.tag = 9000
         menu.addItem(clearItem)
+    }
+
+    /// Preview the highlighted capture beside the menu.
+    ///
+    /// `menu(_:willHighlight:)` is the only hook AppKit gives for menu hover —
+    /// menu items do not deliver mouse-tracking events of their own.
+    func menu(_ menu: NSMenu, willHighlight item: NSMenuItem?) {
+        guard menu === historyMenu else { return }
+        guard let item, item.action == #selector(copyHistoryEntry(_:)) else {
+            MenuPreviewController.shared.hide()
+            return
+        }
+        let entries = ScreenshotHistory.shared.entries
+        let index = item.tag
+        guard index >= 0, index < entries.count,
+              let preview = ScreenshotHistory.shared.loadPreview(for: entries[index])
+        else {
+            MenuPreviewController.shared.hide()
+            return
+        }
+        MenuPreviewController.shared.show(image: preview, near: NSEvent.mouseLocation)
+    }
+
+    func menuDidClose(_ menu: NSMenu) {
+        guard menu === historyMenu else { return }
+        MenuPreviewController.shared.hide()
     }
 
     @objc private func copyHistoryEntry(_ sender: NSMenuItem) {
