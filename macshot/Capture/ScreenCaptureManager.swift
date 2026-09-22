@@ -493,6 +493,50 @@ class ScreenCaptureManager {
 
     // MARK: - Single window capture (with transparency)
 
+    /// Whether an ordinary app window sits above `windowID` and covers part of it.
+    ///
+    /// A window snap normally takes its pixels from the full-screen shot so
+    /// translucent chrome keeps the blend the user actually saw. That is only
+    /// safe while nothing covers the window — anything stacked on top would be
+    /// baked into the crop. When this returns true the caller must fall back to
+    /// the window's own capture instead.
+    ///
+    /// macshot's own windows are skipped: the capture overlay is always on top
+    /// and is never part of what is being captured.
+    static func windowIsOccluded(windowID: CGWindowID) -> Bool {
+        func bounds(of info: [String: Any]) -> CGRect? {
+            guard let b = info[kCGWindowBounds as String] as? [String: CGFloat] else { return nil }
+            let rect = CGRect(x: b["X"] ?? 0, y: b["Y"] ?? 0,
+                              width: b["Width"] ?? 0, height: b["Height"] ?? 0)
+            return rect.isEmpty ? nil : rect
+        }
+
+        guard let target = CGWindowListCopyWindowInfo(
+                [.optionIncludingWindow], windowID) as? [[String: Any]],
+              let targetRect = target.first.flatMap(bounds)
+        else { return false }
+
+        guard let above = CGWindowListCopyWindowInfo(
+                [.optionOnScreenAboveWindow, .excludeDesktopElements], windowID) as? [[String: Any]]
+        else { return false }
+
+        let ownPID = Int(ProcessInfo.processInfo.processIdentifier)
+        for info in above {
+            // Layer 0 only: menus, tooltips and other transient chrome float
+            // above everything and would otherwise report a permanent occlusion.
+            guard (info[kCGWindowLayer as String] as? Int) == 0,
+                  (info[kCGWindowOwnerPID as String] as? Int) != ownPID,
+                  (info[kCGWindowAlpha as String] as? CGFloat ?? 1) > 0.05,
+                  let rect = bounds(of: info)
+            else { continue }
+            // Ignore a hairline overlap along an edge — it costs nothing visually
+            // and isn't worth giving up the on-screen blend for.
+            let overlap = rect.intersection(targetRect)
+            if !overlap.isNull && overlap.width * overlap.height > 100 { return true }
+        }
+        return false
+    }
+
     /// Captures a single window by its CGWindowID, returning an image with transparent corners.
     /// On macOS 14+, uses `desktopIndependentWindow` filter for clean transparent background.
     /// On macOS 12–13, uses `CGWindowListCreateImage` targeting the specific window.

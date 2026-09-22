@@ -191,7 +191,7 @@ final class RecordingEngine: NSObject {
             }
 
             let recordSystemAudio: Bool = {
-                if #available(macOS 13.0, *) { return UserDefaults.standard.bool(forKey: "recordSystemAudio") }
+                return UserDefaults.standard.bool(forKey: "recordSystemAudio")
                 return false
             }()
             let recordMicAudio = UserDefaults.standard.bool(forKey: "recordMicAudio")

@@ -17,6 +17,7 @@ protocol OverlayViewDelegate: AnyObject {
     func overlayViewDidRequestUpload()
     func overlayViewDidRequestShare(anchorView: NSView?)
     @available(macOS 14.0, *)
+
     func overlayViewDidRequestRemoveBackground()
     func overlayViewDidRequestEnterRecordingMode()
     func overlayViewDidRequestStartRecording(rect: NSRect)
@@ -448,7 +449,34 @@ class OverlayView: NSView {
     private var preSelectionPresetButtonRect: NSRect = .zero
 
     // Beautify
-    var beautifyEnabled: Bool = UserDefaults.standard.bool(forKey: "beautifyEnabled")
+    /// Whether beautify applies to *this* capture. Distinct from the stored
+    /// preference: beautify is applied automatically only to whole-window and
+    /// full-screen captures. A drag-selected region is a deliberate crop of
+    /// something specific, and wrapping it in a gradient is rarely what was
+    /// wanted — the toolbar button is there when it is.
+    var beautifyEnabled: Bool = false
+
+    /// The stored preference, i.e. "beautify the captures where it makes sense".
+    private var beautifyPreference: Bool = UserDefaults.standard.object(forKey: "beautifyEnabled") as? Bool ?? true
+
+    /// Set when the selection covers the whole screen rather than a dragged region.
+    var selectionIsFullScreen: Bool = false
+
+    /// Beautify is applied up front only for the capture kinds it suits.
+    private var beautifyAppliesAutomatically: Bool {
+        beautifyPreference && (selectionIsWindowSnap || selectionIsFullScreen)
+    }
+
+    /// Re-evaluate whether this capture beautifies. Called once the selection
+    /// kind is known — which is only after the selection is committed.
+    func applyBeautifyPolicyForSelection() {
+        let shouldApply = beautifyAppliesAutomatically
+        guard beautifyEnabled != shouldApply else { return }
+        beautifyEnabled = shouldApply
+        cachedCompositedImage = nil
+        updateBeautifyFitZoom()
+        needsDisplay = true
+    }
     var beautifyStyleIndex: Int = UserDefaults.standard.integer(
         forKey: "beautifyStyleIndex")
     var beautifyMode: BeautifyMode =
@@ -998,6 +1026,24 @@ class OverlayView: NSView {
     var snappedWindowID: CGWindowID? = nil
     /// Independently captured window image (with transparent corners) for beautify snap mode.
     var snappedWindowImage: NSImage? = nil
+    /// Something was stacked over the snapped window when it was captured, so the
+    /// full-screen shot can't supply its pixels — `compositedImage` has to draw
+    /// the window's own capture instead. See `ScreenCaptureManager.windowIsOccluded`.
+    var snappedWindowWasOccluded: Bool = false
+
+    /// Drop every trace of a window snap. Kept in one place so a new piece of
+    /// snap state can't be left behind by one of the several reset sites.
+    private func clearWindowSnapState() {
+        selectionIsWindowSnap = false
+        snappedWindowID = nil
+        snappedWindowImage = nil
+        snappedWindowWasOccluded = false
+        // Resizing or moving the selection means it is a region now, whatever it
+        // started as — so the automatic beautify no longer applies. An explicit
+        // toolbar toggle survives this, because it sets `beautifyEnabled`
+        // directly rather than going through the policy.
+        selectionIsFullScreen = false
+    }
     private var snapQueryInFlight: Bool = false
     private var pendingSnapQueryPoint: NSPoint?
     private var browserAccessibilityRetryWorkItems: [DispatchWorkItem] = []
@@ -3611,10 +3657,14 @@ class OverlayView: NSView {
     }
 
     /// Apply the Beautify enabled state consistently regardless of which UI control changed it.
+    ///
+    /// This is a per-capture override and deliberately does not write the
+    /// preference: turning beautify on for one drag-selected screenshot should
+    /// not silently change what every future capture does. The Settings pane
+    /// owns the stored value.
     func setBeautifyEnabled(_ enabled: Bool) {
         guard beautifyEnabled != enabled else { return }
         beautifyEnabled = enabled
-        UserDefaults.standard.set(enabled, forKey: "beautifyEnabled")
         cachedCompositedImage = nil
         startBeautifyToolbarAnimation()
         needsDisplay = true
@@ -4392,53 +4442,49 @@ class OverlayView: NSView {
         return (snapDx, snapDy)
     }
 
+    /// Stroke one alignment guide segment in the shared dashed-grey style.
+    private func strokeSnapGuide(from start: NSPoint, to end: NSPoint) {
+        let line = NSBezierPath()
+        line.move(to: start)
+        line.line(to: end)
+        let pattern = ToolbarLayout.snapGuideDashPattern
+        line.setLineDash(pattern, count: pattern.count, phase: 0)
+        line.lineWidth = ToolbarLayout.snapGuideLineWidth
+        ToolbarLayout.snapGuideColor.setStroke()
+        line.stroke()
+    }
+
     /// Draw snap guide lines (called from draw after annotations, before toolbars).
     private func drawSnapGuides() {
         guard snapGuidesEnabled else { return }
 
-        let guideColor = NSColor.systemCyan.withAlphaComponent(0.6)
-        guideColor.setStroke()
-
         if let gx = snapGuideX {
-            let line = NSBezierPath()
-            line.move(to: NSPoint(x: gx, y: selectionRect.minY))
-            line.line(to: NSPoint(x: gx, y: selectionRect.maxY))
-            line.lineWidth = 0.5
-            let pattern: [CGFloat] = [4, 3]
-            line.setLineDash(pattern, count: 2, phase: 0)
-            line.stroke()
+            strokeSnapGuide(
+                from: NSPoint(x: gx, y: selectionRect.minY),
+                to: NSPoint(x: gx, y: selectionRect.maxY))
         }
 
         if let gy = snapGuideY {
-            let line = NSBezierPath()
-            line.move(to: NSPoint(x: selectionRect.minX, y: gy))
-            line.line(to: NSPoint(x: selectionRect.maxX, y: gy))
-            line.lineWidth = 0.5
-            let pattern: [CGFloat] = [4, 3]
-            line.setLineDash(pattern, count: 2, phase: 0)
-            line.stroke()
+            strokeSnapGuide(
+                from: NSPoint(x: selectionRect.minX, y: gy),
+                to: NSPoint(x: selectionRect.maxX, y: gy))
         }
     }
 
-    /// Solid accent guide line(s) on the image edge the selection just snapped
-    /// to (boundary snap). Spans the full overlay so the snapped image line is
-    /// obvious. Drawn only while resizing with an active snap.
+    /// Guide line(s) on the image edge the selection just snapped to (boundary
+    /// snap). Spans the full overlay so the snapped image line is obvious.
+    /// Drawn only while resizing with an active snap.
     private func drawBoundarySnapGuides() {
         guard boundarySnapGuideX != nil || boundarySnapGuideY != nil else { return }
-        ToolbarLayout.accentColor.withAlphaComponent(0.9).setStroke()
         if let gx = boundarySnapGuideX {
-            let line = NSBezierPath()
-            line.move(to: NSPoint(x: gx, y: bounds.minY))
-            line.line(to: NSPoint(x: gx, y: bounds.maxY))
-            line.lineWidth = 1
-            line.stroke()
+            strokeSnapGuide(
+                from: NSPoint(x: gx, y: bounds.minY),
+                to: NSPoint(x: gx, y: bounds.maxY))
         }
         if let gy = boundarySnapGuideY {
-            let line = NSBezierPath()
-            line.move(to: NSPoint(x: bounds.minX, y: gy))
-            line.line(to: NSPoint(x: bounds.maxX, y: gy))
-            line.lineWidth = 1
-            line.stroke()
+            strokeSnapGuide(
+                from: NSPoint(x: bounds.minX, y: gy),
+                to: NSPoint(x: bounds.maxX, y: gy))
         }
     }
 
@@ -6226,9 +6272,7 @@ class OverlayView: NSView {
                 let handle = hitTestHandle(at: point)
                 if handle != .none {
                     isResizingSelection = true
-                    selectionIsWindowSnap = false
-                    snappedWindowID = nil
-                    snappedWindowImage = nil
+                    clearWindowSnapState()
                     resizeHandle = handle
                     return
                 }
@@ -7182,6 +7226,7 @@ class OverlayView: NSView {
     private func finishSelection() {
         if selectionRect.width > 5 || selectionRect.height > 5 {
             // Real drag — use drawn rect as-is
+            selectionIsFullScreen = false
             state = .selected
             applyPreSelectionLockAfterSelection()
             if !autoOCRMode && !autoQuickSaveMode && !autoScrollCaptureMode && !autoConfirmMode { showToolbars = true }
@@ -7201,6 +7246,9 @@ class OverlayView: NSView {
                 // user has to reach for a toolbar button, by which time the image is here.
                 let deferredQuickSave = autoQuickSaveMode
                 if deferredQuickSave { autoQuickSaveMode = false }
+                // Read the stacking order now, while the window is still where the
+                // user saw it — the overlay is above everything but is filtered out.
+                snappedWindowWasOccluded = ScreenCaptureManager.windowIsOccluded(windowID: wid)
                 Task { @MainActor in
                     if let cgImage = await ScreenCaptureManager.captureWindow(windowID: wid, screen: screen) {
                         self.snappedWindowImage = NSImage(cgImage: cgImage,
@@ -7219,11 +7267,13 @@ class OverlayView: NSView {
         } else {
             // Click (no drag), snap off — expand to full screen
             selectionRect = bounds
+            selectionIsFullScreen = true
             state = .selected
             if !autoOCRMode && !autoQuickSaveMode && !autoScrollCaptureMode && !autoConfirmMode { showToolbars = true }
             overlayDelegate?.overlayViewDidFinishSelection(selectionRect)
         }
         hoveredSnapRect = nil
+        applyBeautifyPolicyForSelection()
         // Update cursor to match the selected tool (replaces resize cursor from dragging)
         if let win = window {
             let point = convert(win.mouseLocationOutsideOfEventStream, from: nil)
@@ -7383,6 +7433,7 @@ class OverlayView: NSView {
     private func commitAnchoredSelection() {
         isAnchoredSelecting = false
         if selectionRect.width > 5 || selectionRect.height > 5 {
+            selectionIsFullScreen = false
             state = .selected
             applyPreSelectionLockAfterSelection()
             if !autoOCRMode && !autoQuickSaveMode && !autoScrollCaptureMode && !autoConfirmMode {
@@ -7394,6 +7445,7 @@ class OverlayView: NSView {
             selectionIsWindowSnap = snapMode == .window
             snappedWindowID = selectionIsWindowSnap ? hoveredSnapWindowID : nil
             if selectionIsWindowSnap, let wid = hoveredSnapWindowID, let screen = window?.screen {
+                snappedWindowWasOccluded = ScreenCaptureManager.windowIsOccluded(windowID: wid)
                 Task {
                     if let cgImage = await ScreenCaptureManager.captureWindow(windowID: wid, screen: screen) {
                         self.snappedWindowImage = NSImage(
@@ -7412,6 +7464,7 @@ class OverlayView: NSView {
             overlayDelegate?.overlayViewDidFinishSelection(selectionRect)
         } else {
             selectionRect = bounds
+            selectionIsFullScreen = true
             state = .selected
             if !autoOCRMode && !autoQuickSaveMode && !autoScrollCaptureMode && !autoConfirmMode {
                 showToolbars = true
@@ -7419,6 +7472,7 @@ class OverlayView: NSView {
             overlayDelegate?.overlayViewDidFinishSelection(selectionRect)
         }
         hoveredSnapRect = nil
+        applyBeautifyPolicyForSelection()
         if let win = window {
             updateCursorForPoint(convert(win.mouseLocationOutsideOfEventStream, from: nil))
         }
@@ -8081,9 +8135,7 @@ class OverlayView: NSView {
         clearToolbarHoverState(suppressUntilMouseMoved: true, clearPressed: false)
 
         if selectionIsWindowSnap {
-            selectionIsWindowSnap = false
-            snappedWindowID = nil
-            snappedWindowImage = nil
+            clearWindowSnapState()
             rebuildToolbarLayout()
             setToolbarHoverSuppressed(true)
             moveButton = moveSelectionButtonView()
@@ -8634,9 +8686,7 @@ class OverlayView: NSView {
             clearToolbarHoverState(suppressUntilMouseMoved: true, clearPressed: false)
             // Moving breaks window snap — revert to normal beautify mode
             if selectionIsWindowSnap {
-                selectionIsWindowSnap = false
-                snappedWindowID = nil
-                snappedWindowImage = nil
+                clearWindowSnapState()
                 rebuildToolbarLayout()
                 setToolbarHoverSuppressed(true)
                 moveButton = rightStripView?.buttonViews.first {
@@ -9657,8 +9707,10 @@ class OverlayView: NSView {
             && KeyboardShortcutMatcher.matches(event, character: "f", modifiers: [])
         {
             selectionRect = bounds
+            selectionIsFullScreen = true
             state = .selected
             hoveredSnapRect = nil
+            applyBeautifyPolicyForSelection()
             if autoQuickSaveMode {
                 autoQuickSaveMode = false
                 overlayDelegate?.overlayViewDidRequestQuickSave()
@@ -10280,6 +10332,21 @@ class OverlayView: NSView {
         return renderSelectedRegion(includeAnnotations: false)
     }
 
+    /// Room left around a window snap for its drop shadow.
+    static let windowShadowPadding: CGFloat = 28
+    static let windowShadowBlur: CGFloat = 26
+    static let windowShadowOffset: CGFloat = 8
+
+    /// Whether this render should cast a window shadow.
+    ///
+    /// Window snaps always carry one — it is what makes the result read as a
+    /// window rather than a rectangle of pixels, and it is why macOS's own
+    /// window capture looks the way it does. Beautify is excluded because it
+    /// already composites a shadow against its background; two would stack.
+    private var shouldDrawWindowShadow: Bool {
+        selectionIsWindowSnap && snappedWindowImage != nil && !beautifyEnabled
+    }
+
     private func renderSelectedRegion(includeAnnotations: Bool) -> NSImage? {
         guard selectionRect.width > 0, selectionRect.height > 0 else { return nil }
 
@@ -10307,8 +10374,14 @@ class OverlayView: NSView {
             height: round(selectionRect.height * scale) / scale
         )
 
-        let pixelW = Int(snappedRect.width * scale)
-        let pixelH = Int(snappedRect.height * scale)
+        // A window snap renders with the window's own drop shadow, which needs
+        // room outside the window rect. Beautify draws its own shadow onto its
+        // background, so this only applies when beautify is off.
+        let shadowPad = shouldDrawWindowShadow ? Self.windowShadowPadding : 0
+        let outputRect = snappedRect.insetBy(dx: -shadowPad, dy: -shadowPad)
+
+        let pixelW = Int(outputRect.width * scale)
+        let pixelH = Int(outputRect.height * scale)
         guard pixelW > 0, pixelH > 0 else { return nil }
         // Use the source image's color space to avoid expensive color conversion on render.
         // Fall back to sRGB if unavailable.
@@ -10337,18 +10410,36 @@ class OverlayView: NSView {
         cgCtx.interpolationQuality = .none
         // Scale the CG context so drawing in points maps to the correct pixels.
         cgCtx.scaleBy(x: scale, y: scale)
-        cgCtx.translateBy(x: -snappedRect.origin.x, y: -snappedRect.origin.y)
+        cgCtx.translateBy(x: -outputRect.origin.x, y: -outputRect.origin.y)
 
         let nsContext = NSGraphicsContext(cgContext: cgCtx, flipped: false)
         NSGraphicsContext.saveGraphicsState()
         NSGraphicsContext.current = nsContext
 
-        if selectionIsWindowSnap,
+        if shouldDrawWindowShadow, let windowImg = snappedWindowImage {
+            // Cast the shadow from the window's own alpha, so it follows the
+            // rounded corners instead of boxing the window in a rectangle.
+            cgCtx.saveGState()
+            cgCtx.setShadow(offset: CGSize(width: 0, height: -Self.windowShadowOffset),
+                            blur: Self.windowShadowBlur,
+                            color: NSColor.black.withAlphaComponent(0.34).cgColor)
+            windowImg.draw(in: selectionRect, from: .zero, operation: .sourceOver, fraction: 1.0)
+            cgCtx.restoreGState()
+        }
+
+        if selectionIsWindowSnap, snappedWindowWasOccluded, let windowImg = snappedWindowImage {
+            // Something was stacked over the window. The screen shot has that
+            // intruder baked in, so its pixels are unusable here — a window snap
+            // has to yield the window, the way every other capture tool does it.
+            // Draw the window's own capture and accept that translucent chrome
+            // renders without its desktop blend.
+            windowImg.draw(in: selectionRect, from: .zero, operation: .sourceOver, fraction: 1.0)
+        } else if selectionIsWindowSnap,
            let windowImg = snappedWindowImage,
            let maskCG = windowImg.cgImage(forProposedRect: nil, context: nil, hints: nil),
            let screenshot = captureSourceImage ?? screenshotImage {
-            // Window snap: take the *shape* from the window's own capture and the *pixels*
-            // from the full-screen shot.
+            // Unobstructed window snap: take the *shape* from the window's own
+            // capture and the *pixels* from the full-screen shot.
             //
             // Neither source is right on its own. Cropping the window's rect out of the
             // screen shot bakes whatever sits behind the window into its rounded corners.
@@ -10386,7 +10477,7 @@ class OverlayView: NSView {
         NSGraphicsContext.restoreGraphicsState()
 
         guard let cgImage = cgCtx.makeImage() else { return nil }
-        return NSImage(cgImage: cgImage, size: snappedRect.size)
+        return NSImage(cgImage: cgImage, size: outputRect.size)
     }
 
     // MARK: - Cleanup
@@ -10449,8 +10540,10 @@ class OverlayView: NSView {
     func applyFullScreenSelection() {
         selectionRect = bounds
         selectionStart = bounds.origin
+        selectionIsFullScreen = true
         state = .selected
         showToolbars = true
+        applyBeautifyPolicyForSelection()
         overlayDelegate?.overlayViewDidFinishSelection(selectionRect)
         needsDisplay = true
     }
@@ -10630,13 +10723,48 @@ class OverlayView: NSView {
         needsDisplay = true
     }
 
+    /// Re-read every persisted overlay preference from `UserDefaults`.
+    ///
+    /// Overlay controllers are pooled and their views outlive a capture, so a
+    /// value read once at init — or only in `reset()`, which runs when a
+    /// capture *ends* — is one capture behind whatever Settings says: a change
+    /// made between two captures would not show up until the one after. Called
+    /// from `reset()` and again just before each overlay is shown.
+    ///
+    /// Every default here must match the one the property's initializer uses.
+    /// `beautifyEnabled` previously defaulted to `true` at init and `false`
+    /// here (`bool(forKey:)` on a missing key), so the first capture of a fresh
+    /// install disagreed with the second.
+    func reloadPersistedSettings() {
+        let defaults = UserDefaults.standard
+        beautifyPreference = defaults.object(forKey: "beautifyEnabled") as? Bool ?? true
+        // Reset per-capture state; the policy is applied once a selection exists.
+        beautifyEnabled = false
+        selectionIsFullScreen = false
+        beautifyStyleIndex = defaults.integer(forKey: "beautifyStyleIndex")
+        beautifyMode = BeautifyMode(rawValue: defaults.integer(forKey: "beautifyMode")) ?? .window
+        beautifyPadding = CGFloat(defaults.object(forKey: "beautifyPadding") as? Double ?? 48)
+        beautifyCornerRadius = CGFloat(defaults.object(forKey: "beautifyCornerRadius") as? Double ?? 10)
+        beautifyShadowRadius = CGFloat(defaults.object(forKey: "beautifyShadowRadius") as? Double ?? 20)
+        beautifyBgRadius = CGFloat(defaults.object(forKey: "beautifyBgRadius") as? Double ?? 8)
+        beautifyBackgroundBlur = CGFloat(defaults.object(forKey: "beautifyBgBlur") as? Double ?? 0)
+        // The custom-style background is loaded here (not lazily in the
+        // beautifyConfig getter) so reads during draw never mutate state.
+        customBeautifyBackground = nil
+        ensureCustomBeautifyBackgroundLoaded()
+        currentLineStyle = LineStyle(rawValue: defaults.integer(forKey: "currentLineStyle")) ?? .solid
+        currentArrowStyle = ArrowStyle(rawValue: defaults.integer(forKey: "currentArrowStyle")) ?? .single
+        currentRectFillStyle = RectFillStyle(rawValue: defaults.integer(forKey: "currentRectFillStyle")) ?? .stroke
+        currentRectCornerRadius = CGFloat(defaults.object(forKey: "currentRectCornerRadius") as? Double ?? 0)
+        currentMeasureInPoints = defaults.bool(forKey: "measureInPoints")
+        currentMeasureClampToSelection = defaults.object(forKey: "measureClampToSelection") as? Bool ?? true
+    }
+
     func reset() {
         restoreSystemCursorAfterPicker()
         state = .idle
         selectionRect = .zero
-        selectionIsWindowSnap = false
-        snappedWindowID = nil
-        snappedWindowImage = nil
+        clearWindowSnapState()
         remoteSelectionRect = .zero
         remoteSelectionFullRect = .zero
         annotations.removeAll()
@@ -10669,32 +10797,7 @@ class OverlayView: NSView {
         hoveredAnnotationClearTimer = nil
         hoveredAnnotation = nil
         colorWheel.dismiss()
-        beautifyEnabled = UserDefaults.standard.bool(forKey: "beautifyEnabled")
-        beautifyStyleIndex = UserDefaults.standard.integer(forKey: "beautifyStyleIndex")
-        beautifyMode =
-            BeautifyMode(rawValue: UserDefaults.standard.integer(forKey: "beautifyMode")) ?? .window
-        beautifyPadding = CGFloat(
-            UserDefaults.standard.object(forKey: "beautifyPadding") as? Double ?? 48)
-        beautifyCornerRadius = CGFloat(
-            UserDefaults.standard.object(forKey: "beautifyCornerRadius") as? Double ?? 10)
-        beautifyShadowRadius = CGFloat(
-            UserDefaults.standard.object(forKey: "beautifyShadowRadius") as? Double ?? 20)
-        beautifyBgRadius = CGFloat(
-            UserDefaults.standard.object(forKey: "beautifyBgRadius") as? Double ?? 8)
-        // The custom-style background is loaded here (not lazily in the
-        // beautifyConfig getter) so reads during draw never mutate state.
-        customBeautifyBackground = nil
-        ensureCustomBeautifyBackgroundLoaded()
-        currentLineStyle =
-            LineStyle(rawValue: UserDefaults.standard.integer(forKey: "currentLineStyle")) ?? .solid
-        currentArrowStyle =
-            ArrowStyle(rawValue: UserDefaults.standard.integer(forKey: "currentArrowStyle"))
-            ?? .single
-        currentRectFillStyle =
-            RectFillStyle(rawValue: UserDefaults.standard.integer(forKey: "currentRectFillStyle"))
-            ?? .stroke
-        currentRectCornerRadius = CGFloat(
-            UserDefaults.standard.object(forKey: "currentRectCornerRadius") as? Double ?? 0)
+        reloadPersistedSettings()
         textEditor.dismiss()
         dismissResolutionBox()
         hidePreSelectionPresetButton()

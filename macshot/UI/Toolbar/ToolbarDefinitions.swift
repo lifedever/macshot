@@ -268,6 +268,17 @@ class ToolbarLayout {
     static var handleColor: NSColor { accentColor }
     static let cornerRadius: CGFloat = 6
 
+    // Alignment guides — the quiet dashed grey hairline design apps use, plus a
+    // faint light halo so it stays readable over dark screenshot content.
+    /// One dashed stroke, not two. The earlier version drew a wider translucent
+    /// halo underneath for legibility over dark screenshots, but at this weight
+    /// the halo reads as a second, blurrier guide running alongside the first.
+    /// A single heavier dash in a mid grey holds up on light and dark content
+    /// on its own.
+    static let snapGuideColor = NSColor(white: 0.62, alpha: 1)
+    static let snapGuideDashPattern: [CGFloat] = [6, 5]
+    static let snapGuideLineWidth: CGFloat = 2
+
     /// Save accent color to UserDefaults.
     static func saveAccentColor(_ color: NSColor) {
         if let data = try? NSKeyedArchiver.archivedData(withRootObject: color, requiringSecureCoding: false) {

@@ -1235,7 +1235,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
             UserDefaults.standard.removeObject(forKey: "effectsContrast")
             UserDefaults.standard.removeObject(forKey: "effectsSaturation")
             UserDefaults.standard.removeObject(forKey: "effectsSharpness")
-            UserDefaults.standard.set(false, forKey: "beautifyEnabled")
+            // Beautify is a setting of its own now, not a leftover of the last
+            // capture, so "remember last tool" no longer clears it.
         }
 
         // Clean up stale overlays without consuming previousApp — we just set it.
