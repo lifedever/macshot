@@ -5524,6 +5524,9 @@ class OverlayView: NSView {
 
     // MARK: - Overlay Error
 
+    /// The red banner inside the overlay. Errors only — confirmations and
+    /// progress go to `ToastCenter`, which is styled for them and survives the
+    /// overlay closing.
     func showOverlayError(_ message: String) {
         overlayErrorTimer?.invalidate()
         overlayErrorMessage = message
@@ -6070,7 +6073,8 @@ class OverlayView: NSView {
             if let result = sampleCanvasColor(at: viewToCanvas(point)) {
                 NSPasteboard.general.clearContents()
                 NSPasteboard.general.setString(result.hex, forType: .string)
-                showOverlayError(String(format: L("Copied %@"), result.hex))
+                ToastCenter.shared.show(String(format: L("Copied %@"), result.hex),
+                                        swatch: result.color)
                 needsDisplay = true
             }
             return
@@ -7490,7 +7494,8 @@ class OverlayView: NSView {
             if let result = sampleCanvasColor(at: viewToCanvas(point)) {
                 NSPasteboard.general.clearContents()
                 NSPasteboard.general.setString(result.hex, forType: .string)
-                showOverlayError(String(format: L("Copied %@"), result.hex))
+                ToastCenter.shared.show(String(format: L("Copied %@"), result.hex),
+                                        swatch: result.color)
                 needsDisplay = true
             }
             return
@@ -7814,7 +7819,7 @@ class OverlayView: NSView {
                 pendingAutoAdjustSelection = true
                 scheduleBoundarySnapIndexBuild()
             }
-            showOverlayError(L("Detecting nearby edges…"))
+            ToastCenter.shared.show(L("Detecting nearby edges…"), icon: .info)
             return
         }
 
@@ -7876,7 +7881,8 @@ class OverlayView: NSView {
             || abs(adjusted.maxY - original.maxY) > 0.25
         guard changed else {
             let foundEdge = left != nil || right != nil || bottom != nil || top != nil
-            showOverlayError(foundEdge ? L("Selection is already aligned") : L("No nearby edges found"))
+            ToastCenter.shared.show(foundEdge ? L("Selection is already aligned")
+                                              : L("No nearby edges found"), icon: .info)
             return
         }
 
@@ -7885,16 +7891,14 @@ class OverlayView: NSView {
         boundarySnapGuideX = nil
         boundarySnapGuideY = nil
         if selectionIsWindowSnap {
-            selectionIsWindowSnap = false
-            snappedWindowID = nil
-            snappedWindowImage = nil
+            clearWindowSnapState()
             rebuildToolbarLayout()
         }
         overlayDelegate?.overlayViewSelectionDidChange(selectionRect)
         if webcamSetupPreview != nil { repositionWebcamSetupPreview() }
         refreshResolutionAndToolbarLayout()
         updateCursorForCurrentTool()
-        showOverlayError(L("Selection adjusted"))
+        ToastCenter.shared.show(L("Selection adjusted"))
         needsDisplay = true
     }
 
@@ -9087,7 +9091,8 @@ class OverlayView: NSView {
                     let nextSlot = selectedColorSlot + 1
                     if nextSlot < customColors.count { selectedColorSlot = nextSlot }
                 }
-                showOverlayError(String(format: L("Set color %@"), result.hex))
+                ToastCenter.shared.show(String(format: L("Set color %@"), result.hex),
+                                        swatch: result.color)
                 needsDisplay = true
             }
             return

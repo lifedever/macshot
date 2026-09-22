@@ -52,6 +52,16 @@ final class ToastCenter {
         CAMediaTimingFunction(controlPoints: 0.16, 1.02, 0.30, 1.0)
     }
 
+    /// A trailing button on the toast — "Open" after a save or an upload.
+    struct Action {
+        let title: String
+        let handler: () -> Void
+    }
+
+    /// Toasts carrying an action stay up longer: the user has to notice the
+    /// button, move to it and click before it goes.
+    static let actionDurationBonus: TimeInterval = 5
+
     private var panel: NSPanel?
     private var dismissTask: DispatchWorkItem?
 
@@ -59,12 +69,18 @@ final class ToastCenter {
     /// - Parameter swatch: optional colour chip drawn after the text — used by the colour
     ///   picker so the confirmation shows *which* colour was taken, not just its hex.
     func show(_ message: String, icon: Icon = .success, swatch: NSColor? = nil,
-              duration: TimeInterval = 1.6) {
+              action: Action? = nil, duration: TimeInterval = 1.6) {
         dismissTask?.cancel()
 
         let isDark = NSApp.effectiveAppearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-        let content = ToastPillView(message: message, icon: icon, swatch: swatch, isDark: isDark)
+        let content = ToastPillView(message: message, icon: icon, swatch: swatch,
+                                    isDark: isDark, action: action) { [weak self] in
+            self?.dismiss()
+        }
         let size = content.intrinsicContentSize
+        // Only the toasts with something to click take mouse events; the rest
+        // stay click-through so they never swallow a click on what is behind.
+        let effectiveDuration = action == nil ? duration : duration + Self.actionDurationBonus
 
         let screen = NSScreen.main ?? NSScreen.screens[0]
         let frame = screen.visibleFrame
@@ -72,6 +88,7 @@ final class ToastCenter {
         let x = frame.midX - size.width / 2
 
         let panel = existingPanel(size: size)
+        panel.ignoresMouseEvents = action == nil
         panel.contentView = content
         panel.setFrame(NSRect(x: x, y: restingY - Self.slideDistance,
                               width: size.width, height: size.height),
@@ -91,7 +108,7 @@ final class ToastCenter {
 
         let task = DispatchWorkItem { [weak self] in self?.dismiss() }
         dismissTask = task
-        DispatchQueue.main.asyncAfter(deadline: .now() + duration, execute: task)
+        DispatchQueue.main.asyncAfter(deadline: .now() + effectiveDuration, execute: task)
     }
 
     func dismiss() {
@@ -151,14 +168,48 @@ private final class ToastPillView: NSView {
     /// Transparent margin around the capsule so the drop shadow isn't clipped by the window.
     private let shadowInset: CGFloat = 26
 
-    init(message: String, icon: ToastCenter.Icon, swatch: NSColor?, isDark: Bool) {
+    private let action: ToastCenter.Action?
+    private let onActionTapped: () -> Void
+    private var actionButton: NSButton?
+
+    init(message: String, icon: ToastCenter.Icon, swatch: NSColor?, isDark: Bool,
+         action: ToastCenter.Action? = nil, onActionTapped: @escaping () -> Void = {}) {
         self.message = message
         self.icon = icon
         self.swatch = swatch
         self.isDark = isDark
+        self.action = action
+        self.onActionTapped = onActionTapped
         super.init(frame: .zero)
+        guard let action else { return }
+        let button = NSButton(title: action.title, target: self, action: #selector(runAction))
+        button.bezelStyle = .rounded
+        button.controlSize = .small
+        button.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(button)
+        actionButton = button
     }
     required init?(coder: NSCoder) { fatalError() }
+
+    @objc private func runAction() {
+        action?.handler()
+        onActionTapped()
+    }
+
+    private var actionWidth: CGFloat {
+        guard let actionButton else { return 0 }
+        return ceil(actionButton.intrinsicContentSize.width)
+    }
+
+    override func layout() {
+        super.layout()
+        guard let actionButton else { return }
+        let pill = bounds.insetBy(dx: shadowInset, dy: shadowInset)
+        let size = actionButton.intrinsicContentSize
+        actionButton.frame = NSRect(x: pill.maxX - hPadding - size.width,
+                                    y: pill.midY - size.height / 2,
+                                    width: size.width, height: size.height)
+    }
 
     private var font: NSFont { .systemFont(ofSize: 13, weight: .medium) }
 
@@ -170,6 +221,7 @@ private final class ToastPillView: NSView {
         var w = hPadding * 2 + ceil(textSize.width)
         if icon.symbolName != nil { w += iconSide + spacing }
         if swatch != nil { w += swatchSide + spacing }
+        if actionWidth > 0 { w += actionWidth + spacing }
         let h = max(22, ceil(textSize.height)) + vPadding * 2
         return NSSize(width: w + shadowInset * 2, height: h + shadowInset * 2)
     }

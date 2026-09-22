@@ -29,7 +29,10 @@ enum SaveActionPreference: Int, CaseIterable {
 }
 
 enum ImageSaveService {
-    typealias Completion = (Bool) -> Void
+    /// The URL the image actually landed on, or nil if the save failed or was
+    /// cancelled. Callers that report the destination need the real URL: the
+    /// no-overwrite retry can rename the file out from under the caller.
+    typealias Completion = (URL?) -> Void
 
     static func save(
         _ image: NSImage,
@@ -104,18 +107,18 @@ enum ImageSaveService {
 
         let handler: (NSApplication.ModalResponse) -> Void = { response in
             guard response == .OK, let url = panel.url, let imageData = ImageEncoder.encode(image) else {
-                completionOnMain(completion, false)
+                completionOnMain(completion, nil)
                 return
             }
             DispatchQueue.global(qos: .userInitiated).async {
                 do {
                     try imageData.write(to: url)
-                    completionOnMain(completion, true)
+                    completionOnMain(completion, url)
                 } catch {
                     #if DEBUG
                     NSLog("macshot: failed to save screenshot to \(url.path): \(error.localizedDescription)")
                     #endif
-                    completionOnMain(completion, false)
+                    completionOnMain(completion, nil)
                 }
             }
         }
@@ -139,18 +142,18 @@ enum ImageSaveService {
         DispatchQueue.global(qos: .userInitiated).async {
             defer { if securityScoped { SaveDirectoryAccess.stopAccessing(url: dirURL) } }
             guard let imageData = ImageEncoder.encode(image) else {
-                completionOnMain(completion, false)
+                completionOnMain(completion, nil)
                 return
             }
 
             do {
-                try writeWithoutOverwriting(imageData, in: dirURL, filename: filename)
-                completionOnMain(completion, true)
+                let savedURL = try writeWithoutOverwriting(imageData, in: dirURL, filename: filename)
+                completionOnMain(completion, savedURL)
             } catch {
                 #if DEBUG
                 NSLog("macshot: failed to save screenshot in \(dirURL.path): \(error.localizedDescription)")
                 #endif
-                completionOnMain(completion, false)
+                completionOnMain(completion, nil)
             }
         }
     }
@@ -212,9 +215,11 @@ enum ImageSaveService {
     /// item. Filename selection and creation must be one operation: separate
     /// `fileExists` and `write` calls let concurrent saves select the same
     /// free path and race, silently replacing one capture.
+    /// Returns the URL the data was written to — not necessarily
+    /// `dirURL/filename`, since a name clash appends a counter.
     private static func writeWithoutOverwriting(_ data: Data,
                                                 in dirURL: URL,
-                                                filename: String) throws {
+                                                filename: String) throws -> URL {
         let base = (filename as NSString).deletingPathExtension
         let ext = (filename as NSString).pathExtension
         var candidate = dirURL.appendingPathComponent(filename)
@@ -223,7 +228,7 @@ enum ImageSaveService {
         while true {
             do {
                 try data.write(to: candidate, options: .withoutOverwriting)
-                return
+                return candidate
             } catch {
                 let nsError = error as NSError
                 guard nsError.domain == NSCocoaErrorDomain,
@@ -249,10 +254,10 @@ enum ImageSaveService {
         }
     }
 
-    private static func completionOnMain(_ completion: Completion?, _ success: Bool) {
+    private static func completionOnMain(_ completion: Completion?, _ url: URL?) {
         guard let completion else { return }
         DispatchQueue.main.async {
-            completion(success)
+            completion(url)
         }
     }
 }

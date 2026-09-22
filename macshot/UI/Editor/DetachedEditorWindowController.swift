@@ -405,6 +405,13 @@ extension DetachedEditorWindowController: OverlayViewDelegate {
     func overlayViewRemoteSelectionDidFinish(_ rect: NSRect) {}
     func overlayViewDidCancel() { window?.performClose(nil) }
 
+    /// Whether copying closes the editor. Defaults to on: the copy button is
+    /// how an edit is finished, so leaving the window up means the user has to
+    /// close it by hand every single time.
+    static var closesAfterCopy: Bool {
+        UserDefaults.standard.object(forKey: "closeEditorAfterCopy") as? Bool ?? true
+    }
+
     func overlayViewDidConfirm() {
         guard let raw = overlayView?.captureSelectedRegion() else { return }
         let image = applyPostProcessing(raw)
@@ -412,7 +419,11 @@ extension DetachedEditorWindowController: OverlayViewDelegate {
         ImageEncoder.copyToClipboard(image)
         playCopySound()
         autoSaveToHistoryIfNeeded(compositedImage: image, annotationData: annotationData)
-        if UserDefaults.standard.bool(forKey: "closeEditorAfterCopy") {
+        // Copying is the end of an edit, so the window gets out of the way and
+        // the confirmation goes to the app-wide toast — an in-window banner
+        // would be pointless on a window that is about to close.
+        ToastCenter.shared.show(L("Copied to clipboard!"))
+        if Self.closesAfterCopy {
             window?.close()
         }
         (NSApp.delegate as? AppDelegate)?.showFloatingThumbnail(image: image, annotationData: annotationData, historyEntryID: historyEntryID)
@@ -431,11 +442,11 @@ extension DetachedEditorWindowController: OverlayViewDelegate {
         guard let view = overlayView,
               let raw = view.captureSelectedRegion() else { return }
         let image = applyPostProcessing(raw)
-        ImageSaveService.showSavePanel(for: image, sheetWindow: window) { [weak self] success in
-            if success {
-                self?.playCopySound()
-                self?.autoSaveToHistoryIfNeeded(compositedImage: image)
-            }
+        ImageSaveService.showSavePanel(for: image, sheetWindow: window) { [weak self] url in
+            guard let url else { return }
+            self?.playCopySound()
+            AppDelegate.showSavedToast(for: url)
+            self?.autoSaveToHistoryIfNeeded(compositedImage: image)
         }
     }
 
@@ -500,11 +511,11 @@ extension DetachedEditorWindowController: OverlayViewDelegate {
     func overlayViewDidRequestFileSave() {
         guard let raw = overlayView?.captureSelectedRegion() else { return }
         let image = applyPostProcessing(raw)
-        ImageSaveService.saveToConfiguredFolder(image, sheetWindow: window) { [weak self] success in
-            if success {
-                self?.playCopySound()
-                self?.autoSaveToHistoryIfNeeded(compositedImage: image)
-            }
+        ImageSaveService.saveToConfiguredFolder(image, sheetWindow: window) { [weak self] url in
+            guard let url else { return }
+            self?.playCopySound()
+            AppDelegate.showSavedToast(for: url)
+            self?.autoSaveToHistoryIfNeeded(compositedImage: image)
         }
     }
 
@@ -551,6 +562,8 @@ extension DetachedEditorWindowController: OverlayViewDelegate {
     }
 
     @available(macOS 14.0, *)
+
+
     func overlayViewDidRequestRemoveBackground() {
         guard let image = overlayView?.captureSelectedRegion(),
               let cgImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil) else { return }

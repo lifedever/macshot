@@ -218,6 +218,9 @@ class OverlayWindowController {
     /// for setScreenshot() to install one.
     func showOverlay() {
         guard let window = overlayWindow else { return }
+        // This controller is pooled, so its view survives between captures.
+        // Pick up anything Settings changed since the last one.
+        overlayView?.reloadPersistedSettings()
         timingMark?("showOverlay begin appActive=\(NSApp.isActive)")
         // A real capture is being presented — enable mouse interaction.
         // (Idle/warmed panels are click-through; see setupWindow.)
@@ -872,6 +875,8 @@ extension OverlayWindowController: OverlayViewDelegate {
     }
 
     @available(macOS 14.0, *)
+
+
     func overlayViewDidRequestRemoveBackground() {
         guard var image = captureRegion() else { return }
         image = applyBeautifyIfNeeded(image) ?? image
@@ -1015,10 +1020,10 @@ extension OverlayWindowController: OverlayViewDelegate {
             image,
             windowTitle: capturedWindowTitle,
             panelLevel: NSWindow.Level(258)
-        ) { [weak self] success in
-            if success {
-                self?.playCopySound()
-            }
+        ) { [weak self] url in
+            guard let url else { return }
+            self?.playCopySound()
+            AppDelegate.showSavedToast(for: url)
         }
     }
 
@@ -1038,10 +1043,11 @@ extension OverlayWindowController: OverlayViewDelegate {
             for: image,
             windowTitle: capturedWindowTitle,
             panelLevel: NSWindow.Level(258)
-        ) { [weak self] success in
+        ) { [weak self] url in
             guard let self = self else { return }
-            if success {
+            if let url {
                 self.playCopySound()
+                AppDelegate.showSavedToast(for: url)
                 self.dismiss()
                 self.overlayDelegate?.overlayDidConfirm(self, capturedImage: nil, annotationData: nil)
             } else {

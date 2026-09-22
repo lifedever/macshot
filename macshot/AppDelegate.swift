@@ -2023,19 +2023,36 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
     }
 
     private func saveThumbnailImage(_ image: NSImage) {
-        ImageSaveService.save(image, panelLevel: .floating, activateApp: true) { [weak self] success in
-            if success {
-                self?.playCopySound()
-            }
+        ImageSaveService.save(image, panelLevel: .floating, activateApp: true) { [weak self] url in
+            guard let url else { return }
+            self?.playCopySound()
+            Self.showSavedToast(for: url)
         }
     }
 
     private func saveThumbnailImageAs(_ image: NSImage) {
-        ImageSaveService.showSavePanel(for: image, panelLevel: .floating, activateApp: true) { [weak self] success in
-            if success {
-                self?.playCopySound()
-            }
+        ImageSaveService.showSavePanel(for: image, panelLevel: .floating, activateApp: true) { [weak self] url in
+            guard let url else { return }
+            self?.playCopySound()
+            Self.showSavedToast(for: url)
         }
+    }
+
+    /// Confirmation for a completed save: where the file went, plus a way to go
+    /// there. The path is tilde-abbreviated — a bare filename does not say which
+    /// folder it landed in, and the full absolute path is mostly home directory.
+    ///
+    /// Reveals in Finder rather than opening the file: the app is sandboxed and
+    /// reached the save folder through a security-scoped bookmark it has already
+    /// relinquished, so `NSWorkspace.open` on that path is refused. Revealing is
+    /// performed by Finder, which needs no grant of ours.
+    static func showSavedToast(for url: URL) {
+        let path = (url.path as NSString).abbreviatingWithTildeInPath
+        ToastCenter.shared.show(
+            String(format: L("Saved to %@"), path),
+            action: .init(title: L("Show in Finder")) {
+                NSWorkspace.shared.activateFileViewerSelecting([url])
+            })
     }
 
     private func saveImageToConfiguredFolder(_ image: NSImage) {
@@ -2064,71 +2081,75 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
 
     #if !OFFLINE
     private func showUploadProgress(image: NSImage) {
-        uploadToastController?.dismiss()
-        let toast = UploadToastController()
-        uploadToastController = toast
-        toast.onDismiss = { [weak self] in
-            self?.uploadToastController = nil
-        }
-        toast.show(status: "Uploading...")
-
         let provider = UserDefaults.standard.string(forKey: "uploadProvider") ?? "imgbb"
 
+        // Every upload state goes through the app-wide toast, the same surface
+        // saving and copying use. The bespoke upload panel it replaces was the
+        // only piece of chrome in the app with its own progress bar and layout.
+        func fail(_ message: String) {
+            ToastCenter.shared.show(message, icon: .info, duration: 3.5)
+        }
+        func succeed(_ link: String) {
+            let pasteboard = NSPasteboard.general
+            pasteboard.clearContents()
+            pasteboard.setString(link, forType: .string)
+            ToastCenter.shared.show(
+                L("URL copied to the clipboard"),
+                action: URL(string: link).map { target in
+                    .init(title: L("Open")) { NSWorkspace.shared.open(target) }
+                },
+                duration: 2.2)
+        }
+
         if provider == "gdrive" && !GoogleDriveUploader.shared.isSignedIn {
-            toast.showError(message: "Google Drive not signed in")
-            return
+            fail(L("Google Drive not signed in")); return
         }
-
         if provider == "s3" && !S3Uploader.shared.isConfigured {
-            toast.showError(message: "S3 not configured — check Settings")
-            return
+            fail(L("S3 not configured — check Settings")); return
+        }
+        if provider == "github" && !GitHubUploader.shared.isConfigured {
+            fail(L("GitHub upload is not configured — check Settings.")); return
         }
 
-        if provider == "gdrive" {
+        // Held open until a result replaces it — the toast has no progress bar,
+        // so the duration is just "long enough not to vanish mid-upload".
+        ToastCenter.shared.show(L("Uploading…"), icon: .info, duration: 120)
+
+        switch provider {
+        case "gdrive":
             GoogleDriveUploader.shared.uploadImage(image) { result in
                 switch result {
-                case .success(let link):
-                    let pasteboard = NSPasteboard.general
-                    pasteboard.clearContents()
-                    pasteboard.setString(link, forType: .string)
-                    toast.showSuccess(link: link, deleteURL: "")
-                case .failure(let error):
-                    toast.showError(message: error.localizedDescription)
+                case .success(let link): succeed(link)
+                case .failure(let error): fail(error.localizedDescription)
                 }
             }
-        } else if provider == "s3" {
-            S3Uploader.shared.onProgress = { fraction in
-                toast.updateProgress(fraction)
+        case "github":
+            GitHubUploader.shared.uploadImage(image) { result in
+                switch result {
+                case .success(let link): succeed(link)
+                case .failure(let error): fail(error.localizedDescription)
+                }
             }
+        case "s3":
             S3Uploader.shared.uploadImage(image) { result in
                 switch result {
-                case .success(let link):
-                    let pasteboard = NSPasteboard.general
-                    pasteboard.clearContents()
-                    pasteboard.setString(link, forType: .string)
-                    toast.showSuccess(link: link, deleteURL: "")
-                case .failure(let error):
-                    toast.showError(message: error.localizedDescription)
+                case .success(let link): succeed(link)
+                case .failure(let error): fail(error.localizedDescription)
                 }
             }
-        } else {
+        default:
             ImageUploader.upload(image: image) { result in
                 switch result {
                 case .success(let uploadResult):
-                    let pasteboard = NSPasteboard.general
-                    pasteboard.clearContents()
-                    pasteboard.setString(uploadResult.link, forType: .string)
-
                     var uploads = UserDefaults.standard.array(forKey: "imgbbUploads") as? [[String: String]] ?? []
                     uploads.append([
                         "deleteURL": uploadResult.deleteURL,
                         "link": uploadResult.link,
                     ])
                     UserDefaults.standard.set(uploads, forKey: "imgbbUploads")
-
-                    toast.showSuccess(link: uploadResult.link, deleteURL: uploadResult.deleteURL)
+                    succeed(uploadResult.link)
                 case .failure(let error):
-                    toast.showError(message: error.localizedDescription)
+                    fail(error.localizedDescription)
                 }
             }
         }

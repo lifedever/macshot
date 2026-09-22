@@ -684,7 +684,6 @@ private final class VideoEditorView: NSView {
             drawButtons()
         }
         drawTimeLabels()
-        if let msg = statusMessage { drawStatus(msg) }
     }
 
 
@@ -1572,17 +1571,25 @@ private final class VideoEditorView: NSView {
         needsDisplay = true
     }
 
+    /// Route every message through the app-wide toast, the surface saving,
+    /// copying and uploading already use elsewhere. This used to paint green or
+    /// red text inside the editor — a notification style that existed only in
+    /// this one window.
+    ///
+    /// `persist` marks the running-progress messages ("Exporting… 40%"). Those
+    /// keep arriving as the job advances and each one replaces the last, so they
+    /// take a duration long enough to outlive the gap between updates; the
+    /// terminal success or failure message then replaces them.
     private func showStatus(_ msg: String, isError: Bool = false, persist: Bool = false) {
-        statusMessage = msg
-        statusIsError = isError
-        statusTimer?.invalidate()
-        if !persist {
-            statusTimer = Timer.scheduledTimer(withTimeInterval: isError ? 6 : 3, repeats: false) { [weak self] _ in
-                self?.statusMessage = nil
-                self?.needsDisplay = true
-            }
-        }
-        needsDisplay = true
+        ToastCenter.shared.show(msg,
+                                icon: isError ? .info : .success,
+                                duration: persist ? 60 : (isError ? 6 : 3))
+    }
+
+    /// Completion toast for a written file: says where it went and offers to
+    /// reveal it, matching what an image save shows.
+    private func showSavedStatus(for url: URL) {
+        AppDelegate.showSavedToast(for: url)
     }
 
     /// Runs the correct MP4 export pipeline (custom reencode for non-High
@@ -2174,7 +2181,7 @@ private final class VideoEditorView: NSView {
 
                 DispatchQueue.main.async {
                     self?.savedURL = destURL
-                    self?.showStatus(String(format: L("Saved to %@"), destURL.lastPathComponent))
+                    self?.showSavedStatus(for: destURL)
                     self?.needsDisplay = true
                     completion?(true)
                 }
@@ -2203,7 +2210,7 @@ private final class VideoEditorView: NSView {
             if destURL.standardizedFileURL == videoURL.standardizedFileURL {
                 savedURL = destURL
                 if let dirURL = dirURL { SaveDirectoryAccess.stopAccessing(url: dirURL) }
-                showStatus(String(format: L("Saved to %@"), destURL.lastPathComponent))
+                showSavedStatus(for: destURL)
                 needsDisplay = true
                 return
             }
@@ -2212,7 +2219,7 @@ private final class VideoEditorView: NSView {
                 try FileManager.default.copyItem(at: videoURL, to: destURL)
                 savedURL = destURL
                 if let dirURL = dirURL { SaveDirectoryAccess.stopAccessing(url: dirURL) }
-                showStatus(String(format: L("Saved to %@"), destURL.lastPathComponent))
+                showSavedStatus(for: destURL)
                 needsDisplay = true
             } catch {
                 if dirURL != nil {
@@ -2241,7 +2248,7 @@ private final class VideoEditorView: NSView {
                     try FileManager.default.moveItem(at: tmpURL, to: destURL)
                     self.savedURL = destURL
                     if let dirURL = dirURL { SaveDirectoryAccess.stopAccessing(url: dirURL) }
-                    self.showStatus(String(format: L("Saved to %@"), destURL.lastPathComponent))
+                    self.showSavedStatus(for: destURL)
                     self.needsDisplay = true
                 } catch {
                     self.showStatus(L("Save failed"), isError: true)
