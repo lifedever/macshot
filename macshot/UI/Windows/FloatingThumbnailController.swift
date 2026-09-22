@@ -748,8 +748,12 @@ private class ThumbnailView: NSView {
     /// Control surface for the pre-Liquid-Glass fallback. Fixed, not semantic:
     /// these sit on the hover plate, which is mid grey to dark in either system
     /// theme, so the light-surface/dark-glyph pairing holds both ways.
-    fileprivate static let buttonFill = NSColor(white: 0.847, alpha: 1)
-    fileprivate static let buttonFillHover = NSColor(white: 0.93, alpha: 1)
+    ///
+    /// Near-white rather than light grey: at 0.847 the discs read as grey
+    /// furniture against the plate instead of as buttons. The hover step stops
+    /// short of pure white so there is still somewhere brighter to go.
+    fileprivate static let buttonFill = NSColor(white: 0.94, alpha: 1)
+    fileprivate static let buttonFillHover = NSColor(white: 0.99, alpha: 1)
     fileprivate static let buttonInk = NSColor(white: 0.16, alpha: 1)
 
     fileprivate var chromeHost: NSView?
