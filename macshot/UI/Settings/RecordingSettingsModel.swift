@@ -99,25 +99,6 @@ final class RecordingSettingsModel: ObservableObject {
         didSet { store(webcamShape, "webcamShape", oldValue) }
     }
 
-    // MARK: Scroll capture
-
-    @Published var autoScroll: Bool {
-        didSet { store(autoScroll, "scrollAutoScrollEnabled", oldValue) }
-    }
-
-    /// Stored 1-based to match the engine's existing speed values.
-    @Published var scrollSpeed: Int {
-        didSet { store(scrollSpeed, "scrollAutoScrollSpeed", oldValue) }
-    }
-
-    @Published var scrollMaxHeight: Int {
-        didSet { store(scrollMaxHeight, "scrollMaxHeight", oldValue) }
-    }
-
-    @Published var detectFrozenHeaders: Bool {
-        didSet { store(detectFrozenHeaders, "scrollFrozenDetection", oldValue) }
-    }
-
     // MARK: Lifecycle
 
     init() {
@@ -132,10 +113,6 @@ final class RecordingSettingsModel: ObservableObject {
         webcamPosition = defaults.string(forKey: "webcamPosition") ?? "bottomRight"
         webcamSize = Double(WebcamSize.savedPoints)
         webcamShape = defaults.string(forKey: "webcamShape") ?? "circle"
-        autoScroll = defaults.object(forKey: "scrollAutoScrollEnabled") as? Bool ?? true
-        scrollSpeed = defaults.object(forKey: "scrollAutoScrollSpeed") as? Int ?? 2
-        scrollMaxHeight = defaults.integer(forKey: "scrollMaxHeight")
-        detectFrozenHeaders = defaults.object(forKey: "scrollFrozenDetection") as? Bool ?? true
     }
 
     private func store<T: Equatable>(_ value: T, _ key: String, _ oldValue: T) {

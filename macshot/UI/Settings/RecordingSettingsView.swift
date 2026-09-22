@@ -80,30 +80,6 @@ struct RecordingSettingsView: View {
                 }
             }
 
-            Section(L("Scroll Capture")) {
-                Toggle(L("Auto-scroll (sends synthetic scroll events)"), isOn: $model.autoScroll)
-                Picker(L("Scroll speed"), selection: $model.scrollSpeed) {
-                    Text(L("Slow")).tag(1)
-                    Text(L("Medium")).tag(2)
-                    Text(L("Fast")).tag(3)
-                    Text(L("Very fast")).tag(4)
-                }
-                .disabled(!model.autoScroll)
-                LabeledContent(L("Max height")) {
-                    HStack(spacing: 6) {
-                        TextField("", value: $model.scrollMaxHeight, format: .number)
-                            .textFieldStyle(.roundedBorder)
-                            .frame(width: 70)
-                            .multilineTextAlignment(.trailing)
-                        Stepper("", value: $model.scrollMaxHeight, in: 0...100_000, step: 5_000)
-                            .labelsHidden()
-                        Text(L("px (0 = unlimited)"))
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-                Toggle(L("Detect fixed/sticky headers"), isOn: $model.detectFrozenHeaders)
-            }
         }
         .formStyle(.grouped)
         .scrollDisabled(true)

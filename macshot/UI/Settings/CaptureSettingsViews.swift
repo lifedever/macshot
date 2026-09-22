@@ -17,31 +17,87 @@ struct CaptureSettingsView: View {
                     Text(L("Do nothing")).tag(3)
                 }
                 Toggle(L("Also open in Editor"), isOn: $model.quickCaptureOpenEditor)
-                Toggle(L("Close editor after copying"), isOn: $model.closeEditorAfterCopy)
                 Picker(L("OCR & QR Capture"), selection: $model.ocrAction) {
                     Text(L("Show results window")).tag(0)
                     Text(L("Copy to clipboard")).tag(1)
                 }
             }
 
+            // Two columns of checkboxes rather than a stack of switches. Ten
+            // independent on/off settings in one column, plus the scroll
+            // capture group, ran the pane past the bottom of the window on a
+            // laptop display — and the pane cannot scroll.
             Section(L("Behavior")) {
-                Toggle(L("Play sound on capture"), isOn: $model.playSound)
-                Toggle(L("Remember last selected tool"), isOn: $model.rememberLastTool)
-                Toggle(L("Capture mouse cursor in screenshot"), isOn: $model.captureCursor)
-                Toggle(L("Double-click selection to copy"), isOn: $model.doubleClickToCopy)
-                Toggle(L("Hide capture instructions"), isOn: $model.hideInstructions)
-                Toggle(L("Disable shadow outside selection"), isOn: $model.disableOutsideShadow)
+                checkboxGrid([
+                    (L("Play sound on capture"), $model.playSound),
+                    (L("Remember last selected tool"), $model.rememberLastTool),
+                    (L("Capture mouse cursor in screenshot"), $model.captureCursor),
+                    (L("Double-click selection to copy"), $model.doubleClickToCopy),
+                    (L("Hide capture instructions"), $model.hideInstructions),
+                    (L("Disable shadow outside selection"), $model.disableOutsideShadow),
+                    (L("Close editor after copying"), $model.closeEditorAfterCopy),
+                ])
             }
 
             Section(L("Snapping")) {
-                Toggle(L("Show snap alignment guides"), isOn: $model.snapGuides)
-                Toggle(L("Snap selection edges to image boundaries"), isOn: $model.boundarySnap)
-                Toggle(L("Haptic feedback when snapping"), isOn: $model.snapHaptics)
-                Toggle(L("Enhance browser and Electron element snapping"), isOn: $model.browserElementSnap)
+                checkboxGrid([
+                    (L("Show snap alignment guides"), $model.snapGuides),
+                    (L("Snap selection edges to image boundaries"), $model.boundarySnap),
+                    (L("Haptic feedback when snapping"), $model.snapHaptics),
+                    (L("Enhance browser and Electron element snapping"), $model.browserElementSnap),
+                ])
+            }
+
+            Section {
+                checkboxGrid([
+                    (L("Auto-scroll (sends synthetic scroll events)"), $model.autoScroll),
+                    (L("Detect fixed/sticky headers"), $model.detectFrozenHeaders),
+                ])
+                Picker(L("Scroll speed"), selection: $model.scrollSpeed) {
+                    Text(L("Slow")).tag(1)
+                    Text(L("Medium")).tag(2)
+                    Text(L("Fast")).tag(3)
+                    Text(L("Very fast")).tag(4)
+                }
+                .disabled(!model.autoScroll)
+                LabeledContent(L("Max height")) {
+                    HStack(spacing: 6) {
+                        TextField("", value: $model.scrollMaxHeight, format: .number)
+                            .textFieldStyle(.roundedBorder)
+                            .frame(width: 70)
+                            .multilineTextAlignment(.trailing)
+                        Stepper("", value: $model.scrollMaxHeight, in: 0...100_000, step: 5_000)
+                            .labelsHidden()
+                        Text(L("px (0 = unlimited)"))
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            } header: {
+                Text(L("Scroll Capture"))
             }
         }
         .formStyle(.grouped)
         .scrollDisabled(true)
+    }
+
+    private func checkboxGrid(_ items: [(String, Binding<Bool>)]) -> some View {
+        let half = (items.count + 1) / 2
+        return HStack(alignment: .top, spacing: 24) {
+            checkboxColumn(Array(items.prefix(half)))
+            checkboxColumn(Array(items.dropFirst(half)))
+        }
+        .padding(.vertical, 2)
+    }
+
+    private func checkboxColumn(_ items: [(String, Binding<Bool>)]) -> some View {
+        VStack(alignment: .leading, spacing: 7) {
+            ForEach(Array(items.enumerated()), id: \.offset) { _, item in
+                Toggle(item.0, isOn: item.1)
+                    .toggleStyle(.checkbox)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
@@ -170,12 +226,6 @@ struct OutputSettingsView: View {
                 Toggle(L("Order history by last edit"), isOn: $model.historyOrderByLastEdit)
             }
 
-            Section(L("Translation")) {
-                Picker(L("Engine"), selection: $model.useAppleTranslation) {
-                    Text(L("Apple")).tag(true)
-                    Text(L("Google")).tag(false)
-                }
-            }
         }
         .formStyle(.grouped)
         .scrollDisabled(true)

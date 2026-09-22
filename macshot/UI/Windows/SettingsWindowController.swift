@@ -293,7 +293,8 @@ class SettingsWindowController: NSWindowController, NSToolbarDelegate, NSWindowD
                 onHotkeyChanged: { [weak self] in self?.onHotkeyChanged?() }
             )).configuredAsSettingsPane())
         tabContentViews["tools"] = trackingPaneSize(
-            SettingsPaneHostingView(rootView: ToolsSettingsView()).configuredAsSettingsPane())
+            SettingsPaneHostingView(rootView: ToolsSettingsView(captureModel: capture))
+                .configuredAsSettingsPane())
         tabContentViews["recording"] = trackingPaneSize(
             SettingsPaneHostingView(rootView: RecordingSettingsView()).configuredAsSettingsPane())
         #if !OFFLINE

@@ -8,6 +8,8 @@ import SwiftUI
 /// clearly than a heading above a grid did.
 struct ToolsSettingsView: View {
     @StateObject private var model = ToolsSettingsModel()
+    /// Only for the translation engine, which belongs to the Translate tool.
+    @ObservedObject var captureModel: CaptureSettingsModel
 
     var body: some View {
         Form {
@@ -35,6 +37,16 @@ struct ToolsSettingsView: View {
                 Text(model.group.title)
             } footer: {
                 Text(model.group.footnote)
+            }
+
+            // The Translate tool's engine. It sat under Output next to the
+            // image format, which described the file a capture writes — this
+            // describes what one of the tools above does.
+            Section(L("Translation")) {
+                Picker(L("Engine"), selection: $captureModel.useAppleTranslation) {
+                    Text(L("Apple")).tag(true)
+                    Text(L("Google")).tag(false)
+                }
             }
         }
         .formStyle(.grouped)

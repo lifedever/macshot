@@ -198,8 +198,31 @@ final class CaptureSettingsModel: ObservableObject {
 
     // MARK: Translation
 
-    /// Lives here rather than in its own tab: one control does not earn a pane,
-    /// and it governs what a capture produces, like the rest of Output.
+    // MARK: Scroll capture
+
+    // Scroll capture stitches a long page into one image, so it belongs with
+    // the other capture settings. It used to sit under Recording, next to the
+    // frame rate and the webcam, purely because both run for a while.
+
+    @Published var autoScroll: Bool {
+        didSet { store(autoScroll, "scrollAutoScrollEnabled", oldValue) }
+    }
+
+    /// Stored 1-based to match the engine's existing speed values.
+    @Published var scrollSpeed: Int {
+        didSet { store(scrollSpeed, "scrollAutoScrollSpeed", oldValue) }
+    }
+
+    @Published var scrollMaxHeight: Int {
+        didSet { store(scrollMaxHeight, "scrollMaxHeight", oldValue) }
+    }
+
+    @Published var detectFrozenHeaders: Bool {
+        didSet { store(detectFrozenHeaders, "scrollFrozenDetection", oldValue) }
+    }
+
+    /// Lives on the Tools pane with the annotation tools: translation is what
+    /// the Translate tool runs on, not a property of the file a capture writes.
     @Published var useAppleTranslation: Bool {
         didSet {
             guard useAppleTranslation != oldValue else { return }
@@ -240,6 +263,10 @@ final class CaptureSettingsModel: ObservableObject {
         historyUnlimited = ud.bool(forKey: "historyUnlimited")
         historySize = ud.object(forKey: "historySize") as? Int ?? 20
         historyOrderByLastEdit = ud.bool(forKey: "historyOrderByLastEdit")
+        autoScroll = ud.object(forKey: "scrollAutoScrollEnabled") as? Bool ?? true
+        scrollSpeed = ud.object(forKey: "scrollAutoScrollSpeed") as? Int ?? 2
+        scrollMaxHeight = ud.integer(forKey: "scrollMaxHeight")
+        detectFrozenHeaders = ud.object(forKey: "scrollFrozenDetection") as? Bool ?? true
         useAppleTranslation = TranslationService.provider == .apple
         beautifyEnabled = ud.object(forKey: "beautifyEnabled") as? Bool ?? true
         beautifyMode = ud.integer(forKey: "beautifyMode")
