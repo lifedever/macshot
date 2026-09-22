@@ -141,6 +141,20 @@
 "More Emojis" = "और इमोजी";
 "Load Image" = "चित्र लोड करें";
 "Gradient Style" = "ग्रेडिएंट शैली";
+
+/* Settings - Beautify */
+"Beautify captures" = "कैप्चर सुशोभित करें";
+"Frame" = "फ़्रेम";
+"Window chrome" = "विंडो टाइटल बार";
+"Rounded corners" = "गोल किनारे";
+"Corner radius" = "कोने की त्रिज्या";
+"Background blur" = "पृष्ठभूमि ब्लर";
+"Style" = "शैली";
+"Use desktop wallpaper" = "डेस्कटॉप वॉलपेपर उपयोग करें";
+"Choose image…" = "छवि चुनें…";
+"Places the capture on a background with rounded corners and a drop shadow." = "कैप्चर को गोल किनारों और छाया वाली पृष्ठभूमि पर रखता है।";
+"Places the capture on a gradient background with rounded corners and a drop shadow. The style is chosen from the toolbar." = "कैप्चर को गोल किनारों और छाया के साथ ग्रेडिएंट पृष्ठभूमि पर रखता है। शैली टूलबार से चुनी जाती है।";
+
 "On" = "चालू";
 "Text Only" = "केवल पाठ";
 "All Text" = "सभी पाठ";
@@ -180,6 +194,7 @@
 "Enhance browser and Electron element snapping" = "ब्राउज़र और इलेक्ट्रॉन तत्व स्नैपिंग को बेहतर करें";
 "Builds the target app's accessibility tree in Element mode. Disable this if a browser or Electron app becomes slow or has input issues." = "तत्व मोड में लक्ष्य ऐप की ऐक्सेसिबिलिटी ट्री बनाता है। यदि कोई ब्राउज़र या इलेक्ट्रॉन ऐप धीमा हो जाता है या इनपुट समस्याएं होती हैं, तो इसे अक्षम करें।";
 "Right-click to copy" = "कॉपी करने के लिए राइट-क्लिक करें";
+"Press C to copy" = "कॉपी करने के लिए C दबाएँ";
 "Copied %@" = "%@ कॉपी किया";
 "Set color %@" = "रंग सेट किया %@";
 "Draw something first to use the move tool." = "मूव टूल का उपयोग करने के लिए पहले कुछ बनाएँ।";
@@ -237,6 +252,21 @@
 "  Position:" = "  स्थिति:";
 "Stack (keep all)" = "स्टैक (सभी रखें)";
 "Replace (show only latest)" = "बदलें (केवल नवीनतम दिखाएँ)";
+
+/* Settings - Floating Preview */
+"Floating Preview" = "फ़्लोटिंग पूर्वावलोकन";
+"Position" = "स्थिति";
+"Dismiss after" = "इसके बाद खारिज करें";
+"Never" = "कभी नहीं";
+"3 seconds" = "3 सेकंड";
+"5 seconds" = "5 सेकंड";
+"10 seconds" = "10 सेकंड";
+"30 seconds" = "30 सेकंड";
+"Multiple previews" = "एकाधिक पूर्वावलोकन";
+"Preview size" = "पूर्वावलोकन आकार";
+"Preview" = "पूर्वावलोकन";
+"View" = "देखें";
+
 "Menu Bar Order" = "मेनू बार क्रम";
 "Choose the order of capture actions in the macshot menu bar menu." = "macshot मेनू बार मेनू में कैप्चर क्रियाओं का क्रम चुनें।";
 "Move up" = "ऊपर ले जाएँ";
@@ -268,6 +298,10 @@
 "Default" = "डिफ़ॉल्ट";
 "Custom symbol" = "कस्टम सिंबल";
 "Enter any SF Symbol name (e.g. camera.fill) or pick a preset. Browse names in Apple's SF Symbols app. Invalid names fall back to the default icon." = "कोई भी SF Symbol नाम दर्ज करें (उदा. camera.fill) या एक प्रीसेट चुनें। Apple के SF Symbols ऐप में नाम ब्राउज़ करें। अमान्य नाम डिफ़ॉल्ट आइकन पर वापस आ जाते हैं।";
+"Menu bar icon" = "मेनू बार आइकन";
+"Symbol" = "सिंबल";
+"No SF Symbol by that name — the default icon is used." = "इस नाम का कोई SF Symbol नहीं है — डिफ़ॉल्ट आइकन उपयोग किया जाएगा।";
+"Theme" = "थीम";
 "OCR Capture:" = "OCR कैप्चर:";
 "OCR & QR Capture:" = "OCR और QR कैप्चर:";
 "Show window + copy to clipboard" = "विंडो दिखाएँ + क्लिपबोर्ड पर कॉपी करें";
@@ -277,6 +311,22 @@
 "Save to file" = "फ़ाइल में सहेजें";
 "Save + copy to clipboard" = "सहेजें + क्लिपबोर्ड पर कॉपी करें";
 "OCR Action" = "OCR क्रिया";
+"Enter / Quick Capture" = "Enter / त्वरित कैप्चर";
+"OCR & QR Capture" = "OCR और QR कैप्चर";
+"Show results window" = "परिणाम विंडो दिखाएँ";
+"Snapping" = "स्नैपिंग";
+"Haptic feedback when snapping" = "स्नैप करते समय हैप्टिक फ़ीडबैक";
+"Image" = "छवि";
+"Image format" = "छवि प्रारूप";
+"Quality" = "गुणवत्ता";
+"Saving" = "सहेजना";
+"Save action" = "सहेजने की क्रिया";
+"Save folder" = "सहेजने का फ़ोल्डर";
+"Filename" = "फ़ाइलनाम";
+"History size" = "इतिहास आकार";
+"Engine" = "इंजन";
+"Apple" = "Apple";
+"Google" = "Google";
 "OCR & QR" = "OCR और QR";
 "Run OCR & QR" = "OCR और QR चलाएँ";
 "QR Code" = "QR कोड";
@@ -291,6 +341,9 @@
 "Clear shortcut" = "शॉर्टकट मिटाएँ";
 "Press keys..." = "कुंजियाँ दबाएँ...";
 "Waiting..." = "प्रतीक्षा कर रहे हैं...";
+"Press a shortcut…" = "कोई शॉर्टकट दबाएँ…";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "किसी शॉर्टकट पर क्लिक करें और कम से कम एक मॉडिफ़ायर (⌘, ⌥, ⌃, ⇧) के साथ कुंजी संयोजन दबाएँ। Esc रद्द करता है। फ़ंक्शन कुंजियाँ अकेले भी काम करती हैं।";
+"These apply inside the capture overlay and the editor window." = "ये कैप्चर ओवरले और संपादक विंडो के भीतर लागू होते हैं।";
 
 /* Preferences - Tools */
 "Annotation Tools" = "एनोटेशन उपकरण";
@@ -304,6 +357,12 @@
 
 /* Preferences - Recording */
 "Frame rate:" = "फ़्रेम दर:";
+"Frame rate" = "फ़्रेम दर";
+"%d fps" = "%d fps";
+"When done" = "पूर्ण होने पर";
+"Shape" = "आकृति";
+"Scroll speed" = "स्क्रॉल गति";
+"Max height" = "अधिकतम ऊँचाई";
 "After recording:" = "रिकॉर्डिंग के बाद:";
 "Save recording to:" = "रिकॉर्डिंग यहाँ सहेजें:";
 "Save Recording" = "रिकॉर्डिंग सहेजें";
@@ -358,6 +417,30 @@
 "Make uploads publicly readable" = "अपलोड को सार्वजनिक रूप से पठनीय बनाएं";
 "Sends the public-read ACL so uploaded files are viewable by anyone with the link. Needed for AWS S3, DigitalOcean Spaces, MinIO and Backblaze B2, which store objects privately by default. Leave off for Cloudflare R2, which has no ACLs and rejects the header." = "public-read ACL भेजता है ताकि अपलोड की गई फ़ाइलें लिंक रखने वाले किसी भी व्यक्ति को दिखाई दें। AWS S3, DigitalOcean Spaces, MinIO और Backblaze B2 के लिए आवश्यक है जो डिफ़ॉल्ट रूप से ऑब्जेक्ट्स को निजी रखते हैं। Cloudflare R2 के लिए बंद रखें जो ACLs का समर्थन नहीं करता और हेडर अस्वीकार करता है।";
 "API key:" = "API कुंजी:";
+"Provider" = "प्रदाता";
+"Ask before uploading" = "अपलोड से पहले पूछें";
+"Account" = "खाता";
+"Connection" = "कनेक्शन";
+"Checking…" = "जाँच हो रही है…";
+"Folder" = "फ़ोल्डर";
+"API key" = "API कुंजी";
+"Access Key" = "एक्सेस कुंजी";
+"Secret Key" = "सीक्रेट कुंजी";
+"Bucket" = "बकेट";
+"Region" = "क्षेत्र";
+"Endpoint" = "एंडपॉइंट";
+"Public URL" = "सार्वजनिक URL";
+"Path Prefix" = "पथ उपसर्ग";
+"Domain" = "डोमेन";
+"Custom domain" = "कस्टम डोमेन";
+"GitHub repository" = "GitHub रिपॉज़िटरी";
+"GitHub repository (images + videos)" = "GitHub रिपॉज़िटरी (चित्र + वीडियो)";
+"Token" = "टोकन";
+"Repository" = "रिपॉज़िटरी";
+"Branch" = "ब्रांच";
+"Link style" = "लिंक शैली";
+"Example link" = "उदाहरण लिंक";
+"Create a fine-grained token with Contents write access to this one repository. The repository must be public for the links to be readable without a token." = "इस एक रिपॉज़िटरी के लिए Contents write एक्सेस वाला fine-grained टोकन बनाएँ। लिंक बिना टोकन के पढ़े जा सकें, इसके लिए रिपॉज़िटरी सार्वजनिक होनी चाहिए।";
 "Upload History" = "अपलोड इतिहास";
 "No uploads yet." = "अभी तक कोई अपलोड नहीं।";
 "No Apps Available" = "कोई ऐप उपलब्ध नहीं";
@@ -374,6 +457,7 @@
 "Version %@ (%@)" = "संस्करण %@ (%@)";
 "Made by" = "निर्माता";
 "Licensed under the GPLv3" = "GPLv3 के अंतर्गत लाइसेंसीकृत";
+"Licensed under GPLv3" = "GPLv3 के अंतर्गत लाइसेंसीकृत";
 "A free, open-source screenshot & screen recording tool for macOS.\nFully native — built with Swift and AppKit." = "macOS के लिए एक मुफ़्त, ओपन-सोर्स स्क्रीनशॉट और स्क्रीन रिकॉर्डिंग उपकरण।\nपूर्णतः नेटिव — Swift और AppKit से निर्मित।";
 
 /* Alerts */
@@ -420,6 +504,19 @@
 "Uploading... %d%%" = "अपलोड हो रहा है... %d%%";
 "Upload failed: %@" = "अपलोड विफल: %@";
 "Uploaded! Link copied." = "अपलोड हो गया! लिंक कॉपी किया गया।";
+"Uploading…" = "अपलोड हो रहा है…";
+"Link copied: %@" = "लिंक कॉपी किया गया: %@";
+"Could not encode the image." = "छवि को एन्कोड नहीं किया जा सका।";
+"Google Drive not signed in" = "Google Drive में साइन इन नहीं है";
+"S3 not configured — check Settings" = "S3 कॉन्फ़िगर नहीं है — सेटिंग्स देखें";
+"GitHub upload is not configured — check Settings." = "GitHub अपलोड कॉन्फ़िगर नहीं है — सेटिंग्स देखें।";
+"GitHub rejected the token — check that it has contents write access to the repository." = "GitHub ने टोकन अस्वीकार किया — जाँचें कि उसके पास रिपॉज़िटरी के लिए contents write एक्सेस है।";
+"Repository or branch not found — check the owner/repo and branch name." = "रिपॉज़िटरी या ब्रांच नहीं मिली — owner/repo और ब्रांच का नाम जाँचें।";
+"GitHub returned a response macshot could not read." = "GitHub ने ऐसी प्रतिक्रिया दी जिसे macshot पढ़ नहीं सका।";
+"%@ is too large for a GitHub repository — upload it to S3 or Google Drive instead." = "%@ GitHub रिपॉज़िटरी के लिए बहुत बड़ा है — इसे S3 या Google Drive पर अपलोड करें।";
+"Connected — the token can write to this repository." = "कनेक्ट हो गया — टोकन इस रिपॉज़िटरी में लिख सकता है।";
+"Connected, but the token cannot write to this repository." = "कनेक्ट हो गया, लेकिन टोकन इस रिपॉज़िटरी में नहीं लिख सकता।";
+"Video upload requires Google Drive, S3 or GitHub" = "वीडियो अपलोड के लिए Google Drive, S3 या GitHub आवश्यक है";
 "Uploading to %@... %d%%" = "%@ पर अपलोड हो रहा है... %d%%";
 "Open" = "खोलें";
 
@@ -622,6 +719,7 @@
 "Preview:" = "पूर्वावलोकन:";
 "Copy Screen Info" = "स्क्रीन जानकारी कॉपी करें";
 "Copies display and capture diagnostics to clipboard" = "डिस्प्ले और कैप्चर डायग्नोस्टिक्स को क्लिपबोर्ड पर कॉपी करता है";
+"Copies display and capture diagnostics to the clipboard" = "डिस्प्ले और कैप्चर डायग्नोस्टिक्स को क्लिपबोर्ड पर कॉपी करता है";
 "Accent" = "एक्सेंट";
 "Icon" = "आइकन";
 "Background" = "पृष्ठभूमि";

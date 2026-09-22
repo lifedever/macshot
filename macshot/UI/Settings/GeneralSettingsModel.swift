@@ -132,7 +132,7 @@ final class GeneralSettingsModel: ObservableObject {
     }
 
     func applyThemePreset(at index: Int) {
-        guard index < ThemePreset.all.count else { return }  // "Custom" — no-op
+        guard index >= 0, index < ThemePreset.all.count else { return }  // "Custom" — no-op
         let preset = ThemePreset.all[index]
         ToolbarLayout.saveAccentColor(preset.accent)
         ToolbarLayout.saveIconColor(preset.icon)

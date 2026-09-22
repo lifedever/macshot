@@ -180,6 +180,7 @@
 "Enhance browser and Electron element snapping" = "שיפור הצמדת אלמנטים בדפדפן ובאפליקציות Electron";
 "Builds the target app's accessibility tree in Element mode. Disable this if a browser or Electron app becomes slow or has input issues." = "בונה את עץ הנגישות של האפליקצייה היעד במצב אלמנט. השבת זאת אם דפדפן או אפליקציית Electron הופכים איטיים או יש להם בעיות קלט.";
 "Right-click to copy" = "לחץ ימני להעתקה";
+"Press C to copy" = "הקש C להעתקה";
 "Copied %@" = "הועתק %@";
 "Set color %@" = "הגדר צבע %@";
 "Draw something first to use the move tool." = "צייר משהו קודם כדי להשתמש בכלי ההזזה.";
@@ -212,6 +213,8 @@
 "Launch at login" = "הפעל בהתחברות";
 "Show snap alignment guides" = "הצג קווי הצמדה";
 "Snap selection edges to image boundaries" = "הצמד את קצות הבחירה לגבולות התמונה";
+"Snapping" = "הצמדה";
+"Haptic feedback when snapping" = "משוב מישושי בעת הצמדה";
 "Capture mouse cursor in screenshot" = "לכוד סמן עכבר בצילום מסך";
 "Double-click selection to copy" = "לחיצה כפולה על הבחירה להעתקה";
 "Hide capture instructions" = "הסתר הוראות צילום";
@@ -224,6 +227,9 @@
 "Default" = "ברירת מחדל";
 "Custom symbol" = "סמל מותאם אישית";
 "Enter any SF Symbol name (e.g. camera.fill) or pick a preset. Browse names in Apple's SF Symbols app. Invalid names fall back to the default icon." = "הזן שם SF Symbol כלשהו (למשל camera.fill) או בחר ערכה מוגדרת מראש. עיין בשמות באפליקציית SF Symbols של Apple. שמות לא חוקיים חוזרים לסמל ברירת המחדל.";
+"Menu bar icon" = "סמל שורת התפריטים";
+"Symbol" = "סמל";
+"No SF Symbol by that name — the default icon is used." = "אין SF Symbol בשם זה — נעשה שימוש בסמל ברירת המחדל.";
 "Check for updates automatically" = "בדוק עדכונים באופן אוטומטי";
 "Check for beta updates" = "בדוק עדכוני בטא";
 "Thumbnail" = "תמונה ממוזערת";
@@ -231,6 +237,20 @@
 "seconds before auto-dismiss (0 = never)" = "שניות לסגירה אוטומטית (0 = אף פעם)";
 "  Multiple previews:" = "  תצוגות מקדימות מרובות:";
 "  Position:" = "  מיקום:";
+
+/* Settings — Floating Preview */
+"Floating Preview" = "תצוגה מקדימה צפה";
+"Position" = "מיקום";
+"Dismiss after" = "סגור אחרי";
+"Never" = "אף פעם";
+"3 seconds" = "3 שניות";
+"5 seconds" = "5 שניות";
+"10 seconds" = "10 שניות";
+"30 seconds" = "30 שניות";
+"Multiple previews" = "תצוגות מקדימות מרובות";
+"Preview size" = "גודל תצוגה מקדימה";
+"Preview" = "תצוגה מקדימה";
+"View" = "הצג";
 "Stack (keep all)" = "ערום (שמור הכל)";
 "Replace (show only latest)" = "החלף (הצג רק אחרון)";
 "Menu Bar Order" = "סדר שורת התפריטים";
@@ -240,6 +260,9 @@
 "Output" = "פלט";
 "Image format:" = "פורמט תמונה:";
 "Quality:" = "איכות:";
+"Image" = "תמונה";
+"Image format" = "פורמט תמונה";
+"Quality" = "איכות";
 "%d%%" = "%d%%";
 "Save at standard resolution (1x)" = "שמור ברזולוציה רגילה (1x)";
 "Halves dimensions on Retina displays, ~4x smaller files" = "מחצית מידות בצגי Retina, קבצים קטנים פי ~4";
@@ -247,6 +270,7 @@
 "Ensures consistent colors across different displays" = "מבטיח צבעים עקביים בין צגים שונים";
 "Screenshot History" = "היסטוריית צילומי מסך";
 "History size:" = "גודל היסטוריה:";
+"History size" = "גודל היסטוריה";
 "screenshots kept on disk (0 = off)" = "צילומי מסך נשמרים בדיסק (0 = כבוי)";
 "Order history by last edit" = "מיין היסטוריה לפי עריכה אחרונה";
 "Edited screenshots move to the top. Off keeps them in capture order." = "צילומי מסך שנערכו עוברים לראש. כיבוי משאיר אותם בסדר הצילום.";
@@ -258,20 +282,28 @@
 "Save action:" = "פעולת שמירה:";
 "Save to default folder" = "שמור לתיקיית ברירת המחדל";
 "Ask where to save" = "שאל היכן לשמור";
+"Saving" = "שמירה";
+"Save action" = "פעולת שמירה";
+"Save folder" = "תיקיית שמירה";
+"Filename" = "שם קובץ";
 "Appearance" = "מראה";
 "Accent color:" = "צבע הדגשה:";
 "Icon color:" = "צבע סמל:";
 "Background color:" = "צבע רקע:";
+"Theme" = "ערכת נושא";
 "Reset" = "איפוס";
 "OCR Capture:" = "לכידת OCR:";
 "Show window + copy to clipboard" = "הצג חלון + העתק ללוח";
 "Show window only" = "הצג חלון בלבד";
 "Copy to clipboard only" = "העתק ללוח בלבד";
+"Show results window" = "הצג חלון תוצאות";
 "Enter / Quick Capture:" = "Enter / לכידה מהירה:";
+"Enter / Quick Capture" = "Enter / לכידה מהירה";
 "Save to file" = "שמור לקובץ";
 "Save + copy to clipboard" = "שמור + העתק ללוח";
 "OCR Action" = "פעולת OCR";
 "OCR & QR Capture:" = "לכידת OCR ו-QR:";
+"OCR & QR Capture" = "לכידת OCR ו-QR";
 "OCR & QR" = "OCR ו-QR";
 "Text & QR Recognition" = "זיהוי טקסט ו-QR";
 "Capture OCR & QR" = "לכידת OCR ו-QR";
@@ -286,6 +318,9 @@
 "Clear shortcut" = "נקה קיצור";
 "Press keys..." = "לחץ על מקשים...";
 "Waiting..." = "ממתין...";
+"Press a shortcut…" = "הקש קיצור…";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "לחץ על קיצור והקש צירוף מקשים עם לפחות מקש שינוי אחד (⌘, ⌥, ⌃, ⇧). Esc מבטל. מקשי פונקציה פועלים בפני עצמם.";
+"These apply inside the capture overlay and the editor window." = "אלה פועלים בתוך שכבת הלכידה וחלון העורך.";
 
 /* Preferences - Tools */
 "Annotation Tools" = "כלי הערות";
@@ -299,16 +334,20 @@
 
 /* Preferences - Recording */
 "Frame rate:" = "קצב פריימים:";
+"Frame rate" = "קצב פריימים";
 "After recording:" = "לאחר הקלטה:";
+"When done" = "בסיום";
 "Save recording to:" = "שמור הקלטה אל:";
 "Save Recording" = "שמור הקלטה";
 "Clear" = "נקה";
 "Max height:" = "גובה מקסימלי:";
+"Max height" = "גובה מקסימלי";
 "px (0 = unlimited)" = "px (0 = ללא הגבלה)";
 "Behavior" = "התנהגות";
 "Auto-scroll (sends synthetic scroll events)" = "גלילה אוטומטית (שולח אירועי גלילה סינתטיים)";
 "Detect fixed/sticky headers" = "זהה כותרות קבועות/דביקות";
 "Scroll speed:" = "מהירות גלילה:";
+"Scroll speed" = "מהירות גלילה";
 "Slow" = "איטי";
 "Medium" = "בינוני";
 "Fast" = "מהיר";
@@ -320,13 +359,29 @@
 "30 fps" = "30 fps";
 "60 fps" = "60 fps";
 "120 fps" = "120 fps";
+"%d fps" = "%d fps";
 "MP4 (H.264)" = "MP4 (H.264)";
 "GIF" = "GIF";
+
+/* Settings — Beautify */
+"Beautify captures" = "ייפוי לכידות";
+"Frame" = "מסגרת";
+"Window chrome" = "מסגרת חלון";
+"Rounded corners" = "פינות מעוגלות";
+"Corner radius" = "רדיוס פינות";
+"Background blur" = "טשטוש רקע";
+"Style" = "סגנון";
+"Use desktop wallpaper" = "השתמש בתמונת הרקע של שולחן העבודה";
+"Choose image…" = "בחר תמונה…";
+"Places the capture on a background with rounded corners and a drop shadow." = "ממקם את הלכידה על רקע עם פינות מעוגלות וצל.";
+"Places the capture on a gradient background with rounded corners and a drop shadow. The style is chosen from the toolbar." = "ממקם את הלכידה על רקע מעבר צבע עם פינות מעוגלות וצל. הסגנון נבחר מסרגל הכלים.";
 
 /* Preferences - Upload */
 "Upload Service" = "שירות העלאה";
 "Upload Provider" = "ספק העלאה";
 "Provider:" = "ספק:";
+"Provider" = "ספק";
+"Ask before uploading" = "שאל לפני העלאה";
 "Google Drive" = "Google Drive";
 "Google Drive (images + videos)" = "Google Drive (תמונות + סרטונים)";
 "imgbb (images only)" = "imgbb (תמונות בלבד)";
@@ -337,11 +392,17 @@
 "Signed in" = "מחובר";
 "Not signed in" = "לא מחובר";
 "Account:" = "חשבון:";
+"Account" = "חשבון";
 "Folder:" = "תיקייה:";
+"Folder" = "תיקייה";
 "Test Connection" = "בדוק חיבור";
+"Connection" = "חיבור";
+"Checking…" = "בודק…";
 "Fill in endpoint, bucket, and credentials first" = "מלא קודם כתובת שרת, bucket ופרטי גישה";
 "Testing..." = "בודק...";
 "Connection successful!" = "החיבור הצליח!";
+"Connected — the token can write to this repository." = "מחובר — לאסימון יש הרשאת כתיבה למאגר הזה.";
+"Connected, but the token cannot write to this repository." = "מחובר, אבל לאסימון אין הרשאת כתיבה למאגר הזה.";
 "Leave empty to use default" = "השאר ריק לשימוש בברירת מחדל";
 "Endpoint:" = "כתובת שרת:";
 "Region:" = "אזור:";
@@ -350,9 +411,17 @@
 "Secret Key:" = "מפתח סודי:";
 "Public URL:" = "כתובת URL ציבורית:";
 "Path Prefix:" = "קידומת נתיב:";
+"Endpoint" = "כתובת שרת";
+"Region" = "אזור";
+"Bucket" = "Bucket";
+"Access Key" = "מפתח גישה";
+"Secret Key" = "מפתח סודי";
+"Public URL" = "כתובת URL ציבורית";
+"Path Prefix" = "קידומת נתיב";
 "Make uploads publicly readable" = "הפוך העלאות לקריאה ציבורית";
 "Sends the public-read ACL so uploaded files are viewable by anyone with the link. Needed for AWS S3, DigitalOcean Spaces, MinIO and Backblaze B2, which store objects privately by default. Leave off for Cloudflare R2, which has no ACLs and rejects the header." = "שולח ACL מסוג public-read כדי שקבצים שהועלו יהיו נגישים לכל מי שיש לו את הקישור. נדרש עבור AWS S3, DigitalOcean Spaces, MinIO ו-Backblaze B2, ששומרים אובייקטים באופן פרטי כברירת מחדל. השאר כבוי עבור Cloudflare R2, שאינו תומך ב-ACLs ודוחה את הכותרת.";
 "API key:" = "מפתח API:";
+"API key" = "מפתח API";
 "Upload History" = "היסטוריית העלאות";
 "No uploads yet." = "אין העלאות עדיין.";
 "Base URL for public access. If empty, the S3 endpoint URL is used (may not be publicly accessible)." = "כתובת URL בסיסית לגישה ציבורית. אם ריק, נעשה שימוש בכתובת שרת S3 (ייתכן שלא נגיש לציבור).";
@@ -362,11 +431,25 @@
 "Sign in to Google Drive in Preferences" = "התחבר ל-Google Drive בהעדפות";
 "Video upload requires Google Drive or S3" = "העלאת וידאו דורשת Google Drive או S3";
 
+/* Settings — GitHub upload */
+"GitHub repository" = "מאגר GitHub";
+"GitHub repository (images + videos)" = "מאגר GitHub (תמונות + סרטונים)";
+"Token" = "אסימון";
+"Repository" = "מאגר";
+"Branch" = "ענף";
+"Link style" = "סגנון קישור";
+"Custom domain" = "דומיין מותאם אישית";
+"Domain" = "דומיין";
+"Example link" = "קישור לדוגמה";
+"Create a fine-grained token with Contents write access to this one repository. The repository must be public for the links to be readable without a token." = "צור fine-grained token עם הרשאת כתיבה ל-Contents במאגר הזה בלבד. המאגר חייב להיות ציבורי כדי שהקישורים יהיו קריאים ללא אסימון.";
+"Video upload requires Google Drive, S3 or GitHub" = "העלאת וידאו דורשת Google Drive, S3 או GitHub";
+
 /* Preferences - About */
 "macshot" = "macshot";
 "Version %@ (%@)" = "גרסה %@ (%@)";
 "Made by" = "נוצר על ידי";
 "Licensed under the GPLv3" = "מורשה תחת GPLv3";
+"Licensed under GPLv3" = "מורשה תחת GPLv3";
 "A free, open-source screenshot & screen recording tool for macOS.\nFully native — built with Swift and AppKit." = "כלי חינמי וקוד פתוח לצילום מסך והקלטת מסך עבור macOS.\nנייטיב לחלוטין — בנוי עם Swift ו-AppKit.";
 
 /* Alerts */
@@ -410,8 +493,19 @@
 /* Upload Toast */
 "URL copied to the clipboard" = "הכתובת הועתקה ללוח";
 "Uploading... %d%%" = "מעלה... %d%%";
+"Uploading…" = "מעלה…";
 "Upload failed: %@" = "ההעלאה נכשלה: %@";
+
+/* Upload errors */
+"Google Drive not signed in" = "לא מחובר ל-Google Drive";
+"S3 not configured — check Settings" = "S3 לא הוגדר — בדוק בהגדרות";
+"GitHub upload is not configured — check Settings." = "העלאה ל-GitHub לא הוגדרה — בדוק בהגדרות.";
+"GitHub rejected the token — check that it has contents write access to the repository." = "GitHub דחה את האסימון — בדוק שיש לו הרשאת כתיבה לתוכן המאגר.";
+"Repository or branch not found — check the owner/repo and branch name." = "המאגר או הענף לא נמצאו — בדוק את owner/repo ואת שם הענף.";
+"GitHub returned a response macshot could not read." = "GitHub החזיר תגובה ש-macshot לא הצליח לקרוא.";
+"%@ is too large for a GitHub repository — upload it to S3 or Google Drive instead." = "%@ גדול מדי עבור מאגר GitHub — העלה אותו ל-S3 או ל-Google Drive.";
 "Uploaded! Link copied." = "הועלה! הקישור הועתק.";
+"Link copied: %@" = "הקישור הועתק: %@";
 "Uploading to %@... %d%%" = "מעלה ל-%@... %d%%";
 "Open" = "פתח";
 
@@ -438,6 +532,7 @@
 "Choose a folder" = "בחר תיקייה";
 "Save All to Folder…" = "שמור הכל לתיקייה…";
 "Could not encode the screenshot." = "לא ניתן היה לקודד את צילום המסך.";
+"Could not encode the image." = "לא ניתן היה לקודד את התמונה.";
 "Could not save the screenshot: %@" = "לא ניתן היה לשמור את צילום המסך: %@";
 "Could not save the screenshot to history." = "לא ניתן היה לשמור את צילום המסך בהיסטוריה.";
 
@@ -544,8 +639,11 @@
 "Pause" = "השהה";
 "Resume" = "המשך";
 "Engine:" = "מנוע:";
+"Engine" = "מנוע";
 "Google Translate" = "Google Translate";
 "Apple (on-device)" = "Apple (על המכשיר)";
+"Apple" = "Apple";
+"Google" = "Google";
 "Apple translation is faster and works offline. Google Translate supports more languages." = "התרגום של Apple מהיר יותר ועובד ללא חיבור. Google Translate תומך ביותר שפות.";
 "Download language packs in System Settings…" = "הורד חבילות שפה בהגדרות המערכת…";
 "Configure S3 in Settings" = "הגדר S3 בהגדרות";
@@ -553,6 +651,7 @@
 "Position:" = "מיקום:";
 "Size:" = "גודל:";
 "Shape:" = "צורה:";
+"Shape" = "צורה";
 
 "Same as screenshots" = "זהה לצילומי המסך";
 "  Preview size:" = "  גודל תצוגה מקדימה:";
@@ -622,6 +721,7 @@
 "Preview:" = "תצוגה מקדימה:";
 "Copy Screen Info" = "העתק מידע על המסך";
 "Copies display and capture diagnostics to clipboard" = "מעתיק אבחוני תצוגה ולכידה ללוח";
+"Copies display and capture diagnostics to the clipboard" = "מעתיק אבחוני תצוגה ולכידה ללוח";
 "Accent" = "הדגשה";
 "Icon" = "סמל";
 "Background" = "רקע";

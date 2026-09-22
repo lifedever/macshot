@@ -190,6 +190,7 @@
 "  (Tab to toggle)" = "  (Tab vaihtaaksesi)";
 "  (Tab to switch)" = "  (Tab vaihtaaksesi)";
 "Right-click to copy" = "Kopioi oikealla napsautuksella";
+"Press C to copy" = "Kopioi painamalla C";
 "Copied %@" = "Kopioitu %@";
 "Set color %@" = "Aseta väri %@";
 "Draw something first to use the move tool." = "Piirrä ensin jotain käyttääksesi siirtotyökalua.";
@@ -225,6 +226,8 @@
 "Launch at login" = "Käynnistä kirjautumisen yhteydessä";
 "Show snap alignment guides" = "Näytä kohdistusapuviivat";
 "Snap selection edges to image boundaries" = "Kohdista valinnan reunat kuvan rajoihin";
+"Snapping" = "Kohdistus";
+"Haptic feedback when snapping" = "Haptinen palaute kohdistettaessa";
 "Enhance browser and Electron element snapping" = "Paranna selaimen ja Electronin elementtien tartuntaa";
 "Builds the target app's accessibility tree in Element mode. Disable this if a browser or Electron app becomes slow or has input issues." = "Rakentaa kohdeohjelman saavutettavuuspuun Element-tilassa. Poista tämä käytöstä, jos selain tai Electron-sovellus hidastuu tai sillä on input-ongelmia.";
 "Capture mouse cursor in screenshot" = "Kaappaa hiiren osoitin kuvakaappaukseen";
@@ -241,7 +244,24 @@
 "  Multiple previews:" = "  Useita esikatseluja:";
 "Stack (keep all)" = "Pinoa (säilytä kaikki)";
 "Replace (show only latest)" = "Korvaa (näytä vain viimeisin)";
+/* Settings - Floating Preview */
+"Floating Preview" = "Kelluva esikatselu";
+"Position" = "Sijainti";
+"Dismiss after" = "Piilotusviive";
+"Never" = "Ei koskaan";
+"3 seconds" = "3 sekuntia";
+"5 seconds" = "5 sekuntia";
+"10 seconds" = "10 sekuntia";
+"30 seconds" = "30 sekuntia";
+"Multiple previews" = "Useita esikatseluja";
+"Preview size" = "Esikatselukoko";
+"Preview" = "Esikatselu";
+"View" = "Näytä";
+
 "Output" = "Tuloste";
+"Image" = "Kuva";
+"Image format" = "Kuvamuoto";
+"Quality" = "Laatu";
 "Image format:" = "Kuvamuoto:";
 "Quality:" = "Laatu:";
 "%d%%" = "%d%%";
@@ -252,11 +272,16 @@
 "Screenshot History" = "Kuvakaappaushistoria";
 "History size:" = "Historian koko:";
 "screenshots kept on disk (0 = off)" = "kuvakaappausta säilytetään levyllä (0 = pois)";
+"History size" = "Historian koko";
 "Order history by last edit" = "J\U00E4rjest\U00E4 historia viimeisimm\U00E4n muokkauksen mukaan";
 "Edited screenshots move to the top. Off keeps them in capture order." = "Muokatut kuvakaappaukset siirtyv\U00E4t yl\U00F6s. Pois pit\U00E4\U00E4 ne kaappausj\U00E4rjestyksess\U00E4.";
 "Save Directory" = "Tallennuskansio";
 "Save folder:" = "Tallennuskansio:";
 "Browse…" = "Selaa…";
+"Saving" = "Tallennus";
+"Save action" = "Tallennustoiminto";
+"Save folder" = "Tallennuskansio";
+"Filename" = "Tiedostonimi";
 "Appearance" = "Ulkoasu";
 "Accent color:" = "Korostusväri:";
 "Icon color:" = "Kuvakkeen väri:";
@@ -267,6 +292,9 @@
 "Show window + copy to clipboard" = "Näytä ikkuna + kopioi leikepöydälle";
 "Show window only" = "Näytä vain ikkuna";
 "Copy to clipboard only" = "Kopioi vain leikepöydälle";
+"Enter / Quick Capture" = "Enter / Pikakaappaus";
+"OCR & QR Capture" = "OCR- & QR-kaappaus";
+"Show results window" = "Näytä tulosikkuna";
 "Enter / Quick Capture:" = "Enter / Pikakaappaus:";
 "Save to file" = "Tallenna tiedostoon";
 "Save + copy to clipboard" = "Tallenna + kopioi leikepöydälle";
@@ -280,6 +308,10 @@
 "Default" = "Oletus";
 "Custom symbol" = "Mukautettu symboli";
 "Enter any SF Symbol name (e.g. camera.fill) or pick a preset. Browse names in Apple's SF Symbols app. Invalid names fall back to the default icon." = "Anna mikä tahansa SF Symbol -nimi (esim. camera.fill) tai valitse esiasetus. Selaa nimiä Applen SF Symbols -sovelluksessa. Virheelliset nimet palautuvat oletuskuvakkeeseen.";
+"Menu bar icon" = "Valikkopalkin kuvake";
+"Symbol" = "Symboli";
+"No SF Symbol by that name — the default icon is used." = "Tämännimistä SF Symbol -symbolia ei ole — käytetään oletuskuvaketta.";
+"Theme" = "Teema";
 
 /* Preferences - Shortcuts */
 "Keyboard Shortcuts" = "Pikanäppäimet";
@@ -287,6 +319,9 @@
 "Clear shortcut" = "Tyhjennä pikanäppäin";
 "Press keys..." = "Paina näppäimiä...";
 "Waiting..." = "Odotetaan...";
+"Press a shortcut…" = "Paina pikanäppäintä…";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "Napsauta pikanäppäintä ja paina näppäinyhdistelmää, jossa on vähintään yksi muokkausnäppäin (⌘, ⌥, ⌃, ⇧). Esc peruuttaa. Funktionäppäimet toimivat yksinään.";
+"These apply inside the capture overlay and the editor window." = "Nämä toimivat kaappauksen peittokuvassa ja editori-ikkunassa.";
 
 /* Preferences - Tools */
 "Annotation Tools" = "Merkintätyökalut";
@@ -304,6 +339,10 @@
 
 /* Preferences - Recording */
 "Frame rate:" = "Kuvataajuus:";
+"Frame rate" = "Kuvataajuus";
+"%d fps" = "%d fps";
+"When done" = "Kun valmis";
+"Shape" = "Muoto";
 "After recording:" = "Nauhoituksen jälkeen:";
 "Save recording to:" = "Tallenna nauhoitus kohteeseen:";
 "Save Recording" = "Tallenna nauhoitus";
@@ -314,6 +353,8 @@
 "Auto-scroll (sends synthetic scroll events)" = "Automaattivieritys (lähettää synteettisiä vieritystapahtumia)";
 "Detect fixed/sticky headers" = "Tunnista kiinteät/tarttuvat ylätunnisteet";
 "Scroll speed:" = "Vieritysnopeus:";
+"Scroll speed" = "Vieritysnopeus";
+"Max height" = "Enimmäiskorkeus";
 "Slow" = "Hidas";
 "Medium" = "Keskitaso";
 "Fast" = "Nopea";
@@ -328,21 +369,44 @@
 "MP4 (H.264)" = "MP4 (H.264)";
 "GIF" = "GIF";
 
+/* Settings - Beautify */
+"Beautify captures" = "Kaunista kaappaukset";
+"Frame" = "Kehys";
+"Window chrome" = "Ikkunakehys";
+"Rounded corners" = "Pyöristetyt kulmat";
+"Corner radius" = "Kulman pyöristys";
+"Background blur" = "Taustan sumennus";
+"Style" = "Tyyli";
+"Use desktop wallpaper" = "Käytä työpöydän taustakuvaa";
+"Choose image…" = "Valitse kuva…";
+"Places the capture on a background with rounded corners and a drop shadow." = "Asettaa kaappauksen taustalle, jossa on pyöristetyt kulmat ja varjo.";
+"Places the capture on a gradient background with rounded corners and a drop shadow. The style is chosen from the toolbar." = "Asettaa kaappauksen liukuväritaustalle, jossa on pyöristetyt kulmat ja varjo. Tyyli valitaan työkalupalkista.";
+
 /* Preferences - Upload */
 "Upload Service" = "Latauspalvelu";
 "Upload Provider" = "Latauspalveluntarjoaja";
 "Provider:" = "Palveluntarjoaja:";
+"Provider" = "Palveluntarjoaja";
 "Google Drive" = "Google Drive";
 "Google Drive (images + videos)" = "Google Drive (kuvat + videot)";
 "imgbb (images only)" = "imgbb (vain kuvat)";
 "S3-Compatible (images + videos)" = "S3-yhteensopiva (kuvat + videot)";
+"GitHub repository" = "GitHub-repositorio";
+"GitHub repository (images + videos)" = "GitHub-repositorio (kuvat + videot)";
 "S3-Compatible Storage" = "S3-yhteensopiva tallennustila";
 "Sign In with Google" = "Kirjaudu sisään Googlella";
 "Sign Out" = "Kirjaudu ulos";
 "Signed in" = "Kirjautunut sisään";
 "Not signed in" = "Ei kirjautunut";
 "Account:" = "Tili:";
+"Account" = "Tili";
+"Connection" = "Yhteys";
+"Checking…" = "Tarkistetaan…";
+"Connected — the token can write to this repository." = "Yhdistetty — token voi kirjoittaa tähän repositorioon.";
+"Connected, but the token cannot write to this repository." = "Yhdistetty, mutta token ei voi kirjoittaa tähän repositorioon.";
 "Folder:" = "Kansio:";
+"Folder" = "Kansio";
+"Ask before uploading" = "Kysy ennen lataamista";
 "Test Connection" = "Testaa yhteys";
 "Fill in endpoint, bucket, and credentials first" = "Täytä ensin päätepiste, säiliö ja tunnistetiedot";
 "Testing..." = "Testataan...";
@@ -355,9 +419,17 @@
 "Secret Key:" = "Salainen avain:";
 "Public URL:" = "Julkinen URL:";
 "Path Prefix:" = "Polun etuliite:";
+"Access Key" = "Käyttöavain";
+"Secret Key" = "Salainen avain";
+"Bucket" = "Säiliö";
+"Region" = "Alue";
+"Endpoint" = "Päätepiste";
+"Public URL" = "Julkinen URL";
+"Path Prefix" = "Polun etuliite";
 "Make uploads publicly readable" = "Tee latauksista julkisesti luettavia";
 "Sends the public-read ACL so uploaded files are viewable by anyone with the link. Needed for AWS S3, DigitalOcean Spaces, MinIO and Backblaze B2, which store objects privately by default. Leave off for Cloudflare R2, which has no ACLs and rejects the header." = "L\U00E4hett\U00E4\U00E4 public-read ACL -otsakkeen, jotta ladatut tiedostot ovat kaikkien n\U00E4ht\U00E4viss\U00E4 linkin kautta. Tarvitaan AWS S3:lle, DigitalOcean Spacesille, MinIO:lle ja Backblaze B2:lle, jotka tallentavat objektit oletuksena yksityisin\U00E4. J\U00E4t\U00E4 pois p\U00E4\U00E4lt\U00E4 Cloudflare R2:lle, joka ei tue ACL-otsakkeita ja hylk\U00E4\U00E4 ne.";
 "API key:" = "API-avain:";
+"API key" = "API-avain";
 "Upload History" = "Lataushistoria";
 "No uploads yet." = "Ei latauksia vielä.";
 "Base URL for public access. If empty, the S3 endpoint URL is used (may not be publicly accessible)." = "Julkisen pääsyn perus-URL. Jos tyhjä, käytetään S3-päätepisteen URL-osoitetta (ei välttämättä julkisesti saatavilla).";
@@ -367,11 +439,24 @@
 "Sign in to Google Drive in Preferences" = "Kirjaudu Google Driveen asetuksissa";
 "Video upload requires Google Drive or S3" = "Videon lataus vaatii Google Driven tai S3:n";
 
+/* Uploads - GitHub */
+"Token" = "Token";
+"Repository" = "Repositorio";
+"Branch" = "Haara";
+"Domain" = "Verkkotunnus";
+"Custom domain" = "Oma verkkotunnus";
+"Link style" = "Linkkityyli";
+"Example link" = "Esimerkkilinkki";
+"Create a fine-grained token with Contents write access to this one repository. The repository must be public for the links to be readable without a token." = "Luo fine-grained token, jolla on Contents-kirjoitusoikeus vain tähän repositorioon. Repositorion on oltava julkinen, jotta linkit ovat luettavissa ilman tokenia.";
+"Video upload requires Google Drive, S3 or GitHub" = "Videon lataus vaatii Google Driven, S3:n tai GitHubin";
+
 /* Preferences - About */
 "macshot" = "macshot";
 "Version %@ (%@)" = "Versio %@ (%@)";
 "Made by" = "Tekijä";
 "Licensed under the GPLv3" = "Lisensoitu GPLv3-lisenssillä";
+"Licensed under GPLv3" = "Lisensoitu GPLv3-lisenssillä";
+"Copies display and capture diagnostics to the clipboard" = "Kopioi näytön ja kaappauksen diagnostiikan leikepöydälle";
 "A free, open-source screenshot & screen recording tool for macOS.\nFully native — built with Swift and AppKit." = "Ilmainen, avoimen lähdekoodin kuvakaappaus- ja ruudunnauhoitustyökalu macOS:lle.\nTäysin natiivi — rakennettu Swiftilla ja AppKitilla.";
 
 /* Alerts */
@@ -417,6 +502,16 @@
 "Uploading... %d%%" = "Ladataan... %d%%";
 "Upload failed: %@" = "Lataus epäonnistui: %@";
 "Uploaded! Link copied." = "Ladattu! Linkki kopioitu.";
+"Uploading…" = "Ladataan…";
+"Link copied: %@" = "Linkki kopioitu: %@";
+"Could not encode the image." = "Kuvaa ei voitu koodata.";
+"Google Drive not signed in" = "Ei kirjauduttu Google Driveen";
+"S3 not configured — check Settings" = "S3:a ei ole määritetty — tarkista asetukset";
+"GitHub upload is not configured — check Settings." = "GitHub-latausta ei ole määritetty — tarkista asetukset.";
+"GitHub rejected the token — check that it has contents write access to the repository." = "GitHub hylkäsi tokenin — tarkista, että sillä on contents-kirjoitusoikeus repositorioon.";
+"Repository or branch not found — check the owner/repo and branch name." = "Repositoriota tai haaraa ei löytynyt — tarkista owner/repo ja haaran nimi.";
+"GitHub returned a response macshot could not read." = "GitHub palautti vastauksen, jota macshot ei voinut lukea.";
+"%@ is too large for a GitHub repository — upload it to S3 or Google Drive instead." = "%@ on liian suuri GitHub-repositorioon — lataa se S3:een tai Google Driveen.";
 "Uploading to %@... %d%%" = "Ladataan palveluun %@... %d%%";
 "Open" = "Avaa";
 
@@ -553,6 +648,9 @@
 "Google Translate" = "Google Translate";
 "Apple (on-device)" = "Apple (laitteessa)";
 "Apple translation is faster and works offline. Google Translate supports more languages." = "Apple-k\U00E4\U00E4nn\U00F6s on nopeampi ja toimii offline-tilassa. Google Translate tukee useampia kieli\U00E4.";
+"Engine" = "Moottori";
+"Apple" = "Apple";
+"Google" = "Google";
 "Download language packs in System Settings\U2026" = "Lataa kielipaketteja J\U00E4rjestelm\U00E4asetuksista\U2026";
 "Configure S3 in Settings" = "M\U00E4\U00E4rit\U00E4 S3 asetuksissa";
 "Sign in to Google Drive in Settings" = "Kirjaudu Google Driveen asetuksissa";

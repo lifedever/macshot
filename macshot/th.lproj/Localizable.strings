@@ -53,6 +53,7 @@
 
 /* Floating Thumbnail */
 "Close All" = "ปิดทั้งหมด";
+"View" = "ดู";
 "Save" = "บันทึก";
 
 /* Editor Top Bar */
@@ -185,6 +186,7 @@
 "  (Tab to toggle)" = "  (Tab เพื่อสลับ)";
 "  (Tab to switch)" = "  (Tab เพื่อสลับ)";
 "Right-click to copy" = "คลิกขวาเพื่อคัดลอก";
+"Press C to copy" = "กด C เพื่อคัดลอก";
 "Copied %@" = "คัดลอก %@ แล้ว";
 "Set color %@" = "ตั้งสี %@";
 "Draw something first to use the move tool." = "วาดบางอย่างก่อนเพื่อใช้เครื่องมือย้าย";
@@ -228,6 +230,8 @@
 "Launch at login" = "เปิดเมื่อเข้าสู่ระบบ";
 "Show snap alignment guides" = "แสดงเส้นจัดแนว";
 "Snap selection edges to image boundaries" = "ดูดขอบพื้นที่เลือกเข้ากับขอบเขตของภาพ";
+"Snapping" = "การสแนป";
+"Haptic feedback when snapping" = "การตอบสนองแบบสัมผัสเมื่อสแนป";
 "Enhance browser and Electron element snapping" = "เพิ่มการจับองค์ประกอบของเบราว์เซอร์และ Electron";
 "Builds the target app's accessibility tree in Element mode. Disable this if a browser or Electron app becomes slow or has input issues." = "สร้าง accessibility tree ของแอปเป้าหมายในโหมดองค์ประกอบ ปิดการใช้งานนี้หากเบราว์เซอร์หรือแอป Electron ทำงานช้ากว่าปกติหรือมีปัญหาในการรับข้อมูล";
 "Capture mouse cursor in screenshot" = "จับภาพเคอร์เซอร์เมาส์ในภาพหน้าจอ";
@@ -242,6 +246,9 @@
 "Default" = "ค่าเริ่มต้น";
 "Custom symbol" = "สัญลักษณ์กำหนดเอง";
 "Enter any SF Symbol name (e.g. camera.fill) or pick a preset. Browse names in Apple's SF Symbols app. Invalid names fall back to the default icon." = "ป้อนชื่อ SF Symbol ใดก็ได้ (เช่น camera.fill) หรือเลือกค่าที่ตั้งไว้ ดูชื่อได้ในแอป SF Symbols ของ Apple ชื่อที่ไม่ถูกต้องจะกลับไปใช้ไอคอนเริ่มต้น";
+"Menu bar icon" = "ไอคอนแถบเมนู";
+"Symbol" = "สัญลักษณ์";
+"No SF Symbol by that name — the default icon is used." = "ไม่มี SF Symbol ชื่อนี้ — จะใช้ไอคอนเริ่มต้นแทน";
 "Menu Bar Order" = "ลำดับแถบเมนู";
 "Choose the order of capture actions in the macshot menu bar menu." = "เลือกลำดับของการดำเนินการจับภาพในเมนูแถบเมนูของ macshot";
 "Move up" = "เลื่อนขึ้น";
@@ -250,13 +257,24 @@
 "Check for beta updates" = "ตรวจสอบอัปเดตเบต้า";
 "Thumbnail" = "ภาพขนาดย่อ";
 "  Dismiss after:" = "  ปิดหลังจาก:";
+"Floating Preview" = "ตัวอย่างแบบลอย";
+"Dismiss after" = "ปิดหลังจาก";
+"Never" = "ไม่ปิด";
+"3 seconds" = "3 วินาที";
+"5 seconds" = "5 วินาที";
+"10 seconds" = "10 วินาที";
+"30 seconds" = "30 วินาที";
 "seconds before auto-dismiss (0 = never)" = "วินาทีก่อนปิดอัตโนมัติ (0 = ไม่ปิด)";
 "  Multiple previews:" = "  ตัวอย่างหลายรายการ:";
+"Multiple previews" = "ตัวอย่างหลายรายการ";
 "Stack (keep all)" = "ซ้อน (เก็บทั้งหมด)";
 "Replace (show only latest)" = "แทนที่ (แสดงล่าสุดเท่านั้น)";
 "Output" = "ผลลัพธ์";
 "Image format:" = "รูปแบบภาพ:";
+"Image" = "รูปภาพ";
+"Image format" = "รูปแบบภาพ";
 "Quality:" = "คุณภาพ:";
+"Quality" = "คุณภาพ";
 "%d%%" = "%d%%";
 "Save at standard resolution (1x)" = "บันทึกที่ความละเอียดมาตรฐาน (1x)";
 "Halves dimensions on Retina displays, ~4x smaller files" = "ลดขนาดครึ่งหนึ่งบนจอ Retina ไฟล์เล็กลง ~4 เท่า";
@@ -264,9 +282,12 @@
 "Ensures consistent colors across different displays" = "ทำให้สีสม่ำเสมอบนจอแสดงผลต่าง ๆ";
 "Screenshot History" = "ประวัติภาพหน้าจอ";
 "History size:" = "ขนาดประวัติ:";
+"History size" = "ขนาดประวัติ";
 "screenshots kept on disk (0 = off)" = "ภาพหน้าจอที่เก็บในดิสก์ (0 = ปิด)";
 "Save Directory" = "โฟลเดอร์บันทึก";
 "Save folder:" = "โฟลเดอร์บันทึก:";
+"Saving" = "การบันทึก";
+"Save folder" = "โฟลเดอร์บันทึก";
 "Browse…" = "เรียกดู…";
 "Appearance" = "รูปลักษณ์";
 "Accent color:" = "สีเน้น:";
@@ -275,13 +296,17 @@
 "Reset" = "รีเซ็ต";
 "OCR Capture:" = "การจับภาพ OCR:";
 "OCR & QR Capture:" = "การจับภาพ OCR และ QR:";
+"OCR & QR Capture" = "การจับภาพ OCR และ QR";
+"Show results window" = "แสดงหน้าต่างผลลัพธ์";
 "Show window + copy to clipboard" = "แสดงหน้าต่าง + คัดลอกไปยังคลิปบอร์ด";
 "Show window only" = "แสดงหน้าต่างเท่านั้น";
 "Copy to clipboard only" = "คัดลอกไปยังคลิปบอร์ดเท่านั้น";
 "Enter / Quick Capture:" = "Enter / จับภาพด่วน:";
+"Enter / Quick Capture" = "Enter / จับภาพด่วน";
 "Save to file" = "บันทึกเป็นไฟล์";
 "Save + copy to clipboard" = "บันทึก + คัดลอกไปยังคลิปบอร์ด";
 "Save action:" = "การดำเนินการบันทึก:";
+"Save action" = "การดำเนินการบันทึก";
 "Save to default folder" = "บันทึกไปยังโฟลเดอร์เริ่มต้น";
 "Ask where to save" = "ถามตำแหน่งที่จะบันทึก";
 "OCR Action" = "การดำเนินการ OCR";
@@ -292,6 +317,9 @@
 "Clear shortcut" = "ล้างปุ่มลัด";
 "Press keys..." = "กดปุ่ม...";
 "Waiting..." = "กำลังรอ...";
+"Press a shortcut…" = "กดปุ่มลัด…";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "คลิกที่ปุ่มลัด แล้วกดคีย์ผสมที่มีปุ่มตัวดัดแปลงอย่างน้อยหนึ่งปุ่ม (⌘, ⌥, ⌃, ⇧) กด Esc เพื่อยกเลิก ปุ่มฟังก์ชันใช้เดี่ยว ๆ ได้";
+"These apply inside the capture overlay and the editor window." = "ใช้ได้ภายในโอเวอร์เลย์การจับภาพและหน้าต่างตัวแก้ไข";
 
 /* Preferences - Tools */
 "Annotation Tools" = "เครื่องมือคำอธิบาย";
@@ -305,16 +333,20 @@
 
 /* Preferences - Recording */
 "Frame rate:" = "อัตราเฟรม:";
+"Frame rate" = "อัตราเฟรม";
 "After recording:" = "หลังบันทึก:";
+"When done" = "เมื่อเสร็จ";
 "Save recording to:" = "บันทึกวิดีโอไปยัง:";
 "Save Recording" = "บันทึกวิดีโอ";
 "Clear" = "ล้าง";
 "Max height:" = "ความสูงสูงสุด:";
+"Max height" = "ความสูงสูงสุด";
 "px (0 = unlimited)" = "px (0 = ไม่จำกัด)";
 "Behavior" = "พฤติกรรม";
 "Auto-scroll (sends synthetic scroll events)" = "เลื่อนอัตโนมัติ (ส่งเหตุการณ์เลื่อนสังเคราะห์)";
 "Detect fixed/sticky headers" = "ตรวจจับส่วนหัวที่ตรึงไว้";
 "Scroll speed:" = "ความเร็วเลื่อน:";
+"Scroll speed" = "ความเร็วเลื่อน";
 "Slow" = "ช้า";
 "Medium" = "ปานกลาง";
 "Fast" = "เร็ว";
@@ -326,13 +358,29 @@
 "30 fps" = "30 fps";
 "60 fps" = "60 fps";
 "120 fps" = "120 fps";
+"%d fps" = "%d fps";
 "MP4 (H.264)" = "MP4 (H.264)";
 "GIF" = "GIF";
+
+/* Settings - Beautify */
+"Beautify captures" = "ตกแต่งภาพที่จับ";
+"Frame" = "กรอบ";
+"Window chrome" = "กรอบหน้าต่าง";
+"Rounded corners" = "มุมมน";
+"Corner radius" = "รัศมีมุม";
+"Background blur" = "ความเบลอพื้นหลัง";
+"Style" = "รูปแบบ";
+"Use desktop wallpaper" = "ใช้ภาพพื้นหลังเดสก์ท็อป";
+"Choose image…" = "เลือกรูปภาพ…";
+"Places the capture on a background with rounded corners and a drop shadow." = "วางภาพที่จับบนพื้นหลังพร้อมมุมมนและเงา";
+"Places the capture on a gradient background with rounded corners and a drop shadow. The style is chosen from the toolbar." = "วางภาพที่จับบนพื้นหลังไล่สีพร้อมมุมมนและเงา เลือกรูปแบบได้จากแถบเครื่องมือ";
 
 /* Preferences - Upload */
 "Upload Service" = "บริการอัปโหลด";
 "Upload Provider" = "ผู้ให้บริการอัปโหลด";
 "Provider:" = "ผู้ให้บริการ:";
+"Provider" = "ผู้ให้บริการ";
+"Ask before uploading" = "ถามก่อนอัปโหลด";
 "Google Drive" = "Google Drive";
 "Google Drive (images + videos)" = "Google Drive (รูปภาพ + วิดีโอ)";
 "imgbb (images only)" = "imgbb (รูปภาพเท่านั้น)";
@@ -343,22 +391,34 @@
 "Signed in" = "เข้าสู่ระบบแล้ว";
 "Not signed in" = "ยังไม่ได้เข้าสู่ระบบ";
 "Account:" = "บัญชี:";
+"Account" = "บัญชี";
 "Folder:" = "โฟลเดอร์:";
+"Folder" = "โฟลเดอร์";
 "Test Connection" = "ทดสอบการเชื่อมต่อ";
+"Connection" = "การเชื่อมต่อ";
+"Checking…" = "กำลังตรวจสอบ…";
 "Fill in endpoint, bucket, and credentials first" = "กรอก endpoint, bucket และข้อมูลรับรองก่อน";
 "Testing..." = "กำลังทดสอบ...";
 "Connection successful!" = "เชื่อมต่อสำเร็จ!";
 "Leave empty to use default" = "ปล่อยว่างเพื่อใช้ค่าเริ่มต้น";
 "Endpoint:" = "Endpoint:";
+"Endpoint" = "Endpoint";
 "Region:" = "ภูมิภาค:";
+"Region" = "ภูมิภาค";
 "Bucket:" = "Bucket:";
+"Bucket" = "Bucket";
 "Access Key:" = "Access Key:";
+"Access Key" = "Access Key";
 "Secret Key:" = "Secret Key:";
+"Secret Key" = "Secret Key";
 "Public URL:" = "Public URL:";
+"Public URL" = "Public URL";
 "Path Prefix:" = "Path Prefix:";
+"Path Prefix" = "Path Prefix";
 "Make uploads publicly readable" = "ทำให้ไฟล์ที่อัปโหลดเป็นสาธารณะ";
 "Sends the public-read ACL so uploaded files are viewable by anyone with the link. Needed for AWS S3, DigitalOcean Spaces, MinIO and Backblaze B2, which store objects privately by default. Leave off for Cloudflare R2, which has no ACLs and rejects the header." = "ส่ง ACL แบบ public-read เพื่อให้ไฟล์ที่อัปโหลดสามารถดูได้โดยทุกคนที่มีลิงก์ จำเป็นสำหรับ AWS S3, DigitalOcean Spaces, MinIO และ Backblaze B2 ซึ่งจัดเก็บอ็อบเจกต์แบบส่วนตัวโดยค่าเริ่มต้น ปิดไว้สำหรับ Cloudflare R2 ซึ่งไม่มี ACL และจะปฏิเสธ header";
 "API key:" = "API key:";
+"API key" = "API key";
 "Upload History" = "ประวัติการอัปโหลด";
 "No uploads yet." = "ยังไม่มีการอัปโหลด";
 "Base URL for public access. If empty, the S3 endpoint URL is used (may not be publicly accessible)." = "URL พื้นฐานสำหรับการเข้าถึงสาธารณะ หากปล่อยว่าง จะใช้ URL ของ S3 endpoint (อาจไม่สามารถเข้าถึงแบบสาธารณะได้)";
@@ -368,11 +428,32 @@
 "Sign in to Google Drive in Preferences" = "ลงชื่อเข้าใช้ Google Drive ในการตั้งค่า";
 "Video upload requires Google Drive or S3" = "การอัปโหลดวิดีโอต้องใช้ Google Drive หรือ S3";
 
+/* Settings - Uploads: GitHub */
+"GitHub repository" = "GitHub Repository";
+"GitHub repository (images + videos)" = "GitHub Repository (รูปภาพ + วิดีโอ)";
+"Token" = "โทเคน";
+"Repository" = "Repository";
+"Branch" = "Branch";
+"Domain" = "โดเมน";
+"Custom domain" = "โดเมนที่กำหนดเอง";
+"Link style" = "รูปแบบลิงก์";
+"Example link" = "ตัวอย่างลิงก์";
+"Create a fine-grained token with Contents write access to this one repository. The repository must be public for the links to be readable without a token." = "สร้าง fine-grained token ที่มีสิทธิ์เขียน Contents เฉพาะกับ repository นี้ repository ต้องเป็นสาธารณะเพื่อให้เปิดลิงก์ได้โดยไม่ต้องใช้โทเคน";
+"Connected — the token can write to this repository." = "เชื่อมต่อแล้ว — โทเคนนี้เขียนลง repository นี้ได้";
+"Connected, but the token cannot write to this repository." = "เชื่อมต่อแล้ว แต่โทเคนนี้เขียนลง repository นี้ไม่ได้";
+"GitHub upload is not configured — check Settings." = "ยังไม่ได้ตั้งค่าการอัปโหลด GitHub — ตรวจสอบการตั้งค่า";
+"GitHub rejected the token — check that it has contents write access to the repository." = "GitHub ปฏิเสธโทเคน — ตรวจสอบว่าโทเคนมีสิทธิ์เขียน contents ใน repository นี้";
+"Repository or branch not found — check the owner/repo and branch name." = "ไม่พบ repository หรือ branch — ตรวจสอบ owner/repo และชื่อ branch";
+"GitHub returned a response macshot could not read." = "GitHub ส่งการตอบกลับที่ macshot อ่านไม่ได้";
+"%@ is too large for a GitHub repository — upload it to S3 or Google Drive instead." = "%@ ใหญ่เกินไปสำหรับ GitHub Repository — อัปโหลดไปยัง S3 หรือ Google Drive แทน";
+"Video upload requires Google Drive, S3 or GitHub" = "การอัปโหลดวิดีโอต้องใช้ Google Drive, S3 หรือ GitHub";
+
 /* Preferences - About */
 "macshot" = "macshot";
 "Version %@ (%@)" = "เวอร์ชัน %@ (%@)";
 "Made by" = "สร้างโดย";
 "Licensed under the GPLv3" = "อนุญาตภายใต้ GPLv3";
+"Licensed under GPLv3" = "อนุญาตภายใต้ GPLv3";
 "A free, open-source screenshot & screen recording tool for macOS.\nFully native — built with Swift and AppKit." = "เครื่องมือจับภาพหน้าจอและบันทึกหน้าจอฟรีแบบโอเพนซอร์สสำหรับ macOS\nเนทีฟเต็มรูปแบบ — สร้างด้วย Swift และ AppKit";
 
 /* Alerts */
@@ -417,8 +498,10 @@
 /* Upload Toast */
 "URL copied to the clipboard" = "คัดลอก URL ไปยังคลิปบอร์ดแล้ว";
 "Uploading... %d%%" = "กำลังอัปโหลด... %d%%";
+"Uploading…" = "กำลังอัปโหลด…";
 "Upload failed: %@" = "อัปโหลดล้มเหลว: %@";
 "Uploaded! Link copied." = "อัปโหลดแล้ว! คัดลอกลิงก์แล้ว";
+"Link copied: %@" = "คัดลอกลิงก์แล้ว: %@";
 "Uploading to %@... %d%%" = "กำลังอัปโหลดไปยัง %@... %d%%";
 "Open" = "เปิด";
 
@@ -437,6 +520,7 @@
 "Saved to %@" = "บันทึกไปยัง %@";
 "Save failed" = "บันทึกล้มเหลว";
 "Could not encode the screenshot." = "ไม่สามารถเข้ารหัสภาพหน้าจอได้";
+"Could not encode the image." = "ไม่สามารถเข้ารหัสรูปภาพได้";
 "Could not save the screenshot: %@" = "ไม่สามารถบันทึกภาพหน้าจอได้: %@";
 "Could not save the screenshot to history." = "ไม่สามารถบันทึกภาพหน้าจอลงในประวัติได้";
 
@@ -550,20 +634,29 @@
 "Pause" = "หยุดชั่วคราว";
 "Resume" = "ดำเนินการต่อ";
 "Engine:" = "เครื่องมือ:";
+"Engine" = "เครื่องมือ";
 "Google Translate" = "Google Translate";
 "Apple (on-device)" = "Apple (บนอุปกรณ์)";
+"Apple" = "Apple";
+"Google" = "Google";
 "Apple translation is faster and works offline. Google Translate supports more languages." = "การแปลของ Apple เร็วกว่าและใช้งานได้แบบออฟไลน์ Google Translate รองรับภาษาได้มากกว่า";
 "Download language packs in System Settings…" = "ดาวน์โหลดชุดภาษาในการตั้งค่าระบบ…";
 "Configure S3 in Settings" = "ตั้งค่า S3 ในการตั้งค่า";
 "Sign in to Google Drive in Settings" = "ลงชื่อเข้าใช้ Google Drive ในการตั้งค่า";
+"Google Drive not signed in" = "ยังไม่ได้ลงชื่อเข้าใช้ Google Drive";
+"S3 not configured — check Settings" = "ยังไม่ได้ตั้งค่า S3 — ตรวจสอบการตั้งค่า";
 "Offline build: upload and cloud storage integrations are removed. Update checks may still connect to MacShot's update server. Screenshots and recordings stay local unless you share or save them yourself." = "บิลด์ออฟไลน์: การเชื่อมต่อการอัปโหลดและที่เก็บข้อมูลบนคลาวด์ถูกนำออกแล้ว การตรวจสอบอัปเดตอาจยังเชื่อมต่อกับเซิร์ฟเวอร์อัปเดตของ MacShot ภาพหน้าจอและการบันทึกจะยังคงอยู่ในเครื่อง เว้นแต่คุณจะแชร์หรือบันทึกด้วยตนเอง";
 "Position:" = "ตำแหน่ง:";
 "  Position:" = "  ตำแหน่ง:";
+"Position" = "ตำแหน่ง";
 "Size:" = "ขนาด:";
 "Shape:" = "รูปร่าง:";
+"Shape" = "รูปร่าง";
 
 "Same as screenshots" = "เหมือนกับภาพหน้าจอ";
 "  Preview size:" = "  ขนาดตัวอย่าง:";
+"Preview size" = "ขนาดตัวอย่าง";
+"Preview" = "ตัวอย่าง";
 "Fit image in preview (letterbox)" = "ปรับภาพให้พอดีกับตัวอย่าง (มีแถบดำ)";
 "(0 = off)" = "(0 = ปิด)";
 "Clear All" = "ล้างทั้งหมด";
@@ -622,11 +715,13 @@
 "Preview:" = "ตัวอย่าง:";
 "Copy Screen Info" = "คัดลอกข้อมูลหน้าจอ";
 "Copies display and capture diagnostics to clipboard" = "คัดลอกข้อมูลวินิจฉัยการแสดงผลและการจับภาพไปยังคลิปบอร์ด";
+"Copies display and capture diagnostics to the clipboard" = "คัดลอกข้อมูลวินิจฉัยการแสดงผลและการจับภาพไปยังคลิปบอร์ด";
 "Accent" = "สีเน้น";
 "Icon" = "ไอคอน";
 "Background" = "พื้นหลัง";
 "Custom" = "กำหนดเอง";
 "Theme:" = "ธีม:";
+"Theme" = "ธีม";
 "Application" = "แอปพลิเคชัน";
 "Capture area and extract text" = "จับภาพพื้นที่และดึงข้อความ";
 "Capture the full screen" = "จับภาพเต็มหน้าจอ";
@@ -635,6 +730,7 @@
 "Filename Template Tokens" = "โทเคนเทมเพลตชื่อไฟล์";
 "Filename tokens" = "โทเคนชื่อไฟล์";
 "Filename:" = "ชื่อไฟล์:";
+"Filename" = "ชื่อไฟล์";
 "Open an image file in the editor" = "เปิดไฟล์รูปภาพในตัวแก้ไข";
 "Open the recent captures overlay" = "เปิดโอเวอร์เลย์ภาพที่จับล่าสุด";
 "Open this settings window" = "เปิดหน้าต่างการตั้งค่านี้";

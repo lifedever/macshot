@@ -190,6 +190,7 @@
 "  (Tab to toggle)" = "  (Tab for at skifte)";
 "  (Tab to switch)" = "  (Tab for at skifte)";
 "Right-click to copy" = "H\U00F8jreklik for at kopiere";
+"Press C to copy" = "Tryk på C for at kopiere";
 "Copied %@" = "Kopieret %@";
 "Set color %@" = "Indstil farve %@";
 "Draw something first to use the move tool." = "Tegn noget f\U00F8rst for at bruge flytv\U00E6rkt\U00F8jet.";
@@ -225,6 +226,8 @@
 "Launch at login" = "Start ved login";
 "Show snap alignment guides" = "Vis fastg\U00F8relses-hj\U00E6lpelinjer";
 "Snap selection edges to image boundaries" = "Fastg\U00F8r markeringskanter til billedgr\U00E6nser";
+"Snapping" = "Fastgørelse";
+"Haptic feedback when snapping" = "Haptisk feedback ved fastgørelse";
 "Enhance browser and Electron element snapping" = "Forbedr browser- og Electron-elementfangst";
 "Builds the target app's accessibility tree in Element mode. Disable this if a browser or Electron app becomes slow or has input issues." = "Opbygger m\U00E5lappens tilg\U00E6ngelighedstr\U00E6 i Element-tilstand. Deaktiv\U00E9r dette, hvis en browser- eller Electron-app bliver langsom eller har input-problemer.";
 "Capture mouse cursor in screenshot" = "Inkluder musemark\U00F8r i sk\U00E6rmbillede";
@@ -241,7 +244,24 @@
 "  Multiple previews:" = "  Flere forh\U00E5ndsvisninger:";
 "Stack (keep all)" = "Stak (behold alle)";
 "Replace (show only latest)" = "Erstat (vis kun seneste)";
+/* Settings - Floating Preview */
+"Floating Preview" = "Flydende forhåndsvisning";
+"Position" = "Position";
+"Dismiss after" = "Luk efter";
+"Never" = "Aldrig";
+"3 seconds" = "3 sekunder";
+"5 seconds" = "5 sekunder";
+"10 seconds" = "10 sekunder";
+"30 seconds" = "30 sekunder";
+"Multiple previews" = "Flere forhåndsvisninger";
+"Preview size" = "Forhåndsvisningsstørrelse";
+"Preview" = "Forhåndsvisning";
+"View" = "Vis";
+
 "Output" = "Output";
+"Image" = "Billede";
+"Image format" = "Billedformat";
+"Quality" = "Kvalitet";
 "Image format:" = "Billedformat:";
 "Quality:" = "Kvalitet:";
 "%d%%" = "%d%%";
@@ -252,11 +272,16 @@
 "Screenshot History" = "Sk\U00E6rmbilledhistorik";
 "History size:" = "Historikst\U00F8rrelse:";
 "screenshots kept on disk (0 = off)" = "sk\U00E6rmbilleder gemt p\U00E5 disk (0 = fra)";
+"History size" = "Historikstørrelse";
 "Order history by last edit" = "Sort\U00E9r historik efter sidste redigering";
 "Edited screenshots move to the top. Off keeps them in capture order." = "Redigerede sk\U00E6rmbilleder flyttes til toppen. Fra beholder dem i optagelsesr\U00E6kkef\U00F8lge.";
 "Save Directory" = "Gemmemappe";
 "Save folder:" = "Gemmemappe:";
 "Browse\U2026" = "Gennemse\U2026";
+"Saving" = "Lagring";
+"Save action" = "Gemmehandling";
+"Save folder" = "Gemmemappe";
+"Filename" = "Filnavn";
 "Appearance" = "Udseende";
 "Accent color:" = "Accentfarve:";
 "Icon color:" = "Ikonfarve:";
@@ -267,6 +292,9 @@
 "Show window + copy to clipboard" = "Vis vindue + kopi\U00E9r til udklipsholder";
 "Show window only" = "Vis kun vindue";
 "Copy to clipboard only" = "Kopi\U00E9r kun til udklipsholder";
+"Enter / Quick Capture" = "Enter / Hurtig optagelse";
+"OCR & QR Capture" = "OCR- & QR-optagelse";
+"Show results window" = "Vis resultatvindue";
 "Enter / Quick Capture:" = "Enter / Hurtig optagelse:";
 "Save to file" = "Gem i fil";
 "Save + copy to clipboard" = "Gem + kopi\U00E9r til udklipsholder";
@@ -280,6 +308,10 @@
 "Default" = "Standard";
 "Custom symbol" = "Tilpasset symbol";
 "Enter any SF Symbol name (e.g. camera.fill) or pick a preset. Browse names in Apple's SF Symbols app. Invalid names fall back to the default icon." = "Indtast et hvilket som helst SF Symbol-navn (f.eks. camera.fill) eller v\U00E6lg en forudindstilling. Gennemse navne i Apples SF Symbols-app. Ugyldige navne falder tilbage til standardikonet.";
+"Menu bar icon" = "Menulinjeikon";
+"Symbol" = "Symbol";
+"No SF Symbol by that name — the default icon is used." = "Der findes intet SF Symbol med det navn — standardikonet bruges.";
+"Theme" = "Tema";
 
 /* Preferences - Shortcuts */
 "Keyboard Shortcuts" = "Tastaturgenveje";
@@ -287,6 +319,9 @@
 "Clear shortcut" = "Ryd genvej";
 "Press keys..." = "Tryk p\U00E5 taster...";
 "Waiting..." = "Venter...";
+"Press a shortcut…" = "Tryk på en genvej…";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "Klik på en genvej, og tryk på en tastekombination med mindst én modifikator (⌘, ⌥, ⌃, ⇧). Esc annullerer. Funktionstaster virker alene.";
+"These apply inside the capture overlay and the editor window." = "Disse gælder i optagelsesoverlayet og i redigeringsvinduet.";
 
 /* Preferences - Tools */
 "Annotation Tools" = "Annotationsv\U00E6rkt\U00F8jer";
@@ -304,6 +339,10 @@
 
 /* Preferences - Recording */
 "Frame rate:" = "Billedfrekvens:";
+"Frame rate" = "Billedfrekvens";
+"%d fps" = "%d fps";
+"When done" = "Når færdig";
+"Shape" = "Form";
 "After recording:" = "Efter optagelse:";
 "Save recording to:" = "Gem optagelse i:";
 "Save Recording" = "Gem optagelse";
@@ -314,6 +353,8 @@
 "Auto-scroll (sends synthetic scroll events)" = "Auto-rul (sender syntetiske rulh\U00E6ndelser)";
 "Detect fixed/sticky headers" = "Registrer faste/kl\U00E6bende overskrifter";
 "Scroll speed:" = "Rulhastighed:";
+"Scroll speed" = "Rulhastighed";
+"Max height" = "Maks højde";
 "Slow" = "Langsom";
 "Medium" = "Mellem";
 "Fast" = "Hurtig";
@@ -328,21 +369,44 @@
 "MP4 (H.264)" = "MP4 (H.264)";
 "GIF" = "GIF";
 
+/* Settings - Beautify */
+"Beautify captures" = "Forskøn optagelser";
+"Frame" = "Ramme";
+"Window chrome" = "Vinduesramme";
+"Rounded corners" = "Afrundede hjørner";
+"Corner radius" = "Hjørneradius";
+"Background blur" = "Baggrundssløring";
+"Style" = "Stil";
+"Use desktop wallpaper" = "Brug skrivebordsbaggrund";
+"Choose image…" = "Vælg billede…";
+"Places the capture on a background with rounded corners and a drop shadow." = "Placerer optagelsen på en baggrund med afrundede hjørner og slagskygge.";
+"Places the capture on a gradient background with rounded corners and a drop shadow. The style is chosen from the toolbar." = "Placerer optagelsen på en gradientbaggrund med afrundede hjørner og slagskygge. Stilen vælges i værktøjslinjen.";
+
 /* Preferences - Upload */
 "Upload Service" = "Uploadtjeneste";
 "Upload Provider" = "Uploadudbyder";
 "Provider:" = "Udbyder:";
+"Provider" = "Udbyder";
 "Google Drive" = "Google Drive";
 "Google Drive (images + videos)" = "Google Drive (billeder + videoer)";
 "imgbb (images only)" = "imgbb (kun billeder)";
 "S3-Compatible (images + videos)" = "S3-kompatibel (billeder + videoer)";
+"GitHub repository" = "GitHub-repository";
+"GitHub repository (images + videos)" = "GitHub-repository (billeder + videoer)";
 "S3-Compatible Storage" = "S3-kompatibel lagring";
 "Sign In with Google" = "Log ind med Google";
 "Sign Out" = "Log ud";
 "Signed in" = "Logget ind";
 "Not signed in" = "Ikke logget ind";
 "Account:" = "Konto:";
+"Account" = "Konto";
+"Connection" = "Forbindelse";
+"Checking…" = "Kontrollerer…";
+"Connected — the token can write to this repository." = "Forbundet — dette token kan skrive til dette repository.";
+"Connected, but the token cannot write to this repository." = "Forbundet, men dette token kan ikke skrive til dette repository.";
 "Folder:" = "Mappe:";
+"Folder" = "Mappe";
+"Ask before uploading" = "Spørg før upload";
 "Test Connection" = "Test forbindelse";
 "Fill in endpoint, bucket, and credentials first" = "Udfyld endpoint, bucket og legitimationsoplysninger f\U00F8rst";
 "Testing..." = "Tester...";
@@ -355,9 +419,17 @@
 "Secret Key:" = "Hemmelig n\U00F8gle:";
 "Public URL:" = "Offentlig URL:";
 "Path Prefix:" = "Stipr\U00E6fiks:";
+"Access Key" = "Adgangsnøgle";
+"Secret Key" = "Hemmelig nøgle";
+"Bucket" = "Bucket";
+"Region" = "Region";
+"Endpoint" = "Endpoint";
+"Public URL" = "Offentlig URL";
+"Path Prefix" = "Stipræfiks";
 "Make uploads publicly readable" = "G\U00F8r uploads offentligt l\U00E6sbare";
 "Sends the public-read ACL so uploaded files are viewable by anyone with the link. Needed for AWS S3, DigitalOcean Spaces, MinIO and Backblaze B2, which store objects privately by default. Leave off for Cloudflare R2, which has no ACLs and rejects the header." = "Sender public-read ACL, s\U00E5 uploadede filer kan ses af alle med linket. N\U00F8dvendigt for AWS S3, DigitalOcean Spaces, MinIO og Backblaze B2, som gemmer objekter privat som standard. Lad v\U00E6re sl\U00E5et fra for Cloudflare R2, som ikke har ACL og afviser headeren.";
 "API key:" = "API-n\U00F8gle:";
+"API key" = "API-nøgle";
 "Upload History" = "Uploadhistorik";
 "No uploads yet." = "Ingen uploads endnu.";
 "Base URL for public access. If empty, the S3 endpoint URL is used (may not be publicly accessible)." = "Basis-URL for offentlig adgang. Hvis tom, bruges S3-endpoint-URL (er muligvis ikke offentligt tilg\U00E6ngelig).";
@@ -367,11 +439,24 @@
 "Sign in to Google Drive in Preferences" = "Log ind p\U00E5 Google Drive i Indstillinger";
 "Video upload requires Google Drive or S3" = "Videoupload kr\U00E6ver Google Drive eller S3";
 
+/* Uploads - GitHub */
+"Token" = "Token";
+"Repository" = "Repository";
+"Branch" = "Branch";
+"Domain" = "Domæne";
+"Custom domain" = "Tilpasset domæne";
+"Link style" = "Linkstil";
+"Example link" = "Eksempellink";
+"Create a fine-grained token with Contents write access to this one repository. The repository must be public for the links to be readable without a token." = "Opret et fine-grained token med Contents-skriveadgang til netop dette repository. Repositoryet skal være offentligt, for at linkene kan læses uden et token.";
+"Video upload requires Google Drive, S3 or GitHub" = "Videoupload kræver Google Drive, S3 eller GitHub";
+
 /* Preferences - About */
 "macshot" = "macshot";
 "Version %@ (%@)" = "Version %@ (%@)";
 "Made by" = "Lavet af";
 "Licensed under the GPLv3" = "Licenseret under GPLv3";
+"Licensed under GPLv3" = "Licenseret under GPLv3";
+"Copies display and capture diagnostics to the clipboard" = "Kopierer skærm- og optagelsesdiagnostik til udklipsholderen";
 "A free, open-source screenshot & screen recording tool for macOS.\nFully native \U2014 built with Swift and AppKit." = "Et gratis, open source sk\U00E6rmbillede- og sk\U00E6rmoptagelsesv\U00E6rkt\U00F8j til macOS.\nFuldt ud nativt \U2014 bygget med Swift og AppKit.";
 
 /* Alerts */
@@ -417,6 +502,16 @@
 "Uploading... %d%%" = "Uploader... %d%%";
 "Upload failed: %@" = "Upload mislykkedes: %@";
 "Uploaded! Link copied." = "Uploadet! Link kopieret.";
+"Uploading…" = "Uploader…";
+"Link copied: %@" = "Link kopieret: %@";
+"Could not encode the image." = "Billedet kunne ikke kodes.";
+"Google Drive not signed in" = "Ikke logget ind på Google Drive";
+"S3 not configured — check Settings" = "S3 er ikke konfigureret — tjek Indstillinger";
+"GitHub upload is not configured — check Settings." = "GitHub-upload er ikke konfigureret — tjek Indstillinger.";
+"GitHub rejected the token — check that it has contents write access to the repository." = "GitHub afviste dette token — tjek, at det har contents-skriveadgang til repositoryet.";
+"Repository or branch not found — check the owner/repo and branch name." = "Repository eller branch blev ikke fundet — tjek owner/repo og branchnavnet.";
+"GitHub returned a response macshot could not read." = "GitHub returnerede et svar, som macshot ikke kunne læse.";
+"%@ is too large for a GitHub repository — upload it to S3 or Google Drive instead." = "%@ er for stor til et GitHub-repository — upload den til S3 eller Google Drive i stedet.";
 "Uploading to %@... %d%%" = "Uploader til %@... %d%%";
 "Open" = "\U00C5bn";
 
@@ -554,6 +649,9 @@
 "Google Translate" = "Google Translate";
 "Apple (on-device)" = "Apple (p\U00E5 enheden)";
 "Apple translation is faster and works offline. Google Translate supports more languages." = "Apple-overs\U00E6ttelse er hurtigere og virker offline. Google Translate underst\U00F8tter flere sprog.";
+"Engine" = "Motor";
+"Apple" = "Apple";
+"Google" = "Google";
 "Download language packs in System Settings\U2026" = "Download sprogpakker i Systemindstillinger\U2026";
 "Configure S3 in Settings" = "Konfigur\U00E9r S3 i Indstillinger";
 "Sign in to Google Drive in Settings" = "Log ind p\U00E5 Google Drive i Indstillinger";

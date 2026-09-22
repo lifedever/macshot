@@ -53,6 +53,7 @@
 
 /* Floating Thumbnail */
 "Close All" = "Tutup Semua";
+"View" = "Lihat";
 "Save" = "Simpan";
 
 /* Editor Top Bar */
@@ -186,6 +187,7 @@
 "  (Tab to toggle)" = "  (Tab untuk beralih)";
 "  (Tab to switch)" = "  (Tab untuk berpindah)";
 "Right-click to copy" = "Klik kanan untuk menyalin";
+"Press C to copy" = "Tekan C untuk menyalin";
 "Copied %@" = "Disalin %@";
 "Set color %@" = "Atur warna %@";
 "Draw something first to use the move tool." = "Gambar sesuatu terlebih dahulu untuk menggunakan alat pindah.";
@@ -229,6 +231,8 @@
 "Launch at login" = "Jalankan saat masuk";
 "Show snap alignment guides" = "Tampilkan panduan perataan jepret";
 "Snap selection edges to image boundaries" = "Jepretkan tepi pilihan ke batas gambar";
+"Snapping" = "Penjepretan";
+"Haptic feedback when snapping" = "Umpan balik haptik saat menjepret";
 "Enhance browser and Electron element snapping" = "Tingkatkan penjepretan elemen browser dan Electron";
 "Builds the target app's accessibility tree in Element mode. Disable this if a browser or Electron app becomes slow or has input issues." = "Membangun pohon aksesibilitas aplikasi target dalam Mode Elemen. Nonaktifkan ini jika browser atau aplikasi Electron menjadi lambat atau memiliki masalah input.";
 "Capture mouse cursor in screenshot" = "Tangkap kursor mouse di tangkapan layar";
@@ -247,13 +251,24 @@
 "Check for beta updates" = "Periksa pembaruan beta";
 "Thumbnail" = "Thumbnail";
 "  Dismiss after:" = "  Tutup setelah:";
+"Floating Preview" = "Pratinjau Mengambang";
+"Dismiss after" = "Tutup setelah";
+"Never" = "Tidak pernah";
+"3 seconds" = "3 detik";
+"5 seconds" = "5 detik";
+"10 seconds" = "10 detik";
+"30 seconds" = "30 detik";
 "seconds before auto-dismiss (0 = never)" = "detik sebelum ditutup otomatis (0 = tidak pernah)";
 "  Multiple previews:" = "  Beberapa pratinjau:";
+"Multiple previews" = "Beberapa pratinjau";
 "Stack (keep all)" = "Tumpuk (simpan semua)";
 "Replace (show only latest)" = "Ganti (tampilkan hanya terbaru)";
 "Output" = "Keluaran";
 "Image format:" = "Format gambar:";
+"Image" = "Gambar";
+"Image format" = "Format gambar";
 "Quality:" = "Kualitas:";
+"Quality" = "Kualitas";
 "%d%%" = "%d%%";
 "Save at standard resolution (1x)" = "Simpan pada resolusi standar (1x)";
 "Halves dimensions on Retina displays, ~4x smaller files" = "Membagi dua dimensi di layar Retina, file ~4x lebih kecil";
@@ -261,9 +276,12 @@
 "Ensures consistent colors across different displays" = "Memastikan warna konsisten di berbagai layar";
 "Screenshot History" = "Riwayat Tangkapan Layar";
 "History size:" = "Ukuran riwayat:";
+"History size" = "Ukuran riwayat";
 "screenshots kept on disk (0 = off)" = "tangkapan layar disimpan di disk (0 = nonaktif)";
 "Save Directory" = "Direktori Simpan";
 "Save folder:" = "Folder simpan:";
+"Saving" = "Penyimpanan";
+"Save folder" = "Folder simpan";
 "Browse…" = "Telusuri…";
 "Appearance" = "Tampilan";
 "Accent color:" = "Warna aksen:";
@@ -274,15 +292,22 @@
 "Custom symbol" = "Simbol kustom";
 "Default" = "Default";
 "Enter any SF Symbol name (e.g. camera.fill) or pick a preset. Browse names in Apple's SF Symbols app. Invalid names fall back to the default icon." = "Masukkan nama SF Symbol apa pun (mis. camera.fill) atau pilih prasetel. Telusuri nama di aplikasi SF Symbols Apple. Nama yang tidak valid akan kembali ke ikon default.";
+"Menu bar icon" = "Ikon bilah menu";
+"Symbol" = "Simbol";
+"No SF Symbol by that name — the default icon is used." = "Tidak ada SF Symbol dengan nama itu — ikon default digunakan.";
 "OCR Capture:" = "Tangkapan OCR:";
 "OCR & QR Capture:" = "Tangkapan OCR & QR:";
+"OCR & QR Capture" = "Tangkapan OCR & QR";
+"Show results window" = "Tampilkan jendela hasil";
 "Save action:" = "Aksi simpan:";
+"Save action" = "Aksi simpan";
 "Ask where to save" = "Tanya lokasi penyimpanan";
 "Save to default folder" = "Simpan ke folder default";
 "Show window + copy to clipboard" = "Tampilkan jendela + salin ke papan klip";
 "Show window only" = "Tampilkan jendela saja";
 "Copy to clipboard only" = "Salin ke papan klip saja";
 "Enter / Quick Capture:" = "Enter / Tangkap Cepat:";
+"Enter / Quick Capture" = "Enter / Tangkap Cepat";
 "Save to file" = "Simpan ke file";
 "Save + copy to clipboard" = "Simpan + salin ke papan klip";
 "OCR Action" = "Aksi OCR";
@@ -293,6 +318,9 @@
 "Clear shortcut" = "Hapus pintasan";
 "Press keys..." = "Tekan tombol...";
 "Waiting..." = "Menunggu...";
+"Press a shortcut…" = "Tekan pintasan…";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "Klik sebuah pintasan lalu tekan kombinasi tombol dengan setidaknya satu modifier (⌘, ⌥, ⌃, ⇧). Esc membatalkan. Tombol fungsi bisa dipakai sendiri.";
+"These apply inside the capture overlay and the editor window." = "Berlaku di dalam hamparan tangkapan dan jendela editor.";
 
 /* Preferences - Tools */
 "Annotation Tools" = "Alat Anotasi";
@@ -306,16 +334,20 @@
 
 /* Preferences - Recording */
 "Frame rate:" = "Laju bingkai:";
+"Frame rate" = "Laju bingkai";
 "After recording:" = "Setelah merekam:";
+"When done" = "Setelah selesai";
 "Save recording to:" = "Simpan rekaman ke:";
 "Save Recording" = "Simpan Rekaman";
 "Clear" = "Hapus";
 "Max height:" = "Tinggi maks:";
+"Max height" = "Tinggi maks";
 "px (0 = unlimited)" = "px (0 = tak terbatas)";
 "Behavior" = "Perilaku";
 "Auto-scroll (sends synthetic scroll events)" = "Gulir otomatis (mengirim peristiwa gulir sintetis)";
 "Detect fixed/sticky headers" = "Deteksi header tetap/menempel";
 "Scroll speed:" = "Kecepatan gulir:";
+"Scroll speed" = "Kecepatan gulir";
 "Slow" = "Lambat";
 "Medium" = "Sedang";
 "Fast" = "Cepat";
@@ -327,13 +359,29 @@
 "30 fps" = "30 fps";
 "60 fps" = "60 fps";
 "120 fps" = "120 fps";
+"%d fps" = "%d fps";
 "MP4 (H.264)" = "MP4 (H.264)";
 "GIF" = "GIF";
+
+/* Settings - Beautify */
+"Beautify captures" = "Percantik tangkapan";
+"Frame" = "Bingkai";
+"Window chrome" = "Bingkai jendela";
+"Rounded corners" = "Sudut membulat";
+"Corner radius" = "Radius sudut";
+"Background blur" = "Blur latar belakang";
+"Style" = "Gaya";
+"Use desktop wallpaper" = "Gunakan wallpaper desktop";
+"Choose image…" = "Pilih gambar…";
+"Places the capture on a background with rounded corners and a drop shadow." = "Menempatkan tangkapan di atas latar belakang dengan sudut membulat dan bayangan.";
+"Places the capture on a gradient background with rounded corners and a drop shadow. The style is chosen from the toolbar." = "Menempatkan tangkapan di atas latar belakang gradien dengan sudut membulat dan bayangan. Gaya dipilih dari bilah alat.";
 
 /* Preferences - Upload */
 "Upload Service" = "Layanan Unggah";
 "Upload Provider" = "Penyedia Unggahan";
 "Provider:" = "Penyedia:";
+"Provider" = "Penyedia";
+"Ask before uploading" = "Tanya sebelum mengunggah";
 "Google Drive" = "Google Drive";
 "Google Drive (images + videos)" = "Google Drive (gambar + video)";
 "imgbb (images only)" = "imgbb (gambar saja)";
@@ -344,22 +392,34 @@
 "Signed in" = "Sudah masuk";
 "Not signed in" = "Belum masuk";
 "Account:" = "Akun:";
+"Account" = "Akun";
 "Folder:" = "Folder:";
+"Folder" = "Folder";
 "Test Connection" = "Tes Koneksi";
+"Connection" = "Koneksi";
+"Checking…" = "Memeriksa…";
 "Fill in endpoint, bucket, and credentials first" = "Isi endpoint, bucket, dan kredensial terlebih dahulu";
 "Testing..." = "Menguji...";
 "Connection successful!" = "Koneksi berhasil!";
 "Leave empty to use default" = "Biarkan kosong untuk menggunakan default";
 "Endpoint:" = "Endpoint:";
+"Endpoint" = "Endpoint";
 "Region:" = "Region:";
+"Region" = "Region";
 "Bucket:" = "Bucket:";
+"Bucket" = "Bucket";
 "Access Key:" = "Access Key:";
+"Access Key" = "Access Key";
 "Secret Key:" = "Secret Key:";
+"Secret Key" = "Secret Key";
 "Public URL:" = "URL Publik:";
+"Public URL" = "URL Publik";
 "Path Prefix:" = "Prefiks Path:";
+"Path Prefix" = "Prefiks Path";
 "Make uploads publicly readable" = "Jadikan unggahan dapat dibaca publik";
 "Sends the public-read ACL so uploaded files are viewable by anyone with the link. Needed for AWS S3, DigitalOcean Spaces, MinIO and Backblaze B2, which store objects privately by default. Leave off for Cloudflare R2, which has no ACLs and rejects the header." = "Mengirim ACL public-read agar file yang diunggah dapat dilihat oleh siapa saja yang memiliki tautan. Diperlukan untuk AWS S3, DigitalOcean Spaces, MinIO, dan Backblaze B2 yang menyimpan objek secara pribadi secara default. Nonaktifkan untuk Cloudflare R2 yang tidak memiliki ACL dan menolak header ini.";
 "API key:" = "Kunci API:";
+"API key" = "Kunci API";
 "Upload History" = "Riwayat Unggahan";
 "No uploads yet." = "Belum ada unggahan.";
 "Base URL for public access. If empty, the S3 endpoint URL is used (may not be publicly accessible)." = "URL dasar untuk akses publik. Jika kosong, URL endpoint S3 yang digunakan (mungkin tidak dapat diakses publik).";
@@ -369,11 +429,32 @@
 "Sign in to Google Drive in Preferences" = "Masuk ke Google Drive di Preferensi";
 "Video upload requires Google Drive or S3" = "Unggahan video memerlukan Google Drive atau S3";
 
+/* Settings - Uploads: GitHub */
+"GitHub repository" = "Repositori GitHub";
+"GitHub repository (images + videos)" = "Repositori GitHub (gambar + video)";
+"Token" = "Token";
+"Repository" = "Repositori";
+"Branch" = "Branch";
+"Domain" = "Domain";
+"Custom domain" = "Domain kustom";
+"Link style" = "Gaya tautan";
+"Example link" = "Contoh tautan";
+"Create a fine-grained token with Contents write access to this one repository. The repository must be public for the links to be readable without a token." = "Buat fine-grained token dengan akses tulis Contents khusus untuk repositori ini. Repositori harus publik agar tautannya dapat dibaca tanpa token.";
+"Connected — the token can write to this repository." = "Terhubung — token dapat menulis ke repositori ini.";
+"Connected, but the token cannot write to this repository." = "Terhubung, tetapi token tidak dapat menulis ke repositori ini.";
+"GitHub upload is not configured — check Settings." = "Unggahan GitHub belum dikonfigurasi — periksa Pengaturan.";
+"GitHub rejected the token — check that it has contents write access to the repository." = "GitHub menolak token — pastikan token memiliki akses tulis contents ke repositori ini.";
+"Repository or branch not found — check the owner/repo and branch name." = "Repositori atau branch tidak ditemukan — periksa owner/repo dan nama branch.";
+"GitHub returned a response macshot could not read." = "GitHub mengembalikan respons yang tidak dapat dibaca macshot.";
+"%@ is too large for a GitHub repository — upload it to S3 or Google Drive instead." = "%@ terlalu besar untuk repositori GitHub — unggah ke S3 atau Google Drive.";
+"Video upload requires Google Drive, S3 or GitHub" = "Unggahan video memerlukan Google Drive, S3, atau GitHub";
+
 /* Preferences - About */
 "macshot" = "macshot";
 "Version %@ (%@)" = "Versi %@ (%@)";
 "Made by" = "Dibuat oleh";
 "Licensed under the GPLv3" = "Dilisensikan di bawah GPLv3";
+"Licensed under GPLv3" = "Dilisensikan di bawah GPLv3";
 "A free, open-source screenshot & screen recording tool for macOS.\nFully native — built with Swift and AppKit." = "Alat tangkapan layar & perekaman layar gratis dan sumber terbuka untuk macOS.\nSepenuhnya native — dibangun dengan Swift dan AppKit.";
 
 /* Alerts */
@@ -417,8 +498,10 @@
 /* Upload Toast */
 "URL copied to the clipboard" = "URL disalin ke papan klip";
 "Uploading... %d%%" = "Mengunggah... %d%%";
+"Uploading…" = "Mengunggah…";
 "Upload failed: %@" = "Unggahan gagal: %@";
 "Uploaded! Link copied." = "Terunggah! Tautan disalin.";
+"Link copied: %@" = "Tautan disalin: %@";
 "Uploading to %@... %d%%" = "Mengunggah ke %@... %d%%";
 "Open" = "Buka";
 
@@ -437,6 +520,7 @@
 "Saved to %@" = "Disimpan ke %@";
 "Save failed" = "Gagal menyimpan";
 "Could not encode the screenshot." = "Tidak dapat mengodekan tangkapan layar.";
+"Could not encode the image." = "Tidak dapat mengodekan gambar.";
 "Could not save the screenshot: %@" = "Tidak dapat menyimpan tangkapan layar: %@";
 "Could not save the screenshot to history." = "Tidak dapat menyimpan tangkapan layar ke riwayat.";
 
@@ -551,19 +635,28 @@
 "Pause" = "Jeda";
 "Resume" = "Lanjutkan";
 "Engine:" = "Mesin:";
+"Engine" = "Mesin";
 "Google Translate" = "Google Translate";
 "Apple (on-device)" = "Apple (di perangkat)";
+"Apple" = "Apple";
+"Google" = "Google";
 "Apple translation is faster and works offline. Google Translate supports more languages." = "Terjemahan Apple lebih cepat dan berfungsi secara offline. Google Translate mendukung lebih banyak bahasa.";
 "Download language packs in System Settings…" = "Unduh paket bahasa di Pengaturan Sistem…";
 "Configure S3 in Settings" = "Konfigurasikan S3 di Pengaturan";
 "Sign in to Google Drive in Settings" = "Masuk ke Google Drive di Pengaturan";
+"Google Drive not signed in" = "Belum masuk ke Google Drive";
+"S3 not configured — check Settings" = "S3 belum dikonfigurasi — periksa Pengaturan";
 "Position:" = "Posisi:";
 "  Position:" = "  Posisi:";
+"Position" = "Posisi";
 "Size:" = "Ukuran:";
 "Shape:" = "Bentuk:";
+"Shape" = "Bentuk";
 
 "Same as screenshots" = "Sama seperti tangkapan layar";
 "  Preview size:" = "  Ukuran pratinjau:";
+"Preview size" = "Ukuran pratinjau";
+"Preview" = "Pratinjau";
 "Fit image in preview (letterbox)" = "Paskan gambar di pratinjau (letterbox)";
 "(0 = off)" = "(0 = nonaktif)";
 "Clear All" = "Hapus Semua";
@@ -622,11 +715,13 @@
 "Preview:" = "Pratinjau:";
 "Copy Screen Info" = "Salin Info Layar";
 "Copies display and capture diagnostics to clipboard" = "Menyalin diagnostik tampilan dan tangkapan ke papan klip";
+"Copies display and capture diagnostics to the clipboard" = "Menyalin diagnostik tampilan dan tangkapan ke papan klip";
 "Accent" = "Aksen";
 "Icon" = "Ikon";
 "Background" = "Latar Belakang";
 "Custom" = "Kustom";
 "Theme:" = "Tema:";
+"Theme" = "Tema";
 "Application" = "Aplikasi";
 "Capture area and extract text" = "Tangkap area dan ekstrak teks";
 "Capture the full screen" = "Tangkap seluruh layar";
@@ -635,6 +730,7 @@
 "Filename Template Tokens" = "Token Template Nama File";
 "Filename tokens" = "Token nama file";
 "Filename:" = "Nama file:";
+"Filename" = "Nama file";
 "Open an image file in the editor" = "Buka file gambar di editor";
 "Open the recent captures overlay" = "Buka hamparan tangkapan terbaru";
 "Open this settings window" = "Buka jendela pengaturan ini";

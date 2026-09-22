@@ -190,6 +190,7 @@
 "  (Tab to toggle)" = "  (Tab for \U00E5 veksle)";
 "  (Tab to switch)" = "  (Tab for \U00E5 bytte)";
 "Right-click to copy" = "H\U00F8yreklikk for \U00E5 kopiere";
+"Press C to copy" = "Trykk C for å kopiere";
 "Copied %@" = "Kopierte %@";
 "Set color %@" = "Sett farge %@";
 "Draw something first to use the move tool." = "Tegn noe f\U00F8rst for \U00E5 bruke flytteverkt\U00F8yet.";
@@ -225,6 +226,8 @@
 "Launch at login" = "Start ved innlogging";
 "Show snap alignment guides" = "Vis hjelpelinje for justering";
 "Snap selection edges to image boundaries" = "Fest markeringskanter til bildegrenser";
+"Snapping" = "Snapping";
+"Haptic feedback when snapping" = "Haptisk tilbakemelding ved snapping";
 "Enhance browser and Electron element snapping" = "Forbedre elementfangst for nettleser og Electron";
 "Builds the target app's accessibility tree in Element mode. Disable this if a browser or Electron app becomes slow or has input issues." = "Bygger tilgangstr\U00E6t i m\U00E5lappen i Element-modus. Deaktiver dette hvis en nettleser eller Electron-app blir treg eller har innproblemer.";
 "Capture mouse cursor in screenshot" = "Ta med musepeker i skjermbilde";
@@ -241,7 +244,24 @@
 "  Multiple previews:" = "  Flere forh\U00E5ndsvisninger:";
 "Stack (keep all)" = "Stable (behold alle)";
 "Replace (show only latest)" = "Erstatt (vis kun siste)";
+/* Settings - Floating Preview */
+"Floating Preview" = "Flytende forhåndsvisning";
+"Position" = "Posisjon";
+"Dismiss after" = "Lukk etter";
+"Never" = "Aldri";
+"3 seconds" = "3 sekunder";
+"5 seconds" = "5 sekunder";
+"10 seconds" = "10 sekunder";
+"30 seconds" = "30 sekunder";
+"Multiple previews" = "Flere forhåndsvisninger";
+"Preview size" = "Forhåndsvisningsstørrelse";
+"Preview" = "Forhåndsvisning";
+"View" = "Vis";
+
 "Output" = "Utdata";
+"Image" = "Bilde";
+"Image format" = "Bildeformat";
+"Quality" = "Kvalitet";
 "Image format:" = "Bildeformat:";
 "Quality:" = "Kvalitet:";
 "%d%%" = "%d%%";
@@ -252,11 +272,16 @@
 "Screenshot History" = "Skjermbildehistorikk";
 "History size:" = "Historikkst\U00F8rrelse:";
 "screenshots kept on disk (0 = off)" = "skjermbilder lagret p\U00E5 disk (0 = av)";
+"History size" = "Historikkstørrelse";
 "Order history by last edit" = "Sorter historikk etter siste redigering";
 "Edited screenshots move to the top. Off keeps them in capture order." = "Redigerte skjermbilder flyttes til toppen. Av beholder dem i opptaksrekkef\U00F8lge.";
 "Save Directory" = "Lagringsmappe";
 "Save folder:" = "Lagringsmappe:";
 "Browse\U2026" = "Bla gjennom\U2026";
+"Saving" = "Lagring";
+"Save action" = "Lagringshandling";
+"Save folder" = "Lagringsmappe";
+"Filename" = "Filnavn";
 "Appearance" = "Utseende";
 "Accent color:" = "Aksentfarge:";
 "Icon color:" = "Ikonfarge:";
@@ -267,6 +292,9 @@
 "Show window + copy to clipboard" = "Vis vindu + kopier til utklippstavlen";
 "Show window only" = "Vis kun vindu";
 "Copy to clipboard only" = "Kopier kun til utklippstavlen";
+"Enter / Quick Capture" = "Enter / Hurtigopptak";
+"OCR & QR Capture" = "OCR- & QR-opptak";
+"Show results window" = "Vis resultatvindu";
 "Enter / Quick Capture:" = "Enter / Hurtigopptak:";
 "Save to file" = "Lagre til fil";
 "Save + copy to clipboard" = "Lagre + kopier til utklippstavlen";
@@ -280,6 +308,10 @@
 "Default" = "Standard";
 "Custom symbol" = "Egendefinert symbol";
 "Enter any SF Symbol name (e.g. camera.fill) or pick a preset. Browse names in Apple's SF Symbols app. Invalid names fall back to the default icon." = "Skriv inn et hvilket som helst SF Symbol-navn (f.eks. camera.fill) eller velg en forh\U00E5ndsinnstilling. Bla gjennom navn i Apples SF Symbols-app. Ugyldige navn faller tilbake til standardikonet.";
+"Menu bar icon" = "Menylinje-ikon";
+"Symbol" = "Symbol";
+"No SF Symbol by that name — the default icon is used." = "Det finnes ingen SF Symbol med det navnet — standardikonet brukes.";
+"Theme" = "Tema";
 
 /* Preferences - Shortcuts */
 "Keyboard Shortcuts" = "Tastatursnarveier";
@@ -287,6 +319,9 @@
 "Clear shortcut" = "Fjern snarvei";
 "Press keys..." = "Trykk taster\U2026";
 "Waiting..." = "Venter\U2026";
+"Press a shortcut…" = "Trykk en snarvei…";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "Klikk på en snarvei og trykk en tastekombinasjon med minst én modifikatortast (⌘, ⌥, ⌃, ⇧). Esc avbryter. Funksjonstaster fungerer alene.";
+"These apply inside the capture overlay and the editor window." = "Disse gjelder i opptaksoverlegget og i redigeringsvinduet.";
 
 /* Preferences - Tools */
 "Annotation Tools" = "Kommentarverkt\U00F8y";
@@ -304,6 +339,10 @@
 
 /* Preferences - Recording */
 "Frame rate:" = "Bildefrekvens:";
+"Frame rate" = "Bildefrekvens";
+"%d fps" = "%d fps";
+"When done" = "Når ferdig";
+"Shape" = "Form";
 "After recording:" = "Etter opptak:";
 "Save recording to:" = "Lagre opptak til:";
 "Save Recording" = "Lagre opptak";
@@ -314,6 +353,8 @@
 "Auto-scroll (sends synthetic scroll events)" = "Autorulling (sender syntetiske rullehendelser)";
 "Detect fixed/sticky headers" = "Oppdag faste/klebrige topptekster";
 "Scroll speed:" = "Rullehastighet:";
+"Scroll speed" = "Rullehastighet";
+"Max height" = "Maks høyde";
 "Slow" = "Sakte";
 "Medium" = "Middels";
 "Fast" = "Raskt";
@@ -328,21 +369,44 @@
 "MP4 (H.264)" = "MP4 (H.264)";
 "GIF" = "GIF";
 
+/* Settings - Beautify */
+"Beautify captures" = "Forskjønn opptak";
+"Frame" = "Ramme";
+"Window chrome" = "Vindusramme";
+"Rounded corners" = "Avrundede hjørner";
+"Corner radius" = "Hjørneradius";
+"Background blur" = "Bakgrunnsuskarphet";
+"Style" = "Stil";
+"Use desktop wallpaper" = "Bruk skrivebordsbakgrunn";
+"Choose image…" = "Velg bilde…";
+"Places the capture on a background with rounded corners and a drop shadow." = "Plasserer opptaket på en bakgrunn med avrundede hjørner og slagskygge.";
+"Places the capture on a gradient background with rounded corners and a drop shadow. The style is chosen from the toolbar." = "Plasserer opptaket på en gradientbakgrunn med avrundede hjørner og slagskygge. Stilen velges fra verktøylinjen.";
+
 /* Preferences - Upload */
 "Upload Service" = "Opplastingstjeneste";
 "Upload Provider" = "Opplastingsleverand\U00F8r";
 "Provider:" = "Leverand\U00F8r:";
+"Provider" = "Leverandør";
 "Google Drive" = "Google Drive";
 "Google Drive (images + videos)" = "Google Drive (bilder + videoer)";
 "imgbb (images only)" = "imgbb (kun bilder)";
 "S3-Compatible (images + videos)" = "S3-kompatibel (bilder + videoer)";
+"GitHub repository" = "GitHub-repository";
+"GitHub repository (images + videos)" = "GitHub-repository (bilder + videoer)";
 "S3-Compatible Storage" = "S3-kompatibel lagring";
 "Sign In with Google" = "Logg inn med Google";
 "Sign Out" = "Logg ut";
 "Signed in" = "Innlogget";
 "Not signed in" = "Ikke innlogget";
 "Account:" = "Konto:";
+"Account" = "Konto";
+"Connection" = "Tilkobling";
+"Checking…" = "Sjekker…";
+"Connected — the token can write to this repository." = "Tilkoblet — dette tokenet kan skrive til dette repositoryet.";
+"Connected, but the token cannot write to this repository." = "Tilkoblet, men dette tokenet kan ikke skrive til dette repositoryet.";
 "Folder:" = "Mappe:";
+"Folder" = "Mappe";
+"Ask before uploading" = "Spør før opplasting";
 "Test Connection" = "Test tilkobling";
 "Fill in endpoint, bucket, and credentials first" = "Fyll inn endepunkt, beholder og legitimasjon f\U00F8rst";
 "Testing..." = "Tester\U2026";
@@ -355,9 +419,17 @@
 "Secret Key:" = "Hemmelig n\U00F8kkel:";
 "Public URL:" = "Offentlig URL:";
 "Path Prefix:" = "Sti-prefiks:";
+"Access Key" = "Tilgangsnøkkel";
+"Secret Key" = "Hemmelig nøkkel";
+"Bucket" = "Beholder";
+"Region" = "Region";
+"Endpoint" = "Endepunkt";
+"Public URL" = "Offentlig URL";
+"Path Prefix" = "Sti-prefiks";
 "Make uploads publicly readable" = "Gj\U00F8r opplastinger offentlig lesbare";
 "Sends the public-read ACL so uploaded files are viewable by anyone with the link. Needed for AWS S3, DigitalOcean Spaces, MinIO and Backblaze B2, which store objects privately by default. Leave off for Cloudflare R2, which has no ACLs and rejects the header." = "Sender public-read ACL slik at opplastede filer kan ses av alle med lenken. N\U00F8dvendig for AWS S3, DigitalOcean Spaces, MinIO og Backblaze B2, som lagrer objekter privat som standard. La st\U00E5 av for Cloudflare R2, som ikke har ACL og avviser headeren.";
 "API key:" = "API-n\U00F8kkel:";
+"API key" = "API-nøkkel";
 "Upload History" = "Opplastingshistorikk";
 "No uploads yet." = "Ingen opplastinger enn\U00E5.";
 "Base URL for public access. If empty, the S3 endpoint URL is used (may not be publicly accessible)." = "Basis-URL for offentlig tilgang. Hvis tom, brukes S3-endepunktets URL (som kanskje ikke er offentlig tilgjengelig).";
@@ -367,11 +439,24 @@
 "Sign in to Google Drive in Preferences" = "Logg inn p\U00E5 Google Drive i innstillingene";
 "Video upload requires Google Drive or S3" = "Videoopplasting krever Google Drive eller S3";
 
+/* Uploads - GitHub */
+"Token" = "Token";
+"Repository" = "Repository";
+"Branch" = "Branch";
+"Domain" = "Domene";
+"Custom domain" = "Egendefinert domene";
+"Link style" = "Lenkestil";
+"Example link" = "Eksempellenke";
+"Create a fine-grained token with Contents write access to this one repository. The repository must be public for the links to be readable without a token." = "Opprett et fine-grained token med Contents-skrivetilgang til akkurat dette repositoryet. Repositoryet må være offentlig for at lenkene skal kunne leses uten token.";
+"Video upload requires Google Drive, S3 or GitHub" = "Videoopplasting krever Google Drive, S3 eller GitHub";
+
 /* Preferences - About */
 "macshot" = "macshot";
 "Version %@ (%@)" = "Versjon %@ (%@)";
 "Made by" = "Laget av";
 "Licensed under the GPLv3" = "Lisensiert under GPLv3";
+"Licensed under GPLv3" = "Lisensiert under GPLv3";
+"Copies display and capture diagnostics to the clipboard" = "Kopierer skjerm- og opptaksdiagnostikk til utklippstavlen";
 "A free, open-source screenshot & screen recording tool for macOS.\nFully native \U2014 built with Swift and AppKit." = "Et gratis skjermbilde- og skjermopptaksverkt\U00F8y med \U00E5pen kildekode for macOS.\nHelt innebygd \U2014 bygget med Swift og AppKit.";
 
 /* Alerts */
@@ -417,6 +502,16 @@
 "Uploading... %d%%" = "Laster opp\U2026 %d%%";
 "Upload failed: %@" = "Opplasting mislyktes: %@";
 "Uploaded! Link copied." = "Lastet opp! Lenke kopiert.";
+"Uploading…" = "Laster opp…";
+"Link copied: %@" = "Lenke kopiert: %@";
+"Could not encode the image." = "Kunne ikke kode bildet.";
+"Google Drive not signed in" = "Ikke innlogget på Google Drive";
+"S3 not configured — check Settings" = "S3 er ikke konfigurert — sjekk innstillingene";
+"GitHub upload is not configured — check Settings." = "GitHub-opplasting er ikke konfigurert — sjekk innstillingene.";
+"GitHub rejected the token — check that it has contents write access to the repository." = "GitHub avviste dette tokenet — sjekk at det har contents-skrivetilgang til repositoryet.";
+"Repository or branch not found — check the owner/repo and branch name." = "Fant ikke repository eller branch — sjekk owner/repo og branchnavnet.";
+"GitHub returned a response macshot could not read." = "GitHub returnerte et svar macshot ikke kunne lese.";
+"%@ is too large for a GitHub repository — upload it to S3 or Google Drive instead." = "%@ er for stor for et GitHub-repository – last den opp til S3 eller Google Drive i stedet.";
 "Uploading to %@... %d%%" = "Laster opp til %@\U2026 %d%%";
 "Open" = "\U00C5pne";
 
@@ -555,6 +650,9 @@
 "Google Translate" = "Google Translate";
 "Apple (on-device)" = "Apple (p\U00E5 enheten)";
 "Apple translation is faster and works offline. Google Translate supports more languages." = "Apple-oversettelse er raskere og fungerer uten nett. Google Translate st\U00F8tter flere spr\U00E5k.";
+"Engine" = "Motor";
+"Apple" = "Apple";
+"Google" = "Google";
 "Download language packs in System Settings\U2026" = "Last ned spr\U00E5kpakker i Systeminnstillinger\U2026";
 "Configure S3 in Settings" = "Konfigurer S3 i innstillingene";
 "Sign in to Google Drive in Settings" = "Logg inn p\U00E5 Google Drive i innstillingene";

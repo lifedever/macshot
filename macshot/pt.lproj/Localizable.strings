@@ -185,6 +185,7 @@
 "  (Tab to toggle)" = "  (Tab para alternar)";
 "  (Tab to switch)" = "  (Tab para mudar)";
 "Right-click to copy" = "Clique direito para copiar";
+"Press C to copy" = "Prima C para copiar";
 "Copied %@" = "Copiado %@";
 "Set color %@" = "Definir cor %@";
 "Draw something first to use the move tool." = "Desenhe algo primeiro para usar a ferramenta de mover.";
@@ -217,6 +218,8 @@
 "Show floating thumbnail after capture" = "Mostrar miniatura flutuante após captura";
 "Launch at login" = "Iniciar ao arrancar";
 "Show snap alignment guides" = "Mostrar guias de alinhamento";
+"Snapping" = "Ajuste";
+"Haptic feedback when snapping" = "Resposta háptica ao ajustar";
 "Snap selection edges to image boundaries" = "Ajustar as margens da seleção aos limites da imagem";
 "Enhance browser and Electron element snapping" = "Melhorar ajuste de elementos de navegador e Electron";
 "Builds the target app's accessibility tree in Element mode. Disable this if a browser or Electron app becomes slow or has input issues." = "Constrói a árvore de acessibilidade da aplicação alvo no modo Elemento. Desative se um navegador ou aplicação Electron ficar lento ou tiver problemas de entrada.";
@@ -236,6 +239,18 @@
 "Stack (keep all)" = "Empilhar (manter todas)";
 "Replace (show only latest)" = "Substituir (mostrar apenas a mais recente)";
 "  Position:" = "  Posição:";
+"Floating Preview" = "Pré-visualização flutuante";
+"Position" = "Posição";
+"Dismiss after" = "Fechar após";
+"Never" = "Nunca";
+"3 seconds" = "3 segundos";
+"5 seconds" = "5 segundos";
+"10 seconds" = "10 segundos";
+"30 seconds" = "30 segundos";
+"Multiple previews" = "Várias pré-visualizações";
+"Preview size" = "Tamanho da pré-visualização";
+"Preview" = "Pré-visualização";
+"View" = "Ver";
 "Menu Bar Order" = "Ordem da barra de menus";
 "Choose the order of capture actions in the macshot menu bar menu." = "Escolha a ordem das ações de captura no menu da barra de menus do macshot.";
 "Move up" = "Mover para cima";
@@ -243,6 +258,9 @@
 "Output" = "Saída";
 "Image format:" = "Formato de imagem:";
 "Quality:" = "Qualidade:";
+"Image" = "Imagem";
+"Image format" = "Formato de imagem";
+"Quality" = "Qualidade";
 "%d%%" = "%d%%";
 "Save at standard resolution (1x)" = "Guardar em resolução padrão (1x)";
 "Halves dimensions on Retina displays, ~4x smaller files" = "Reduz as dimensões para metade em ecrãs Retina, ficheiros ~4x mais pequenos";
@@ -252,6 +270,7 @@
 "Order history by last edit" = "Ordenar histórico pela última edição";
 "Edited screenshots move to the top. Off keeps them in capture order." = "As capturas editadas passam para o topo. Desativado mantém a ordem de captura.";
 "History size:" = "Tamanho do histórico:";
+"History size" = "Tamanho do histórico";
 "screenshots kept on disk (0 = off)" = "capturas mantidas no disco (0 = desligado)";
 "Save Directory" = "Diretoria de Gravação";
 "Save action:" = "Ação ao guardar:";
@@ -259,6 +278,10 @@
 "Ask where to save" = "Perguntar onde guardar";
 "Save folder:" = "Pasta de gravação:";
 "Browse…" = "Procurar...";
+"Saving" = "Gravação";
+"Save action" = "Ação ao guardar";
+"Save folder" = "Pasta de gravação";
+"Filename" = "Nome do ficheiro";
 "Appearance" = "Aparência";
 "Accent color:" = "Cor de destaque:";
 "Icon color:" = "Cor do ícone:";
@@ -268,6 +291,10 @@
 "Default" = "Predefinido";
 "Custom symbol" = "Símbolo personalizado";
 "Enter any SF Symbol name (e.g. camera.fill) or pick a preset. Browse names in Apple's SF Symbols app. Invalid names fall back to the default icon." = "Introduza qualquer nome de SF Symbol (ex.: camera.fill) ou escolha uma predefinição. Procure nomes na app SF Symbols da Apple. Nomes inválidos revertem para o ícone predefinido.";
+"Menu bar icon" = "Ícone da barra de menus";
+"Symbol" = "Símbolo";
+"No SF Symbol by that name — the default icon is used." = "Não existe nenhum SF Symbol com esse nome — é usado o ícone predefinido.";
+"Theme" = "Tema";
 "OCR Capture:" = "Captura OCR:";
 "OCR & QR Capture:" = "Captura OCR e QR:";
 "Show window + copy to clipboard" = "Mostrar janela + copiar para a área de transferência";
@@ -277,6 +304,9 @@
 "Save to file" = "Guardar em ficheiro";
 "Save + copy to clipboard" = "Guardar + copiar para a área de transferência";
 "OCR Action" = "Ação OCR";
+"Enter / Quick Capture" = "Enter / Captura Rápida";
+"OCR & QR Capture" = "Captura OCR e QR";
+"Show results window" = "Mostrar janela de resultados";
 
 /* Preferences - Shortcuts */
 "Keyboard Shortcuts" = "Atalhos de Teclado";
@@ -284,6 +314,9 @@
 "Clear shortcut" = "Limpar atalho";
 "Press keys..." = "Prima teclas...";
 "Waiting..." = "A aguardar...";
+"Press a shortcut…" = "Prima um atalho…";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "Clique num atalho e prima uma combinação de teclas com pelo menos um modificador (⌘, ⌥, ⌃, ⇧). Esc cancela. As teclas de função funcionam sozinhas.";
+"These apply inside the capture overlay and the editor window." = "Aplicam-se dentro do overlay de captura e da janela do editor.";
 
 /* Preferences - Tools */
 "Annotation Tools" = "Ferramentas de Anotação";
@@ -297,15 +330,20 @@
 
 /* Preferences - Recording */
 "Frame rate:" = "Taxa de fotogramas:";
+"Frame rate" = "Taxa de fotogramas";
+"%d fps" = "%d fps";
+"When done" = "Ao terminar";
 "After recording:" = "Após gravação:";
 "Save recording to:" = "Guardar gravação em:";
 "Clear" = "Limpar";
 "Max height:" = "Altura máxima:";
+"Max height" = "Altura máxima";
 "px (0 = unlimited)" = "px (0 = ilimitado)";
 "Behavior" = "Comportamento";
 "Auto-scroll (sends synthetic scroll events)" = "Deslocamento automático (envia eventos de deslocamento sintéticos)";
 "Detect fixed/sticky headers" = "Detetar cabeçalhos fixos/persistentes";
 "Scroll speed:" = "Velocidade de deslocamento:";
+"Scroll speed" = "Velocidade de deslocamento";
 "Slow" = "Lento";
 "Medium" = "Médio";
 "Fast" = "Rápido";
@@ -320,10 +358,27 @@
 "MP4 (H.264)" = "MP4 (H.264)";
 "GIF" = "GIF";
 
+/* Settings - Beautify */
+"Beautify captures" = "Embelezar capturas";
+"Frame" = "Moldura";
+"Window chrome" = "Barra de título";
+"Rounded corners" = "Cantos arredondados";
+"Corner radius" = "Raio dos cantos";
+"Background blur" = "Desfocagem do fundo";
+"Style" = "Estilo";
+"Use desktop wallpaper" = "Usar a imagem de fundo da secretária";
+"Choose image…" = "Escolher imagem…";
+"Places the capture on a background with rounded corners and a drop shadow." = "Coloca a captura sobre um fundo com cantos arredondados e sombra.";
+"Places the capture on a gradient background with rounded corners and a drop shadow. The style is chosen from the toolbar." = "Coloca a captura sobre um fundo em gradiente com cantos arredondados e sombra. O estilo é escolhido na barra de ferramentas.";
+
 /* Preferences - Upload */
 "Upload Service" = "Serviço de Carregamento";
 "Upload Provider" = "Fornecedor de Carregamento";
 "Provider:" = "Fornecedor:";
+"Provider" = "Fornecedor";
+"GitHub repository" = "Repositório do GitHub";
+"GitHub repository (images + videos)" = "Repositório do GitHub (imagens + vídeos)";
+"Ask before uploading" = "Perguntar antes de carregar";
 "Google Drive" = "Google Drive";
 "Google Drive (images + videos)" = "Google Drive (imagens + vídeos)";
 "imgbb (images only)" = "imgbb (apenas imagens)";
@@ -335,10 +390,16 @@
 "Not signed in" = "Sessão não iniciada";
 "Account:" = "Conta:";
 "Folder:" = "Pasta:";
+"Account" = "Conta";
+"Folder" = "Pasta";
+"Connection" = "Ligação";
+"Checking…" = "A verificar…";
 "Test Connection" = "Testar Ligação";
 "Fill in endpoint, bucket, and credentials first" = "Preencha primeiro o endpoint, bucket e credenciais";
 "Testing..." = "A testar...";
 "Connection successful!" = "Ligação bem sucedida!";
+"Connected — the token can write to this repository." = "Ligado — o token pode escrever neste repositório.";
+"Connected, but the token cannot write to this repository." = "Ligado, mas o token não pode escrever neste repositório.";
 "Leave empty to use default" = "Deixar vazio para usar o predefinido";
 "Endpoint:" = "Endpoint:";
 "Region:" = "Região:";
@@ -347,9 +408,17 @@
 "Secret Key:" = "Chave Secreta:";
 "Public URL:" = "URL Público:";
 "Path Prefix:" = "Prefixo do Caminho:";
+"Endpoint" = "Endpoint";
+"Region" = "Região";
+"Bucket" = "Bucket";
+"Access Key" = "Chave de Acesso";
+"Secret Key" = "Chave Secreta";
+"Public URL" = "URL Público";
+"Path Prefix" = "Prefixo do Caminho";
 "Make uploads publicly readable" = "Tornar carregamentos legíveis publicamente";
 "Sends the public-read ACL so uploaded files are viewable by anyone with the link. Needed for AWS S3, DigitalOcean Spaces, MinIO and Backblaze B2, which store objects privately by default. Leave off for Cloudflare R2, which has no ACLs and rejects the header." = "Envia a ACL public-read para que os ficheiros carregados fiquem visíveis para qualquer pessoa com a ligação. Necessário para AWS S3, DigitalOcean Spaces, MinIO e Backblaze B2, que armazenam objetos de forma privada por predefinição. Deixe desativado para Cloudflare R2, que não possui ACLs e rejeita o cabeçalho.";
 "API key:" = "Chave API:";
+"API key" = "Chave API";
 "Upload History" = "Histórico de Carregamentos";
 "No uploads yet." = "Sem carregamentos ainda.";
 "Base URL for public access. If empty, the S3 endpoint URL is used (may not be publicly accessible)." = "URL base para acesso público. Se vazio, o URL do endpoint S3 é utilizado (pode não ser acessível publicamente).";
@@ -358,12 +427,22 @@
 "Configure S3 in Preferences" = "Configurar S3 nas Preferências";
 "Sign in to Google Drive in Preferences" = "Iniciar sessão no Google Drive nas Preferências";
 "Video upload requires Google Drive or S3" = "O carregamento de vídeo requer Google Drive ou S3";
+"Token" = "Token";
+"Repository" = "Repositório";
+"Branch" = "Branch";
+"Link style" = "Estilo da ligação";
+"Custom domain" = "Domínio personalizado";
+"Domain" = "Domínio";
+"Example link" = "Ligação de exemplo";
+"Create a fine-grained token with Contents write access to this one repository. The repository must be public for the links to be readable without a token." = "Crie um token fine-grained com acesso de escrita a Contents apenas para este repositório. O repositório tem de ser público para que as ligações sejam legíveis sem token.";
+"Video upload requires Google Drive, S3 or GitHub" = "O carregamento de vídeo requer Google Drive, S3 ou GitHub";
 
 /* Preferences - About */
 "macshot" = "macshot";
 "Version %@ (%@)" = "Versão %@ (%@)";
 "Made by" = "Criado por";
 "Licensed under the GPLv3" = "Licenciado sob a GPLv3";
+"Licensed under GPLv3" = "Licenciado sob a GPLv3";
 "A free, open-source screenshot & screen recording tool for macOS.\nFully native — built with Swift and AppKit." = "Uma ferramenta gratuita e de código aberto para capturas de ecrã e gravação de ecrã para macOS.\nTotalmente nativa — construída com Swift e AppKit.";
 
 /* Alerts */
@@ -409,6 +488,16 @@
 "Uploading... %d%%" = "A carregar... %d%%";
 "Upload failed: %@" = "Carregamento falhou: %@";
 "Uploaded! Link copied." = "Carregado! Ligação copiada.";
+"Uploading…" = "A carregar…";
+"Link copied: %@" = "Ligação copiada: %@";
+"Could not encode the image." = "Não foi possível codificar a imagem.";
+"Google Drive not signed in" = "Sessão do Google Drive não iniciada";
+"S3 not configured — check Settings" = "S3 não configurado — verifique as Definições";
+"GitHub upload is not configured — check Settings." = "O carregamento para o GitHub não está configurado — verifique as Definições.";
+"GitHub rejected the token — check that it has contents write access to the repository." = "O GitHub rejeitou o token — verifique se tem acesso de escrita a Contents no repositório.";
+"Repository or branch not found — check the owner/repo and branch name." = "Repositório ou branch não encontrado — verifique owner/repo e o nome do branch.";
+"GitHub returned a response macshot could not read." = "O GitHub devolveu uma resposta que o macshot não conseguiu ler.";
+"%@ is too large for a GitHub repository — upload it to S3 or Google Drive instead." = "%@ é demasiado grande para um repositório do GitHub — envie-o para o S3 ou o Google Drive.";
 "Uploading to %@... %d%%" = "A carregar para %@... %d%%";
 "Open" = "Abrir";
 
@@ -543,6 +632,9 @@
 "Engine:" = "Motor:";
 "Google Translate" = "Google Translate";
 "Apple (on-device)" = "Apple (no dispositivo)";
+"Engine" = "Motor";
+"Apple" = "Apple";
+"Google" = "Google";
 "Apple translation is faster and works offline. Google Translate supports more languages." = "A tradução da Apple é mais rápida e funciona offline. O Google Translate suporta mais idiomas.";
 "Download language packs in System Settings…" = "Descarregue pacotes de idiomas nas Definições do Sistema…";
 "Configure S3 in Settings" = "Configurar S3 nas Definições";
@@ -551,6 +643,7 @@
 "Position:" = "Posição:";
 "Size:" = "Tamanho:";
 "Shape:" = "Forma:";
+"Shape" = "Forma";
 
 "Same as screenshots" = "Igual às capturas de ecrã";
 "  Preview size:" = "  Tamanho da pré-visualização:";
@@ -612,6 +705,7 @@
 "Preview:" = "Pré-visualização:";
 "Copy Screen Info" = "Copiar Informação do Ecrã";
 "Copies display and capture diagnostics to clipboard" = "Copia diagnósticos do ecrã e captura para a área de transferência";
+"Copies display and capture diagnostics to the clipboard" = "Copia diagnósticos do ecrã e captura para a área de transferência";
 "Accent" = "Destaque";
 "Icon" = "Ícone";
 "Background" = "Fundo";

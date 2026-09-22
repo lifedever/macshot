@@ -145,6 +145,20 @@
 "More Emojis" = "மேலும் எமோஜிகள்";
 "Load Image" = "படத்தை ஏற்று";
 "Gradient Style" = "சாய்வு நிற பாணி";
+
+/* Settings - Beautify */
+"Beautify captures" = "பிடிப்புகளை அழகுபடுத்து";
+"Frame" = "சட்டகம்";
+"Window chrome" = "சாளரத் தலைப்புப் பட்டை";
+"Rounded corners" = "வட்டமான மூலைகள்";
+"Corner radius" = "மூலை ஆரை";
+"Background blur" = "பின்னணி மங்கல்";
+"Style" = "பாணி";
+"Use desktop wallpaper" = "டெஸ்க்டாப் வால்பேப்பரைப் பயன்படுத்து";
+"Choose image…" = "படத்தைத் தேர்வுசெய்…";
+"Places the capture on a background with rounded corners and a drop shadow." = "பிடிப்பை வட்டமான மூலைகளும் நிழலும் கொண்ட பின்னணியில் வைக்கிறது.";
+"Places the capture on a gradient background with rounded corners and a drop shadow. The style is chosen from the toolbar." = "பிடிப்பை வட்டமான மூலைகளும் நிழலும் கொண்ட சாய்வு நிற பின்னணியில் வைக்கிறது. பாணி கருவிப்பட்டியிலிருந்து தேர்வு செய்யப்படுகிறது.";
+
 "On" = "இயக்கு";
 "Text Only" = "உரை மட்டும்";
 "All Text" = "அனைத்து உரை";
@@ -184,6 +198,7 @@
 "Enhance browser and Electron element snapping" = "உலாவி மற்றும் எலக்ட்ரான் உறுப்பொருள் ஒட்டுதலை மேம்படுத்து";
 "Builds the target app's accessibility tree in Element mode. Disable this if a browser or Electron app becomes slow or has input issues." = "உறுப்பொருள் பயன்முறையில் இலக்கு செயலியின் அணுகல்தன்மை மரத்தை உருவாக்குகிறது. உலாவி அல்லது எலக்ட்ரான் செயலி மெதுவாகும் அல்லது உள்ளீட்டுச் சிக்கல்கள் இருந்தால் இதை முடக்கவும்.";
 "Right-click to copy" = "நகலெடுக்க வலது கிளிக் செய்";
+"Press C to copy" = "நகலெடுக்க C ஐ அழுத்தவும்";
 "Copied %@" = "%@ நகலெடுக்கப்பட்டது";
 "Set color %@" = "நிறம் %@ அமைக்கப்பட்டது";
 "Draw something first to use the move tool." = "நகர்த்தும் கருவியைப் பயன்படுத்த முதலில் ஏதாவது வரையுங்கள்.";
@@ -241,6 +256,21 @@
 "  Position:" = "  நிலை:";
 "Stack (keep all)" = "அடுக்கு (அனைத்தையும் வை)";
 "Replace (show only latest)" = "மாற்று (சமீபத்தியதை மட்டும் காட்டு)";
+
+/* Settings - Floating Preview */
+"Floating Preview" = "மிதக்கும் முன்னோட்டம்";
+"Position" = "நிலை";
+"Dismiss after" = "பிறகு மறை";
+"Never" = "ஒருபோதும் இல்லை";
+"3 seconds" = "3 வினாடிகள்";
+"5 seconds" = "5 வினாடிகள்";
+"10 seconds" = "10 வினாடிகள்";
+"30 seconds" = "30 வினாடிகள்";
+"Multiple previews" = "பல முன்னோட்டங்கள்";
+"Preview size" = "முன்னோட்ட அளவு";
+"Preview" = "முன்னோட்டம்";
+"View" = "பார்";
+
 "Menu Bar Order" = "மெனு பட்டி வரிசை";
 "Choose the order of capture actions in the macshot menu bar menu." = "macshot மெனு பட்டி மெனுவில் படமெடுப்பு செயல்களின் வரிசையைத் தேர்வு செய்க.";
 "Move up" = "மேலே நகர்த்து";
@@ -273,6 +303,10 @@
 "Default" = "இயல்புநிலை";
 "Custom symbol" = "தனிப்பயன் சின்னம்";
 "Enter any SF Symbol name (e.g. camera.fill) or pick a preset. Browse names in Apple's SF Symbols app. Invalid names fall back to the default icon." = "எந்த SF Symbol பெயரையும் உள்ளிடவும் (எ.கா. camera.fill) அல்லது ஒரு முன்னமைவைத் தேர்வுசெய்யவும். Apple-இன் SF Symbols பயன்பாட்டில் பெயர்களை உலாவவும். தவறான பெயர்கள் இயல்புநிலை ஐகானுக்குத் திரும்பும்.";
+"Menu bar icon" = "பட்டிப்பட்டை ஐகான்";
+"Symbol" = "சின்னம்";
+"No SF Symbol by that name — the default icon is used." = "அந்தப் பெயரில் SF Symbol இல்லை — இயல்புநிலை ஐகான் பயன்படுத்தப்படும்.";
+"Theme" = "தீம்";
 "Background color:" = "பின்னணி நிறம்:";
 "Reset" = "மீட்டமை";
 "OCR Capture:" = "OCR பிடிப்பு:";
@@ -284,6 +318,22 @@
 "Save to file" = "கோப்பில் சேமி";
 "Save + copy to clipboard" = "சேமி + ஒட்டுப்பலகையில் நகலெடு";
 "OCR Action" = "OCR செயல்";
+"Enter / Quick Capture" = "Enter / விரைவு பிடிப்பு";
+"OCR & QR Capture" = "OCR & QR பிடிப்பு";
+"Show results window" = "முடிவுகள் சாளரத்தைக் காட்டு";
+"Snapping" = "ஒட்டுதல்";
+"Haptic feedback when snapping" = "ஒட்டும்போது தொடு பின்னூட்டம்";
+"Image" = "படம்";
+"Image format" = "பட வடிவம்";
+"Quality" = "தரம்";
+"Saving" = "சேமிப்பு";
+"Save action" = "சேமிப்புச் செயல்";
+"Save folder" = "சேமிப்பு கோப்புறை";
+"Filename" = "கோப்புப்பெயர்";
+"History size" = "வரலாற்று அளவு";
+"Engine" = "இயந்திரம்";
+"Apple" = "Apple";
+"Google" = "Google";
 
 /* Preferences - Shortcuts */
 "Keyboard Shortcuts" = "விசைப்பலகை குறுக்குவழிகள்";
@@ -291,6 +341,9 @@
 "Clear shortcut" = "குறுக்குவழியை அழி";
 "Press keys..." = "விசைகளை அழுத்து...";
 "Waiting..." = "காத்திருக்கிறது...";
+"Press a shortcut…" = "ஒரு குறுக்குவழியை அழுத்தவும்…";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "ஒரு குறுக்குவழியைக் கிளிக் செய்து, குறைந்தது ஒரு மாற்றி (⌘, ⌥, ⌃, ⇧) கொண்ட விசை சேர்க்கையை அழுத்தவும். Esc ரத்துசெய்யும். செயல்பாட்டு விசைகள் தனியாகவே வேலை செய்யும்.";
+"These apply inside the capture overlay and the editor window." = "இவை பிடிப்பு மேலடுக்கிலும் எடிட்டர் சாளரத்திலும் பொருந்தும்.";
 
 /* Preferences - Tools */
 "Annotation Tools" = "குறிப்புக் கருவிகள்";
@@ -304,6 +357,12 @@
 
 /* Preferences - Recording */
 "Frame rate:" = "பிரேம் வீதம்:";
+"Frame rate" = "பிரேம் வீதம்";
+"%d fps" = "%d fps";
+"When done" = "முடிந்ததும்";
+"Shape" = "வடிவம்";
+"Scroll speed" = "உருள் வேகம்";
+"Max height" = "அதிகபட்ச உயரம்";
 "After recording:" = "பதிவுக்குப் பிறகு:";
 "Save recording to:" = "பதிவை இங்கே சேமி:";
 "Save Recording" = "பதிவைச் சேமி";
@@ -358,6 +417,30 @@
 "Make uploads publicly readable" = "பதிவேற்றங்களை பொதுவில் படிக்கக்கூடியதாக்கு";
 "Sends the public-read ACL so uploaded files are viewable by anyone with the link. Needed for AWS S3, DigitalOcean Spaces, MinIO and Backblaze B2, which store objects privately by default. Leave off for Cloudflare R2, which has no ACLs and rejects the header." = "public-read ACL அனுப்புகிறது, இதனால் பதிவேற்றிய கோப்புகள் இணைப்பு உள்ள எவரும் பார்க்கக்கூடியதாக இருக்கும். இயல்பாக பொருட்களை தனிப்பட்டதாக சேமிக்கும் AWS S3, DigitalOcean Spaces, MinIO மற்றும் Backblaze B2 க்கு தேவை. ACLs இல்லாத மற்றும் தலைப்பை நிராகரிக்கும் Cloudflare R2 க்கு அணைத்து வைக்கவும்.";
 "API key:" = "API விசை:";
+"Provider" = "வழங்குநர்";
+"Ask before uploading" = "பதிவேற்றுவதற்கு முன் கேள்";
+"Account" = "கணக்கு";
+"Connection" = "இணைப்பு";
+"Checking…" = "சரிபார்க்கிறது…";
+"Folder" = "கோப்புறை";
+"API key" = "API விசை";
+"Access Key" = "அணுகல் விசை";
+"Secret Key" = "ரகசிய விசை";
+"Bucket" = "பக்கெட்";
+"Region" = "பிராந்தியம்";
+"Endpoint" = "முனைப்புள்ளி";
+"Public URL" = "பொது URL";
+"Path Prefix" = "பாதை முன்னொட்டு";
+"Domain" = "டொமைன்";
+"Custom domain" = "தனிப்பயன் டொமைன்";
+"GitHub repository" = "GitHub களஞ்சியம்";
+"GitHub repository (images + videos)" = "GitHub களஞ்சியம் (படங்கள் + காணொளிகள்)";
+"Token" = "டோக்கன்";
+"Repository" = "களஞ்சியம்";
+"Branch" = "கிளை";
+"Link style" = "இணைப்பு பாணி";
+"Example link" = "எடுத்துக்காட்டு இணைப்பு";
+"Create a fine-grained token with Contents write access to this one repository. The repository must be public for the links to be readable without a token." = "இந்த ஒரு களஞ்சியத்திற்கு மட்டும் Contents எழுதும் அணுகலுடன் ஒரு fine-grained டோக்கனை உருவாக்குங்கள். டோக்கன் இல்லாமல் இணைப்புகளைப் படிக்க களஞ்சியம் பொதுவானதாக இருக்க வேண்டும்.";
 "Upload History" = "பதிவேற்ற வரலாறு";
 "No uploads yet." = "இதுவரை பதிவேற்றங்கள் இல்லை.";
 "Base URL for public access. If empty, the S3 endpoint URL is used (may not be publicly accessible)." = "பொது அணுகலுக்கான அடிப்படை URL. காலியாக இருந்தால், S3 முனைப்புள்ளி URL பயன்படுத்தப்படும் (பொதுவாக அணுகக்கூடியதாக இல்லாமல் போகலாம்).";
@@ -372,6 +455,7 @@
 "Version %@ (%@)" = "பதிப்பு %@ (%@)";
 "Made by" = "உருவாக்கியவர்";
 "Licensed under the GPLv3" = "GPLv3 உரிமத்தின் கீழ் வழங்கப்பட்டது";
+"Licensed under GPLv3" = "GPLv3 உரிமத்தின் கீழ் வழங்கப்பட்டது";
 "A free, open-source screenshot & screen recording tool for macOS.\nFully native — built with Swift and AppKit." = "macOS க்கான இலவச, திறந்த மூல திரைப்பிடிப்பு & திரைப்பதிவு கருவி.\nமுழுமையாக நேட்டிவ் — Swift மற்றும் AppKit மூலம் உருவாக்கப்பட்டது.";
 
 /* Alerts */
@@ -420,6 +504,19 @@
 "Uploading... %d%%" = "பதிவேற்றுகிறது... %d%%";
 "Upload failed: %@" = "பதிவேற்றம் தோல்வி: %@";
 "Uploaded! Link copied." = "பதிவேற்றப்பட்டது! இணைப்பு நகலெடுக்கப்பட்டது.";
+"Uploading…" = "பதிவேற்றுகிறது…";
+"Link copied: %@" = "இணைப்பு நகலெடுக்கப்பட்டது: %@";
+"Could not encode the image." = "படத்தைக் குறியாக்கம் செய்ய முடியவில்லை.";
+"Google Drive not signed in" = "Google Drive இல் உள்நுழையவில்லை";
+"S3 not configured — check Settings" = "S3 உள்ளமைக்கப்படவில்லை — அமைப்புகளைப் பார்க்கவும்";
+"GitHub upload is not configured — check Settings." = "GitHub பதிவேற்றம் உள்ளமைக்கப்படவில்லை — அமைப்புகளைப் பார்க்கவும்.";
+"GitHub rejected the token — check that it has contents write access to the repository." = "GitHub டோக்கனை நிராகரித்தது — அதற்கு களஞ்சியத்தில் contents எழுதும் அணுகல் உள்ளதா எனச் சரிபார்க்கவும்.";
+"Repository or branch not found — check the owner/repo and branch name." = "களஞ்சியம் அல்லது கிளை கிடைக்கவில்லை — owner/repo மற்றும் கிளையின் பெயரைச் சரிபார்க்கவும்.";
+"GitHub returned a response macshot could not read." = "macshot ஆல் படிக்க முடியாத ஒரு பதிலை GitHub திருப்பியது.";
+"%@ is too large for a GitHub repository — upload it to S3 or Google Drive instead." = "%@ GitHub களஞ்சியத்திற்கு மிகப் பெரியது — அதை S3 அல்லது Google Drive இல் பதிவேற்றவும்.";
+"Connected — the token can write to this repository." = "இணைக்கப்பட்டது — டோக்கன் இந்தக் களஞ்சியத்தில் எழுத முடியும்.";
+"Connected, but the token cannot write to this repository." = "இணைக்கப்பட்டது, ஆனால் டோக்கன் இந்தக் களஞ்சியத்தில் எழுத முடியாது.";
+"Video upload requires Google Drive, S3 or GitHub" = "காணொளி பதிவேற்றத்திற்கு Google Drive, S3 அல்லது GitHub தேவை";
 "Uploading to %@... %d%%" = "%@ இல் பதிவேற்றுகிறது... %d%%";
 "Open" = "திற";
 
@@ -624,6 +721,7 @@
 "Preview:" = "முன்னோட்டம்:";
 "Copy Screen Info" = "திரை தகவலை நகலெடு";
 "Copies display and capture diagnostics to clipboard" = "திரை மற்றும் பிடிப்பு கண்டறிதல்களை ஒட்டுப்பலகையில் நகலெடுக்கிறது";
+"Copies display and capture diagnostics to the clipboard" = "திரை மற்றும் பிடிப்பு கண்டறிதல்களை ஒட்டுப்பலகையில் நகலெடுக்கிறது";
 "Accent" = "முதன்மை";
 "Icon" = "ஐகான்";
 "Background" = "பின்னணி";

@@ -53,6 +53,7 @@
 
 /* Floating Thumbnail */
 "Close All" = "すべて閉じる";
+"View" = "表示";
 "Save" = "保存";
 
 /* Editor Top Bar */
@@ -179,6 +180,7 @@
 "  (Tab to toggle)" = "  (Tab で切替)";
 "  (Tab to switch)" = "  (Tab で切り替え)";
 "Right-click to copy" = "右クリックでコピー";
+"Press C to copy" = "C キーでコピー";
 "Copied %@" = "%@ をコピーしました";
 "Set color %@" = "カラーを %@ に設定";
 "Draw something first to use the move tool." = "移動ツールを使うには、先に何か描いてください。";
@@ -211,6 +213,8 @@
 "Launch at login" = "ログイン時に起動";
 "Show snap alignment guides" = "スナップ整列ガイドを表示";
 "Snap selection edges to image boundaries" = "選択範囲の端を画像の境界にスナップ";
+"Snapping" = "スナップ";
+"Haptic feedback when snapping" = "スナップ時に触覚フィードバック";
 "Enhance browser and Electron element snapping" = "ブラウザと Electron の要素スナップを強化";
 "Builds the target app's accessibility tree in Element mode. Disable this if a browser or Electron app becomes slow or has input issues." = "要素モードで対象アプリのアクセシビリティツリーを構築します。ブラウザまたは Electron アプリが動作中に遅くなる場合や入力に問題がある場合は無効にしてください。";
 "Capture mouse cursor in screenshot" = "スクリーンショットにマウスカーソルを含める";
@@ -227,13 +231,24 @@
 "Check for beta updates" = "ベータアップデートを確認";
 "Thumbnail" = "サムネイル";
 "  Dismiss after:" = "  自動非表示:";
+"Floating Preview" = "フローティングプレビュー";
+"Dismiss after" = "自動非表示";
+"Never" = "なし";
+"3 seconds" = "3 秒";
+"5 seconds" = "5 秒";
+"10 seconds" = "10 秒";
+"30 seconds" = "30 秒";
 "seconds before auto-dismiss (0 = never)" = "秒後に自動非表示 (0 = 無効)";
 "  Multiple previews:" = "  複数プレビュー:";
+"Multiple previews" = "複数プレビュー";
 "Stack (keep all)" = "スタック (すべて保持)";
 "Replace (show only latest)" = "置き換え (最新のみ表示)";
 "Output" = "出力";
 "Image format:" = "画像形式:";
+"Image" = "画像";
+"Image format" = "画像形式";
 "Quality:" = "品質:";
+"Quality" = "品質";
 "%d%%" = "%d%%";
 "Save at standard resolution (1x)" = "標準解像度 (1x) で保存";
 "Halves dimensions on Retina displays, ~4x smaller files" = "Retina ディスプレイで解像度を半分に、ファイルサイズ約 1/4";
@@ -241,9 +256,12 @@
 "Ensures consistent colors across different displays" = "異なるディスプレイ間で一貫した色を保証";
 "Screenshot History" = "スクリーンショット履歴";
 "History size:" = "履歴サイズ:";
+"History size" = "履歴サイズ";
 "screenshots kept on disk (0 = off)" = "枚をディスクに保存 (0 = 無効)";
 "Save Directory" = "保存先ディレクトリ";
 "Save folder:" = "保存フォルダ:";
+"Saving" = "保存";
+"Save folder" = "保存フォルダ";
 "Browse…" = "参照…";
 "Appearance" = "外観";
 "Accent color:" = "アクセントカラー:";
@@ -254,17 +272,24 @@
 "Custom symbol" = "カスタムシンボル";
 "Default" = "デフォルト";
 "Enter any SF Symbol name (e.g. camera.fill) or pick a preset. Browse names in Apple's SF Symbols app. Invalid names fall back to the default icon." = "任意の SF Symbol 名 (例: camera.fill) を入力するか、プリセットを選択します。名前は Apple の SF Symbols アプリで参照できます。無効な名前はデフォルトのアイコンに戻ります。";
+"Menu bar icon" = "メニューバーアイコン";
+"Symbol" = "シンボル";
+"No SF Symbol by that name — the default icon is used." = "その名前の SF Symbol はありません — デフォルトのアイコンを使用します。";
 "Save action:" = "保存アクション:";
+"Save action" = "保存アクション";
 "Save to default folder" = "デフォルトフォルダに保存";
 "Ask where to save" = "保存先を確認";
 "Disable shadow outside selection" = "選択範囲外のシャドウを無効化";
 "Show shortcuts in tooltips" = "ツールチップにショートカットを表示";
 "OCR Capture:" = "OCR キャプチャ:";
 "OCR & QR Capture:" = "OCR & QR キャプチャ:";
+"OCR & QR Capture" = "OCR & QR キャプチャ";
+"Show results window" = "結果ウインドウを表示";
 "Show window + copy to clipboard" = "ウインドウを表示 + クリップボードにコピー";
 "Show window only" = "ウインドウのみ表示";
 "Copy to clipboard only" = "クリップボードにコピーのみ";
 "Enter / Quick Capture:" = "Enter / クイックキャプチャ:";
+"Enter / Quick Capture" = "Enter / クイックキャプチャ";
 "Save to file" = "ファイルに保存";
 "Save + copy to clipboard" = "保存 + クリップボードにコピー";
 "OCR Action" = "OCR アクション";
@@ -275,6 +300,9 @@
 "Clear shortcut" = "ショートカットを消去";
 "Press keys..." = "キーを押してください...";
 "Waiting..." = "入力待ち...";
+"Press a shortcut…" = "ショートカットを押す…";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "ショートカットをクリックし、修飾キー (⌘, ⌥, ⌃, ⇧) を1つ以上含むキーの組み合わせを押します。Esc でキャンセルします。ファンクションキーは単独で使用できます。";
+"These apply inside the capture overlay and the editor window." = "これらはキャプチャオーバーレイとエディタウインドウ内で有効です。";
 
 /* Preferences - Tools */
 "Annotation Tools" = "注釈ツール";
@@ -288,16 +316,20 @@
 
 /* Preferences - Recording */
 "Frame rate:" = "フレームレート:";
+"Frame rate" = "フレームレート";
 "After recording:" = "録画後:";
+"When done" = "完了時";
 "Save recording to:" = "録画の保存先:";
 "Save Recording" = "録画を保存";
 "Clear" = "クリア";
 "Max height:" = "最大高さ:";
+"Max height" = "最大高さ";
 "px (0 = unlimited)" = "px (0 = 無制限)";
 "Behavior" = "動作";
 "Auto-scroll (sends synthetic scroll events)" = "自動スクロール (合成スクロールイベントを送信)";
 "Detect fixed/sticky headers" = "固定/スティッキーヘッダーを検出";
 "Scroll speed:" = "スクロール速度:";
+"Scroll speed" = "スクロール速度";
 "Slow" = "遅い";
 "Medium" = "中";
 "Fast" = "速い";
@@ -309,13 +341,29 @@
 "30 fps" = "30 fps";
 "60 fps" = "60 fps";
 "120 fps" = "120 fps";
+"%d fps" = "%d fps";
 "MP4 (H.264)" = "MP4 (H.264)";
 "GIF" = "GIF";
+
+/* Settings - Beautify */
+"Beautify captures" = "キャプチャを美化";
+"Frame" = "フレーム";
+"Window chrome" = "ウインドウ枠";
+"Rounded corners" = "角丸";
+"Corner radius" = "角の丸み";
+"Background blur" = "背景のぼかし";
+"Style" = "スタイル";
+"Use desktop wallpaper" = "デスクトップピクチャを使用";
+"Choose image…" = "画像を選択…";
+"Places the capture on a background with rounded corners and a drop shadow." = "キャプチャを角丸とドロップシャドウ付きの背景に配置します。";
+"Places the capture on a gradient background with rounded corners and a drop shadow. The style is chosen from the toolbar." = "キャプチャを角丸とドロップシャドウ付きのグラデーション背景に配置します。スタイルはツールバーから選択します。";
 
 /* Preferences - Upload */
 "Upload Service" = "アップロードサービス";
 "Upload Provider" = "アップロードプロバイダ";
 "Provider:" = "プロバイダ:";
+"Provider" = "プロバイダ";
+"Ask before uploading" = "アップロード前に確認";
 "Google Drive" = "Google Drive";
 "Google Drive (images + videos)" = "Google Drive (画像 + 動画)";
 "imgbb (images only)" = "imgbb (画像のみ)";
@@ -326,22 +374,34 @@
 "Signed in" = "サインイン済み";
 "Not signed in" = "未サインイン";
 "Account:" = "アカウント:";
+"Account" = "アカウント";
 "Folder:" = "フォルダ:";
+"Folder" = "フォルダ";
 "Test Connection" = "接続テスト";
+"Connection" = "接続";
+"Checking…" = "確認中…";
 "Fill in endpoint, bucket, and credentials first" = "先にエンドポイント、バケット、認証情報を入力してください";
 "Testing..." = "テスト中...";
 "Connection successful!" = "接続に成功しました!";
 "Leave empty to use default" = "デフォルトを使用する場合は空欄";
 "Endpoint:" = "エンドポイント:";
+"Endpoint" = "エンドポイント";
 "Region:" = "リージョン:";
+"Region" = "リージョン";
 "Bucket:" = "バケット:";
+"Bucket" = "バケット";
 "Access Key:" = "アクセスキー:";
+"Access Key" = "アクセスキー";
 "Secret Key:" = "シークレットキー:";
+"Secret Key" = "シークレットキー";
 "Public URL:" = "パブリック URL:";
+"Public URL" = "パブリック URL";
 "Path Prefix:" = "パスプレフィックス:";
+"Path Prefix" = "パスプレフィックス";
 "Make uploads publicly readable" = "アップロードを公開読み取り可能にする";
 "Sends the public-read ACL so uploaded files are viewable by anyone with the link. Needed for AWS S3, DigitalOcean Spaces, MinIO and Backblaze B2, which store objects privately by default. Leave off for Cloudflare R2, which has no ACLs and rejects the header." = "public-read ACL を送信して、アップロードされたファイルをリンクを知っている誰でも閲覧できるようにします。デフォルトでオブジェクトを非公開で保存する AWS S3、DigitalOcean Spaces、MinIO、Backblaze B2 に必要です。ACL がなくヘッダーを拒否する Cloudflare R2 ではオフのままにしてください。";
 "API key:" = "API キー:";
+"API key" = "API キー";
 "Upload History" = "アップロード履歴";
 "No uploads yet." = "アップロードはまだありません。";
 "Base URL for public access. If empty, the S3 endpoint URL is used (may not be publicly accessible)." = "公開アクセス用のベース URL。空の場合、S3 エンドポイント URL が使用されます (公開アクセスできない場合があります)。";
@@ -351,11 +411,32 @@
 "Sign in to Google Drive in Preferences" = "環境設定で Google Drive にサインインしてください";
 "Video upload requires Google Drive or S3" = "動画のアップロードには Google Drive または S3 が必要です";
 
+/* Settings - Uploads: GitHub */
+"GitHub repository" = "GitHub リポジトリ";
+"GitHub repository (images + videos)" = "GitHub リポジトリ (画像 + 動画)";
+"Token" = "トークン";
+"Repository" = "リポジトリ";
+"Branch" = "ブランチ";
+"Domain" = "ドメイン";
+"Custom domain" = "カスタムドメイン";
+"Link style" = "リンク形式";
+"Example link" = "リンクの例";
+"Create a fine-grained token with Contents write access to this one repository. The repository must be public for the links to be readable without a token." = "このリポジトリ 1 つに対して Contents の書き込み権限を持つ fine-grained トークンを作成してください。トークンなしでリンクを読み取れるようにするには、リポジトリを公開する必要があります。";
+"Connected — the token can write to this repository." = "接続しました — このトークンはこのリポジトリに書き込めます。";
+"Connected, but the token cannot write to this repository." = "接続しましたが、このトークンはこのリポジトリに書き込めません。";
+"GitHub upload is not configured — check Settings." = "GitHub アップロードが未設定です — 設定を確認してください。";
+"GitHub rejected the token — check that it has contents write access to the repository." = "GitHub がトークンを拒否しました — リポジトリへの contents 書き込み権限があるか確認してください。";
+"Repository or branch not found — check the owner/repo and branch name." = "リポジトリまたはブランチが見つかりません — owner/repo とブランチ名を確認してください。";
+"GitHub returned a response macshot could not read." = "GitHub から macshot が読み取れない応答が返されました。";
+"%@ is too large for a GitHub repository — upload it to S3 or Google Drive instead." = "%@ は GitHub リポジトリには大きすぎます。S3 か Google Drive にアップロードしてください。";
+"Video upload requires Google Drive, S3 or GitHub" = "動画のアップロードには Google Drive、S3 または GitHub が必要です";
+
 /* Preferences - About */
 "macshot" = "macshot";
 "Version %@ (%@)" = "バージョン %@ (%@)";
 "Made by" = "作者";
 "Licensed under the GPLv3" = "GPLv3 ライセンス";
+"Licensed under GPLv3" = "GPLv3 ライセンス";
 "A free, open-source screenshot & screen recording tool for macOS.\nFully native — built with Swift and AppKit." = "macOS 用の無料・オープンソースのスクリーンショット & 画面録画ツール。\n完全ネイティブ — Swift と AppKit で構築。";
 
 /* Alerts */
@@ -402,8 +483,10 @@
 /* Upload Toast */
 "URL copied to the clipboard" = "URL をクリップボードにコピーしました";
 "Uploading... %d%%" = "アップロード中... %d%%";
+"Uploading…" = "アップロード中…";
 "Upload failed: %@" = "アップロード失敗: %@";
 "Uploaded! Link copied." = "アップロード完了! リンクをコピーしました。";
+"Link copied: %@" = "リンクをコピーしました: %@";
 "Uploading to %@... %d%%" = "%@ にアップロード中... %d%%";
 "Open" = "開く";
 "Open Link" = "リンクを開く";
@@ -426,6 +509,7 @@
 "Saved to %@" = "%@ に保存しました";
 "Save failed" = "保存に失敗しました";
 "Could not encode the screenshot." = "スクリーンショットをエンコードできませんでした。";
+"Could not encode the image." = "画像をエンコードできませんでした。";
 "Could not save the screenshot: %@" = "スクリーンショットを保存できませんでした: %@";
 "Could not save the screenshot to history." = "スクリーンショットを履歴に保存できませんでした。";
 
@@ -540,19 +624,28 @@
 "Pause" = "一時停止";
 "Resume" = "再開";
 "Engine:" = "エンジン:";
+"Engine" = "エンジン";
 "Google Translate" = "Google Translate";
 "Apple (on-device)" = "Apple (オンデバイス)";
+"Apple" = "Apple";
+"Google" = "Google";
 "Apple translation is faster and works offline. Google Translate supports more languages." = "Apple の翻訳はより高速でオフラインでも動作します。Google Translate はより多くの言語に対応しています。";
 "Download language packs in System Settings…" = "システム設定で言語パックをダウンロード…";
 "Configure S3 in Settings" = "設定で S3 を構成してください";
 "Sign in to Google Drive in Settings" = "設定で Google Drive にサインインしてください";
+"Google Drive not signed in" = "Google Drive にサインインしていません";
+"S3 not configured — check Settings" = "S3 が未設定です — 設定を確認してください";
 "Position:" = "位置:";
 "  Position:" = "  位置:";
+"Position" = "位置";
 "Size:" = "サイズ:";
 "Shape:" = "形状:";
+"Shape" = "形状";
 
 "Same as screenshots" = "スクリーンショットと同じ";
 "  Preview size:" = "  プレビューサイズ:";
+"Preview size" = "プレビューサイズ";
+"Preview" = "プレビュー";
 "Fit image in preview (letterbox)" = "プレビューに画像全体を表示 (レターボックス)";
 "(0 = off)" = "(0 = オフ)";
 "Clear All" = "すべてクリア";
@@ -611,11 +704,13 @@
 "Preview:" = "プレビュー:";
 "Copy Screen Info" = "画面情報をコピー";
 "Copies display and capture diagnostics to clipboard" = "ディスプレイとキャプチャの診断情報をクリップボードにコピー";
+"Copies display and capture diagnostics to the clipboard" = "ディスプレイとキャプチャの診断情報をクリップボードにコピーします";
 "Accent" = "アクセント";
 "Icon" = "アイコン";
 "Background" = "背景";
 "Custom" = "カスタム";
 "Theme:" = "テーマ:";
+"Theme" = "テーマ";
 "Application" = "アプリケーション";
 "Capture area and extract text" = "エリアをキャプチャしてテキストを抽出";
 "Capture the full screen" = "フルスクリーンをキャプチャ";
@@ -624,6 +719,7 @@
 "Filename Template Tokens" = "ファイル名テンプレートトークン";
 "Filename tokens" = "ファイル名トークン";
 "Filename:" = "ファイル名:";
+"Filename" = "ファイル名";
 "Open an image file in the editor" = "エディタで画像ファイルを開く";
 "Open the recent captures overlay" = "最近のキャプチャオーバーレイを開く";
 "Open this settings window" = "この設定ウインドウを開く";

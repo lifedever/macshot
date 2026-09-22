@@ -25,7 +25,7 @@
 "Capture Last Area" = "Zachytiť poslednú oblasť";
 "Capture Delay" = "Oneskorenie zachytenia";
 "None" = "Žiadne";
-"%d seconds" = "%d sekund";
+"%d seconds" = "%d sekúnd";
 "Record Area" = "Nahrať oblasť";
 "Record Screen" = "Nahrať obrazovku";
 "Recent Captures" = "Posledné zachytenia";
@@ -53,6 +53,7 @@
 
 /* Floating Thumbnail */
 "Close All" = "Zavrieť všetko";
+"View" = "Zobraziť";
 "Save" = "Uložiť";
 
 /* Editor Top Bar */
@@ -174,6 +175,18 @@
 "Smart" = "Inteligentné";
 "Padding" = "Odsadenie";
 "Shadow" = "Tieň";
+/* Beautify */
+"Beautify captures" = "Skrášľovať snímky";
+"Frame" = "Rámik";
+"Window chrome" = "Záhlavie okna";
+"Rounded corners" = "Zaoblené rohy";
+"Corner radius" = "Polomer zaoblenia";
+"Background blur" = "Rozostrenie pozadia";
+"Style" = "Štýl";
+"Use desktop wallpaper" = "Tapeta plochy";
+"Choose image…" = "Vybrať obrázok…";
+"Places the capture on a background with rounded corners and a drop shadow." = "Umiestni snímku na pozadie so zaoblenými rohmi a tieňom.";
+"Places the capture on a gradient background with rounded corners and a drop shadow. The style is chosen from the toolbar." = "Umiestni snímku na prechodové pozadie so zaoblenými rohmi a tieňom. Štýl sa vyberá v lište nástrojov.";
 "Right-click to add points" = "Kliknutím pravým tlačidlom pridajte body";
 "Hold 1 auto-vertical  ·  Hold 2 auto-horizontal" = "Držte 1 auto-vertikálne  ·  Držte 2 auto-horizontálne";
 "Limit to selection" = "Obmedziť na výber";
@@ -199,6 +212,7 @@
 "  (Tab to switch)" = "  (Tab pre prepnutie)";
 "Space" = "Medzerník";
 "Right-click to copy" = "Kliknite pravým tlačidlom pre kopírovanie";
+"Press C to copy" = "Stlačte C pre kopírovanie";
 "Copied %@" = "Skopírované %@";
 "Set color %@" = "Nastaviť farbu %@";
 "Draw something first to use the move tool." = "Najprv niečo nakreslite, aby ste mohli použiť nástroj presunu.";
@@ -230,6 +244,8 @@
 "Show floating thumbnail after capture" = "Zobraziť plávajúci náhľad po zachytení";
 "Launch at login" = "Spustiť pri prihlásení";
 "Show snap alignment guides" = "Zobraziť vodiace čiary zarovnania";
+"Snapping" = "Prichytávanie";
+"Haptic feedback when snapping" = "Hmatová odozva pri prichytení";
 "Snap selection edges to image boundaries" = "Prichytiť okraje výberu k hraniciam obrázka";
 "Enhance browser and Electron element snapping" = "Zlepšiť prichytenie prvkov v prehliadači a Electron";
 "Builds the target app's accessibility tree in Element mode. Disable this if a browser or Electron app becomes slow or has input issues." = "Vytvára strom dostupnosti cieľovej aplikácie v režime prvkov. Zakážte, ak sa prehliadač alebo Electron aplikácia stane pomalým alebo má problémy s vstupom.";
@@ -243,13 +259,24 @@
 "Check for beta updates" = "Kontrolovať beta aktualizácie";
 "Thumbnail" = "Náhľad";
 "  Dismiss after:" = "  Skryť po:";
-"seconds before auto-dismiss (0 = never)" = "sekund pred automatickým skrytím (0 = nikdy)";
+"seconds before auto-dismiss (0 = never)" = "sekúnd pred automatickým skrytím (0 = nikdy)";
 "  Multiple previews:" = "  Viacero náhľadov:";
 "Stack (keep all)" = "Vrstviť (ponechať všetky)";
 "Replace (show only latest)" = "Nahradiť (zobraziť len posledný)";
+"Floating Preview" = "Plávajúci náhľad";
+"Dismiss after" = "Skryť po";
+"Never" = "Nikdy";
+"3 seconds" = "3 sekundy";
+"5 seconds" = "5 sekúnd";
+"10 seconds" = "10 sekúnd";
+"30 seconds" = "30 sekúnd";
+"Multiple previews" = "Viacero náhľadov";
 "Output" = "Výstup";
 "Image format:" = "Formát obrázka:";
 "Quality:" = "Kvalita:";
+"Image" = "Obrázok";
+"Image format" = "Formát obrázka";
+"Quality" = "Kvalita";
 "%d%%" = "%d%%";
 "Save at standard resolution (1x)" = "Uložiť v štandardnom rozlíšení (1x)";
 "Halves dimensions on Retina displays, ~4x smaller files" = "Polovičné rozmery na Retina displejoch, ~4x menšie súbory";
@@ -257,11 +284,15 @@
 "Ensures consistent colors across different displays" = "Zabezpečuje konzistentné farby na rôznych displejoch";
 "Screenshot History" = "História snímok obrazovky";
 "History size:" = "Veľkosť histórie:";
+"History size" = "Veľkosť histórie";
 "screenshots kept on disk (0 = off)" = "snímok obrazovky uchovávaných na disku (0 = vyp)";
 "Order history by last edit" = "Zoradiť históriu podľa poslednej úpravy";
 "Edited screenshots move to the top. Off keeps them in capture order." = "Upravené snímky sa presunú nahor. Vypnuté zachová poradie zachytenia.";
 "Save Directory" = "Priečinok uloženia";
 "Save folder:" = "Priečinok uloženia:";
+"Saving" = "Ukladanie";
+"Save folder" = "Priečinok uloženia";
+"Filename" = "Názov súboru";
 "Browse…" = "Prehľadávať…";
 "Appearance" = "Vzhľad";
 "Accent color:" = "Farba akcentu:";
@@ -270,14 +301,18 @@
 "Reset" = "Resetovať";
 "OCR Capture:" = "OCR zachytenie:";
 "OCR & QR Capture:" = "OCR a QR zachytenie:";
+"OCR & QR Capture" = "OCR a QR zachytenie";
+"Show results window" = "Zobraziť okno s výsledkami";
 "Show window + copy to clipboard" = "Zobraziť okno + kopírovať do schránky";
 "Show window only" = "Zobraziť len okno";
 "Copy to clipboard only" = "Kopírovať len do schránky";
 "Enter / Quick Capture:" = "Enter / Rýchle zachytenie:";
+"Enter / Quick Capture" = "Enter / Rýchle zachytenie";
 "Save to file" = "Uložiť do súboru";
 "Save + copy to clipboard" = "Uložiť + kopírovať do schránky";
 "OCR Action" = "OCR akcia";
 "Save action:" = "Akcia uloženia:";
+"Save action" = "Akcia uloženia";
 "Save to default folder" = "Uložiť do predvoleného priečinka";
 "Ask where to save" = "Spýtať sa, kam uložiť";
 "Show shortcuts in tooltips" = "Zobraziť skratky v popisoch";
@@ -286,6 +321,9 @@
 "Default" = "Predvolené";
 "Custom symbol" = "Vlastný symbol";
 "Enter any SF Symbol name (e.g. camera.fill) or pick a preset. Browse names in Apple's SF Symbols app. Invalid names fall back to the default icon." = "Zadajte ľubovoľný názov SF Symbol (napr. camera.fill) alebo vyberte predvoľbu. Prehliadajte názvy v aplikácii Apple SF Symbols. Neplatné názvy sa vrátia k predvolenej ikone.";
+"Menu bar icon" = "Ikona v lište menu";
+"Symbol" = "Symbol";
+"No SF Symbol by that name — the default icon is used." = "SF Symbol s takým názvom neexistuje — použije sa predvolená ikona.";
 
 /* Preferences - Shortcuts */
 "Keyboard Shortcuts" = "Klávesové skratky";
@@ -293,6 +331,7 @@
 "Clear shortcut" = "Vymazať skratku";
 "Press keys..." = "Stlačte klávesy...";
 "Waiting..." = "Čakanie...";
+"Press a shortcut…" = "Stlačte skratku…";
 
 /* Preferences - Tools */
 "Annotation Tools" = "Nástroje anotácie";
@@ -306,16 +345,20 @@
 
 /* Preferences - Recording */
 "Frame rate:" = "Snímková frekvencia:";
+"Frame rate" = "Snímková frekvencia";
 "After recording:" = "Po nahrávaní:";
+"When done" = "Po dokončení";
 "Save recording to:" = "Uložiť nahrávku do:";
 "Save Recording" = "Uložiť nahrávku";
 "Clear" = "Vymazať";
 "Max height:" = "Max. výška:";
+"Max height" = "Max. výška";
 "px (0 = unlimited)" = "px (0 = neobmedzené)";
 "Behavior" = "Správanie";
 "Auto-scroll (sends synthetic scroll events)" = "Automatické posúvanie (odosiela syntetické udalosti posunu)";
 "Detect fixed/sticky headers" = "Detekovať fixné/prilnavé hlavičky";
 "Scroll speed:" = "Rýchlosť posunu:";
+"Scroll speed" = "Rýchlosť posunu";
 "Slow" = "Pomaly";
 "Medium" = "Stredný";
 "Fast" = "Rýchly";
@@ -327,6 +370,7 @@
 "30 fps" = "30 fps";
 "60 fps" = "60 fps";
 "120 fps" = "120 fps";
+"%d fps" = "%d fps";
 "MP4 (H.264)" = "MP4 (H.264)";
 "GIF" = "GIF";
 
@@ -334,10 +378,13 @@
 "Upload Service" = "Služba nahrávania";
 "Upload Provider" = "Poskytovateľ nahrávania";
 "Provider:" = "Poskytovateľ:";
+"Provider" = "Poskytovateľ";
 "Google Drive" = "Google Drive";
 "Google Drive (images + videos)" = "Google Drive (obrázky + videa)";
 "imgbb (images only)" = "imgbb (len obrázky)";
 "S3-Compatible (images + videos)" = "S3-Compatible (obrázky + videa)";
+"GitHub repository" = "Repozitár GitHub";
+"GitHub repository (images + videos)" = "Repozitár GitHub (obrázky + videa)";
 "S3-Compatible Storage" = "S3-Compatible úložisko";
 "Sign In with Google" = "Prihlásiť sa cez Google";
 "Sign Out" = "Odhlásiť sa";
@@ -345,10 +392,17 @@
 "Not signed in" = "Neprihlásený";
 "Account:" = "Účet:";
 "Folder:" = "Priečinok:";
+"Account" = "Účet";
+"Folder" = "Priečinok";
+"Ask before uploading" = "Opýtať sa pred nahraním";
 "Test Connection" = "Otestovať pripojenie";
 "Fill in endpoint, bucket, and credentials first" = "Najprv vyplňte endpoint, bucket a prihlasovacie údaje";
 "Testing..." = "Testovanie...";
 "Connection successful!" = "Pripojenie úspešné!";
+"Connection" = "Pripojenie";
+"Checking…" = "Prebieha kontrola…";
+"Connected — the token can write to this repository." = "Pripojené — token môže zapisovať do tohto repozitára.";
+"Connected, but the token cannot write to this repository." = "Pripojené, ale token nemôže zapisovať do tohto repozitára.";
 "Leave empty to use default" = "Nechajte prázdne pre použitie predvolenej hodnoty";
 "Endpoint:" = "Endpoint:";
 "Region:" = "Region:";
@@ -357,23 +411,42 @@
 "Secret Key:" = "Tajný kľúč:";
 "Public URL:" = "Verejná URL:";
 "Path Prefix:" = "Prefix cesty:";
+"Endpoint" = "Endpoint";
+"Region" = "Region";
+"Bucket" = "Bucket";
+"Access Key" = "Prístupový kľúč";
+"Secret Key" = "Tajný kľúč";
+"Public URL" = "Verejná URL";
+"Path Prefix" = "Prefix cesty";
 "Make uploads publicly readable" = "Sprístupniť nahrávania verejne na čítanie";
 "Sends the public-read ACL so uploaded files are viewable by anyone with the link. Needed for AWS S3, DigitalOcean Spaces, MinIO and Backblaze B2, which store objects privately by default. Leave off for Cloudflare R2, which has no ACLs and rejects the header." = "Odošle ACL public-read, aby nahrané súbory boli prístupné komukoľvek s odkazom. Potrebné pre AWS S3, DigitalOcean Spaces, MinIO a Backblaze B2, ktoré predvolene ukladajú objekty ako súkromné. Ponechajte vypnuté pre Cloudflare R2, ktoré nepodporuje ACL a túto hlavičku odmietne.";
 "API key:" = "API kľúč:";
+"API key" = "API kľúč";
 "Upload History" = "História nahrávaní";
 "No uploads yet." = "Zatiaľ žiadne nahrávania.";
 "Base URL for public access. If empty, the S3 endpoint URL is used (may not be publicly accessible)." = "Základná URL pre verejný prístup. Ak je prázdna, použije sa S3 endpoint URL (nemusí byť verejne prístupná).";
 "A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "Zdieľaný kľúč je zahrnutý — získajte vlastný bezplatný kľúč na imgbb.com/api, ak narazíte na limity. Len obrázky (bez podpory videa).";
 "Works with AWS S3, Cloudflare R2, MinIO, DigitalOcean Spaces, Backblaze B2, and other S3-compatible services. Supports images and videos." = "Funguje s AWS S3, Cloudflare R2, MinIO, DigitalOcean Spaces, Backblaze B2 a ďalšími S3-compatible službami. Podporuje obrázky a videa.";
+/* Uploads - GitHub */
+"Token" = "Token";
+"Repository" = "Repozitár";
+"Branch" = "Vetva";
+"Domain" = "Doména";
+"Custom domain" = "Vlastná doména";
+"Link style" = "Formát odkazu";
+"Example link" = "Ukážkový odkaz";
+"Create a fine-grained token with Contents write access to this one repository. The repository must be public for the links to be readable without a token." = "Vytvorte fine-grained token s právom zápisu Contents len pre tento repozitár. Repozitár musí byť verejný, aby odkazy fungovali bez tokenu.";
 "Configure S3 in Preferences" = "Nastaviť S3 v Predvoľbách";
 "Sign in to Google Drive in Preferences" = "Prihláste sa do Google Drive v Predvoľbách";
 "Video upload requires Google Drive or S3" = "Nahrávanie videa vyžaduje Google Drive alebo S3";
+"Video upload requires Google Drive, S3 or GitHub" = "Nahrávanie videa vyžaduje Google Drive, S3 alebo GitHub";
 
 /* Preferences - About */
 "macshot" = "macshot";
 "Version %@ (%@)" = "Verzia %@ (%@)";
 "Made by" = "Vytvoril";
 "Licensed under the GPLv3" = "Licencované pod GPLv3";
+"Licensed under GPLv3" = "Licencované pod GPLv3";
 "A free, open-source screenshot & screen recording tool for macOS.\nFully native — built with Swift and AppKit." = "Bezplatný, open-source nástroj na snímky obrazovky a nahrávanie obrazovky pre macOS.\nPlne natívny — postavený na Swift a AppKit.";
 
 /* Alerts */
@@ -421,6 +494,8 @@
 "Uploaded! Link copied." = "Nahrané! Odkaz skopírovaný.";
 "Uploading to %@... %d%%" = "Nahrávanie na %@... %d%%";
 "Open" = "Otvoriť";
+"Uploading…" = "Nahrávanie…";
+"Link copied: %@" = "Odkaz skopírovaný: %@";
 
 /* Recording Toast */
 "Recording saved" = "Nahrávka uložená";
@@ -445,6 +520,7 @@
 "Choose a folder" = "Vyberte priečinok";
 "Save All to Folder…" = "Uložiť všetko do priečinka…";
 "Could not encode the screenshot." = "Nepodarilo sa zakódovať snímku obrazovky.";
+"Could not encode the image." = "Nepodarilo sa zakódovať obrázok.";
 "Could not save the screenshot: %@" = "Nepodarilo sa uložiť snímku obrazovky: %@";
 "Could not save the screenshot to history." = "Nepodarilo sa uložiť snímku obrazovky do histórie.";
 
@@ -533,6 +609,7 @@
 "Press..." = "Stlačte...";
 "Reset to default" = "Obnoviť predvolené";
 "Press a single key to assign it as the shortcut for that tool. These work when the overlay or editor is active." = "Stlačte jednu klávesu pre priradenie ako skratku pre daný nástroj. Fungujú, keď je aktívne prekrytie alebo editor.";
+"These apply inside the capture overlay and the editor window." = "Platia v prekrytí snímania a v okne editora.";
 "Keep Separate" = "Ponechať oddelené";
 "Merge Audio" = "Zlúčiť zvuk";
 "Audio Tracks" = "Zvukové stopy";
@@ -552,24 +629,39 @@
 "Engine:" = "Engine:";
 "Google Translate" = "Google Translate";
 "Apple (on-device)" = "Apple (na zariadení)";
+"Engine" = "Engine";
+"Apple" = "Apple";
+"Google" = "Google";
 "Apple translation is faster and works offline. Google Translate supports more languages." = "Preklad Apple je rýchlejší a funguje offline. Google Translate podporuje viac jazykov.";
 "Download language packs in System Settings…" = "Stiahnite jazykové balíčky v Nastaveniach systému…";
 "Configure S3 in Settings" = "Nastavte S3 v Nastaveniach";
 "Sign in to Google Drive in Settings" = "Prihláste sa do Google Drive v Nastaveniach";
+"Google Drive not signed in" = "Nie ste prihlásení do Google Drive";
+"S3 not configured — check Settings" = "S3 nie je nastavené — skontrolujte Nastavenia";
+"GitHub upload is not configured — check Settings." = "Nahrávanie na GitHub nie je nastavené — skontrolujte Nastavenia.";
+"GitHub rejected the token — check that it has contents write access to the repository." = "GitHub odmietol token — skontrolujte, či má právo zápisu contents pre tento repozitár.";
+"Repository or branch not found — check the owner/repo and branch name." = "Repozitár alebo vetva sa nenašli — skontrolujte owner/repo a názov vetvy.";
+"GitHub returned a response macshot could not read." = "GitHub vrátil odpoveď, ktorú macshot nedokázal prečítať.";
+"%@ is too large for a GitHub repository — upload it to S3 or Google Drive instead." = "%@ je príliš veľký pre repozitár GitHub — nahrajte ho na S3 alebo Google Drive.";
 "Offline build: upload and cloud storage integrations are removed. Update checks may still connect to MacShot's update server. Screenshots and recordings stay local unless you share or save them yourself." = "Offline zostava: integrácie nahrávania a cloudového úložiska sú odstránené. Kontrola aktualizácií sa stále môže pripájať k aktualizačnému serveru MacShotu. Snímky obrazovky a nahrávky zostávajú lokálne, kým ich sami nezdieľate alebo neuložíte.";
 "Position:" = "Pozícia:";
 "  Position:" = "  Pozícia:";
+"Position" = "Pozícia";
 "Size:" = "Veľkosť:";
 "Shape:" = "Tvar:";
+"Shape" = "Tvar";
 
 "Same as screenshots" = "Rovnaké ako snímky obrazovky";
 "  Preview size:" = "  Veľkosť náhľadu:";
+"Preview size" = "Veľkosť náhľadu";
+"Preview" = "Náhľad";
 "Fit image in preview (letterbox)" = "Prispôsobiť obrázok náhľadu (s pruhmi)";
 "(0 = off)" = "(0 = vypnuté)";
 "Clear All" = "Vymazať všetko";
 "Clear History?" = "Vymazať históriu?";
 "This will permanently delete all screenshots from history." = "Týmto sa natrvalo odstránia všetky snímky obrazovky z histórie.";
 "Click \"Set\" and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧) to set a shortcut." = "Kliknite na \"Nastaviť\" a stlačte kombináciu klávesov s aspoň jedným modifikátorom (⌘, ⌥, ⌃, ⇧) na nastavenie skratky.";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "Kliknite na skratku a stlačte kombináciu klávesov s aspoň jedným modifikátorom (⌘, ⌥, ⌃, ⇧). Esc zruší zadávanie. Funkčné klávesy fungujú samostatne.";
 "Files are uploaded to this folder in your Google Drive. Leave empty to use \"macshot\". macshot can only use folders it created itself, so a folder you made in Drive with the same name won't be reused — a new one is created instead. Everything stays private — nothing is shared publicly." = "Súbory sa nahrajú do tohto priečinka na vašom Google Drive. Ak pole necháte prázdne, použije sa \"macshot\". macshot môže používať iba priečinky, ktoré sám vytvoril, takže priečinok s rovnakým názvom, ktorý ste vytvorili na Disku, sa nepoužije — namiesto neho sa vytvorí nový. Všetko zostáva súkromné — nič nie je verejne zdieľané.";
 
 "Pressure" = "Tlak";
@@ -622,11 +714,13 @@
 "Preview:" = "Náhľad:";
 "Copy Screen Info" = "Kopírovať informácie o obrazovke";
 "Copies display and capture diagnostics to clipboard" = "Skopíruje diagnostiku displeja a snímania do schránky";
+"Copies display and capture diagnostics to the clipboard" = "Skopíruje diagnostiku displeja a snímania do schránky";
 "Accent" = "Akcent";
 "Icon" = "Ikona";
 "Background" = "Pozadie";
 "Custom" = "Vlastné";
 "Theme:" = "Téma:";
+"Theme" = "Téma";
 "Application" = "Aplikácia";
 "Capture area and extract text" = "Zachytiť oblasť a extrahovať text";
 "Capture the full screen" = "Zachytiť celú obrazovku";

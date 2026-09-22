@@ -53,6 +53,7 @@
 
 /* Floating Thumbnail */
 "Close All" = "Закрыть все";
+"View" = "Просмотреть";
 "Save" = "Сохранить";
 
 /* Editor Top Bar */
@@ -174,6 +175,18 @@
 "Smart" = "Умное";
 "Padding" = "Отступ";
 "Shadow" = "Тень";
+/* Beautify */
+"Beautify captures" = "Оформлять снимки";
+"Frame" = "Рамка";
+"Window chrome" = "Оформление окна";
+"Rounded corners" = "Скруглённые углы";
+"Corner radius" = "Радиус скругления";
+"Background blur" = "Размытие фона";
+"Style" = "Стиль";
+"Use desktop wallpaper" = "Обои рабочего стола";
+"Choose image…" = "Выбрать изображение…";
+"Places the capture on a background with rounded corners and a drop shadow." = "Помещает снимок на фон со скруглёнными углами и тенью.";
+"Places the capture on a gradient background with rounded corners and a drop shadow. The style is chosen from the toolbar." = "Помещает снимок на градиентный фон со скруглёнными углами и тенью. Стиль выбирается на панели инструментов.";
 "Right-click to add points" = "Нажмите правую кнопку, чтобы добавить точки";
 "Hold 1 auto-vertical  ·  Hold 2 auto-horizontal" = "Удерживайте 1 — авто-вертикаль  ·  Удерживайте 2 — авто-горизонталь";
 "Limit to selection" = "Ограничить выделением";
@@ -199,6 +212,7 @@
 "  (Tab to switch)" = "  (Tab для переключения)";
 "Space" = "Пробел";
 "Right-click to copy" = "Нажмите правой кнопкой, чтобы скопировать";
+"Press C to copy" = "Нажмите C, чтобы скопировать";
 "Copied %@" = "Скопировано: %@";
 "Set color %@" = "Установлен цвет %@";
 "Draw something first to use the move tool." = "Сначала нарисуйте что-нибудь, чтобы использовать инструмент перемещения.";
@@ -230,6 +244,8 @@
 "Show floating thumbnail after capture" = "Показывать миниатюру после захвата";
 "Launch at login" = "Запускать при входе в систему";
 "Show snap alignment guides" = "Показывать направляющие привязки";
+"Snapping" = "Привязка";
+"Haptic feedback when snapping" = "Тактильный отклик при привязке";
 "Snap selection edges to image boundaries" = "Привязывать края выделения к границам изображения";
 "Enhance browser and Electron element snapping" = "Улучшить привязку элементов в браузере и Electron";
 "Builds the target app's accessibility tree in Element mode. Disable this if a browser or Electron app becomes slow or has input issues." = "Строит дерево доступности целевого приложения в режиме элементов. Отключите, если браузер или Electron-приложение начинает медленно работать или возникают проблемы с вводом.";
@@ -247,9 +263,20 @@
 "  Multiple previews:" = "  Несколько превью:";
 "Stack (keep all)" = "Стопка (сохранять все)";
 "Replace (show only latest)" = "Заменять (только последнее)";
+"Floating Preview" = "Плавающее превью";
+"Dismiss after" = "Скрывать через";
+"Never" = "Никогда";
+"3 seconds" = "3 секунды";
+"5 seconds" = "5 секунд";
+"10 seconds" = "10 секунд";
+"30 seconds" = "30 секунд";
+"Multiple previews" = "Несколько превью";
 "Output" = "Вывод";
 "Image format:" = "Формат изображения:";
 "Quality:" = "Качество:";
+"Image" = "Изображение";
+"Image format" = "Формат изображения";
+"Quality" = "Качество";
 "%d%%" = "%d%%";
 "Save at standard resolution (1x)" = "Сохранять в стандартном разрешении (1x)";
 "Halves dimensions on Retina displays, ~4x smaller files" = "Уменьшает размеры вдвое на Retina-дисплеях, файлы ~4x меньше";
@@ -257,11 +284,15 @@
 "Ensures consistent colors across different displays" = "Обеспечивает одинаковые цвета на разных дисплеях";
 "Screenshot History" = "История снимков экрана";
 "History size:" = "Размер истории:";
+"History size" = "Размер истории";
 "screenshots kept on disk (0 = off)" = "снимков хранится на диске (0 = выкл.)";
 "Order history by last edit" = "Сортировать историю по последнему изменению";
 "Edited screenshots move to the top. Off keeps them in capture order." = "Изменённые снимки перемещаются вверх. Если выключено, сохраняется порядок захвата.";
 "Save Directory" = "Папка сохранения";
 "Save folder:" = "Папка сохранения:";
+"Saving" = "Сохранение";
+"Save folder" = "Папка сохранения";
+"Filename" = "Имя файла";
 "Browse…" = "Обзор…";
 "Appearance" = "Оформление";
 "Accent color:" = "Цвет акцента:";
@@ -270,14 +301,18 @@
 "Reset" = "Сбросить";
 "OCR Capture:" = "Захват OCR:";
 "OCR & QR Capture:" = "Захват OCR и QR:";
+"OCR & QR Capture" = "Захват OCR и QR";
+"Show results window" = "Показывать окно результатов";
 "Show window + copy to clipboard" = "Показать окно и скопировать";
 "Show window only" = "Только показать окно";
 "Copy to clipboard only" = "Только скопировать";
 "Enter / Quick Capture:" = "Enter / Быстрый захват:";
+"Enter / Quick Capture" = "Enter / Быстрый захват";
 "Save to file" = "Сохранить в файл";
 "Save + copy to clipboard" = "Сохранить и скопировать";
 "OCR Action" = "Действие OCR";
 "Save action:" = "Действие сохранения:";
+"Save action" = "Действие сохранения";
 "Save to default folder" = "Сохранять в папку по умолчанию";
 "Ask where to save" = "Спрашивать, куда сохранять";
 "Show shortcuts in tooltips" = "Показывать сочетания в подсказках";
@@ -286,6 +321,9 @@
 "Default" = "По умолчанию";
 "Custom symbol" = "Пользовательский символ";
 "Enter any SF Symbol name (e.g. camera.fill) or pick a preset. Browse names in Apple's SF Symbols app. Invalid names fall back to the default icon." = "Введите любое имя SF Symbol (например, camera.fill) или выберите пресет. Просматривайте имена в приложении Apple SF Symbols. При недопустимом имени используется значок по умолчанию.";
+"Menu bar icon" = "Значок в строке меню";
+"Symbol" = "Символ";
+"No SF Symbol by that name — the default icon is used." = "SF Symbol с таким именем не найден — используется значок по умолчанию.";
 
 /* Preferences - Shortcuts */
 "Keyboard Shortcuts" = "Сочетания клавиш";
@@ -293,6 +331,7 @@
 "Clear shortcut" = "Очистить сочетание";
 "Press keys..." = "Нажмите клавиши...";
 "Waiting..." = "Ожидание...";
+"Press a shortcut…" = "Нажмите сочетание…";
 
 /* Preferences - Tools */
 "Annotation Tools" = "Инструменты аннотации";
@@ -306,16 +345,20 @@
 
 /* Preferences - Recording */
 "Frame rate:" = "Частота кадров:";
+"Frame rate" = "Частота кадров";
 "After recording:" = "После записи:";
+"When done" = "После завершения";
 "Save recording to:" = "Сохранять запись в:";
 "Save Recording" = "Сохранить запись";
 "Clear" = "Очистить";
 "Max height:" = "Макс. высота:";
+"Max height" = "Макс. высота";
 "px (0 = unlimited)" = "px (0 = без ограничений)";
 "Behavior" = "Поведение";
 "Auto-scroll (sends synthetic scroll events)" = "Авто-прокрутка (отправляет синтетические события прокрутки)";
 "Detect fixed/sticky headers" = "Обнаруживать фиксированные заголовки";
 "Scroll speed:" = "Скорость прокрутки:";
+"Scroll speed" = "Скорость прокрутки";
 "Slow" = "Медленно";
 "Medium" = "Средне";
 "Fast" = "Быстро";
@@ -327,6 +370,7 @@
 "30 fps" = "30 fps";
 "60 fps" = "60 fps";
 "120 fps" = "120 fps";
+"%d fps" = "%d fps";
 "MP4 (H.264)" = "MP4 (H.264)";
 "GIF" = "GIF";
 
@@ -334,10 +378,13 @@
 "Upload Service" = "Сервис загрузки";
 "Upload Provider" = "Провайдер загрузки";
 "Provider:" = "Провайдер:";
+"Provider" = "Провайдер";
 "Google Drive" = "Google Drive";
 "Google Drive (images + videos)" = "Google Drive (изображения и видео)";
 "imgbb (images only)" = "imgbb (только изображения)";
 "S3-Compatible (images + videos)" = "S3-совместимый (изображения и видео)";
+"GitHub repository" = "Репозиторий GitHub";
+"GitHub repository (images + videos)" = "Репозиторий GitHub (изображения и видео)";
 "S3-Compatible Storage" = "S3-совместимое хранилище";
 "Sign In with Google" = "Войти через Google";
 "Sign Out" = "Выйти";
@@ -345,10 +392,17 @@
 "Not signed in" = "Вход не выполнен";
 "Account:" = "Аккаунт:";
 "Folder:" = "Папка:";
+"Account" = "Аккаунт";
+"Folder" = "Папка";
+"Ask before uploading" = "Спрашивать перед загрузкой";
 "Test Connection" = "Проверить подключение";
 "Fill in endpoint, bucket, and credentials first" = "Сначала заполните адрес, бакет и учётные данные";
 "Testing..." = "Проверка...";
 "Connection successful!" = "Подключение успешно!";
+"Connection" = "Подключение";
+"Checking…" = "Проверка…";
+"Connected — the token can write to this repository." = "Подключено — токен может писать в этот репозиторий.";
+"Connected, but the token cannot write to this repository." = "Подключено, но токен не может писать в этот репозиторий.";
 "Leave empty to use default" = "Оставьте пустым для значения по умолчанию";
 "Endpoint:" = "Адрес:";
 "Region:" = "Регион:";
@@ -357,23 +411,42 @@
 "Secret Key:" = "Секретный ключ:";
 "Public URL:" = "Публичный URL:";
 "Path Prefix:" = "Префикс пути:";
+"Endpoint" = "Адрес";
+"Region" = "Регион";
+"Bucket" = "Бакет";
+"Access Key" = "Ключ доступа";
+"Secret Key" = "Секретный ключ";
+"Public URL" = "Публичный URL";
+"Path Prefix" = "Префикс пути";
 "Make uploads publicly readable" = "Сделать загрузки общедоступными для чтения";
 "Sends the public-read ACL so uploaded files are viewable by anyone with the link. Needed for AWS S3, DigitalOcean Spaces, MinIO and Backblaze B2, which store objects privately by default. Leave off for Cloudflare R2, which has no ACLs and rejects the header." = "Отправляет ACL public-read, чтобы загруженные файлы были доступны всем по ссылке. Необходимо для AWS S3, DigitalOcean Spaces, MinIO и Backblaze B2, которые по умолчанию хранят объекты приватно. Отключите для Cloudflare R2, который не поддерживает ACL и отклоняет этот заголовок.";
 "API key:" = "API-ключ:";
+"API key" = "API-ключ";
 "Upload History" = "История загрузок";
 "No uploads yet." = "Загрузок пока нет.";
 "Base URL for public access. If empty, the S3 endpoint URL is used (may not be publicly accessible)." = "Базовый URL для публичного доступа. Если пуст, используется URL S3 (может быть недоступен публично).";
 "A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "Используется общий ключ — получите свой бесплатный ключ на imgbb.com/api при превышении лимитов. Только изображения (видео не поддерживается).";
 "Works with AWS S3, Cloudflare R2, MinIO, DigitalOcean Spaces, Backblaze B2, and other S3-compatible services. Supports images and videos." = "Работает с AWS S3, Cloudflare R2, MinIO, DigitalOcean Spaces, Backblaze B2 и другими S3-совместимыми сервисами. Поддерживает изображения и видео.";
+/* Uploads - GitHub */
+"Token" = "Токен";
+"Repository" = "Репозиторий";
+"Branch" = "Ветка";
+"Domain" = "Домен";
+"Custom domain" = "Пользовательский домен";
+"Link style" = "Формат ссылки";
+"Example link" = "Пример ссылки";
+"Create a fine-grained token with Contents write access to this one repository. The repository must be public for the links to be readable without a token." = "Создайте fine-grained токен с правом записи Contents только для этого репозитория. Репозиторий должен быть публичным, чтобы ссылки открывались без токена.";
 "Configure S3 in Preferences" = "Настройте S3 в Настройках";
 "Sign in to Google Drive in Preferences" = "Войдите в Google Drive в Настройках";
 "Video upload requires Google Drive or S3" = "Загрузка видео требует Google Drive или S3";
+"Video upload requires Google Drive, S3 or GitHub" = "Загрузка видео требует Google Drive, S3 или GitHub";
 
 /* Preferences - About */
 "macshot" = "macshot";
 "Version %@ (%@)" = "Версия %@ (%@)";
 "Made by" = "Разработал";
 "Licensed under the GPLv3" = "Лицензия GPLv3";
+"Licensed under GPLv3" = "Лицензия GPLv3";
 "A free, open-source screenshot & screen recording tool for macOS.\nFully native — built with Swift and AppKit." = "Бесплатный инструмент для снимков экрана и записи видео с открытым исходным кодом для macOS.\nПолностью нативный — создан на Swift и AppKit.";
 
 /* Alerts */
@@ -421,6 +494,8 @@
 "Uploaded! Link copied." = "Загружено! Ссылка скопирована.";
 "Uploading to %@... %d%%" = "Загрузка на %@... %d%%";
 "Open" = "Открыть";
+"Uploading…" = "Загрузка…";
+"Link copied: %@" = "Ссылка скопирована: %@";
 
 /* Recording Toast */
 "Recording saved" = "Запись сохранена";
@@ -445,6 +520,7 @@
 "Choose a folder" = "Выберите папку";
 "Save All to Folder…" = "Сохранить все в папку…";
 "Could not encode the screenshot." = "Не удалось закодировать снимок экрана.";
+"Could not encode the image." = "Не удалось закодировать изображение.";
 "Could not save the screenshot: %@" = "Не удалось сохранить снимок экрана: %@";
 "Could not save the screenshot to history." = "Не удалось сохранить снимок экрана в историю.";
 
@@ -533,6 +609,7 @@
 "Press..." = "Нажмите...";
 "Reset to default" = "Сбросить по умолчанию";
 "Press a single key to assign it as the shortcut for that tool. These work when the overlay or editor is active." = "Нажмите клавишу, чтобы назначить её быстрой клавишей для этого инструмента. Работает при активном оверлее или редакторе.";
+"These apply inside the capture overlay and the editor window." = "Действуют в оверлее захвата и в окне редактора.";
 "Keep Separate" = "Оставить раздельно";
 "Merge Audio" = "Объединить аудио";
 "Audio Tracks" = "Аудиодорожки";
@@ -552,24 +629,39 @@
 "Engine:" = "Движок:";
 "Google Translate" = "Google Translate";
 "Apple (on-device)" = "Apple (на устройстве)";
+"Engine" = "Движок";
+"Apple" = "Apple";
+"Google" = "Google";
 "Apple translation is faster and works offline. Google Translate supports more languages." = "Перевод Apple быстрее и работает офлайн. Google Translate поддерживает больше языков.";
 "Download language packs in System Settings…" = "Загрузите языковые пакеты в Системных настройках…";
 "Configure S3 in Settings" = "Настройте S3 в Настройках";
 "Sign in to Google Drive in Settings" = "Войдите в Google Drive в Настройках";
+"Google Drive not signed in" = "Вход в Google Drive не выполнен";
+"S3 not configured — check Settings" = "S3 не настроен — проверьте Настройки";
+"GitHub upload is not configured — check Settings." = "Загрузка в GitHub не настроена — проверьте Настройки.";
+"GitHub rejected the token — check that it has contents write access to the repository." = "GitHub отклонил токен — проверьте, что у него есть право записи contents для этого репозитория.";
+"Repository or branch not found — check the owner/repo and branch name." = "Репозиторий или ветка не найдены — проверьте owner/repo и имя ветки.";
+"GitHub returned a response macshot could not read." = "GitHub вернул ответ, который macshot не смог прочитать.";
+"%@ is too large for a GitHub repository — upload it to S3 or Google Drive instead." = "%@ слишком велик для репозитория GitHub — загрузите его в S3 или Google Drive.";
 "Offline build: upload and cloud storage integrations are removed. Update checks may still connect to MacShot's update server. Screenshots and recordings stay local unless you share or save them yourself." = "Офлайн-сборка: интеграции загрузки и облачного хранилища удалены. Проверка обновлений всё ещё может подключаться к серверу обновлений MacShot. Снимки экрана и записи остаются локальными, пока вы сами не поделитесь ими или не сохраните их.";
 "Position:" = "Позиция:";
 "  Position:" = "  Позиция:";
+"Position" = "Позиция";
 "Size:" = "Размер:";
 "Shape:" = "Форма:";
+"Shape" = "Форма";
 
 "Same as screenshots" = "Как у скриншотов";
 "  Preview size:" = "  Размер превью:";
+"Preview size" = "Размер превью";
+"Preview" = "Превью";
 "Fit image in preview (letterbox)" = "Вписать изображение в превью (с полосами)";
 "(0 = off)" = "(0 = выкл)";
 "Clear All" = "Очистить всё";
 "Clear History?" = "Очистить историю?";
 "This will permanently delete all screenshots from history." = "Это безвозвратно удалит все скриншоты из истории.";
 "Click \"Set\" and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧) to set a shortcut." = "Нажмите \"Задать\" и введите комбинацию клавиш с хотя бы одним модификатором (⌘, ⌥, ⌃, ⇧), чтобы установить сочетание.";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "Нажмите на сочетание и введите комбинацию клавиш с хотя бы одним модификатором (⌘, ⌥, ⌃, ⇧). Esc отменяет. Функциональные клавиши работают сами по себе.";
 "Files are uploaded to this folder in your Google Drive. Leave empty to use \"macshot\". macshot can only use folders it created itself, so a folder you made in Drive with the same name won't be reused — a new one is created instead. Everything stays private — nothing is shared publicly." = "Файлы загружаются в эту папку на вашем Google Drive. Оставьте поле пустым, чтобы использовать \"macshot\". macshot может использовать только созданные им самим папки, поэтому папка с таким же именем, созданная вами в Drive, не будет использована — вместо неё будет создана новая. Всё остаётся приватным — ничего не публикуется в открытый доступ.";
 
 "Pressure" = "Нажим";
@@ -622,11 +714,13 @@
 "Preview:" = "Превью:";
 "Copy Screen Info" = "Копировать информацию об экране";
 "Copies display and capture diagnostics to clipboard" = "Копирует диагностику дисплея и захвата в буфер обмена";
+"Copies display and capture diagnostics to the clipboard" = "Копирует диагностику дисплея и захвата в буфер обмена";
 "Accent" = "Акцент";
 "Icon" = "Значок";
 "Background" = "Фон";
 "Custom" = "Пользовательский";
 "Theme:" = "Тема:";
+"Theme" = "Тема";
 "Application" = "Приложение";
 "Capture area and extract text" = "Захват области и извлечение текста";
 "Capture the full screen" = "Захватить весь экран";

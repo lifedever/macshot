@@ -141,6 +141,20 @@
 "More Emojis" = "Mai multe Emoji-uri";
 "Load Image" = "Încarcă imagine";
 "Gradient Style" = "Stil gradient";
+
+/* Settings - Beautify */
+"Beautify captures" = "Înfrumusețează capturile";
+"Frame" = "Ramă";
+"Window chrome" = "Bară de titlu";
+"Rounded corners" = "Colțuri rotunjite";
+"Corner radius" = "Rază colțuri";
+"Background blur" = "Estompare fundal";
+"Style" = "Stil";
+"Use desktop wallpaper" = "Folosește imaginea de fundal a biroului";
+"Choose image…" = "Alege o imagine…";
+"Places the capture on a background with rounded corners and a drop shadow." = "Așază captura pe un fundal cu colțuri rotunjite și umbră.";
+"Places the capture on a gradient background with rounded corners and a drop shadow. The style is chosen from the toolbar." = "Așază captura pe un fundal cu gradient, cu colțuri rotunjite și umbră. Stilul se alege din bara de instrumente.";
+
 "On" = "Activat";
 "Text Only" = "Doar text";
 "All Text" = "Tot textul";
@@ -180,6 +194,7 @@
 "Enhance browser and Electron element snapping" = "Îmbunătățește fixarea elementelor de browser și Electron";
 "Builds the target app's accessibility tree in Element mode. Disable this if a browser or Electron app becomes slow or has input issues." = "Construiește arborele de accesibilitate al aplicației țintă în modul Element. Dezactivează dacă un browser sau aplicație Electron devine lentă sau are probleme de intrare.";
 "Right-click to copy" = "Clic dreapta pentru copiere";
+"Press C to copy" = "Apasă C pentru copiere";
 "Copied %@" = "Copiat %@";
 "Set color %@" = "Setează culoarea %@";
 "Draw something first to use the move tool." = "Desenează ceva mai întâi pentru a folosi instrumentul de mutare.";
@@ -223,6 +238,10 @@
 "Custom symbol" = "Simbol personalizat";
 "Default" = "Implicit";
 "Enter any SF Symbol name (e.g. camera.fill) or pick a preset. Browse names in Apple's SF Symbols app. Invalid names fall back to the default icon." = "Introdu orice nume de SF Symbol (ex. camera.fill) sau alege o presetare. Răsfoiește numele în aplicația SF Symbols de la Apple. Numele invalide revin la pictograma implicită.";
+"Menu bar icon" = "Pictograma barei de meniu";
+"Symbol" = "Simbol";
+"No SF Symbol by that name — the default icon is used." = "Niciun SF Symbol cu acest nume — se folosește pictograma implicită.";
+"Theme" = "Tema";
 "Hotkeys still work. To show the icon again, re-launch macshot." = "Scurtăturile funcționează în continuare. Pentru a afișa din nou pictograma, repornește macshot.";
 "Check for updates automatically" = "Verifică actualizările automat";
 "Check for beta updates" = "Verifică actualizările beta";
@@ -233,6 +252,21 @@
 "  Position:" = "  Poziție:";
 "Stack (keep all)" = "Stivă (păstrează toate)";
 "Replace (show only latest)" = "Înlocuiește (afișează doar ultima)";
+
+/* Settings - Floating Preview */
+"Floating Preview" = "Previzualizare flotantă";
+"Position" = "Poziție";
+"Dismiss after" = "Închide după";
+"Never" = "Niciodată";
+"3 seconds" = "3 secunde";
+"5 seconds" = "5 secunde";
+"10 seconds" = "10 secunde";
+"30 seconds" = "30 de secunde";
+"Multiple previews" = "Previzualizări multiple";
+"Preview size" = "Dimensiune previzualizare";
+"Preview" = "Previzualizare";
+"View" = "Vizualizează";
+
 "Menu Bar Order" = "Ordinea barei de meniu";
 "Choose the order of capture actions in the macshot menu bar menu." = "Alege ordinea acțiunilor de capturare în meniul barei de meniu macshot.";
 "Move up" = "Mută în sus";
@@ -271,6 +305,22 @@
 "Save to file" = "Salvează în fișier";
 "Save + copy to clipboard" = "Salvează + copiază în clipboard";
 "OCR Action" = "Acțiune OCR";
+"Enter / Quick Capture" = "Enter / Captură rapidă";
+"OCR & QR Capture" = "Captură OCR & QR";
+"Show results window" = "Afișează fereastra cu rezultate";
+"Snapping" = "Fixare";
+"Haptic feedback when snapping" = "Feedback haptic la fixare";
+"Image" = "Imagine";
+"Image format" = "Format imagine";
+"Quality" = "Calitate";
+"Saving" = "Salvare";
+"Save action" = "Acțiune salvare";
+"Save folder" = "Dosar de salvare";
+"Filename" = "Nume fișier";
+"History size" = "Dimensiune istoric";
+"Engine" = "Motor";
+"Apple" = "Apple";
+"Google" = "Google";
 "OCR & QR Capture:" = "Captură OCR & QR:";
 "OCR & QR" = "OCR & QR";
 "Text & QR Recognition" = "Recunoaștere text & QR";
@@ -286,6 +336,9 @@
 "Clear shortcut" = "Șterge scurtătura";
 "Press keys..." = "Apasă tastele...";
 "Waiting..." = "Se așteaptă...";
+"Press a shortcut…" = "Apasă o scurtătură…";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "Dă clic pe o scurtătură și apasă o combinație de taste cu cel puțin un modificator (⌘, ⌥, ⌃, ⇧). Esc anulează. Tastele funcționale funcționează singure.";
+"These apply inside the capture overlay and the editor window." = "Acestea se aplică în suprapunerea de captură și în fereastra editorului.";
 
 /* Preferences - Tools */
 "Annotation Tools" = "Instrumente de adnotare";
@@ -299,6 +352,12 @@
 
 /* Preferences - Recording */
 "Frame rate:" = "Rata de cadre:";
+"Frame rate" = "Rata de cadre";
+"%d fps" = "%d fps";
+"When done" = "La finalizare";
+"Shape" = "Formă";
+"Scroll speed" = "Viteza de derulare";
+"Max height" = "Înălțime maximă";
 "After recording:" = "După înregistrare:";
 "Save recording to:" = "Salvează înregistrarea în:";
 "Save Recording" = "Salvează înregistrarea";
@@ -353,6 +412,30 @@
 "Make uploads publicly readable" = "Fă încărcările citibile public";
 "Sends the public-read ACL so uploaded files are viewable by anyone with the link. Needed for AWS S3, DigitalOcean Spaces, MinIO and Backblaze B2, which store objects privately by default. Leave off for Cloudflare R2, which has no ACLs and rejects the header." = "Trimite ACL-ul public-read ca fișierele încărcate să fie vizibile de oricine are linkul. Necesar pentru AWS S3, DigitalOcean Spaces, MinIO și Backblaze B2, care stochează obiectele privat în mod implicit. Lasă dezactivat pentru Cloudflare R2, care nu suportă ACL-uri și respinge headerul.";
 "API key:" = "Cheie API:";
+"Provider" = "Furnizor";
+"Ask before uploading" = "Întreabă înainte de încărcare";
+"Account" = "Cont";
+"Connection" = "Conexiune";
+"Checking…" = "Se verifică…";
+"Folder" = "Folder";
+"API key" = "Cheie API";
+"Access Key" = "Cheie de acces";
+"Secret Key" = "Cheie secretă";
+"Bucket" = "Bucket";
+"Region" = "Regiune";
+"Endpoint" = "Endpoint";
+"Public URL" = "URL public";
+"Path Prefix" = "Prefix cale";
+"Domain" = "Domeniu";
+"Custom domain" = "Domeniu personalizat";
+"GitHub repository" = "Depozit GitHub";
+"GitHub repository (images + videos)" = "Depozit GitHub (imagini + videoclipuri)";
+"Token" = "Token";
+"Repository" = "Depozit";
+"Branch" = "Ramură";
+"Link style" = "Stil link";
+"Example link" = "Exemplu de link";
+"Create a fine-grained token with Contents write access to this one repository. The repository must be public for the links to be readable without a token." = "Creează un token fine-grained cu acces de scriere Contents la acest singur depozit. Depozitul trebuie să fie public pentru ca linkurile să fie accesibile fără token.";
 "Upload History" = "Istoric încărcări";
 "No uploads yet." = "Nicio încărcare încă.";
 "Base URL for public access. If empty, the S3 endpoint URL is used (may not be publicly accessible)." = "URL de bază pentru acces public. Dacă este gol, se folosește URL-ul endpoint-ului S3 (poate să nu fie accesibil public).";
@@ -367,6 +450,7 @@
 "Version %@ (%@)" = "Versiunea %@ (%@)";
 "Made by" = "Creat de";
 "Licensed under the GPLv3" = "Licență GPLv3";
+"Licensed under GPLv3" = "Licență GPLv3";
 "A free, open-source screenshot & screen recording tool for macOS.\nFully native — built with Swift and AppKit." = "Un instrument gratuit și open-source de captură de ecran și înregistrare pentru macOS.\nComplet nativ — construit cu Swift și AppKit.";
 
 /* Alerts */
@@ -412,6 +496,19 @@
 "Uploading... %d%%" = "Se încarcă... %d%%";
 "Upload failed: %@" = "Încărcarea a eșuat: %@";
 "Uploaded! Link copied." = "Încărcat! Link copiat.";
+"Uploading…" = "Se încarcă…";
+"Link copied: %@" = "Link copiat: %@";
+"Could not encode the image." = "Nu s-a putut codifica imaginea.";
+"Google Drive not signed in" = "Neautentificat în Google Drive";
+"S3 not configured — check Settings" = "S3 nu este configurat — verifică Setările";
+"GitHub upload is not configured — check Settings." = "Încărcarea pe GitHub nu este configurată — verifică Setările.";
+"GitHub rejected the token — check that it has contents write access to the repository." = "GitHub a respins tokenul — verifică dacă are acces de scriere contents la depozit.";
+"Repository or branch not found — check the owner/repo and branch name." = "Depozitul sau ramura nu au fost găsite — verifică owner/repo și numele ramurii.";
+"GitHub returned a response macshot could not read." = "GitHub a returnat un răspuns pe care macshot nu l-a putut citi.";
+"%@ is too large for a GitHub repository — upload it to S3 or Google Drive instead." = "%@ este prea mare pentru un depozit GitHub — încarcă-l pe S3 sau Google Drive.";
+"Connected — the token can write to this repository." = "Conectat — tokenul poate scrie în acest depozit.";
+"Connected, but the token cannot write to this repository." = "Conectat, dar tokenul nu poate scrie în acest depozit.";
+"Video upload requires Google Drive, S3 or GitHub" = "Încărcarea video necesită Google Drive, S3 sau GitHub";
 "Uploading to %@... %d%%" = "Se încarcă pe %@... %d%%";
 "Open" = "Deschide";
 
@@ -622,6 +719,7 @@
 "Preview:" = "Previzualizare:";
 "Copy Screen Info" = "Copiază informațiile despre ecran";
 "Copies display and capture diagnostics to clipboard" = "Copiază în clipboard diagnosticele de afișare și captură";
+"Copies display and capture diagnostics to the clipboard" = "Copiază în clipboard diagnosticele de afișare și captură";
 "Accent" = "Accent";
 "Icon" = "Pictograma";
 "Background" = "Fundal";

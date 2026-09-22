@@ -53,6 +53,7 @@
 
 /* Floating Thumbnail */
 "Close All" = "모두 닫기";
+"View" = "보기";
 "Save" = "저장";
 
 /* Editor Top Bar */
@@ -179,6 +180,7 @@
 "  (Tab to toggle)" = "  (Tab으로 전환)";
 "  (Tab to switch)" = "  (Tab으로 전환)";
 "Right-click to copy" = "우클릭하여 복사";
+"Press C to copy" = "C를 눌러 복사";
 "Copied %@" = "%@ 복사됨";
 "Set color %@" = "색상 %@ 설정됨";
 "Draw something first to use the move tool." = "이동 도구를 사용하려면 먼저 무언가를 그리세요.";
@@ -211,6 +213,8 @@
 "Launch at login" = "로그인 시 실행";
 "Show snap alignment guides" = "스냅 정렬 가이드 표시";
 "Snap selection edges to image boundaries" = "선택 영역 가장자리를 이미지 경계에 스냅";
+"Snapping" = "스냅";
+"Haptic feedback when snapping" = "스냅할 때 햅틱 피드백";
 "Enhance browser and Electron element snapping" = "브라우저 및 Electron 요소 스냅 향상";
 "Builds the target app's accessibility tree in Element mode. Disable this if a browser or Electron app becomes slow or has input issues." = "요소 모드에서 대상 앱의 접근성 트리를 구축합니다. 브라우저 또는 Electron 앱이 느려지거나 입력 문제가 있는 경우 비활성화하세요.";
 "Capture mouse cursor in screenshot" = "스크린샷에 마우스 커서 포함";
@@ -227,13 +231,24 @@
 "Check for beta updates" = "베타 업데이트 확인";
 "Thumbnail" = "썸네일";
 "  Dismiss after:" = "  자동 닫기:";
+"Floating Preview" = "플로팅 미리보기";
+"Dismiss after" = "자동 닫기";
+"Never" = "안 함";
+"3 seconds" = "3초";
+"5 seconds" = "5초";
+"10 seconds" = "10초";
+"30 seconds" = "30초";
 "seconds before auto-dismiss (0 = never)" = "초 후 자동 닫기 (0 = 사용 안 함)";
 "  Multiple previews:" = "  여러 미리보기:";
+"Multiple previews" = "여러 미리보기";
 "Stack (keep all)" = "쌓기 (모두 유지)";
 "Replace (show only latest)" = "교체 (최신만 표시)";
 "Output" = "출력";
 "Image format:" = "이미지 포맷:";
+"Image" = "이미지";
+"Image format" = "이미지 포맷";
 "Quality:" = "품질:";
+"Quality" = "품질";
 "%d%%" = "%d%%";
 "Save at standard resolution (1x)" = "표준 해상도(1x)로 저장";
 "Halves dimensions on Retina displays, ~4x smaller files" = "Retina 디스플레이에서 크기를 절반으로 줄여 파일 약 4배 축소";
@@ -241,9 +256,12 @@
 "Ensures consistent colors across different displays" = "다른 디스플레이에서도 일관된 색상 보장";
 "Screenshot History" = "스크린샷 기록";
 "History size:" = "기록 크기:";
+"History size" = "기록 크기";
 "screenshots kept on disk (0 = off)" = "디스크에 보관할 스크린샷 수 (0 = 사용 안 함)";
 "Save Directory" = "저장 폴더";
 "Save folder:" = "저장 폴더:";
+"Saving" = "저장";
+"Save folder" = "저장 폴더";
 "Browse…" = "찾아보기…";
 "Appearance" = "모양새";
 "Accent color:" = "강조 색상:";
@@ -254,17 +272,24 @@
 "Custom symbol" = "사용자 지정 기호";
 "Default" = "기본값";
 "Enter any SF Symbol name (e.g. camera.fill) or pick a preset. Browse names in Apple's SF Symbols app. Invalid names fall back to the default icon." = "원하는 SF Symbol 이름 (예: camera.fill) 을 입력하거나 프리셋을 선택하세요. 이름은 Apple의 SF Symbols 앱에서 찾아볼 수 있습니다. 잘못된 이름은 기본 아이콘으로 대체됩니다.";
+"Menu bar icon" = "메뉴 막대 아이콘";
+"Symbol" = "기호";
+"No SF Symbol by that name — the default icon is used." = "해당 이름의 SF Symbol이 없습니다 — 기본 아이콘을 사용합니다.";
 "Save action:" = "저장 동작:";
+"Save action" = "저장 동작";
 "Save to default folder" = "기본 폴더에 저장";
 "Ask where to save" = "저장 위치 묻기";
 "Disable shadow outside selection" = "선택 영역 바깥 그림자 비활성화";
 "Show shortcuts in tooltips" = "툴팁에 단축키 표시";
 "OCR Capture:" = "OCR 캡처:";
 "OCR & QR Capture:" = "OCR & QR 캡처:";
+"OCR & QR Capture" = "OCR & QR 캡처";
+"Show results window" = "결과 윈도우 표시";
 "Show window + copy to clipboard" = "윈도우 표시 + 클립보드에 복사";
 "Show window only" = "윈도우만 표시";
 "Copy to clipboard only" = "클립보드에만 복사";
 "Enter / Quick Capture:" = "Enter / 빠른 캡처:";
+"Enter / Quick Capture" = "Enter / 빠른 캡처";
 "Save to file" = "파일로 저장";
 "Save + copy to clipboard" = "저장 + 클립보드에 복사";
 "OCR Action" = "OCR 동작";
@@ -275,6 +300,9 @@
 "Clear shortcut" = "단축키 지우기";
 "Press keys..." = "키를 누르세요...";
 "Waiting..." = "대기 중...";
+"Press a shortcut…" = "단축키를 누르세요…";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "단축키를 클릭한 다음 보조 키(⌘, ⌥, ⌃, ⇧)를 하나 이상 포함한 키 조합을 누르세요. Esc를 누르면 취소됩니다. 기능 키는 단독으로 사용할 수 있습니다.";
+"These apply inside the capture overlay and the editor window." = "캡처 오버레이와 편집기 윈도우에서 적용됩니다.";
 
 /* Preferences - Tools */
 "Annotation Tools" = "주석 도구";
@@ -288,16 +316,20 @@
 
 /* Preferences - Recording */
 "Frame rate:" = "프레임 레이트:";
+"Frame rate" = "프레임 레이트";
 "After recording:" = "녹화 후:";
+"When done" = "완료 시";
 "Save recording to:" = "녹화 저장 위치:";
 "Save Recording" = "녹화 저장";
 "Clear" = "지우기";
 "Max height:" = "최대 높이:";
+"Max height" = "최대 높이";
 "px (0 = unlimited)" = "px (0 = 무제한)";
 "Behavior" = "동작";
 "Auto-scroll (sends synthetic scroll events)" = "자동 스크롤 (가상 스크롤 이벤트 전송)";
 "Detect fixed/sticky headers" = "고정/스티키 헤더 감지";
 "Scroll speed:" = "스크롤 속도:";
+"Scroll speed" = "스크롤 속도";
 "Slow" = "느리게";
 "Medium" = "보통";
 "Fast" = "빠르게";
@@ -309,13 +341,29 @@
 "30 fps" = "30 fps";
 "60 fps" = "60 fps";
 "120 fps" = "120 fps";
+"%d fps" = "%d fps";
 "MP4 (H.264)" = "MP4 (H.264)";
 "GIF" = "GIF";
+
+/* Settings - Beautify */
+"Beautify captures" = "캡처 꾸미기";
+"Frame" = "프레임";
+"Window chrome" = "윈도우 테두리";
+"Rounded corners" = "둥근 모서리";
+"Corner radius" = "모서리 둥글기";
+"Background blur" = "배경 흐림";
+"Style" = "스타일";
+"Use desktop wallpaper" = "배경화면 사용";
+"Choose image…" = "이미지 선택…";
+"Places the capture on a background with rounded corners and a drop shadow." = "캡처를 둥근 모서리와 그림자가 있는 배경 위에 배치합니다.";
+"Places the capture on a gradient background with rounded corners and a drop shadow. The style is chosen from the toolbar." = "캡처를 둥근 모서리와 그림자가 있는 그라데이션 배경 위에 배치합니다. 스타일은 도구 막대에서 선택합니다.";
 
 /* Preferences - Upload */
 "Upload Service" = "업로드 서비스";
 "Upload Provider" = "업로드 제공자";
 "Provider:" = "제공자:";
+"Provider" = "제공자";
+"Ask before uploading" = "업로드 전 확인";
 "Google Drive" = "Google Drive";
 "Google Drive (images + videos)" = "Google Drive (이미지 + 동영상)";
 "imgbb (images only)" = "imgbb (이미지만)";
@@ -326,22 +374,34 @@
 "Signed in" = "로그인됨";
 "Not signed in" = "로그인되지 않음";
 "Account:" = "계정:";
+"Account" = "계정";
 "Folder:" = "폴더:";
+"Folder" = "폴더";
 "Test Connection" = "연결 테스트";
+"Connection" = "연결";
+"Checking…" = "확인 중…";
 "Fill in endpoint, bucket, and credentials first" = "먼저 엔드포인트, 버킷, 자격 증명을 입력하세요";
 "Testing..." = "테스트 중...";
 "Connection successful!" = "연결 성공!";
 "Leave empty to use default" = "기본값을 사용하려면 비워두세요";
 "Endpoint:" = "엔드포인트:";
+"Endpoint" = "엔드포인트";
 "Region:" = "리전:";
+"Region" = "리전";
 "Bucket:" = "버킷:";
+"Bucket" = "버킷";
 "Access Key:" = "액세스 키:";
+"Access Key" = "액세스 키";
 "Secret Key:" = "시크릿 키:";
+"Secret Key" = "시크릿 키";
 "Public URL:" = "공개 URL:";
+"Public URL" = "공개 URL";
 "Path Prefix:" = "경로 접두사:";
+"Path Prefix" = "경로 접두사";
 "Make uploads publicly readable" = "업로드를 공개 읽기 가능으로 설정";
 "Sends the public-read ACL so uploaded files are viewable by anyone with the link. Needed for AWS S3, DigitalOcean Spaces, MinIO and Backblaze B2, which store objects privately by default. Leave off for Cloudflare R2, which has no ACLs and rejects the header." = "public-read ACL을 전송하여 업로드된 파일을 링크가 있는 누구나 볼 수 있게 합니다. 기본적으로 객체를 비공개로 저장하는 AWS S3, DigitalOcean Spaces, MinIO, Backblaze B2에 필요합니다. ACL이 없고 헤더를 거부하는 Cloudflare R2에서는 끄세요.";
 "API key:" = "API 키:";
+"API key" = "API 키";
 "Upload History" = "업로드 기록";
 "No uploads yet." = "아직 업로드가 없습니다.";
 "Base URL for public access. If empty, the S3 endpoint URL is used (may not be publicly accessible)." = "공개 접근용 기본 URL입니다. 비어 있으면 S3 엔드포인트 URL이 사용됩니다 (공개 접근이 불가능할 수 있음).";
@@ -351,11 +411,32 @@
 "Sign in to Google Drive in Preferences" = "환경설정에서 Google Drive에 로그인";
 "Video upload requires Google Drive or S3" = "동영상 업로드에는 Google Drive 또는 S3가 필요합니다";
 
+/* Settings - Uploads: GitHub */
+"GitHub repository" = "GitHub 저장소";
+"GitHub repository (images + videos)" = "GitHub 저장소 (이미지 + 동영상)";
+"Token" = "토큰";
+"Repository" = "저장소";
+"Branch" = "브랜치";
+"Domain" = "도메인";
+"Custom domain" = "사용자 지정 도메인";
+"Link style" = "링크 형식";
+"Example link" = "링크 예시";
+"Create a fine-grained token with Contents write access to this one repository. The repository must be public for the links to be readable without a token." = "이 저장소 하나에 대해 Contents 쓰기 권한이 있는 fine-grained 토큰을 생성하세요. 토큰 없이 링크를 열 수 있으려면 저장소가 공개 상태여야 합니다.";
+"Connected — the token can write to this repository." = "연결됨 — 이 토큰으로 저장소에 쓸 수 있습니다.";
+"Connected, but the token cannot write to this repository." = "연결되었지만 이 토큰으로는 저장소에 쓸 수 없습니다.";
+"GitHub upload is not configured — check Settings." = "GitHub 업로드가 구성되지 않았습니다 — 설정을 확인하세요.";
+"GitHub rejected the token — check that it has contents write access to the repository." = "GitHub에서 토큰을 거부했습니다 — 저장소에 대한 contents 쓰기 권한이 있는지 확인하세요.";
+"Repository or branch not found — check the owner/repo and branch name." = "저장소 또는 브랜치를 찾을 수 없습니다 — owner/repo와 브랜치 이름을 확인하세요.";
+"GitHub returned a response macshot could not read." = "macshot이 읽을 수 없는 응답이 GitHub에서 반환되었습니다.";
+"%@ is too large for a GitHub repository — upload it to S3 or Google Drive instead." = "%@은(는) GitHub 저장소에 올리기에 너무 큽니다. S3 또는 Google Drive를 사용하세요.";
+"Video upload requires Google Drive, S3 or GitHub" = "동영상 업로드에는 Google Drive, S3 또는 GitHub가 필요합니다";
+
 /* Preferences - About */
 "macshot" = "macshot";
 "Version %@ (%@)" = "버전 %@ (%@)";
 "Made by" = "제작자";
 "Licensed under the GPLv3" = "GPLv3 라이선스";
+"Licensed under GPLv3" = "GPLv3 라이선스";
 "A free, open-source screenshot & screen recording tool for macOS.\nFully native — built with Swift and AppKit." = "macOS용 무료 오픈소스 스크린샷 및 화면 녹화 도구입니다.\nSwift와 AppKit으로 제작된 완전한 네이티브 앱입니다.";
 
 /* Alerts */
@@ -402,8 +483,10 @@
 /* Upload Toast */
 "URL copied to the clipboard" = "URL이 클립보드에 복사되었습니다";
 "Uploading... %d%%" = "업로드 중... %d%%";
+"Uploading…" = "업로드 중…";
 "Upload failed: %@" = "업로드 실패: %@";
 "Uploaded! Link copied." = "업로드 완료! 링크가 복사되었습니다.";
+"Link copied: %@" = "링크가 복사되었습니다: %@";
 "Uploading to %@... %d%%" = "%@에 업로드 중... %d%%";
 "Open" = "열기";
 "Open Link" = "링크 열기";
@@ -426,6 +509,7 @@
 "Saved to %@" = "%@에 저장됨";
 "Save failed" = "저장 실패";
 "Could not encode the screenshot." = "스크린샷을 인코딩할 수 없습니다.";
+"Could not encode the image." = "이미지를 인코딩할 수 없습니다.";
 "Could not save the screenshot: %@" = "스크린샷을 저장할 수 없습니다: %@";
 "Could not save the screenshot to history." = "스크린샷을 기록에 저장할 수 없습니다.";
 
@@ -542,19 +626,28 @@
 "Pause" = "일시정지";
 "Resume" = "재개";
 "Engine:" = "엔진:";
+"Engine" = "엔진";
 "Google Translate" = "Google Translate";
 "Apple (on-device)" = "Apple (기기 내)";
+"Apple" = "Apple";
+"Google" = "Google";
 "Apple translation is faster and works offline. Google Translate supports more languages." = "Apple 번역은 더 빠르고 오프라인에서 작동합니다. Google Translate는 더 많은 언어를 지원합니다.";
 "Download language packs in System Settings…" = "시스템 설정에서 언어 팩 다운로드…";
 "Configure S3 in Settings" = "설정에서 S3 구성";
 "Sign in to Google Drive in Settings" = "설정에서 Google Drive에 로그인";
+"Google Drive not signed in" = "Google Drive에 로그인되지 않음";
+"S3 not configured — check Settings" = "S3가 구성되지 않음 — 설정을 확인하세요";
 "Position:" = "위치:";
 "  Position:" = "  위치:";
+"Position" = "위치";
 "Size:" = "크기:";
 "Shape:" = "모양:";
+"Shape" = "모양";
 
 "Same as screenshots" = "스크린샷과 동일";
 "  Preview size:" = "  미리보기 크기:";
+"Preview size" = "미리보기 크기";
+"Preview" = "미리보기";
 "Fit image in preview (letterbox)" = "미리보기에 이미지 전체 맞추기 (레터박스)";
 "(0 = off)" = "(0 = 끄기)";
 "Clear All" = "모두 지우기";
@@ -613,11 +706,13 @@
 "Preview:" = "미리보기:";
 "Copy Screen Info" = "화면 정보 복사";
 "Copies display and capture diagnostics to clipboard" = "디스플레이 및 캡처 진단 정보를 클립보드로 복사합니다";
+"Copies display and capture diagnostics to the clipboard" = "디스플레이 및 캡처 진단 정보를 클립보드로 복사합니다";
 "Accent" = "강조";
 "Icon" = "아이콘";
 "Background" = "배경";
 "Custom" = "사용자 지정";
 "Theme:" = "테마:";
+"Theme" = "테마";
 "Application" = "애플리케이션";
 "Capture area and extract text" = "영역 캡처 및 텍스트 추출";
 "Capture the full screen" = "전체 화면 캡처";
@@ -626,6 +721,7 @@
 "Filename Template Tokens" = "파일명 템플릿 토큰";
 "Filename tokens" = "파일명 토큰";
 "Filename:" = "파일명:";
+"Filename" = "파일명";
 "Open an image file in the editor" = "편집기에서 이미지 파일 열기";
 "Open the recent captures overlay" = "최근 캡처 오버레이 열기";
 "Open this settings window" = "이 설정 윈도우 열기";

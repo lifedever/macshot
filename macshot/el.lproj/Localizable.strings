@@ -145,6 +145,20 @@
 "More Emojis" = "Περισσότερα Emoji";
 "Load Image" = "Φόρτωση εικόνας";
 "Gradient Style" = "Στυλ διαβάθμισης";
+
+/* Settings - Beautify */
+"Beautify captures" = "Ομορφιά λήψεων";
+"Frame" = "Πλαίσιο";
+"Window chrome" = "Γραμμή τίτλου παραθύρου";
+"Rounded corners" = "Στρογγυλεμένες γωνίες";
+"Corner radius" = "Ακτίνα γωνίας";
+"Background blur" = "Θόλωμα φόντου";
+"Style" = "Στυλ";
+"Use desktop wallpaper" = "Χρήση φόντου επιφάνειας εργασίας";
+"Choose image…" = "Επιλογή εικόνας…";
+"Places the capture on a background with rounded corners and a drop shadow." = "Τοποθετεί τη λήψη σε φόντο με στρογγυλεμένες γωνίες και σκιά.";
+"Places the capture on a gradient background with rounded corners and a drop shadow. The style is chosen from the toolbar." = "Τοποθετεί τη λήψη σε φόντο με διαβάθμιση, στρογγυλεμένες γωνίες και σκιά. Το στυλ επιλέγεται από τη γραμμή εργαλείων.";
+
 "On" = "Ενεργό";
 "Text Only" = "Μόνο κείμενο";
 "All Text" = "Όλο το κείμενο";
@@ -192,6 +206,7 @@
 "Enhance browser and Electron element snapping" = "Βελτίωση της κούμπωσης στοιχείων σε προγράμματα περιήγησης και Electron";
 "Builds the target app's accessibility tree in Element mode. Disable this if a browser or Electron app becomes slow or has input issues." = "Κατασκευάζει το δέντρο προσβασιμότητας της εφαρμογής-στόχου στη λειτουργία Στοιχείο. Απενεργοποιήστε το αν ένα πρόγραμμα περιήγησης ή Electron γίνει αργό ή έχει προβλήματα εισαγωγής.";
 "Right-click to copy" = "Δεξί κλικ για αντιγραφή";
+"Press C to copy" = "Πατήστε C για αντιγραφή";
 "Copied %@" = "Αντιγράφηκε %@";
 "Set color %@" = "Ορισμός χρώματος %@";
 "Draw something first to use the move tool." = "Σχεδιάστε κάτι πρώτα για να χρησιμοποιήσετε το εργαλείο μετακίνησης.";
@@ -235,6 +250,10 @@
 "Custom symbol" = "Προσαρμοσμένο σύμβολο";
 "Default" = "Προεπιλογή";
 "Enter any SF Symbol name (e.g. camera.fill) or pick a preset. Browse names in Apple's SF Symbols app. Invalid names fall back to the default icon." = "Εισαγάγετε οποιοδήποτε όνομα SF Symbol (π.χ. camera.fill) ή επιλέξτε μια προεπιλογή. Περιηγηθείτε στα ονόματα στην εφαρμογή SF Symbols της Apple. Τα μη έγκυρα ονόματα επιστρέφουν στο προεπιλεγμένο εικονίδιο.";
+"Menu bar icon" = "Εικονίδιο γραμμής μενού";
+"Symbol" = "Σύμβολο";
+"No SF Symbol by that name — the default icon is used." = "Δεν υπάρχει SF Symbol με αυτό το όνομα — χρησιμοποιείται το προεπιλεγμένο εικονίδιο.";
+"Theme" = "Θέμα";
 "Hotkeys still work. To show the icon again, re-launch macshot." = "Τα πλήκτρα συντόμευσης λειτουργούν ακόμα. Για εμφάνιση του εικονιδίου, επανεκκινήστε το macshot.";
 "Check for updates automatically" = "Αυτόματος έλεγχος ενημερώσεων";
 "Check for beta updates" = "Έλεγχος για ενημερώσεις beta";
@@ -245,6 +264,21 @@
 "  Position:" = "  Θέση:";
 "Stack (keep all)" = "Στοίβαξη (διατήρηση όλων)";
 "Replace (show only latest)" = "Αντικατάσταση (εμφάνιση μόνο τελευταίου)";
+
+/* Settings - Floating Preview */
+"Floating Preview" = "Αιωρούμενη προεπισκόπηση";
+"Position" = "Θέση";
+"Dismiss after" = "Απόκρυψη μετά από";
+"Never" = "Ποτέ";
+"3 seconds" = "3 δευτερόλεπτα";
+"5 seconds" = "5 δευτερόλεπτα";
+"10 seconds" = "10 δευτερόλεπτα";
+"30 seconds" = "30 δευτερόλεπτα";
+"Multiple previews" = "Πολλαπλές προεπισκοπήσεις";
+"Preview size" = "Μέγεθος προεπισκόπησης";
+"Preview" = "Προεπισκόπηση";
+"View" = "Προβολή";
+
 "Menu Bar Order" = "Σειρά γραμμής μενού";
 "Choose the order of capture actions in the macshot menu bar menu." = "Επιλέξτε τη σειρά των ενεργειών λήψης στο μενού της γραμμής μενού του macshot.";
 "Move up" = "Μετακίνηση πάνω";
@@ -284,6 +318,22 @@
 "Save to file" = "Αποθήκευση σε αρχείο";
 "Save + copy to clipboard" = "Αποθήκευση + αντιγραφή στο πρόχειρο";
 "OCR Action" = "Ενέργεια OCR";
+"Enter / Quick Capture" = "Enter / Γρήγορη λήψη";
+"OCR & QR Capture" = "Λήψη OCR & QR";
+"Show results window" = "Εμφάνιση παραθύρου αποτελεσμάτων";
+"Snapping" = "Κούμπωμα";
+"Haptic feedback when snapping" = "Απτική ανάδραση κατά το κούμπωμα";
+"Image" = "Εικόνα";
+"Image format" = "Μορφή εικόνας";
+"Quality" = "Ποιότητα";
+"Saving" = "Αποθήκευση";
+"Save action" = "Ενέργεια αποθήκευσης";
+"Save folder" = "Φάκελος αποθήκευσης";
+"Filename" = "Όνομα αρχείου";
+"History size" = "Μέγεθος ιστορικού";
+"Engine" = "Μηχανή";
+"Apple" = "Apple";
+"Google" = "Google";
 "QR Code" = "Κωδικός QR";
 "QR Codes" = "Κωδικοί QR";
 
@@ -293,6 +343,9 @@
 "Clear shortcut" = "Εκκαθάριση συντόμευσης";
 "Press keys..." = "Πατήστε πλήκτρα...";
 "Waiting..." = "Αναμονή...";
+"Press a shortcut…" = "Πατήστε μια συντόμευση…";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "Κάντε κλικ σε μια συντόμευση και πατήστε έναν συνδυασμό πλήκτρων με τουλάχιστον έναν τροποποιητή (⌘, ⌥, ⌃, ⇧). Το Esc ακυρώνει. Τα πλήκτρα λειτουργιών λειτουργούν από μόνα τους.";
+"These apply inside the capture overlay and the editor window." = "Αυτές ισχύουν μέσα στην επικάλυψη λήψης και στο παράθυρο επεξεργασίας.";
 
 /* Preferences - Tools */
 "Annotation Tools" = "Εργαλεία σχολιασμού";
@@ -306,6 +359,12 @@
 
 /* Preferences - Recording */
 "Frame rate:" = "Ρυθμός καρέ:";
+"Frame rate" = "Ρυθμός καρέ";
+"%d fps" = "%d fps";
+"When done" = "Μετά την ολοκλήρωση";
+"Shape" = "Σχήμα";
+"Scroll speed" = "Ταχύτητα κύλισης";
+"Max height" = "Μέγιστο ύψος";
 "After recording:" = "Μετά την εγγραφή:";
 "Save recording to:" = "Αποθήκευση εγγραφής σε:";
 "Save Recording" = "Αποθήκευση εγγραφής";
@@ -360,6 +419,30 @@
 "Make uploads publicly readable" = "Δημόσια αναγνώσιμες μεταφορτώσεις";
 "Sends the public-read ACL so uploaded files are viewable by anyone with the link. Needed for AWS S3, DigitalOcean Spaces, MinIO and Backblaze B2, which store objects privately by default. Leave off for Cloudflare R2, which has no ACLs and rejects the header." = "Στέλνει το ACL public-read ώστε τα μεταφορτωμένα αρχεία να είναι ορατά σε οποιονδήποτε έχει τον σύνδεσμο. Απαιτείται για AWS S3, DigitalOcean Spaces, MinIO και Backblaze B2, που αποθηκεύουν αντικείμενα ιδιωτικά από προεπιλογή. Αφήστε το απενεργοποιημένο για Cloudflare R2, που δεν υποστηρίζει ACLs και απορρίπτει την κεφαλίδα.";
 "API key:" = "Κλειδί API:";
+"Provider" = "Πάροχος";
+"Ask before uploading" = "Ερώτηση πριν τη μεταφόρτωση";
+"Account" = "Λογαριασμός";
+"Connection" = "Σύνδεση";
+"Checking…" = "Έλεγχος…";
+"Folder" = "Φάκελος";
+"API key" = "Κλειδί API";
+"Access Key" = "Κλειδί πρόσβασης";
+"Secret Key" = "Μυστικό κλειδί";
+"Bucket" = "Bucket";
+"Region" = "Περιοχή";
+"Endpoint" = "Endpoint";
+"Public URL" = "Δημόσιο URL";
+"Path Prefix" = "Πρόθεμα διαδρομής";
+"Domain" = "Τομέας";
+"Custom domain" = "Προσαρμοσμένος τομέας";
+"GitHub repository" = "Αποθετήριο GitHub";
+"GitHub repository (images + videos)" = "Αποθετήριο GitHub (εικόνες + βίντεο)";
+"Token" = "Token";
+"Repository" = "Αποθετήριο";
+"Branch" = "Κλάδος";
+"Link style" = "Στυλ συνδέσμου";
+"Example link" = "Παράδειγμα συνδέσμου";
+"Create a fine-grained token with Contents write access to this one repository. The repository must be public for the links to be readable without a token." = "Δημιουργήστε ένα fine-grained token με δικαίωμα εγγραφής Contents σε αυτό μόνο το αποθετήριο. Το αποθετήριο πρέπει να είναι δημόσιο ώστε οι σύνδεσμοι να είναι αναγνώσιμοι χωρίς token.";
 "Upload History" = "Ιστορικό μεταφορτώσεων";
 "No uploads yet." = "Δεν υπάρχουν μεταφορτώσεις ακόμα.";
 "Base URL for public access. If empty, the S3 endpoint URL is used (may not be publicly accessible)." = "Βασικό URL για δημόσια πρόσβαση. Αν είναι κενό, χρησιμοποιείται το URL του S3 endpoint (μπορεί να μην είναι δημόσια προσβάσιμο).";
@@ -374,6 +457,7 @@
 "Version %@ (%@)" = "Έκδοση %@ (%@)";
 "Made by" = "Δημιουργήθηκε από";
 "Licensed under the GPLv3" = "Με άδεια GPLv3";
+"Licensed under GPLv3" = "Με άδεια GPLv3";
 "A free, open-source screenshot & screen recording tool for macOS.\nFully native — built with Swift and AppKit." = "Ένα δωρεάν εργαλείο στιγμιοτύπων και εγγραφής οθόνης ανοιχτού κώδικα για macOS.\nΠλήρως εγγενές — κατασκευασμένο με Swift και AppKit.";
 
 /* Alerts */
@@ -420,6 +504,19 @@
 "Uploading... %d%%" = "Μεταφόρτωση... %d%%";
 "Upload failed: %@" = "Αποτυχία μεταφόρτωσης: %@";
 "Uploaded! Link copied." = "Μεταφορτώθηκε! Ο σύνδεσμος αντιγράφηκε.";
+"Uploading…" = "Μεταφόρτωση…";
+"Link copied: %@" = "Ο σύνδεσμος αντιγράφηκε: %@";
+"Could not encode the image." = "Δεν ήταν δυνατή η κωδικοποίηση της εικόνας.";
+"Google Drive not signed in" = "Δεν έχετε συνδεθεί στο Google Drive";
+"S3 not configured — check Settings" = "Το S3 δεν έχει ρυθμιστεί — ελέγξτε τις Ρυθμίσεις";
+"GitHub upload is not configured — check Settings." = "Η μεταφόρτωση στο GitHub δεν έχει ρυθμιστεί — ελέγξτε τις Ρυθμίσεις.";
+"GitHub rejected the token — check that it has contents write access to the repository." = "Το GitHub απέρριψε το token — ελέγξτε ότι έχει δικαίωμα εγγραφής contents στο αποθετήριο.";
+"Repository or branch not found — check the owner/repo and branch name." = "Το αποθετήριο ή ο κλάδος δεν βρέθηκε — ελέγξτε το owner/repo και το όνομα του κλάδου.";
+"GitHub returned a response macshot could not read." = "Το GitHub επέστρεψε μια απάντηση που το macshot δεν μπόρεσε να διαβάσει.";
+"%@ is too large for a GitHub repository — upload it to S3 or Google Drive instead." = "Το %@ είναι πολύ μεγάλο για αποθετήριο GitHub — ανεβάστε το στο S3 ή στο Google Drive.";
+"Connected — the token can write to this repository." = "Συνδέθηκε — το token μπορεί να γράψει σε αυτό το αποθετήριο.";
+"Connected, but the token cannot write to this repository." = "Συνδέθηκε, αλλά το token δεν μπορεί να γράψει σε αυτό το αποθετήριο.";
+"Video upload requires Google Drive, S3 or GitHub" = "Η μεταφόρτωση βίντεο απαιτεί Google Drive, S3 ή GitHub";
 "Uploading to %@... %d%%" = "Μεταφόρτωση στο %@... %d%%";
 "Open" = "Άνοιγμα";
 
@@ -624,6 +721,7 @@
 "Preview:" = "Προεπισκόπηση:";
 "Copy Screen Info" = "Αντιγραφή πληροφοριών οθόνης";
 "Copies display and capture diagnostics to clipboard" = "Αντιγράφει διαγνωστικά οθόνης και λήψης στο πρόχειρο";
+"Copies display and capture diagnostics to the clipboard" = "Αντιγράφει διαγνωστικά οθόνης και λήψης στο πρόχειρο";
 "Accent" = "Τονισμός";
 "Icon" = "Εικονίδιο";
 "Background" = "Φόντο";

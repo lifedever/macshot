@@ -215,8 +215,8 @@ final class LocalizationTests: XCTestCase {
     /// ban. A locale that climbs above its budget has almost certainly been
     /// re-damaged; the fix is to repair the strings, not to raise the number.
     private static let diacriticSuspectBudget: [String: Int] = [
-        "ca": 3, "cs": 16, "es": 3, "fr": 6, "hr": 1, "pl": 1,
-        "pt": 4, "pt-BR": 3, "ro": 38, "sk": 3, "sv": 1, "tr": 4, "vi": 39,
+        "ca": 2, "cs": 6, "es": 3, "fr": 4, "hr": 1, "pl": 1,
+        "pt": 3, "pt-BR": 3, "ro": 20, "sk": 3, "sv": 1, "vi": 18,
     ]
 
     private static func deaccented(_ word: String) -> String {
@@ -246,10 +246,29 @@ final class LocalizationTests: XCTestCase {
         // or increasing the damage budget whenever another "in" is added.
         // Spanish video/vídeo are both valid regional spellings (FundéuRAE:
         // https://www.fundeu.es/recomendacion/video-video/).
+        // Turkish dotted capital İ decomposes to I + U+0307, so stripping the
+        // "diacritic" turns İptal into iptal and makes the correctly spelled
+        // lowercase word look like damage. These three are ordinary Turkish
+        // words that never carry a diacritic.
+        // Vietnamese tonal syllables have the same problem wholesale: nearly
+        // every toneless syllable is also some other word with a tone mark.
+        // French copie / Portuguese copia are verb forms; copié / cópia are
+        // different words, not accented spellings of these.
+        // Romanian's definite article and Czech/Hungarian case endings produce
+        // the same collision: captură → captura ("the capture"), soubor →
+        // souboru (genitive), név → nevet (accusative). All correct spellings.
         let validPlainWords: Set<String>
         switch locale {
-        case "vi": validPlainWords = ["trong"]
+        case "vi": validPlainWords = ["trong", "thanh", "nhanh", "cung", "dung", "minh"]
         case "es": validPlainWords = ["video"]
+        case "tr": validPlainWords = ["izin", "izni", "iptal"]
+        case "fr": validPlainWords = ["copie"]
+        case "pt": validPlainWords = ["copia"]
+        case "ca": validPlainWords = ["copia"]
+        case "cs": validPlainWords = ["souboru"]
+        case "hu": validPlainWords = ["nevet"]
+        case "ro": validPlainWords = ["captura", "bara", "fereastra", "rata",
+                                      "viteza", "ramura", "aplica"]
         default: validPlainWords = []
         }
         return plain.filter { accented.contains($0.key) && !validPlainWords.contains($0.key) }

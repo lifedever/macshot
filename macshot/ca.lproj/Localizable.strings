@@ -141,6 +141,20 @@
 "More Emojis" = "Més emojis";
 "Load Image" = "Carregar imatge";
 "Gradient Style" = "Estil de gradient";
+
+/* Settings - Beautify */
+"Beautify captures" = "Embellir les captures";
+"Frame" = "Marc";
+"Window chrome" = "Barra de títol de finestra";
+"Rounded corners" = "Cantonades arrodonides";
+"Corner radius" = "Radi de les cantonades";
+"Background blur" = "Difuminat del fons";
+"Style" = "Estil";
+"Use desktop wallpaper" = "Utilitzar el fons d'escriptori";
+"Choose image…" = "Triar imatge…";
+"Places the capture on a background with rounded corners and a drop shadow." = "Col·loca la captura sobre un fons amb cantonades arrodonides i ombra.";
+"Places the capture on a gradient background with rounded corners and a drop shadow. The style is chosen from the toolbar." = "Col·loca la captura sobre un fons degradat amb cantonades arrodonides i ombra. L'estil es tria des de la barra d'eines.";
+
 "On" = "Activat";
 "Text Only" = "Només text";
 "All Text" = "Tot el text";
@@ -180,6 +194,7 @@
 "Enhance browser and Electron element snapping" = "Millora l'ajust d'elements de navegador i aplicacions Electron";
 "Builds the target app's accessibility tree in Element mode. Disable this if a browser or Electron app becomes slow or has input issues." = "Construeix l'arbre d'accessibilitat de l'aplicació objectiu en mode Element. Desactiveu-ho si un navegador o aplicació Electron es torna lent o té problemes d'entrada.";
 "Right-click to copy" = "Clic dret per copiar";
+"Press C to copy" = "Premeu C per copiar";
 "Copied %@" = "Copiat %@";
 "Set color %@" = "Color establert %@";
 "Draw something first to use the move tool." = "Dibuixeu alguna cosa primer per utilitzar l'eina de moure.";
@@ -229,6 +244,21 @@
 "  Position:" = "  Posició:";
 "Stack (keep all)" = "Apilar (mantenir totes)";
 "Replace (show only latest)" = "Substituir (mostrar només l'última)";
+
+/* Settings - Floating Preview */
+"Floating Preview" = "Previsualització flotant";
+"Position" = "Posició";
+"Dismiss after" = "Descartar després de";
+"Never" = "Mai";
+"3 seconds" = "3 segons";
+"5 seconds" = "5 segons";
+"10 seconds" = "10 segons";
+"30 seconds" = "30 segons";
+"Multiple previews" = "Múltiples previsualitzacions";
+"Preview size" = "Mida de la previsualització";
+"Preview" = "Previsualització";
+"View" = "Veure";
+
 "Menu Bar Order" = "Ordre de la barra de menús";
 "Choose the order of capture actions in the macshot menu bar menu." = "Tria l'ordre de les accions de captura al menu de la barra de menús de macshot.";
 "Move up" = "Mou amunt";
@@ -259,6 +289,10 @@
 "Default" = "Per defecte";
 "Custom symbol" = "Símbol personalitzat";
 "Enter any SF Symbol name (e.g. camera.fill) or pick a preset. Browse names in Apple's SF Symbols app. Invalid names fall back to the default icon." = "Introduïu qualsevol nom de SF Symbol (p. ex. camera.fill) o trieu un predefinit. Exploreu els noms a l'aplicació SF Symbols d'Apple. Els noms no vàlids tornen a la icona per defecte.";
+"Menu bar icon" = "Icona de la barra de menús";
+"Symbol" = "Símbol";
+"No SF Symbol by that name — the default icon is used." = "Cap SF Symbol amb aquest nom — s'utilitza la icona per defecte.";
+"Theme" = "Tema";
 "Accent color:" = "Color d'accent:";
 "Icon color:" = "Color de la icona:";
 "Background color:" = "Color de fons:";
@@ -271,6 +305,22 @@
 "Save to file" = "Desar a fitxer";
 "Save + copy to clipboard" = "Desar + copiar al porta-retalls";
 "OCR Action" = "Acció OCR";
+"Enter / Quick Capture" = "Enter / Captura ràpida";
+"OCR & QR Capture" = "Captura OCR & QR";
+"Show results window" = "Mostrar la finestra de resultats";
+"Snapping" = "Ajust";
+"Haptic feedback when snapping" = "Resposta hàptica en ajustar";
+"Image" = "Imatge";
+"Image format" = "Format d'imatge";
+"Quality" = "Qualitat";
+"Saving" = "Desament";
+"Save action" = "Acció de desat";
+"Save folder" = "Carpeta de desat";
+"Filename" = "Nom de fitxer";
+"History size" = "Mida de l'historial";
+"Engine" = "Motor";
+"Apple" = "Apple";
+"Google" = "Google";
 "OCR & QR Capture:" = "Captura OCR & QR:";
 "OCR & QR" = "OCR & QR";
 "Text & QR Recognition" = "Reconeixement de text & QR";
@@ -286,6 +336,9 @@
 "Clear shortcut" = "Esborrar drecera";
 "Press keys..." = "Premeu les tecles...";
 "Waiting..." = "Esperant...";
+"Press a shortcut…" = "Premeu una drecera…";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "Feu clic a una drecera i premeu una combinació de tecles amb almenys un modificador (⌘, ⌥, ⌃, ⇧). Esc cancel·la. Les tecles de funció funcionen soles.";
+"These apply inside the capture overlay and the editor window." = "Aquestes s'apliquen dins de la superposició de captura i la finestra de l'editor.";
 
 /* Preferences - Tools */
 "Annotation Tools" = "Eines d'anotació";
@@ -299,6 +352,12 @@
 
 /* Preferences - Recording */
 "Frame rate:" = "Velocitat de fotogrames:";
+"Frame rate" = "Velocitat de fotogrames";
+"%d fps" = "%d fps";
+"When done" = "En acabar";
+"Shape" = "Forma";
+"Scroll speed" = "Velocitat de desplaçament";
+"Max height" = "Alçada màxima";
 "After recording:" = "Després de gravar:";
 "Save recording to:" = "Desar gravació a:";
 "Save Recording" = "Desar gravació";
@@ -353,6 +412,30 @@
 "Make uploads publicly readable" = "Fer les pujades llegibles públicament";
 "Sends the public-read ACL so uploaded files are viewable by anyone with the link. Needed for AWS S3, DigitalOcean Spaces, MinIO and Backblaze B2, which store objects privately by default. Leave off for Cloudflare R2, which has no ACLs and rejects the header." = "Envia l'ACL public-read perquè els fitxers pujats siguin visibles per qualsevol persona amb l'enllaç. Necessari per a AWS S3, DigitalOcean Spaces, MinIO i Backblaze B2, que emmagatzemen objectes de manera privada per defecte. Deixeu-ho desactivat per a Cloudflare R2, que no admet ACLs i rebutja la capçalera.";
 "API key:" = "Clau API:";
+"Provider" = "Proveïdor";
+"Ask before uploading" = "Preguntar abans de pujar";
+"Account" = "Compte";
+"Connection" = "Connexió";
+"Checking…" = "Comprovant…";
+"Folder" = "Carpeta";
+"API key" = "Clau API";
+"Access Key" = "Clau d'accés";
+"Secret Key" = "Clau secreta";
+"Bucket" = "Bucket";
+"Region" = "Regió";
+"Endpoint" = "Endpoint";
+"Public URL" = "URL pública";
+"Path Prefix" = "Prefix de ruta";
+"Domain" = "Domini";
+"Custom domain" = "Domini personalitzat";
+"GitHub repository" = "Repositori de GitHub";
+"GitHub repository (images + videos)" = "Repositori de GitHub (imatges + vídeos)";
+"Token" = "Token";
+"Repository" = "Repositori";
+"Branch" = "Branca";
+"Link style" = "Estil d'enllaç";
+"Example link" = "Enllaç d'exemple";
+"Create a fine-grained token with Contents write access to this one repository. The repository must be public for the links to be readable without a token." = "Creeu un token fine-grained amb accés d'escriptura a Contents per a aquest únic repositori. El repositori ha de ser públic perquè els enllaços es puguin llegir sense token.";
 "Upload History" = "Historial de pujades";
 "No uploads yet." = "Encara no hi ha pujades.";
 "Base URL for public access. If empty, the S3 endpoint URL is used (may not be publicly accessible)." = "URL base per accés públic. Si és buida, s'utilitza la URL de l'endpoint S3 (pot no ser accessible públicament).";
@@ -367,6 +450,7 @@
 "Version %@ (%@)" = "Versió %@ (%@)";
 "Made by" = "Creat per";
 "Licensed under the GPLv3" = "Llicenciat sota la GPLv3";
+"Licensed under GPLv3" = "Llicenciat sota la GPLv3";
 "A free, open-source screenshot & screen recording tool for macOS.\nFully native — built with Swift and AppKit." = "Una eina gratuïta i de codi obert per a captures de pantalla i gravació de pantalla per a macOS.\nTotalment nativa — construïda amb Swift i AppKit.";
 
 /* Alerts */
@@ -412,6 +496,19 @@
 "Uploading... %d%%" = "Pujant... %d%%";
 "Upload failed: %@" = "Error en pujar: %@";
 "Uploaded! Link copied." = "Pujat! Enllaç copiat.";
+"Uploading…" = "Pujant…";
+"Link copied: %@" = "Enllaç copiat: %@";
+"Could not encode the image." = "No s'ha pogut codificar la imatge.";
+"Google Drive not signed in" = "Sessió no iniciada a Google Drive";
+"S3 not configured — check Settings" = "S3 no configurat — reviseu la Configuració";
+"GitHub upload is not configured — check Settings." = "La pujada a GitHub no està configurada — reviseu la Configuració.";
+"GitHub rejected the token — check that it has contents write access to the repository." = "GitHub ha rebutjat el token — comproveu que tingui accés d'escriptura a contents del repositori.";
+"Repository or branch not found — check the owner/repo and branch name." = "No s'ha trobat el repositori o la branca — comproveu owner/repo i el nom de la branca.";
+"GitHub returned a response macshot could not read." = "GitHub ha retornat una resposta que macshot no ha pogut llegir.";
+"%@ is too large for a GitHub repository — upload it to S3 or Google Drive instead." = "%@ és massa gran per a un repositori de GitHub: puja'l a S3 o Google Drive.";
+"Connected — the token can write to this repository." = "Connectat — el token pot escriure en aquest repositori.";
+"Connected, but the token cannot write to this repository." = "Connectat, però el token no pot escriure en aquest repositori.";
+"Video upload requires Google Drive, S3 or GitHub" = "La pujada de vídeo requereix Google Drive, S3 o GitHub";
 "Uploading to %@... %d%%" = "Pujant a %@... %d%%";
 "Open" = "Obrir";
 
@@ -616,6 +713,7 @@
 "Preview:" = "Previsualització:";
 "Copy Screen Info" = "Copiar informació de pantalla";
 "Copies display and capture diagnostics to clipboard" = "Copia diagnòstics de pantalla i captura al porta-retalls";
+"Copies display and capture diagnostics to the clipboard" = "Copia diagnòstics de pantalla i captura al porta-retalls";
 "Accent" = "Accent";
 "Icon" = "Icona";
 "Background" = "Fons";

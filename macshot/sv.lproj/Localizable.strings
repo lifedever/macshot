@@ -190,6 +190,7 @@
 "  (Tab to toggle)" = "  (Tab f\U00F6r att v\U00E4xla)";
 "  (Tab to switch)" = "  (Tab f\U00F6r att v\U00E4xla)";
 "Right-click to copy" = "H\U00F6gerklicka f\U00F6r att kopiera";
+"Press C to copy" = "Tryck på C för att kopiera";
 "Copied %@" = "Kopierade %@";
 "Set color %@" = "Valde f\U00E4rg %@";
 "Draw something first to use the move tool." = "Rita n\U00E5got f\U00F6rst f\U00F6r att anv\U00E4nda flytta-verktyget.";
@@ -225,6 +226,8 @@
 "Launch at login" = "Starta vid inloggning";
 "Show snap alignment guides" = "Visa f\U00E4stlinjer";
 "Snap selection edges to image boundaries" = "F\U00E4st markeringskanter mot bildgr\U00E4nser";
+"Snapping" = "Fästning";
+"Haptic feedback when snapping" = "Haptisk återkoppling vid fästning";
 "Enhance browser and Electron element snapping" = "F\U00F6rb\U00E4ttra elementf\U00E5ngst f\U00F6r webbl\U00E4sare och Electron";
 "Builds the target app's accessibility tree in Element mode. Disable this if a browser or Electron app becomes slow or has input issues." = "Bygger m\U00E5lappens tr\U00E4d f\U00F6r hj\U00E4lpmedel i Element-l\U00E4ge. Inaktivera detta om en webbl\U00E4sare eller Electron-app blir långsam eller har inmatningsproblem.";
 "Capture mouse cursor in screenshot" = "F\U00E5nga muspekaren i sk\U00E4rmbild";
@@ -241,7 +244,24 @@
 "  Multiple previews:" = "  Flera f\U00F6rhandsvisningar:";
 "Stack (keep all)" = "Stapla (beh\U00E5ll alla)";
 "Replace (show only latest)" = "Ers\U00E4tt (visa bara senaste)";
+/* Settings - Floating Preview */
+"Floating Preview" = "Flytande förhandsvisning";
+"Position" = "Position";
+"Dismiss after" = "Stäng efter";
+"Never" = "Aldrig";
+"3 seconds" = "3 sekunder";
+"5 seconds" = "5 sekunder";
+"10 seconds" = "10 sekunder";
+"30 seconds" = "30 sekunder";
+"Multiple previews" = "Flera förhandsvisningar";
+"Preview size" = "Förhandsvisningsstorlek";
+"Preview" = "Förhandsvisning";
+"View" = "Visa";
+
 "Output" = "Utdata";
+"Image" = "Bild";
+"Image format" = "Bildformat";
+"Quality" = "Kvalitet";
 "Image format:" = "Bildformat:";
 "Quality:" = "Kvalitet:";
 "%d%%" = "%d%%";
@@ -252,11 +272,16 @@
 "Screenshot History" = "Sk\U00E4rmbildshistorik";
 "History size:" = "Historikstorlek:";
 "screenshots kept on disk (0 = off)" = "sk\U00E4rmbilder sparade p\U00E5 disk (0 = av)";
+"History size" = "Historikstorlek";
 "Order history by last edit" = "Sortera historik efter senaste redigering";
 "Edited screenshots move to the top. Off keeps them in capture order." = "Redigerade sk\U00E4rmbilder flyttas \U00F6verst. Av beh\U00E5ller dem i f\U00E5ngstordning.";
 "Save Directory" = "Spara-mapp";
 "Save folder:" = "Spara-mapp:";
 "Browse\U2026" = "Bl\U00E4ddra\U2026";
+"Saving" = "Sparande";
+"Save action" = "Sparåtgärd";
+"Save folder" = "Spara-mapp";
+"Filename" = "Filnamn";
 "Appearance" = "Utseende";
 "Accent color:" = "Accentf\U00E4rg:";
 "Icon color:" = "Ikonf\U00E4rg:";
@@ -267,6 +292,9 @@
 "Show window + copy to clipboard" = "Visa f\U00F6nster + kopiera till urklipp";
 "Show window only" = "Visa f\U00F6nster";
 "Copy to clipboard only" = "Kopiera till urklipp";
+"Enter / Quick Capture" = "Enter / Snabbfångst";
+"OCR & QR Capture" = "OCR- & QR-fångst";
+"Show results window" = "Visa resultatfönster";
 "Enter / Quick Capture:" = "Enter / Snabbf\U00E5ngst:";
 "Save to file" = "Spara till fil";
 "Save + copy to clipboard" = "Spara + kopiera till urklipp";
@@ -280,6 +308,10 @@
 "Default" = "Standard";
 "Custom symbol" = "Anpassad symbol";
 "Enter any SF Symbol name (e.g. camera.fill) or pick a preset. Browse names in Apple's SF Symbols app. Invalid names fall back to the default icon." = "Ange valfritt SF Symbol-namn (t.ex. camera.fill) eller v\U00E4lj en f\U00F6rinst\U00E4llning. Bl\U00E4ddra bland namn i Apples SF Symbols-app. Ogiltiga namn \U00E5terg\U00E5r till standardikonen.";
+"Menu bar icon" = "Menyradsikon";
+"Symbol" = "Symbol";
+"No SF Symbol by that name — the default icon is used." = "Det finns ingen SF Symbol med det namnet — standardikonen används.";
+"Theme" = "Tema";
 
 /* Preferences - Shortcuts */
 "Keyboard Shortcuts" = "Kortkommandon";
@@ -287,6 +319,9 @@
 "Clear shortcut" = "Rensa genv\U00E4g";
 "Press keys..." = "Tryck p\U00E5 tangenter...";
 "Waiting..." = "V\U00E4ntar...";
+"Press a shortcut…" = "Tryck på en genväg…";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "Klicka på en genväg och tryck på en tangentkombination med minst en modifierare (⌘, ⌥, ⌃, ⇧). Esc avbryter. Funktionstangenter fungerar på egen hand.";
+"These apply inside the capture overlay and the editor window." = "Dessa gäller i fångstöverlagringen och redigeringsfönstret.";
 
 /* Preferences - Tools */
 "Annotation Tools" = "Anteckningsverktyg";
@@ -304,6 +339,10 @@
 
 /* Preferences - Recording */
 "Frame rate:" = "Bildfrekvens:";
+"Frame rate" = "Bildfrekvens";
+"%d fps" = "%d fps";
+"When done" = "När klar";
+"Shape" = "Form";
 "After recording:" = "Efter inspelning:";
 "Save recording to:" = "Spara inspelning till:";
 "Save Recording" = "Spara inspelning";
@@ -314,6 +353,8 @@
 "Auto-scroll (sends synthetic scroll events)" = "Auto-rullning (skickar syntetiska rullh\U00E4ndelser)";
 "Detect fixed/sticky headers" = "Identifiera fasta/klistrade rubriker";
 "Scroll speed:" = "Rullhastighet:";
+"Scroll speed" = "Rullhastighet";
+"Max height" = "Maxhöjd";
 "Slow" = "L\U00E5ngsam";
 "Medium" = "Medel";
 "Fast" = "Snabb";
@@ -328,21 +369,44 @@
 "MP4 (H.264)" = "MP4 (H.264)";
 "GIF" = "GIF";
 
+/* Settings - Beautify */
+"Beautify captures" = "Försköna fångster";
+"Frame" = "Ram";
+"Window chrome" = "Fönsterram";
+"Rounded corners" = "Rundade hörn";
+"Corner radius" = "Hörnradie";
+"Background blur" = "Bakgrundsoskärpa";
+"Style" = "Stil";
+"Use desktop wallpaper" = "Använd skrivbordsbakgrund";
+"Choose image…" = "Välj bild…";
+"Places the capture on a background with rounded corners and a drop shadow." = "Placerar fångsten på en bakgrund med rundade hörn och slagskugga.";
+"Places the capture on a gradient background with rounded corners and a drop shadow. The style is chosen from the toolbar." = "Placerar fångsten på en gradientbakgrund med rundade hörn och slagskugga. Stilen väljs i verktygsfältet.";
+
 /* Preferences - Upload */
 "Upload Service" = "Uppladdningstj\U00E4nst";
 "Upload Provider" = "Uppladdningsleverant\U00F6r";
 "Provider:" = "Leverant\U00F6r:";
+"Provider" = "Leverantör";
 "Google Drive" = "Google Drive";
 "Google Drive (images + videos)" = "Google Drive (bilder + videor)";
 "imgbb (images only)" = "imgbb (endast bilder)";
 "S3-Compatible (images + videos)" = "S3-kompatibel (bilder + videor)";
+"GitHub repository" = "GitHub-repository";
+"GitHub repository (images + videos)" = "GitHub-repository (bilder + videor)";
 "S3-Compatible Storage" = "S3-kompatibel lagring";
 "Sign In with Google" = "Logga in med Google";
 "Sign Out" = "Logga ut";
 "Signed in" = "Inloggad";
 "Not signed in" = "Inte inloggad";
 "Account:" = "Konto:";
+"Account" = "Konto";
+"Connection" = "Anslutning";
+"Checking…" = "Kontrollerar…";
+"Connected — the token can write to this repository." = "Ansluten — denna token kan skriva till detta repository.";
+"Connected, but the token cannot write to this repository." = "Ansluten, men denna token kan inte skriva till detta repository.";
 "Folder:" = "Mapp:";
+"Folder" = "Mapp";
+"Ask before uploading" = "Fråga före uppladdning";
 "Test Connection" = "Testa anslutning";
 "Fill in endpoint, bucket, and credentials first" = "Fyll i endpoint, bucket och inloggningsuppgifter f\U00F6rst";
 "Testing..." = "Testar...";
@@ -355,9 +419,17 @@
 "Secret Key:" = "Hemlig nyckel:";
 "Public URL:" = "Publik URL:";
 "Path Prefix:" = "S\U00F6kv\U00E4gsprefix:";
+"Access Key" = "Åtkomstnyckel";
+"Secret Key" = "Hemlig nyckel";
+"Bucket" = "Bucket";
+"Region" = "Region";
+"Endpoint" = "Endpoint";
+"Public URL" = "Publik URL";
+"Path Prefix" = "Sökvägsprefix";
 "Make uploads publicly readable" = "G\U00F6r uppladdningar publikt l\U00E4sbara";
 "Sends the public-read ACL so uploaded files are viewable by anyone with the link. Needed for AWS S3, DigitalOcean Spaces, MinIO and Backblaze B2, which store objects privately by default. Leave off for Cloudflare R2, which has no ACLs and rejects the header." = "Skickar public-read ACL s\U00E5 att uppladdade filer kan ses av alla med l\U00E4nken. Kr\U00E4vs f\U00F6r AWS S3, DigitalOcean Spaces, MinIO och Backblaze B2, som lagrar objekt privat som standard. L\U00E4mna av f\U00F6r Cloudflare R2, som saknar ACL och avvisar headern.";
 "API key:" = "API-nyckel:";
+"API key" = "API-nyckel";
 "Upload History" = "Uppladdningshistorik";
 "No uploads yet." = "Inga uppladdningar \U00E4nnu.";
 "Base URL for public access. If empty, the S3 endpoint URL is used (may not be publicly accessible)." = "Bas-URL f\U00F6r publik \U00E5tkomst. Om tomt anv\U00E4nds S3-endpointens URL (kanske inte publikt tillg\U00E4nglig).";
@@ -367,11 +439,24 @@
 "Sign in to Google Drive in Preferences" = "Logga in p\U00E5 Google Drive i Inst\U00E4llningar";
 "Video upload requires Google Drive or S3" = "Videouppladdning kr\U00E4ver Google Drive eller S3";
 
+/* Uploads - GitHub */
+"Token" = "Token";
+"Repository" = "Repository";
+"Branch" = "Branch";
+"Domain" = "Domän";
+"Custom domain" = "Egen domän";
+"Link style" = "Länkstil";
+"Example link" = "Exempellänk";
+"Create a fine-grained token with Contents write access to this one repository. The repository must be public for the links to be readable without a token." = "Skapa en fine-grained token med skrivåtkomst till Contents för just detta repository. Det måste vara publikt för att länkarna ska gå att läsa utan token.";
+"Video upload requires Google Drive, S3 or GitHub" = "Videouppladdning kräver Google Drive, S3 eller GitHub";
+
 /* Preferences - About */
 "macshot" = "macshot";
 "Version %@ (%@)" = "Version %@ (%@)";
 "Made by" = "Skapad av";
 "Licensed under the GPLv3" = "Licensierad under GPLv3";
+"Licensed under GPLv3" = "Licensierad under GPLv3";
+"Copies display and capture diagnostics to the clipboard" = "Kopierar skärm- och fångstdiagnostik till urklipp";
 "A free, open-source screenshot & screen recording tool for macOS.\nFully native \U2014 built with Swift and AppKit." = "Ett gratis sk\U00E4rmbilds- och sk\U00E4rminspelningsverktyg med \U00F6ppen k\U00E4llkod f\U00F6r macOS.\nHelt inbyggt \U2014 byggt med Swift och AppKit.";
 
 /* Alerts */
@@ -417,6 +502,16 @@
 "Uploading... %d%%" = "Laddar upp... %d%%";
 "Upload failed: %@" = "Uppladdning misslyckades: %@";
 "Uploaded! Link copied." = "Uppladdat! L\U00E4nk kopierad.";
+"Uploading…" = "Laddar upp…";
+"Link copied: %@" = "Länk kopierad: %@";
+"Could not encode the image." = "Det gick inte att koda bilden.";
+"Google Drive not signed in" = "Inte inloggad på Google Drive";
+"S3 not configured — check Settings" = "S3 är inte konfigurerat — kontrollera Inställningar";
+"GitHub upload is not configured — check Settings." = "GitHub-uppladdning är inte konfigurerad — kontrollera Inställningar.";
+"GitHub rejected the token — check that it has contents write access to the repository." = "GitHub avvisade denna token — kontrollera att den har skrivåtkomst till contents för detta repository.";
+"Repository or branch not found — check the owner/repo and branch name." = "Repository eller branch hittades inte — kontrollera owner/repo och branchnamnet.";
+"GitHub returned a response macshot could not read." = "GitHub returnerade ett svar som macshot inte kunde läsa.";
+"%@ is too large for a GitHub repository — upload it to S3 or Google Drive instead." = "%@ är för stor för ett GitHub-repository – ladda upp den till S3 eller Google Drive i stället.";
 "Uploading to %@... %d%%" = "Laddar upp till %@... %d%%";
 "Open" = "\U00D6ppna";
 
@@ -554,6 +649,9 @@
 "Google Translate" = "Google Translate";
 "Apple (on-device)" = "Apple (p\U00E5 enheten)";
 "Apple translation is faster and works offline. Google Translate supports more languages." = "Apple-\U00F6vers\U00E4ttning \U00E4r snabbare och fungerar offline. Google Translate st\U00F6der fler spr\U00E5k.";
+"Engine" = "Motor";
+"Apple" = "Apple";
+"Google" = "Google";
 "Download language packs in System Settings\U2026" = "Ladda ner spr\U00E5kpaket i Systeminst\U00E4llningar\U2026";
 "Configure S3 in Settings" = "Konfigurera S3 i Inst\U00E4llningar";
 "Sign in to Google Drive in Settings" = "Logga in p\U00E5 Google Drive i Inst\U00E4llningar";

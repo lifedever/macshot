@@ -53,6 +53,7 @@
 
 /* Floating Thumbnail */
 "Close All" = "Đóng tất cả";
+"View" = "Xem";
 "Save" = "Lưu";
 
 /* Editor Top Bar */
@@ -185,6 +186,7 @@
 "  (Tab to toggle)" = "  (Tab để chuyển)";
 "  (Tab to switch)" = "  (Tab để chuyển đổi)";
 "Right-click to copy" = "Nhấp chuột phải để sao chép";
+"Press C to copy" = "Nhấn C để sao chép";
 "Copied %@" = "Đã sao chép %@";
 "Set color %@" = "Đặt màu %@";
 "Draw something first to use the move tool." = "Hãy vẽ gì đó trước khi dùng công cụ di chuyển.";
@@ -228,6 +230,8 @@
 "Launch at login" = "Khởi chạy khi đăng nhập";
 "Show snap alignment guides" = "Hiển thị đường căn chỉnh bắt dính";
 "Snap selection edges to image boundaries" = "Bắt dính cạnh vùng chọn vào ranh giới ảnh";
+"Snapping" = "Bắt dính";
+"Haptic feedback when snapping" = "Phản hồi rung khi bắt dính";
 "Enhance browser and Electron element snapping" = "Nâng cao bắt dính phần tử trình duyệt và Electron";
 "Builds the target app's accessibility tree in Element mode. Disable this if a browser or Electron app becomes slow or has input issues." = "Xây dựng cây khả năng truy cập của ứng dụng đích trong Chế độ phần tử. Tắt tính năng này nếu trình duyệt hoặc ứng dụng Electron trở nên chậm hoặc gặp sự cố nhập liệu.";
 "Capture mouse cursor in screenshot" = "Chụp con trỏ chuột trong ảnh";
@@ -242,6 +246,9 @@
 "Default" = "Mặc định";
 "Custom symbol" = "Ký hiệu tùy chỉnh";
 "Enter any SF Symbol name (e.g. camera.fill) or pick a preset. Browse names in Apple's SF Symbols app. Invalid names fall back to the default icon." = "Nhập bất kỳ tên SF Symbol nào (ví dụ: camera.fill) hoặc chọn một cài sẵn. Duyệt tên trong ứng dụng SF Symbols của Apple. Tên không hợp lệ sẽ chuyển về biểu tượng mặc định.";
+"Menu bar icon" = "Biểu tượng thanh menu";
+"Symbol" = "Ký hiệu";
+"No SF Symbol by that name — the default icon is used." = "Không có SF Symbol nào tên này — sẽ dùng biểu tượng mặc định.";
 "Menu Bar Order" = "Thứ tự thanh menu";
 "Choose the order of capture actions in the macshot menu bar menu." = "Chọn thứ tự các hành động chụp trong menu thanh menu của macshot.";
 "Move up" = "Di chuyển lên";
@@ -250,13 +257,24 @@
 "Check for beta updates" = "Kiểm tra bản cập nhật beta";
 "Thumbnail" = "Ảnh thu nhỏ";
 "  Dismiss after:" = "  Ẩn sau:";
+"Floating Preview" = "Bản xem trước nổi";
+"Dismiss after" = "Ẩn sau";
+"Never" = "Không bao giờ";
+"3 seconds" = "3 giây";
+"5 seconds" = "5 giây";
+"10 seconds" = "10 giây";
+"30 seconds" = "30 giây";
 "seconds before auto-dismiss (0 = never)" = "giây trước khi tự động ẩn (0 = không bao giờ)";
 "  Multiple previews:" = "  Nhiều bản xem trước:";
+"Multiple previews" = "Nhiều bản xem trước";
 "Stack (keep all)" = "Xếp chồng (giữ tất cả)";
 "Replace (show only latest)" = "Thay thế (chỉ hiển thị mới nhất)";
 "Output" = "Đầu ra";
 "Image format:" = "Định dạng ảnh:";
+"Image" = "Hình ảnh";
+"Image format" = "Định dạng ảnh";
 "Quality:" = "Chất lượng:";
+"Quality" = "Chất lượng";
 "%d%%" = "%d%%";
 "Save at standard resolution (1x)" = "Lưu ở độ phân giải tiêu chuẩn (1x)";
 "Halves dimensions on Retina displays, ~4x smaller files" = "Giảm một nửa kích thước trên màn hình Retina, tệp nhỏ hơn ~4 lần";
@@ -264,9 +282,12 @@
 "Ensures consistent colors across different displays" = "Đảm bảo màu sắc đồng nhất trên các màn hình khác nhau";
 "Screenshot History" = "Lịch sử ảnh chụp";
 "History size:" = "Dung lượng lịch sử:";
+"History size" = "Dung lượng lịch sử";
 "screenshots kept on disk (0 = off)" = "ảnh chụp lưu trên ổ đĩa (0 = tắt)";
 "Save Directory" = "Thư mục lưu";
 "Save folder:" = "Thư mục lưu:";
+"Saving" = "Lưu";
+"Save folder" = "Thư mục lưu";
 "Browse…" = "Duyệt…";
 "Appearance" = "Giao diện";
 "Accent color:" = "Màu nhấn:";
@@ -275,13 +296,17 @@
 "Reset" = "Đặt lại";
 "OCR Capture:" = "Chụp OCR:";
 "OCR & QR Capture:" = "Chụp OCR & QR:";
+"OCR & QR Capture" = "Chụp OCR & QR";
+"Show results window" = "Hiện cửa sổ kết quả";
 "Show window + copy to clipboard" = "Hiện cửa sổ + sao chép vào bộ nhớ tạm";
 "Show window only" = "Chỉ hiện cửa sổ";
 "Copy to clipboard only" = "Chỉ sao chép vào bộ nhớ tạm";
 "Enter / Quick Capture:" = "Enter / Chụp nhanh:";
+"Enter / Quick Capture" = "Enter / Chụp nhanh";
 "Save to file" = "Lưu vào tệp";
 "Save + copy to clipboard" = "Lưu + sao chép vào bộ nhớ tạm";
 "Save action:" = "Hành động lưu:";
+"Save action" = "Hành động lưu";
 "Save to default folder" = "Lưu vào thư mục mặc định";
 "Ask where to save" = "Hỏi nơi lưu";
 "OCR Action" = "Hành động OCR";
@@ -292,6 +317,9 @@
 "Clear shortcut" = "Xóa phím tắt";
 "Press keys..." = "Nhấn phím...";
 "Waiting..." = "Đang chờ...";
+"Press a shortcut…" = "Nhấn một phím tắt…";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "Nhấp vào một phím tắt rồi nhấn tổ hợp phím có ít nhất một phím bổ trợ (⌘, ⌥, ⌃, ⇧). Esc để hủy. Các phím chức năng dùng được một mình.";
+"These apply inside the capture overlay and the editor window." = "Các phím tắt này có hiệu lực trong lớp phủ chụp và cửa sổ chỉnh sửa.";
 
 /* Preferences - Tools */
 "Annotation Tools" = "Công cụ chú thích";
@@ -305,16 +333,20 @@
 
 /* Preferences - Recording */
 "Frame rate:" = "Tốc độ khung hình:";
+"Frame rate" = "Tốc độ khung hình";
 "After recording:" = "Sau khi quay:";
+"When done" = "Khi xong";
 "Save recording to:" = "Lưu bản quay vào:";
 "Save Recording" = "Lưu bản quay";
 "Clear" = "Xóa";
 "Max height:" = "Chiều cao tối đa:";
+"Max height" = "Chiều cao tối đa";
 "px (0 = unlimited)" = "px (0 = không giới hạn)";
 "Behavior" = "Hành vi";
 "Auto-scroll (sends synthetic scroll events)" = "Tự động cuộn (gửi sự kiện cuộn giả lập)";
 "Detect fixed/sticky headers" = "Phát hiện tiêu đề cố định/dính";
 "Scroll speed:" = "Tốc độ cuộn:";
+"Scroll speed" = "Tốc độ cuộn";
 "Slow" = "Chậm";
 "Medium" = "Trung bình";
 "Fast" = "Nhanh";
@@ -326,13 +358,29 @@
 "30 fps" = "30 fps";
 "60 fps" = "60 fps";
 "120 fps" = "120 fps";
+"%d fps" = "%d fps";
 "MP4 (H.264)" = "MP4 (H.264)";
 "GIF" = "GIF";
+
+/* Settings - Beautify */
+"Beautify captures" = "Làm đẹp ảnh chụp";
+"Frame" = "Khung";
+"Window chrome" = "Khung cửa sổ";
+"Rounded corners" = "Bo góc";
+"Corner radius" = "Bán kính bo góc";
+"Background blur" = "Làm mờ nền";
+"Style" = "Kiểu";
+"Use desktop wallpaper" = "Dùng hình nền màn hình";
+"Choose image…" = "Chọn ảnh…";
+"Places the capture on a background with rounded corners and a drop shadow." = "Đặt ảnh chụp lên nền có góc bo tròn và đổ bóng.";
+"Places the capture on a gradient background with rounded corners and a drop shadow. The style is chosen from the toolbar." = "Đặt ảnh chụp lên nền chuyển sắc có góc bo tròn và đổ bóng. Kiểu nền được chọn từ thanh công cụ.";
 
 /* Preferences - Upload */
 "Upload Service" = "Dịch vụ tải lên";
 "Upload Provider" = "Nhà cung cấp tải lên";
 "Provider:" = "Nhà cung cấp:";
+"Provider" = "Nhà cung cấp";
+"Ask before uploading" = "Hỏi trước khi tải lên";
 "Google Drive" = "Google Drive";
 "Google Drive (images + videos)" = "Google Drive (ảnh + video)";
 "imgbb (images only)" = "imgbb (chỉ ảnh)";
@@ -343,22 +391,34 @@
 "Signed in" = "Đã đăng nhập";
 "Not signed in" = "Chưa đăng nhập";
 "Account:" = "Tài khoản:";
+"Account" = "Tài khoản";
 "Folder:" = "Thư mục:";
+"Folder" = "Thư mục";
 "Test Connection" = "Kiểm tra kết nối";
+"Connection" = "Kết nối";
+"Checking…" = "Đang kiểm tra…";
 "Fill in endpoint, bucket, and credentials first" = "Điền endpoint, bucket và thông tin xác thực trước";
 "Testing..." = "Đang kiểm tra...";
 "Connection successful!" = "Kết nối thành công!";
 "Leave empty to use default" = "Để trống để dùng mặc định";
 "Endpoint:" = "Endpoint:";
+"Endpoint" = "Endpoint";
 "Region:" = "Vùng:";
+"Region" = "Vùng";
 "Bucket:" = "Bucket:";
+"Bucket" = "Bucket";
 "Access Key:" = "Khóa truy cập:";
+"Access Key" = "Khóa truy cập";
 "Secret Key:" = "Khóa bí mật:";
+"Secret Key" = "Khóa bí mật";
 "Public URL:" = "URL công khai:";
+"Public URL" = "URL công khai";
 "Path Prefix:" = "Tiền tố đường dẫn:";
+"Path Prefix" = "Tiền tố đường dẫn";
 "Make uploads publicly readable" = "Cho phép đọc công khai các tệp tải lên";
 "Sends the public-read ACL so uploaded files are viewable by anyone with the link. Needed for AWS S3, DigitalOcean Spaces, MinIO and Backblaze B2, which store objects privately by default. Leave off for Cloudflare R2, which has no ACLs and rejects the header." = "Gửi ACL public-read để các tệp đã tải lên có thể xem được bởi bất kỳ ai có liên kết. Cần thiết cho AWS S3, DigitalOcean Spaces, MinIO và Backblaze B2 vì các dịch vụ này lưu trữ đối tượng ở chế độ riêng tư theo mặc định. Tắt cho Cloudflare R2 vì không hỗ trợ ACL và sẽ từ chối header.";
 "API key:" = "Khóa API:";
+"API key" = "Khóa API";
 "Upload History" = "Lịch sử tải lên";
 "No uploads yet." = "Chưa có tải lên nào.";
 "Base URL for public access. If empty, the S3 endpoint URL is used (may not be publicly accessible)." = "URL cơ sở để truy cập công khai. Nếu để trống, URL endpoint S3 sẽ được sử dụng (có thể không truy cập được công khai).";
@@ -368,11 +428,32 @@
 "Sign in to Google Drive in Preferences" = "Đăng nhập Google Drive trong Tùy chọn";
 "Video upload requires Google Drive or S3" = "Tải video lên yêu cầu Google Drive hoặc S3";
 
+/* Settings - Uploads: GitHub */
+"GitHub repository" = "Kho GitHub";
+"GitHub repository (images + videos)" = "Kho GitHub (ảnh + video)";
+"Token" = "Token";
+"Repository" = "Kho lưu trữ";
+"Branch" = "Nhánh";
+"Domain" = "Tên miền";
+"Custom domain" = "Tên miền tùy chỉnh";
+"Link style" = "Kiểu liên kết";
+"Example link" = "Liên kết mẫu";
+"Create a fine-grained token with Contents write access to this one repository. The repository must be public for the links to be readable without a token." = "Tạo một fine-grained token có quyền ghi Contents cho riêng kho này. Kho phải ở chế độ công khai thì liên kết mới đọc được mà không cần token.";
+"Connected — the token can write to this repository." = "Đã kết nối — token có thể ghi vào kho này.";
+"Connected, but the token cannot write to this repository." = "Đã kết nối, nhưng token không thể ghi vào kho này.";
+"GitHub upload is not configured — check Settings." = "Chưa cấu hình tải lên GitHub — kiểm tra Cài đặt.";
+"GitHub rejected the token — check that it has contents write access to the repository." = "GitHub đã từ chối token — kiểm tra xem token có quyền ghi contents vào kho này không.";
+"Repository or branch not found — check the owner/repo and branch name." = "Không tìm thấy kho hoặc nhánh — kiểm tra owner/repo và tên nhánh.";
+"GitHub returned a response macshot could not read." = "GitHub trả về phản hồi mà macshot không đọc được.";
+"%@ is too large for a GitHub repository — upload it to S3 or Google Drive instead." = "%@ quá lớn đối với kho GitHub — hãy tải lên S3 hoặc Google Drive.";
+"Video upload requires Google Drive, S3 or GitHub" = "Tải video lên yêu cầu Google Drive, S3 hoặc GitHub";
+
 /* Preferences - About */
 "macshot" = "macshot";
 "Version %@ (%@)" = "Phiên bản %@ (%@)";
 "Made by" = "Được tạo bởi";
 "Licensed under the GPLv3" = "Được cấp phép theo GPLv3";
+"Licensed under GPLv3" = "Được cấp phép theo GPLv3";
 "A free, open-source screenshot & screen recording tool for macOS.\nFully native — built with Swift and AppKit." = "Công cụ chụp ảnh và quay màn hình mã nguồn mở, miễn phí cho macOS.\nHoàn toàn gốc — được xây dựng bằng Swift và AppKit.";
 
 /* Alerts */
@@ -417,8 +498,10 @@
 /* Upload Toast */
 "URL copied to the clipboard" = "Đã sao chép URL vào bộ nhớ tạm";
 "Uploading... %d%%" = "Đang tải lên... %d%%";
+"Uploading…" = "Đang tải lên…";
 "Upload failed: %@" = "Tải lên thất bại: %@";
 "Uploaded! Link copied." = "Đã tải lên! Đã sao chép liên kết.";
+"Link copied: %@" = "Đã sao chép liên kết: %@";
 "Uploading to %@... %d%%" = "Đang tải lên %@... %d%%";
 "Open" = "Mở";
 
@@ -437,6 +520,7 @@
 "Saved to %@" = "Đã lưu vào %@";
 "Save failed" = "Lưu thất bại";
 "Could not encode the screenshot." = "Không thể mã hóa ảnh chụp màn hình.";
+"Could not encode the image." = "Không thể mã hóa hình ảnh.";
 "Could not save the screenshot: %@" = "Không thể lưu ảnh chụp màn hình: %@";
 "Could not save the screenshot to history." = "Không thể lưu ảnh chụp màn hình vào lịch sử.";
 
@@ -550,20 +634,29 @@
 "Pause" = "Tạm dừng";
 "Resume" = "Tiếp tục";
 "Engine:" = "Công cụ:";
+"Engine" = "Công cụ";
 "Google Translate" = "Google Translate";
 "Apple (on-device)" = "Apple (trên thiết bị)";
+"Apple" = "Apple";
+"Google" = "Google";
 "Apple translation is faster and works offline. Google Translate supports more languages." = "Bản dịch Apple nhanh hơn và hoạt động ngoại tuyến. Google Translate hỗ trợ nhiều ngôn ngữ hơn.";
 "Download language packs in System Settings…" = "Tải gói ngôn ngữ trong Cài đặt hệ thống…";
 "Configure S3 in Settings" = "Cấu hình S3 trong Cài đặt";
 "Sign in to Google Drive in Settings" = "Đăng nhập Google Drive trong Cài đặt";
+"Google Drive not signed in" = "Chưa đăng nhập Google Drive";
+"S3 not configured — check Settings" = "Chưa cấu hình S3 — kiểm tra Cài đặt";
 "Offline build: upload and cloud storage integrations are removed. Update checks may still connect to MacShot's update server. Screenshots and recordings stay local unless you share or save them yourself." = "Bản dựng ngoại tuyến: các tích hợp tải lên và lưu trữ đám mây đã bị loại bỏ. Việc kiểm tra cập nhật vẫn có thể kết nối đến máy chủ cập nhật của MacShot. Ảnh chụp màn hình và bản ghi vẫn được lưu cục bộ trừ khi bạn tự chia sẻ hoặc lưu chúng.";
 "Position:" = "Vị trí:";
 "  Position:" = "  Vị trí:";
+"Position" = "Vị trí";
 "Size:" = "Kích thước:";
 "Shape:" = "Hình dạng:";
+"Shape" = "Hình dạng";
 
 "Same as screenshots" = "Giống như ảnh chụp màn hình";
 "  Preview size:" = "  Kích thước xem trước:";
+"Preview size" = "Kích thước xem trước";
+"Preview" = "Xem trước";
 "Fit image in preview (letterbox)" = "Hiển thị trọn ảnh trong xem trước (có viền đen)";
 "(0 = off)" = "(0 = tắt)";
 "Clear All" = "Xóa tất cả";
@@ -622,11 +715,13 @@
 "Preview:" = "Xem trước:";
 "Copy Screen Info" = "Sao chép thông tin màn hình";
 "Copies display and capture diagnostics to clipboard" = "Sao chép thông tin chẩn đoán màn hình và ảnh chụp vào bộ nhớ tạm";
+"Copies display and capture diagnostics to the clipboard" = "Sao chép thông tin chẩn đoán màn hình và ảnh chụp vào bộ nhớ tạm";
 "Accent" = "Nhấn";
 "Icon" = "Biểu tượng";
 "Background" = "Nền";
 "Custom" = "Tùy chỉnh";
 "Theme:" = "Chủ đề:";
+"Theme" = "Chủ đề";
 "Application" = "Ứng dụng";
 "Capture area and extract text" = "Chụp vùng chọn và trích xuất văn bản";
 "Capture the full screen" = "Chụp toàn bộ màn hình";
@@ -635,6 +730,7 @@
 "Filename Template Tokens" = "Token mẫu tên tệp";
 "Filename tokens" = "Token tên tệp";
 "Filename:" = "Tên tệp:";
+"Filename" = "Tên tệp";
 "Open an image file in the editor" = "Mở tệp ảnh trong trình chỉnh sửa";
 "Open the recent captures overlay" = "Mở lớp phủ ảnh chụp gần đây";
 "Open this settings window" = "Mở cửa sổ cài đặt này";

@@ -180,6 +180,7 @@
 "Enhance browser and Electron element snapping" = "بهبود چسبش عناصر مرورگر و الکترون";
 "Builds the target app's accessibility tree in Element mode. Disable this if a browser or Electron app becomes slow or has input issues." = "درخت دسترسی‌پذیری برنامه هدف را در حالت عنصر می‌سازد. اگر مرورگر یا برنامه الکترون کند می‌شود یا مشکلات ورودی دارد، این را غیرفعال کنید.";
 "Right-click to copy" = "کلیک راست برای کپی";
+"Press C to copy" = "برای کپی C را فشار دهید";
 "Copied %@" = "کپی شد %@";
 "Set color %@" = "تنظیم رنگ %@";
 "Draw something first to use the move tool." = "ابتدا چیزی بکشید تا بتوانید از ابزار جابجایی استفاده کنید.";
@@ -212,6 +213,8 @@
 "Launch at login" = "اجرا هنگام ورود";
 "Show snap alignment guides" = "نمایش خطوط راهنمای تراز";
 "Snap selection edges to image boundaries" = "چسباندن لبه‌های انتخاب به مرزهای تصویر";
+"Snapping" = "چسبش";
+"Haptic feedback when snapping" = "بازخورد لمسی هنگام چسبش";
 "Capture mouse cursor in screenshot" = "ضبط نشانگر موس در تصویر صفحه";
 "Double-click selection to copy" = "دوبار کلیک روی انتخاب برای کپی";
 "Hide capture instructions" = "پنهان کردن راهنمای تصویربرداری";
@@ -224,6 +227,9 @@
 "Default" = "پیش‌فرض";
 "Custom symbol" = "نماد سفارشی";
 "Enter any SF Symbol name (e.g. camera.fill) or pick a preset. Browse names in Apple's SF Symbols app. Invalid names fall back to the default icon." = "هر نام SF Symbol دلخواه (مثلاً camera.fill) را وارد کنید یا یک پیش‌تنظیم انتخاب کنید. نام‌ها را در برنامه SF Symbols اپل مرور کنید. نام‌های نامعتبر به آیکون پیش‌فرض بازمی‌گردند.";
+"Menu bar icon" = "آیکون نوار منو";
+"Symbol" = "نماد";
+"No SF Symbol by that name — the default icon is used." = "هیچ SF Symbol با این نام وجود ندارد — از آیکون پیش‌فرض استفاده می‌شود.";
 "Check for updates automatically" = "بررسی خودکار به‌روزرسانی‌ها";
 "Check for beta updates" = "بررسی به‌روزرسانی‌های بتا";
 "Thumbnail" = "تصویر بندانگشتی";
@@ -231,6 +237,20 @@
 "seconds before auto-dismiss (0 = never)" = "ثانیه قبل از بستن خودکار (0 = هرگز)";
 "  Multiple previews:" = "  پیش‌نمایش‌های متعدد:";
 "  Position:" = "  موقعیت:";
+
+/* Settings — Floating Preview */
+"Floating Preview" = "پیش‌نمایش شناور";
+"Position" = "موقعیت";
+"Dismiss after" = "بستن بعد از";
+"Never" = "هرگز";
+"3 seconds" = "۳ ثانیه";
+"5 seconds" = "۵ ثانیه";
+"10 seconds" = "۱۰ ثانیه";
+"30 seconds" = "۳۰ ثانیه";
+"Multiple previews" = "پیش‌نمایش‌های متعدد";
+"Preview size" = "اندازه پیش‌نمایش";
+"Preview" = "پیش‌نمایش";
+"View" = "مشاهده";
 "Stack (keep all)" = "روی هم (نگه‌داشتن همه)";
 "Replace (show only latest)" = "جایگزینی (فقط نمایش آخرین)";
 "Menu Bar Order" = "ترتیب نوار منو";
@@ -240,6 +260,9 @@
 "Output" = "خروجی";
 "Image format:" = "فرمت تصویر:";
 "Quality:" = "کیفیت:";
+"Image" = "تصویر";
+"Image format" = "فرمت تصویر";
+"Quality" = "کیفیت";
 "%d%%" = "%d%%";
 "Save at standard resolution (1x)" = "ذخیره با وضوح استاندارد (1x)";
 "Halves dimensions on Retina displays, ~4x smaller files" = "ابعاد را در نمایشگرهای Retina نصف می‌کند، فایل‌ها حدود ۴ برابر کوچکتر";
@@ -247,6 +270,7 @@
 "Ensures consistent colors across different displays" = "رنگ‌های یکسان در نمایشگرهای مختلف را تضمین می‌کند";
 "Screenshot History" = "تاریخچه تصاویر صفحه";
 "History size:" = "اندازه تاریخچه:";
+"History size" = "اندازه تاریخچه";
 "screenshots kept on disk (0 = off)" = "تصویر صفحه نگهداری‌شده روی دیسک (0 = خاموش)";
 "Order history by last edit" = "مرتب‌سازی تاریخچه بر اساس آخرین ویرایش";
 "Edited screenshots move to the top. Off keeps them in capture order." = "تصاویر صفحه ویرایش‌شده به بالا منتقل می‌شوند. خاموش‌بودن آن‌ها را به ترتیب گرفتن نگه می‌دارد.";
@@ -258,20 +282,28 @@
 "Save action:" = "عملکرد ذخیره:";
 "Save to default folder" = "ذخیره در پوشه پیش‌فرض";
 "Ask where to save" = "پرسش درباره محل ذخیره";
+"Saving" = "ذخیره‌سازی";
+"Save action" = "عملکرد ذخیره";
+"Save folder" = "پوشه ذخیره";
+"Filename" = "نام فایل";
 "Appearance" = "ظاهر";
 "Accent color:" = "رنگ تاکیدی:";
 "Icon color:" = "رنگ آیکون:";
 "Background color:" = "رنگ پس‌زمینه:";
+"Theme" = "تم";
 "Reset" = "بازنشانی";
 "OCR Capture:" = "ضبط OCR:";
 "Show window + copy to clipboard" = "نمایش پنجره + کپی به کلیپ‌بورد";
 "Show window only" = "فقط نمایش پنجره";
 "Copy to clipboard only" = "فقط کپی به کلیپ‌بورد";
+"Show results window" = "نمایش پنجره نتایج";
 "Enter / Quick Capture:" = "Enter / ضبط سریع:";
+"Enter / Quick Capture" = "Enter / ضبط سریع";
 "Save to file" = "ذخیره در فایل";
 "Save + copy to clipboard" = "ذخیره + کپی به کلیپ‌بورد";
 "OCR Action" = "عملکرد OCR";
 "OCR & QR Capture:" = "ضبط OCR و QR:";
+"OCR & QR Capture" = "ضبط OCR و QR";
 "OCR & QR" = "OCR و QR";
 "Text & QR Recognition" = "تشخیص متن و QR";
 "Capture OCR & QR" = "ضبط OCR و QR";
@@ -286,6 +318,9 @@
 "Clear shortcut" = "پاک کردن میانبر";
 "Press keys..." = "کلیدها را فشار دهید...";
 "Waiting..." = "در انتظار...";
+"Press a shortcut…" = "یک میانبر فشار دهید…";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "روی یک میانبر کلیک کنید و ترکیب کلیدی با حداقل یک کلید تغییردهنده (⌘، ⌥، ⌃، ⇧) فشار دهید. Esc لغو می‌کند. کلیدهای تابعی به‌تنهایی کار می‌کنند.";
+"These apply inside the capture overlay and the editor window." = "این‌ها در همپوشانی ضبط و پنجره ویرایشگر اعمال می‌شوند.";
 
 /* Preferences - Tools */
 "Annotation Tools" = "ابزارهای حاشیه‌نویسی";
@@ -299,16 +334,20 @@
 
 /* Preferences - Recording */
 "Frame rate:" = "نرخ فریم:";
+"Frame rate" = "نرخ فریم";
 "After recording:" = "پس از ضبط ویدیو:";
+"When done" = "پس از اتمام";
 "Save recording to:" = "ذخیره ضبط ویدیو در:";
 "Save Recording" = "ذخیره ضبط";
 "Clear" = "پاک کردن";
 "Max height:" = "حداکثر ارتفاع:";
+"Max height" = "حداکثر ارتفاع";
 "px (0 = unlimited)" = "px (0 = نامحدود)";
 "Behavior" = "رفتار";
 "Auto-scroll (sends synthetic scroll events)" = "پیمایش خودکار (ارسال رویدادهای پیمایش مصنوعی)";
 "Detect fixed/sticky headers" = "تشخیص سربرگ‌های ثابت/چسبنده";
 "Scroll speed:" = "سرعت پیمایش:";
+"Scroll speed" = "سرعت پیمایش";
 "Slow" = "آهسته";
 "Medium" = "متوسط";
 "Fast" = "سریع";
@@ -320,13 +359,29 @@
 "30 fps" = "30 fps";
 "60 fps" = "60 fps";
 "120 fps" = "120 fps";
+"%d fps" = "%d fps";
 "MP4 (H.264)" = "MP4 (H.264)";
 "GIF" = "GIF";
+
+/* Settings — Beautify */
+"Beautify captures" = "زیباسازی ضبط‌ها";
+"Frame" = "قاب";
+"Window chrome" = "قاب پنجره";
+"Rounded corners" = "گوشه‌های گرد";
+"Corner radius" = "شعاع گوشه";
+"Background blur" = "تاری پس‌زمینه";
+"Style" = "سبک";
+"Use desktop wallpaper" = "استفاده از تصویر پس‌زمینه دسکتاپ";
+"Choose image…" = "انتخاب تصویر…";
+"Places the capture on a background with rounded corners and a drop shadow." = "تصویر ضبط‌شده را روی پس‌زمینه‌ای با گوشه‌های گرد و سایه قرار می‌دهد.";
+"Places the capture on a gradient background with rounded corners and a drop shadow. The style is chosen from the toolbar." = "تصویر ضبط‌شده را روی پس‌زمینه‌ای گرادیانی با گوشه‌های گرد و سایه قرار می‌دهد. سبک از نوار ابزار انتخاب می‌شود.";
 
 /* Preferences - Upload */
 "Upload Service" = "سرویس بارگذاری";
 "Upload Provider" = "ارائه‌دهنده بارگذاری";
 "Provider:" = "ارائه‌دهنده:";
+"Provider" = "ارائه‌دهنده";
+"Ask before uploading" = "پرسش قبل از بارگذاری";
 "Google Drive" = "Google Drive";
 "Google Drive (images + videos)" = "Google Drive (تصاویر + ویدیوها)";
 "imgbb (images only)" = "imgbb (فقط تصاویر)";
@@ -337,11 +392,17 @@
 "Signed in" = "وارد شده";
 "Not signed in" = "وارد نشده";
 "Account:" = "حساب کاربری:";
+"Account" = "حساب کاربری";
 "Folder:" = "پوشه:";
+"Folder" = "پوشه";
 "Test Connection" = "تست اتصال";
+"Connection" = "اتصال";
+"Checking…" = "در حال بررسی…";
 "Fill in endpoint, bucket, and credentials first" = "ابتدا آدرس، باکت و اطلاعات ورود را پر کنید";
 "Testing..." = "در حال تست...";
 "Connection successful!" = "اتصال موفقیت‌آمیز بود!";
+"Connected — the token can write to this repository." = "متصل شد — توکن می‌تواند در این مخزن بنویسد.";
+"Connected, but the token cannot write to this repository." = "متصل شد، اما توکن نمی‌تواند در این مخزن بنویسد.";
 "Leave empty to use default" = "برای استفاده از پیش‌فرض خالی بگذارید";
 "Endpoint:" = "آدرس:";
 "Region:" = "منطقه:";
@@ -350,9 +411,17 @@
 "Secret Key:" = "کلید محرمانه:";
 "Public URL:" = "آدرس عمومی:";
 "Path Prefix:" = "پیشوند مسیر:";
+"Endpoint" = "آدرس";
+"Region" = "منطقه";
+"Bucket" = "باکت";
+"Access Key" = "کلید دسترسی";
+"Secret Key" = "کلید محرمانه";
+"Public URL" = "آدرس عمومی";
+"Path Prefix" = "پیشوند مسیر";
 "Make uploads publicly readable" = "قابل خواندن عمومی کردن بارگذاری‌ها";
 "Sends the public-read ACL so uploaded files are viewable by anyone with the link. Needed for AWS S3, DigitalOcean Spaces, MinIO and Backblaze B2, which store objects privately by default. Leave off for Cloudflare R2, which has no ACLs and rejects the header." = "ACL از نوع public-read ارسال می‌کند تا فایل‌های بارگذاری‌شده برای هر کسی که لینک را دارد قابل مشاهده باشند. برای AWS S3، DigitalOcean Spaces، MinIO و Backblaze B2 که اشیاء را به صورت خصوصی ذخیره می‌کنند لازم است. برای Cloudflare R2 که ACLs ندارد و هدر را رد می‌کند، خاموش بگذارید.";
 "API key:" = "کلید API:";
+"API key" = "کلید API";
 "Upload History" = "تاریخچه بارگذاری";
 "No uploads yet." = "هنوز بارگذاری‌ای انجام نشده.";
 "Base URL for public access. If empty, the S3 endpoint URL is used (may not be publicly accessible)." = "آدرس پایه برای دسترسی عمومی. اگر خالی باشد، آدرس S3 استفاده می‌شود (ممکن است به صورت عمومی قابل دسترسی نباشد).";
@@ -362,11 +431,25 @@
 "Sign in to Google Drive in Preferences" = "ورود به Google Drive در تنظیمات";
 "Video upload requires Google Drive or S3" = "بارگذاری ویدیو نیاز به Google Drive یا S3 دارد";
 
+/* Settings — GitHub upload */
+"GitHub repository" = "مخزن GitHub";
+"GitHub repository (images + videos)" = "مخزن GitHub (تصاویر + ویدیوها)";
+"Token" = "توکن";
+"Repository" = "مخزن";
+"Branch" = "شاخه";
+"Link style" = "سبک لینک";
+"Custom domain" = "دامنه سفارشی";
+"Domain" = "دامنه";
+"Example link" = "نمونه لینک";
+"Create a fine-grained token with Contents write access to this one repository. The repository must be public for the links to be readable without a token." = "یک fine-grained token با دسترسی نوشتن Contents فقط برای همین مخزن بسازید. مخزن باید عمومی باشد تا لینک‌ها بدون توکن قابل خواندن باشند.";
+"Video upload requires Google Drive, S3 or GitHub" = "بارگذاری ویدیو نیاز به Google Drive، S3 یا GitHub دارد";
+
 /* Preferences - About */
 "macshot" = "macshot";
 "Version %@ (%@)" = "نسخه %@ (%@)";
 "Made by" = "ساخته شده توسط";
 "Licensed under the GPLv3" = "تحت مجوز GPLv3";
+"Licensed under GPLv3" = "تحت مجوز GPLv3";
 "A free, open-source screenshot & screen recording tool for macOS.\nFully native — built with Swift and AppKit." = "ابزار رایگان و متن‌باز تصویربرداری و ضبط ویدیو از صفحه برای macOS.\nکاملا بومی — ساخته شده با Swift و AppKit.";
 
 /* Alerts */
@@ -410,8 +493,19 @@
 /* Upload Toast */
 "URL copied to the clipboard" = "آدرس به کلیپ‌بورد کپی شد";
 "Uploading... %d%%" = "در حال بارگذاری... %d%%";
+"Uploading…" = "در حال بارگذاری…";
 "Upload failed: %@" = "بارگذاری ناموفق: %@";
+
+/* Upload errors */
+"Google Drive not signed in" = "به Google Drive وارد نشده‌اید";
+"S3 not configured — check Settings" = "S3 پیکربندی نشده — تنظیمات را بررسی کنید";
+"GitHub upload is not configured — check Settings." = "بارگذاری در GitHub پیکربندی نشده — تنظیمات را بررسی کنید.";
+"GitHub rejected the token — check that it has contents write access to the repository." = "GitHub توکن را رد کرد — بررسی کنید که دسترسی نوشتن contents در مخزن را داشته باشد.";
+"Repository or branch not found — check the owner/repo and branch name." = "مخزن یا شاخه پیدا نشد — owner/repo و نام شاخه را بررسی کنید.";
+"GitHub returned a response macshot could not read." = "GitHub پاسخی برگرداند که macshot نتوانست آن را بخواند.";
+"%@ is too large for a GitHub repository — upload it to S3 or Google Drive instead." = "%@ برای مخزن GitHub خیلی بزرگ است — آن را در S3 یا Google Drive بارگذاری کنید.";
 "Uploaded! Link copied." = "بارگذاری شد! لینک کپی شد.";
+"Link copied: %@" = "لینک کپی شد: %@";
 "Uploading to %@... %d%%" = "در حال بارگذاری به %@... %d%%";
 "Open" = "باز کردن";
 
@@ -438,6 +532,7 @@
 "Choose a folder" = "یک پوشه انتخاب کنید";
 "Save All to Folder…" = "ذخیره همه در پوشه…";
 "Could not encode the screenshot." = "کدگذاری تصویر صفحه ممکن نشد.";
+"Could not encode the image." = "کدگذاری تصویر ممکن نشد.";
 "Could not save the screenshot: %@" = "ذخیره تصویر صفحه ممکن نشد: %@";
 "Could not save the screenshot to history." = "ذخیره تصویر صفحه در تاریخچه ممکن نشد.";
 
@@ -544,8 +639,11 @@
 "Pause" = "مکث";
 "Resume" = "ادامه";
 "Engine:" = "موتور:";
+"Engine" = "موتور";
 "Google Translate" = "Google Translate";
 "Apple (on-device)" = "Apple (روی دستگاه)";
+"Apple" = "Apple";
+"Google" = "Google";
 "Apple translation is faster and works offline. Google Translate supports more languages." = "ترجمه Apple سریع‌تر است و بدون اینترنت کار می‌کند. Google Translate از زبان‌های بیشتری پشتیبانی می‌کند.";
 "Download language packs in System Settings…" = "بسته‌های زبان را در تنظیمات سیستم دانلود کنید…";
 "Configure S3 in Settings" = "پیکربندی S3 در تنظیمات";
@@ -553,6 +651,7 @@
 "Position:" = "موقعیت:";
 "Size:" = "اندازه:";
 "Shape:" = "شکل:";
+"Shape" = "شکل";
 
 "Same as screenshots" = "مشابه اسکرین‌شات‌ها";
 "  Preview size:" = "  اندازه پیش‌نمایش:";
@@ -622,6 +721,7 @@
 "Preview:" = "پیش‌نمایش:";
 "Copy Screen Info" = "کپی اطلاعات صفحه";
 "Copies display and capture diagnostics to clipboard" = "اطلاعات تشخیصی نمایشگر و ضبط را در کلیپ‌بورد کپی می‌کند";
+"Copies display and capture diagnostics to the clipboard" = "اطلاعات تشخیصی نمایشگر و ضبط را در کلیپ‌بورد کپی می‌کند";
 "Accent" = "تاکیدی";
 "Icon" = "آیکون";
 "Background" = "پس‌زمینه";

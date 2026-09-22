@@ -184,6 +184,7 @@
 "  (Tab to toggle)" = "  (Tab om te wisselen)";
 "  (Tab to switch)" = "  (Tab om te schakelen)";
 "Right-click to copy" = "Rechtsklik om te kopiëren";
+"Press C to copy" = "Druk op C om te kopiëren";
 "Copied %@" = "%@ gekopieerd";
 "Set color %@" = "Kleur %@ ingesteld";
 "Draw something first to use the move tool." = "Teken eerst iets om het verplaatsgereedschap te gebruiken.";
@@ -216,6 +217,8 @@
 "Launch at login" = "Open bij inloggen";
 "Show snap alignment guides" = "Uitlijnhulplijnen tonen";
 "Snap selection edges to image boundaries" = "Selectieranden uitlijnen op afbeeldingsgrenzen";
+"Snapping" = "Uitlijnen";
+"Haptic feedback when snapping" = "Haptische feedback bij uitlijnen";
 "Enhance browser and Electron element snapping" = "Verbeter browser- en Electron-element-snap";
 "Builds the target app's accessibility tree in Element mode. Disable this if a browser or Electron app becomes slow or has input issues." = "Bouwt de toegankelijkheidsboom van de doel-app op in Element-modus. Schakel dit uit als een browser of Electron-app traag wordt of invoerproblemen heeft.";
 "Capture mouse cursor in screenshot" = "Muiscursor vastleggen in schermafbeelding";
@@ -234,12 +237,29 @@
 "  Multiple previews:" = "  Meerdere voorbeelden:";
 "Stack (keep all)" = "Stapelen (alles bewaren)";
 "Replace (show only latest)" = "Vervangen (alleen laatste tonen)";
+/* Settings - Floating Preview */
+"Floating Preview" = "Zwevend voorbeeld";
+"Position" = "Positie";
+"Dismiss after" = "Verbergen na";
+"Never" = "Nooit";
+"3 seconds" = "3 seconden";
+"5 seconds" = "5 seconden";
+"10 seconds" = "10 seconden";
+"30 seconds" = "30 seconden";
+"Multiple previews" = "Meerdere voorbeelden";
+"Preview size" = "Voorbeeldgrootte";
+"Preview" = "Voorbeeld";
+"View" = "Bekijk";
+
 "  Position:" = "  Positie:";
 "Menu Bar Order" = "Volgorde menubalk";
 "Choose the order of capture actions in the macshot menu bar menu." = "Kies de volgorde van opname-acties in het menubalkmenu van macshot.";
 "Move up" = "Omhoog verplaatsen";
 "Move down" = "Omlaag verplaatsen";
 "Output" = "Uitvoer";
+"Image" = "Afbeelding";
+"Image format" = "Afbeeldingsformaat";
+"Quality" = "Kwaliteit";
 "Image format:" = "Afbeeldingsformaat:";
 "Quality:" = "Kwaliteit:";
 "%d%%" = "%d%%";
@@ -252,12 +272,17 @@
 "Edited screenshots move to the top. Off keeps them in capture order." = "Bewerkte schermafbeeldingen komen bovenaan. Uit houdt ze in opnamevolgorde.";
 "History size:" = "Geschiedenisgrootte:";
 "screenshots kept on disk (0 = off)" = "schermafbeeldingen bewaard op schijf (0 = uit)";
+"History size" = "Geschiedenisgrootte";
 "Save Directory" = "Opslagmap";
 "Save action:" = "Opslagactie:";
 "Save to default folder" = "Opslaan in standaardmap";
 "Ask where to save" = "Vragen waar op te slaan";
 "Save folder:" = "Opslagmap:";
 "Browse…" = "Bladeren…";
+"Saving" = "Opslaan";
+"Save action" = "Opslagactie";
+"Save folder" = "Opslagmap";
+"Filename" = "Bestandsnaam";
 "Appearance" = "Weergave";
 "Accent color:" = "Accentkleur:";
 "Icon color:" = "Pictogramkleur:";
@@ -267,11 +292,18 @@
 "Default" = "Standaard";
 "Custom symbol" = "Aangepast symbool";
 "Enter any SF Symbol name (e.g. camera.fill) or pick a preset. Browse names in Apple's SF Symbols app. Invalid names fall back to the default icon." = "Voer een willekeurige SF Symbol-naam in (bijv. camera.fill) of kies een voorinstelling. Blader door namen in Apple's SF Symbols-app. Ongeldige namen vallen terug op het standaardpictogram.";
+"Menu bar icon" = "Menubalkpictogram";
+"Symbol" = "Symbool";
+"No SF Symbol by that name — the default icon is used." = "Er bestaat geen SF Symbol met die naam — het standaardpictogram wordt gebruikt.";
+"Theme" = "Thema";
 "OCR Capture:" = "OCR-opname:";
 "OCR & QR Capture:" = "OCR & QR-opname:";
 "Show window + copy to clipboard" = "Venster tonen + kopiëren naar klembord";
 "Show window only" = "Alleen venster tonen";
 "Copy to clipboard only" = "Alleen kopiëren naar klembord";
+"Enter / Quick Capture" = "Enter / Snelle opname";
+"OCR & QR Capture" = "OCR & QR-opname";
+"Show results window" = "Resultatenvenster tonen";
 "Enter / Quick Capture:" = "Enter / Snelle opname:";
 "Save to file" = "Bewaar als bestand";
 "Save + copy to clipboard" = "Bewaar + kopieer naar klembord";
@@ -283,6 +315,9 @@
 "Clear shortcut" = "Sneltoets wissen";
 "Press keys..." = "Druk op toetsen...";
 "Waiting..." = "Wachten...";
+"Press a shortcut…" = "Druk op een sneltoets…";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "Klik op een sneltoets en druk op een toetscombinatie met ten minste één modifier (⌘, ⌥, ⌃, ⇧). Esc annuleert. Functietoetsen werken op zichzelf.";
+"These apply inside the capture overlay and the editor window." = "Deze gelden binnen de opname-overlay en het editorvenster.";
 
 /* Preferences - Tools */
 "Annotation Tools" = "Annotatiegereedschap";
@@ -296,6 +331,10 @@
 
 /* Preferences - Recording */
 "Frame rate:" = "Framesnelheid:";
+"Frame rate" = "Framesnelheid";
+"%d fps" = "%d fps";
+"When done" = "Na afloop";
+"Shape" = "Vorm";
 "After recording:" = "Na opname:";
 "Save recording to:" = "Opname opslaan in:";
 "Clear" = "Wis";
@@ -305,6 +344,8 @@
 "Auto-scroll (sends synthetic scroll events)" = "Automatisch scrollen (stuurt synthetische scroll-events)";
 "Detect fixed/sticky headers" = "Vaste/plakkende headers detecteren";
 "Scroll speed:" = "Scrollsnelheid:";
+"Scroll speed" = "Scrollsnelheid";
+"Max height" = "Max hoogte";
 "Slow" = "Langzaam";
 "Medium" = "Gemiddeld";
 "Fast" = "Snel";
@@ -319,21 +360,44 @@
 "MP4 (H.264)" = "MP4 (H.264)";
 "GIF" = "GIF";
 
+/* Settings - Beautify */
+"Beautify captures" = "Opnames verfraaien";
+"Frame" = "Kader";
+"Window chrome" = "Vensterkader";
+"Rounded corners" = "Afgeronde hoeken";
+"Corner radius" = "Hoekradius";
+"Background blur" = "Achtergrondvervaging";
+"Style" = "Stijl";
+"Use desktop wallpaper" = "Bureaubladachtergrond gebruiken";
+"Choose image…" = "Kies afbeelding…";
+"Places the capture on a background with rounded corners and a drop shadow." = "Plaatst de opname op een achtergrond met afgeronde hoeken en een slagschaduw.";
+"Places the capture on a gradient background with rounded corners and a drop shadow. The style is chosen from the toolbar." = "Plaatst de opname op een verloopachtergrond met afgeronde hoeken en een slagschaduw. De stijl kies je in de werkbalk.";
+
 /* Preferences - Upload */
 "Upload Service" = "Uploaddienst";
 "Upload Provider" = "Uploadprovider";
 "Provider:" = "Provider:";
+"Provider" = "Provider";
 "Google Drive" = "Google Drive";
 "Google Drive (images + videos)" = "Google Drive (afbeeldingen + video's)";
 "imgbb (images only)" = "imgbb (alleen afbeeldingen)";
 "S3-Compatible (images + videos)" = "S3-compatibel (afbeeldingen + video's)";
+"GitHub repository" = "GitHub-repository";
+"GitHub repository (images + videos)" = "GitHub-repository (afbeeldingen + video's)";
 "S3-Compatible Storage" = "S3-compatibele opslag";
 "Sign In with Google" = "Inloggen met Google";
 "Sign Out" = "Uitloggen";
 "Signed in" = "Ingelogd";
 "Not signed in" = "Niet ingelogd";
 "Account:" = "Account:";
+"Account" = "Account";
+"Connection" = "Verbinding";
+"Checking…" = "Controleren…";
+"Connected — the token can write to this repository." = "Verbonden — de token kan naar deze repository schrijven.";
+"Connected, but the token cannot write to this repository." = "Verbonden, maar de token kan niet naar deze repository schrijven.";
 "Folder:" = "Map:";
+"Folder" = "Map";
+"Ask before uploading" = "Vragen voor uploaden";
 "Test Connection" = "Verbinding testen";
 "Fill in endpoint, bucket, and credentials first" = "Vul eerst endpoint, bucket en inloggegevens in";
 "Testing..." = "Testen...";
@@ -346,9 +410,17 @@
 "Secret Key:" = "Geheime sleutel:";
 "Public URL:" = "Publieke URL:";
 "Path Prefix:" = "Padprefix:";
+"Access Key" = "Toegangssleutel";
+"Secret Key" = "Geheime sleutel";
+"Bucket" = "Bucket";
+"Region" = "Regio";
+"Endpoint" = "Endpoint";
+"Public URL" = "Publieke URL";
+"Path Prefix" = "Padprefix";
 "Make uploads publicly readable" = "Uploads publiek leesbaar maken";
 "Sends the public-read ACL so uploaded files are viewable by anyone with the link. Needed for AWS S3, DigitalOcean Spaces, MinIO and Backblaze B2, which store objects privately by default. Leave off for Cloudflare R2, which has no ACLs and rejects the header." = "Verstuurt de public-read ACL zodat geüploade bestanden zichtbaar zijn voor iedereen met de link. Vereist voor AWS S3, DigitalOcean Spaces, MinIO en Backblaze B2, die objecten standaard privé opslaan. Laat uitgeschakeld voor Cloudflare R2, dat geen ACL's ondersteunt en de header weigert.";
 "API key:" = "API-sleutel:";
+"API key" = "API-sleutel";
 "Upload History" = "Uploadgeschiedenis";
 "No uploads yet." = "Nog geen uploads.";
 "Base URL for public access. If empty, the S3 endpoint URL is used (may not be publicly accessible)." = "Basis-URL voor publieke toegang. Indien leeg wordt de S3-endpoint-URL gebruikt (mogelijk niet publiek toegankelijk).";
@@ -358,11 +430,24 @@
 "Sign in to Google Drive in Preferences" = "Log in bij Google Drive in Instellingen";
 "Video upload requires Google Drive or S3" = "Video-upload vereist Google Drive of S3";
 
+/* Uploads - GitHub */
+"Token" = "Token";
+"Repository" = "Repository";
+"Branch" = "Branch";
+"Domain" = "Domein";
+"Custom domain" = "Eigen domein";
+"Link style" = "Linkstijl";
+"Example link" = "Voorbeeldlink";
+"Create a fine-grained token with Contents write access to this one repository. The repository must be public for the links to be readable without a token." = "Maak een fine-grained token met Contents-schrijftoegang tot alleen deze repository. De repository moet openbaar zijn om de links zonder token leesbaar te maken.";
+"Video upload requires Google Drive, S3 or GitHub" = "Video-upload vereist Google Drive, S3 of GitHub";
+
 /* Preferences - About */
 "macshot" = "macshot";
 "Version %@ (%@)" = "Versie %@ (%@)";
 "Made by" = "Gemaakt door";
 "Licensed under the GPLv3" = "Gelicenseerd onder de GPLv3";
+"Licensed under GPLv3" = "Gelicenseerd onder GPLv3";
+"Copies display and capture diagnostics to the clipboard" = "Kopieert scherm- en opnamediagnostiek naar het klembord";
 "A free, open-source screenshot & screen recording tool for macOS.\nFully native — built with Swift and AppKit." = "Een gratis, open-source schermafbeelding- en schermopnametool voor macOS.\nVolledig natief — gebouwd met Swift en AppKit.";
 
 /* Alerts */
@@ -408,6 +493,16 @@
 "Uploading... %d%%" = "Uploaden... %d%%";
 "Upload failed: %@" = "Upload mislukt: %@";
 "Uploaded! Link copied." = "Geüpload! Link gekopieerd.";
+"Uploading…" = "Uploaden…";
+"Link copied: %@" = "Link gekopieerd: %@";
+"Could not encode the image." = "Kon de afbeelding niet coderen.";
+"Google Drive not signed in" = "Niet ingelogd bij Google Drive";
+"S3 not configured — check Settings" = "S3 is niet geconfigureerd — controleer Instellingen";
+"GitHub upload is not configured — check Settings." = "GitHub-upload is niet geconfigureerd — controleer Instellingen.";
+"GitHub rejected the token — check that it has contents write access to the repository." = "GitHub weigerde de token — controleer of deze contents-schrijftoegang tot de repository heeft.";
+"Repository or branch not found — check the owner/repo and branch name." = "Repository of branch niet gevonden — controleer de owner/repo en de branchnaam.";
+"GitHub returned a response macshot could not read." = "GitHub gaf een antwoord dat macshot niet kon lezen.";
+"%@ is too large for a GitHub repository — upload it to S3 or Google Drive instead." = "%@ is te groot voor een GitHub-repository — upload het naar S3 of Google Drive.";
 "Uploading to %@... %d%%" = "Uploaden naar %@... %d%%";
 "Open" = "Open";
 
@@ -543,6 +638,9 @@
 "Google Translate" = "Google Translate";
 "Apple (on-device)" = "Apple (op het apparaat)";
 "Apple translation is faster and works offline. Google Translate supports more languages." = "Apple-vertaling is sneller en werkt offline. Google Translate ondersteunt meer talen.";
+"Engine" = "Engine";
+"Apple" = "Apple";
+"Google" = "Google";
 "Download language packs in System Settings…" = "Download taalpakketten in Systeeminstellingen…";
 "Configure S3 in Settings" = "Configureer S3 in Instellingen";
 "Sign in to Google Drive in Settings" = "Log in bij Google Drive in Instellingen";

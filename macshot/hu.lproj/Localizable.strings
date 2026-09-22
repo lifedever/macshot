@@ -145,6 +145,20 @@
 "More Emojis" = "Több emoji";
 "Load Image" = "Kép betöltése";
 "Gradient Style" = "Színátmenet stílus";
+
+/* Settings - Beautify */
+"Beautify captures" = "Rögzítések szépítése";
+"Frame" = "Keret";
+"Window chrome" = "Ablakkeret";
+"Rounded corners" = "Lekerekített sarkok";
+"Corner radius" = "Sarok sugara";
+"Background blur" = "Háttér elmosása";
+"Style" = "Stílus";
+"Use desktop wallpaper" = "Asztali háttérkép használata";
+"Choose image…" = "Kép kiválasztása…";
+"Places the capture on a background with rounded corners and a drop shadow." = "A rögzítést háttérre helyezi lekerekített sarkokkal és vetett árnyékkal.";
+"Places the capture on a gradient background with rounded corners and a drop shadow. The style is chosen from the toolbar." = "A rögzítést színátmenetes háttérre helyezi lekerekített sarkokkal és vetett árnyékkal. A stílust az eszközsorból választhatod ki.";
+
 "On" = "Be";
 "Text Only" = "Csak szöveg";
 "All Text" = "Összes szöveg";
@@ -184,6 +198,7 @@
 "Enhance browser and Electron element snapping" = "Böngésző és Electron elem illesztésének javítása";
 "Builds the target app's accessibility tree in Element mode. Disable this if a browser or Electron app becomes slow or has input issues." = "Építi a célalkalmazás akadálymentesítési fastruktúráját Elem módban. Tiltsa le, ha egy böngésző vagy Electron alkalmazás lassúvá válik vagy bemeneti problémái vannak.";
 "Right-click to copy" = "Jobb kattintás a másoláshoz";
+"Press C to copy" = "Nyomd meg a C-t a másoláshoz";
 "Copied %@" = "%@ másolva";
 "Set color %@" = "Szín beállítva: %@";
 "Draw something first to use the move tool." = "Rajzolj valamit előbb az áthelyező eszköz használatához.";
@@ -241,6 +256,21 @@
 "  Position:" = "  Pozíció:";
 "Stack (keep all)" = "Halmozás (összes megtartása)";
 "Replace (show only latest)" = "Csere (csak a legutolsó megjelenítése)";
+
+/* Settings - Floating Preview */
+"Floating Preview" = "Lebegő előnézet";
+"Position" = "Pozíció";
+"Dismiss after" = "Eltüntetés ennyi idő után";
+"Never" = "Soha";
+"3 seconds" = "3 másodperc";
+"5 seconds" = "5 másodperc";
+"10 seconds" = "10 másodperc";
+"30 seconds" = "30 másodperc";
+"Multiple previews" = "Több előnézet";
+"Preview size" = "Előnézet mérete";
+"Preview" = "Előnézet";
+"View" = "Megtekintés";
+
 "Menu Bar Order" = "Menüsor sorrendje";
 "Choose the order of capture actions in the macshot menu bar menu." = "Válaszd ki a rögzítési műveletek sorrendjét a macshot menüsorának menüjében.";
 "Move up" = "Mozgatás felfelé";
@@ -275,6 +305,10 @@
 "Default" = "Alapértelmezett";
 "Custom symbol" = "Egyéni szimbólum";
 "Enter any SF Symbol name (e.g. camera.fill) or pick a preset. Browse names in Apple's SF Symbols app. Invalid names fall back to the default icon." = "Adj meg bármilyen SF Symbol nevet (pl. camera.fill), vagy válassz egy előbeállítást. A neveket az Apple SF Symbols alkalmazásában böngészheted. Az érvénytelen nevek esetén az alapértelmezett ikon kerül használatra.";
+"Menu bar icon" = "Menüsor ikon";
+"Symbol" = "Szimbólum";
+"No SF Symbol by that name — the default icon is used." = "Nincs ilyen nevű SF Symbol — az alapértelmezett ikon lesz használatban.";
+"Theme" = "Téma";
 "OCR Capture:" = "OCR rögzítés:";
 "OCR & QR Capture:" = "OCR és QR rögzítés:";
 "Text & QR Recognition" = "Szöveg- és QR-felismerés";
@@ -285,6 +319,22 @@
 "Save to file" = "Mentés fájlba";
 "Save + copy to clipboard" = "Mentés + másolás a vágólapra";
 "OCR Action" = "OCR művelet";
+"Enter / Quick Capture" = "Enter / Gyors rögzítés";
+"OCR & QR Capture" = "OCR és QR rögzítés";
+"Show results window" = "Eredményablak megjelenítése";
+"Snapping" = "Illesztés";
+"Haptic feedback when snapping" = "Haptikus visszajelzés illesztéskor";
+"Image" = "Kép";
+"Image format" = "Képformátum";
+"Quality" = "Minőség";
+"Saving" = "Mentés";
+"Save action" = "Mentési művelet";
+"Save folder" = "Mentési mappa";
+"Filename" = "Fájlnév";
+"History size" = "Előzmények mérete";
+"Engine" = "Motor";
+"Apple" = "Apple";
+"Google" = "Google";
 
 /* Preferences - Shortcuts */
 "Keyboard Shortcuts" = "Gyorsbillentyűk";
@@ -292,6 +342,9 @@
 "Clear shortcut" = "Gyorsbillentyű törlése";
 "Press keys..." = "Nyomj billentyűket...";
 "Waiting..." = "Várakozás...";
+"Press a shortcut…" = "Nyomj egy gyorsbillentyűt…";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "Kattints egy gyorsbillentyűre, és nyomj meg egy billentyűkombinációt legalább egy módosítóval (⌘, ⌥, ⌃, ⇧). Az Esc megszakítja. A funkcióbillentyűk önmagukban is működnek.";
+"These apply inside the capture overlay and the editor window." = "Ezek a rögzítési átfedésben és a szerkesztőablakban érvényesek.";
 
 /* Preferences - Tools */
 "Annotation Tools" = "Jegyzetelési eszközök";
@@ -305,6 +358,12 @@
 
 /* Preferences - Recording */
 "Frame rate:" = "Képkockaszám:";
+"Frame rate" = "Képkockaszám";
+"%d fps" = "%d fps";
+"When done" = "Befejezéskor";
+"Shape" = "Alakzat";
+"Scroll speed" = "Görgetési sebesség";
+"Max height" = "Max magasság";
 "After recording:" = "Felvétel után:";
 "Save recording to:" = "Felvétel mentése ide:";
 "Save Recording" = "Felvétel mentése";
@@ -359,6 +418,30 @@
 "Make uploads publicly readable" = "Feltöltések nyilvánosan olvashatóvá tétele";
 "Sends the public-read ACL so uploaded files are viewable by anyone with the link. Needed for AWS S3, DigitalOcean Spaces, MinIO and Backblaze B2, which store objects privately by default. Leave off for Cloudflare R2, which has no ACLs and rejects the header." = "A public-read ACL-t küldi, így a feltöltött fájlok bárki számára megtekinthetők a linkkel. Szükséges az AWS S3, DigitalOcean Spaces, MinIO és Backblaze B2 számára, amelyek alapértelmezetten privát módon tárolják az objektumokat. Hagyja kikapcsolva a Cloudflare R2-nél, amely nem támogatja az ACL-eket és elutasítja a fejlécet.";
 "API key:" = "API kulcs:";
+"Provider" = "Szolgáltató";
+"Ask before uploading" = "Rákérdezés feltöltés előtt";
+"Account" = "Fiók";
+"Connection" = "Kapcsolat";
+"Checking…" = "Ellenőrzés…";
+"Folder" = "Mappa";
+"API key" = "API kulcs";
+"Access Key" = "Hozzáférési kulcs";
+"Secret Key" = "Titkos kulcs";
+"Bucket" = "Tároló";
+"Region" = "Régió";
+"Endpoint" = "Végpont";
+"Public URL" = "Nyilvános URL";
+"Path Prefix" = "Útvonal előtag";
+"Domain" = "Domain";
+"Custom domain" = "Egyéni domain";
+"GitHub repository" = "GitHub tárház";
+"GitHub repository (images + videos)" = "GitHub tárház (képek + videók)";
+"Token" = "Token";
+"Repository" = "Tárház";
+"Branch" = "Ág";
+"Link style" = "Link stílusa";
+"Example link" = "Példa link";
+"Create a fine-grained token with Contents write access to this one repository. The repository must be public for the links to be readable without a token." = "Hozz létre egy fine-grained tokent, amely Contents írási jogot kap erre az egy tárházra. A tárháznak nyilvánosnak kell lennie, hogy a linkek token nélkül is olvashatók legyenek.";
 "Upload History" = "Feltöltési előzmények";
 "No uploads yet." = "Még nincsenek feltöltések.";
 "Base URL for public access. If empty, the S3 endpoint URL is used (may not be publicly accessible)." = "Alap URL a nyilvános hozzáféréshez. Ha üres, az S3 végpont URL kerül használatra (lehet, hogy nem nyilvánosan elérhető).";
@@ -373,6 +456,7 @@
 "Version %@ (%@)" = "Verzió %@ (%@)";
 "Made by" = "Készítette";
 "Licensed under the GPLv3" = "GPLv3 licenc alatt";
+"Licensed under GPLv3" = "GPLv3 licenc alatt";
 "A free, open-source screenshot & screen recording tool for macOS.\nFully native — built with Swift and AppKit." = "Egy ingyenes, nyílt forráskódú képernyőkép- és képernyőfelvétel-eszköz macOS-re.\nTeljesen natív — Swift-tel és AppKit-tel építve.";
 
 /* Alerts */
@@ -420,6 +504,19 @@
 "Uploading... %d%%" = "Feltöltés... %d%%";
 "Upload failed: %@" = "Feltöltés sikertelen: %@";
 "Uploaded! Link copied." = "Feltöltve! Link másolva.";
+"Uploading…" = "Feltöltés…";
+"Link copied: %@" = "Link másolva: %@";
+"Could not encode the image." = "Nem sikerült kódolni a képet.";
+"Google Drive not signed in" = "Nincs bejelentkezve a Google Drive-ba";
+"S3 not configured — check Settings" = "Az S3 nincs beállítva — nézd meg a Beállításokat";
+"GitHub upload is not configured — check Settings." = "A GitHub feltöltés nincs beállítva — nézd meg a Beállításokat.";
+"GitHub rejected the token — check that it has contents write access to the repository." = "A GitHub elutasította a tokent — ellenőrizd, hogy van-e contents írási joga a tárházhoz.";
+"Repository or branch not found — check the owner/repo and branch name." = "A tárház vagy az ág nem található — ellenőrizd az owner/repo értéket és az ág nevét.";
+"GitHub returned a response macshot could not read." = "A GitHub olyan választ adott, amelyet a macshot nem tudott értelmezni.";
+"%@ is too large for a GitHub repository — upload it to S3 or Google Drive instead." = "A(z) %@ túl nagy egy GitHub-tárházhoz – töltsd fel inkább S3-ra vagy Google Drive-ra.";
+"Connected — the token can write to this repository." = "Kapcsolódva — a token írhat ebbe a tárházba.";
+"Connected, but the token cannot write to this repository." = "Kapcsolódva, de a token nem tud írni ebbe a tárházba.";
+"Video upload requires Google Drive, S3 or GitHub" = "A videó feltöltéshez Google Drive, S3 vagy GitHub szükséges";
 "Uploading to %@... %d%%" = "Feltöltés ide: %@... %d%%";
 "Open" = "Megnyitás";
 
@@ -622,6 +719,7 @@
 "Preview:" = "Előnézet:";
 "Copy Screen Info" = "Képernyő információ másolása";
 "Copies display and capture diagnostics to clipboard" = "Kijelző- és rögzítési diagnosztikát másol a vágólapra";
+"Copies display and capture diagnostics to the clipboard" = "Kijelző- és rögzítési diagnosztikát másol a vágólapra";
 "Accent" = "Kiemelés";
 "Icon" = "Ikon";
 "Background" = "Háttér";

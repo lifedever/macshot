@@ -53,6 +53,7 @@
 
 /* Floating Thumbnail */
 "Close All" = "Закрити всі";
+"View" = "Переглянути";
 "Save" = "Зберегти";
 
 /* Editor Top Bar */
@@ -174,6 +175,18 @@
 "Smart" = "Розумне";
 "Padding" = "Відступ";
 "Shadow" = "Тінь";
+/* Beautify */
+"Beautify captures" = "Прикрашати знімки";
+"Frame" = "Рамка";
+"Window chrome" = "Оформлення вікна";
+"Rounded corners" = "Заокруглені кути";
+"Corner radius" = "Радіус заокруглення";
+"Background blur" = "Розмиття тла";
+"Style" = "Стиль";
+"Use desktop wallpaper" = "Шпалери робочого столу";
+"Choose image…" = "Вибрати зображення…";
+"Places the capture on a background with rounded corners and a drop shadow." = "Розміщує знімок на тлі із заокругленими кутами та тінню.";
+"Places the capture on a gradient background with rounded corners and a drop shadow. The style is chosen from the toolbar." = "Розміщує знімок на градієнтному тлі із заокругленими кутами та тінню. Стиль вибирається на панелі інструментів.";
 "Right-click to add points" = "Клацніть правою кнопкою, щоб додати точки";
 "Hold 1 auto-vertical  ·  Hold 2 auto-horizontal" = "Тримайте 1 автовертикаль  ·  Тримайте 2 автогоризонталь";
 "Limit to selection" = "Обмежити виділенням";
@@ -199,6 +212,7 @@
 "  (Tab to switch)" = "  (Tab для перемикання)";
 "Space" = "Пробіл";
 "Right-click to copy" = "Клацніть правою кнопкою, щоб копіювати";
+"Press C to copy" = "Натисніть C, щоб копіювати";
 "Copied %@" = "Скопійовано %@";
 "Set color %@" = "Встановлено колір %@";
 "Draw something first to use the move tool." = "Спочатку намалюйте щось, щоб використати інструмент переміщення.";
@@ -230,6 +244,8 @@
 "Show floating thumbnail after capture" = "Показувати плаваючу мініатюру після захоплення";
 "Launch at login" = "Запускати при вході в систему";
 "Show snap alignment guides" = "Показувати напрямні вирівнювання";
+"Snapping" = "Прилипання";
+"Haptic feedback when snapping" = "Тактильний відгук під час прилипання";
 "Snap selection edges to image boundaries" = "Прив'язувати краї виділення до меж зображення";
 "Enhance browser and Electron element snapping" = "Покращення прилипання елементів у браузері та Electron";
 "Builds the target app's accessibility tree in Element mode. Disable this if a browser or Electron app becomes slow or has input issues." = "Будує дерево доступності цільової програми в режимі елементів. Вимкніть, якщо браузер або Electron-програма працює повільно або має проблеми з введенням.";
@@ -247,9 +263,20 @@
 "  Multiple previews:" = "  Кілька попередніх переглядів:";
 "Stack (keep all)" = "Стос (зберігати всі)";
 "Replace (show only latest)" = "Заміна (показувати лише останній)";
+"Floating Preview" = "Плаваючий попередній перегляд";
+"Dismiss after" = "Зникає через";
+"Never" = "Ніколи";
+"3 seconds" = "3 секунди";
+"5 seconds" = "5 секунд";
+"10 seconds" = "10 секунд";
+"30 seconds" = "30 секунд";
+"Multiple previews" = "Кілька попередніх переглядів";
 "Output" = "Вивід";
 "Image format:" = "Формат зображення:";
 "Quality:" = "Якість:";
+"Image" = "Зображення";
+"Image format" = "Формат зображення";
+"Quality" = "Якість";
 "%d%%" = "%d%%";
 "Save at standard resolution (1x)" = "Зберігати в стандартній роздільності (1x)";
 "Halves dimensions on Retina displays, ~4x smaller files" = "Зменшує розміри вдвічі на дисплеях Retina, файли ~4x менші";
@@ -257,11 +284,15 @@
 "Ensures consistent colors across different displays" = "Забезпечує однаковість кольорів на різних дисплеях";
 "Screenshot History" = "Історія знімків екрана";
 "History size:" = "Розмір історії:";
+"History size" = "Розмір історії";
 "screenshots kept on disk (0 = off)" = "знімків зберігається на диску (0 = вимкнено)";
 "Order history by last edit" = "Упорядкувати історію за останнім редагуванням";
 "Edited screenshots move to the top. Off keeps them in capture order." = "Відредаговані знімки переміщуються вгору. Якщо вимкнено, зберігається порядок захоплення.";
 "Save Directory" = "Тека збереження";
 "Save folder:" = "Тека збереження:";
+"Saving" = "Збереження";
+"Save folder" = "Тека збереження";
+"Filename" = "Ім'я файлу";
 "Browse…" = "Огляд…";
 "Appearance" = "Зовнішній вигляд";
 "Accent color:" = "Колір акценту:";
@@ -270,14 +301,18 @@
 "Reset" = "Скинути";
 "OCR Capture:" = "Захоплення OCR:";
 "OCR & QR Capture:" = "Захоплення OCR і QR:";
+"OCR & QR Capture" = "Захоплення OCR і QR";
+"Show results window" = "Показувати вікно результатів";
 "Show window + copy to clipboard" = "Показати вікно + копіювати до буфера обміну";
 "Show window only" = "Лише показати вікно";
 "Copy to clipboard only" = "Лише копіювати до буфера обміну";
 "Enter / Quick Capture:" = "Enter / Швидке захоплення:";
+"Enter / Quick Capture" = "Enter / Швидке захоплення";
 "Save to file" = "Зберегти у файл";
 "Save + copy to clipboard" = "Зберегти + копіювати до буфера обміну";
 "OCR Action" = "Дія OCR";
 "Save action:" = "Дія збереження:";
+"Save action" = "Дія збереження";
 "Save to default folder" = "Зберігати в теку за замовчуванням";
 "Ask where to save" = "Запитувати, куди зберігати";
 "Show shortcuts in tooltips" = "Показувати скорочення в підказках";
@@ -286,6 +321,9 @@
 "Default" = "За замовчуванням";
 "Custom symbol" = "Власний символ";
 "Enter any SF Symbol name (e.g. camera.fill) or pick a preset. Browse names in Apple's SF Symbols app. Invalid names fall back to the default icon." = "Введіть будь-яке ім'я SF Symbol (наприклад, camera.fill) або виберіть пресет. Переглядайте імена в програмі Apple SF Symbols. За недійсного імені використовується іконка за замовчуванням.";
+"Menu bar icon" = "Іконка в рядку меню";
+"Symbol" = "Символ";
+"No SF Symbol by that name — the default icon is used." = "SF Symbol з такою назвою не знайдено — використовується іконка за замовчуванням.";
 
 /* Preferences - Shortcuts */
 "Keyboard Shortcuts" = "Клавіатурні скорочення";
@@ -293,6 +331,7 @@
 "Clear shortcut" = "Очистити скорочення";
 "Press keys..." = "Натисніть клавіші...";
 "Waiting..." = "Очікування...";
+"Press a shortcut…" = "Натисніть скорочення…";
 
 /* Preferences - Tools */
 "Annotation Tools" = "Інструменти анотації";
@@ -306,16 +345,20 @@
 
 /* Preferences - Recording */
 "Frame rate:" = "Частота кадрів:";
+"Frame rate" = "Частота кадрів";
 "After recording:" = "Після запису:";
+"When done" = "Після завершення";
 "Save recording to:" = "Зберігати запис у:";
 "Save Recording" = "Зберегти запис";
 "Clear" = "Очистити";
 "Max height:" = "Макс. висота:";
+"Max height" = "Макс. висота";
 "px (0 = unlimited)" = "px (0 = без обмежень)";
 "Behavior" = "Поведінка";
 "Auto-scroll (sends synthetic scroll events)" = "Автопрокрутка (надсилає синтетичні події прокрутки)";
 "Detect fixed/sticky headers" = "Виявляти фіксовані/закріплені заголовки";
 "Scroll speed:" = "Швидкість прокрутки:";
+"Scroll speed" = "Швидкість прокрутки";
 "Slow" = "Повільно";
 "Medium" = "Середньо";
 "Fast" = "Швидко";
@@ -327,6 +370,7 @@
 "30 fps" = "30 fps";
 "60 fps" = "60 fps";
 "120 fps" = "120 fps";
+"%d fps" = "%d fps";
 "MP4 (H.264)" = "MP4 (H.264)";
 "GIF" = "GIF";
 
@@ -334,10 +378,13 @@
 "Upload Service" = "Сервіс завантаження";
 "Upload Provider" = "Провайдер завантаження";
 "Provider:" = "Провайдер:";
+"Provider" = "Провайдер";
 "Google Drive" = "Google Drive";
 "Google Drive (images + videos)" = "Google Drive (зображення + відео)";
 "imgbb (images only)" = "imgbb (лише зображення)";
 "S3-Compatible (images + videos)" = "S3-сумісне (зображення + відео)";
+"GitHub repository" = "Репозиторій GitHub";
+"GitHub repository (images + videos)" = "Репозиторій GitHub (зображення + відео)";
 "S3-Compatible Storage" = "S3-сумісне сховище";
 "Sign In with Google" = "Увійти через Google";
 "Sign Out" = "Вийти";
@@ -345,10 +392,17 @@
 "Not signed in" = "Не увійдено";
 "Account:" = "Обліковий запис:";
 "Folder:" = "Папка:";
+"Account" = "Обліковий запис";
+"Folder" = "Папка";
+"Ask before uploading" = "Запитувати перед завантаженням";
 "Test Connection" = "Перевірити з'єднання";
 "Fill in endpoint, bucket, and credentials first" = "Спочатку заповніть адресу, бакет та облікові дані";
 "Testing..." = "Перевірка...";
 "Connection successful!" = "З'єднання успішне!";
+"Connection" = "З'єднання";
+"Checking…" = "Перевірка…";
+"Connected — the token can write to this repository." = "Під'єднано — токен може писати в цей репозиторій.";
+"Connected, but the token cannot write to this repository." = "Під'єднано, але токен не може писати в цей репозиторій.";
 "Leave empty to use default" = "Залиште порожнім для використання за замовчуванням";
 "Endpoint:" = "Адреса:";
 "Region:" = "Регіон:";
@@ -357,23 +411,42 @@
 "Secret Key:" = "Секретний ключ:";
 "Public URL:" = "Публічна URL-адреса:";
 "Path Prefix:" = "Префікс шляху:";
+"Endpoint" = "Адреса";
+"Region" = "Регіон";
+"Bucket" = "Бакет";
+"Access Key" = "Ключ доступу";
+"Secret Key" = "Секретний ключ";
+"Public URL" = "Публічна URL-адреса";
+"Path Prefix" = "Префікс шляху";
 "Make uploads publicly readable" = "Зробити завантаження публічно доступними для читання";
 "Sends the public-read ACL so uploaded files are viewable by anyone with the link. Needed for AWS S3, DigitalOcean Spaces, MinIO and Backblaze B2, which store objects privately by default. Leave off for Cloudflare R2, which has no ACLs and rejects the header." = "Надсилає ACL public-read, щоб завантажені файли були доступні всім за посиланням. Потрібно для AWS S3, DigitalOcean Spaces, MinIO та Backblaze B2, які за замовчуванням зберігають об'єкти приватно. Вимкніть для Cloudflare R2, який не підтримує ACL і відхиляє цей заголовок.";
 "API key:" = "API-ключ:";
+"API key" = "API-ключ";
 "Upload History" = "Історія завантажень";
 "No uploads yet." = "Завантажень ще немає.";
 "Base URL for public access. If empty, the S3 endpoint URL is used (may not be publicly accessible)." = "Базова URL-адреса для публічного доступу. Якщо порожня, використовується URL-адреса S3 (може бути недоступною публічно).";
 "A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "Спільний ключ вже включено — отримайте власний безкоштовний ключ на imgbb.com/api, якщо досягнете обмежень. Лише зображення (без підтримки відео).";
 "Works with AWS S3, Cloudflare R2, MinIO, DigitalOcean Spaces, Backblaze B2, and other S3-compatible services. Supports images and videos." = "Працює з AWS S3, Cloudflare R2, MinIO, DigitalOcean Spaces, Backblaze B2 та іншими S3-сумісними сервісами. Підтримує зображення та відео.";
+/* Uploads - GitHub */
+"Token" = "Токен";
+"Repository" = "Репозиторій";
+"Branch" = "Гілка";
+"Domain" = "Домен";
+"Custom domain" = "Власний домен";
+"Link style" = "Формат посилання";
+"Example link" = "Приклад посилання";
+"Create a fine-grained token with Contents write access to this one repository. The repository must be public for the links to be readable without a token." = "Створіть fine-grained токен із правом запису Contents лише для цього репозиторію. Репозиторій має бути публічним, щоб посилання відкривалися без токена.";
 "Configure S3 in Preferences" = "Налаштуйте S3 у Параметрах";
 "Sign in to Google Drive in Preferences" = "Увійдіть до Google Drive у Параметрах";
 "Video upload requires Google Drive or S3" = "Завантаження відео потребує Google Drive або S3";
+"Video upload requires Google Drive, S3 or GitHub" = "Завантаження відео потребує Google Drive, S3 або GitHub";
 
 /* Preferences - About */
 "macshot" = "macshot";
 "Version %@ (%@)" = "Версія %@ (%@)";
 "Made by" = "Автор";
 "Licensed under the GPLv3" = "Ліцензія GPLv3";
+"Licensed under GPLv3" = "Ліцензія GPLv3";
 "A free, open-source screenshot & screen recording tool for macOS.\nFully native — built with Swift and AppKit." = "Безкоштовний інструмент з відкритим кодом для знімків та запису екрана на macOS.\nПовністю нативний — створений на Swift та AppKit.";
 
 /* Alerts */
@@ -421,6 +494,8 @@
 "Uploaded! Link copied." = "Завантажено! Посилання скопійовано.";
 "Uploading to %@... %d%%" = "Завантаження на %@... %d%%";
 "Open" = "Відкрити";
+"Uploading…" = "Завантаження…";
+"Link copied: %@" = "Посилання скопійовано: %@";
 
 /* Recording Toast */
 "Recording saved" = "Запис збережено";
@@ -445,6 +520,7 @@
 "Choose a folder" = "Оберіть теку";
 "Save All to Folder…" = "Зберегти всі в теку…";
 "Could not encode the screenshot." = "Не вдалося закодувати знімок екрана.";
+"Could not encode the image." = "Не вдалося закодувати зображення.";
 "Could not save the screenshot: %@" = "Не вдалося зберегти знімок екрана: %@";
 "Could not save the screenshot to history." = "Не вдалося зберегти знімок екрана в історію.";
 
@@ -533,6 +609,7 @@
 "Press..." = "Натисніть...";
 "Reset to default" = "Скинути до стандартних";
 "Press a single key to assign it as the shortcut for that tool. These work when the overlay or editor is active." = "Натисніть одну клавішу, щоб призначити її скороченням для цього інструмента. Працює, коли активне накладання або редактор.";
+"These apply inside the capture overlay and the editor window." = "Діють у накладанні захоплення та у вікні редактора.";
 "Keep Separate" = "Зберігати окремо";
 "Merge Audio" = "Об'єднати аудіо";
 "Audio Tracks" = "Аудіодоріжки";
@@ -552,24 +629,39 @@
 "Engine:" = "Рушій:";
 "Google Translate" = "Google Translate";
 "Apple (on-device)" = "Apple (на пристрої)";
+"Engine" = "Рушій";
+"Apple" = "Apple";
+"Google" = "Google";
 "Apple translation is faster and works offline. Google Translate supports more languages." = "Переклад Apple швидший і працює офлайн. Google Translate підтримує більше мов.";
 "Download language packs in System Settings…" = "Завантажте мовні пакети в Системних параметрах…";
 "Configure S3 in Settings" = "Налаштуйте S3 у Налаштуваннях";
 "Sign in to Google Drive in Settings" = "Увійдіть до Google Drive у Налаштуваннях";
+"Google Drive not signed in" = "Вхід до Google Drive не виконано";
+"S3 not configured — check Settings" = "S3 не налаштовано — перевірте Налаштування";
+"GitHub upload is not configured — check Settings." = "Завантаження до GitHub не налаштовано — перевірте Налаштування.";
+"GitHub rejected the token — check that it has contents write access to the repository." = "GitHub відхилив токен — перевірте, чи має він право запису contents для цього репозиторію.";
+"Repository or branch not found — check the owner/repo and branch name." = "Репозиторій або гілку не знайдено — перевірте owner/repo та назву гілки.";
+"GitHub returned a response macshot could not read." = "GitHub повернув відповідь, яку macshot не зміг прочитати.";
+"%@ is too large for a GitHub repository — upload it to S3 or Google Drive instead." = "%@ завеликий для репозиторію GitHub — завантажте його до S3 або Google Drive.";
 "Offline build: upload and cloud storage integrations are removed. Update checks may still connect to MacShot's update server. Screenshots and recordings stay local unless you share or save them yourself." = "Офлайн-збірка: інтеграції завантаження та хмарного сховища вилучено. Перевірка оновлень усе ще може з'єднуватися із сервером оновлень MacShot. Знімки екрана та записи залишаються локальними, доки ви самі ними не поділитеся або не збережете їх.";
 "Position:" = "Позиція:";
 "  Position:" = "  Позиція:";
+"Position" = "Позиція";
 "Size:" = "Розмір:";
 "Shape:" = "Форма:";
+"Shape" = "Форма";
 
 "Same as screenshots" = "Як у знімках екрана";
 "  Preview size:" = "  Розмір попереднього перегляду:";
+"Preview size" = "Розмір попереднього перегляду";
+"Preview" = "Попередній перегляд";
 "Fit image in preview (letterbox)" = "Вписати зображення в попередній перегляд (зі смугами)";
 "(0 = off)" = "(0 = вимкнено)";
 "Clear All" = "Очистити все";
 "Clear History?" = "Очистити історію?";
 "This will permanently delete all screenshots from history." = "Це назавжди видалить усі знімки екрана з історії.";
 "Click \"Set\" and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧) to set a shortcut." = "Натисніть \"Встановити\" та введіть комбінацію клавіш з принаймні одним модифікатором (⌘, ⌥, ⌃, ⇧), щоб призначити ярлик.";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "Клацніть скорочення та натисніть комбінацію клавіш з принаймні одним модифікатором (⌘, ⌥, ⌃, ⇧). Esc скасовує. Функціональні клавіші працюють самостійно.";
 "Files are uploaded to this folder in your Google Drive. Leave empty to use \"macshot\". macshot can only use folders it created itself, so a folder you made in Drive with the same name won't be reused — a new one is created instead. Everything stays private — nothing is shared publicly." = "Файли завантажуються до цієї папки на вашому Google Диску. Залиште поле порожнім, щоб використовувати \"macshot\". macshot може використовувати лише папки, які створив сам, тому папку з такою ж назвою, створену вами на Диску, не буде використано — натомість буде створено нову. Все залишається приватним — нічого не публікується у відкритому доступі.";
 
 "Pressure" = "Тиск";
@@ -622,11 +714,13 @@
 "Preview:" = "Попередній перегляд:";
 "Copy Screen Info" = "Копіювати інформацію про екран";
 "Copies display and capture diagnostics to clipboard" = "Копіює діагностику дисплея та захоплення до буфера обміну";
+"Copies display and capture diagnostics to the clipboard" = "Копіює діагностику дисплея та захоплення до буфера обміну";
 "Accent" = "Акцент";
 "Icon" = "Іконка";
 "Background" = "Тло";
 "Custom" = "Власний";
 "Theme:" = "Тема:";
+"Theme" = "Тема";
 "Application" = "Програма";
 "Capture area and extract text" = "Захопити область і розпізнати текст";
 "Capture the full screen" = "Захопити весь екран";

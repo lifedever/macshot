@@ -180,6 +180,7 @@
 "Enhance browser and Electron element snapping" = "تحسين التقاط عناصر المتصفح وتطبيقات Electron";
 "Builds the target app's accessibility tree in Element mode. Disable this if a browser or Electron app becomes slow or has input issues." = "يبني شجرة إمكانية الوصول لتطبيق الهدف في وضع العنصر. قم بإيقاف تشغيله إذا أصبح المتصفح أو تطبيق Electron بطيئًا أو كانت لديه مشاكل في الإدخال.";
 "Right-click to copy" = "انقر بزر الفأرة الأيمن للنسخ";
+"Press C to copy" = "اضغط C للنسخ";
 "Copied %@" = "تم نسخ %@";
 "Set color %@" = "تعيين اللون %@";
 "Draw something first to use the move tool." = "ارسم شيئًا أولًا لاستخدام أداة النقل.";
@@ -212,6 +213,8 @@
 "Launch at login" = "التشغيل عند تسجيل الدخول";
 "Show snap alignment guides" = "عرض خطوط المحاذاة";
 "Snap selection edges to image boundaries" = "محاذاة حواف التحديد إلى حدود الصورة";
+"Snapping" = "المحاذاة";
+"Haptic feedback when snapping" = "استجابة لمسية عند المحاذاة";
 "Capture mouse cursor in screenshot" = "التقاط مؤشر الفأرة في لقطة الشاشة";
 "Double-click selection to copy" = "النقر المزدوج على التحديد للنسخ";
 "Hide capture instructions" = "إخفاء تعليمات الالتقاط";
@@ -224,6 +227,9 @@
 "Default" = "افتراضي";
 "Custom symbol" = "رمز مخصص";
 "Enter any SF Symbol name (e.g. camera.fill) or pick a preset. Browse names in Apple's SF Symbols app. Invalid names fall back to the default icon." = "أدخل أي اسم SF Symbol (مثل camera.fill) أو اختر إعدادًا مسبقًا. تصفّح الأسماء في تطبيق SF Symbols من Apple. الأسماء غير الصالحة تعود إلى الأيقونة الافتراضية.";
+"Menu bar icon" = "أيقونة شريط القوائم";
+"Symbol" = "الرمز";
+"No SF Symbol by that name — the default icon is used." = "لا يوجد SF Symbol بهذا الاسم — تُستخدم الأيقونة الافتراضية.";
 "Check for updates automatically" = "التحقق من التحديثات تلقائيًا";
 "Check for beta updates" = "التحقق من التحديثات التجريبية";
 "Thumbnail" = "صورة مصغرة";
@@ -231,6 +237,20 @@
 "seconds before auto-dismiss (0 = never)" = "ثوانٍ قبل الإخفاء التلقائي (0 = أبدًا)";
 "  Multiple previews:" = "  معاينات متعددة:";
 "  Position:" = "  الموضع:";
+
+/* Settings — Floating Preview */
+"Floating Preview" = "المعاينة العائمة";
+"Position" = "الموضع";
+"Dismiss after" = "إخفاء بعد";
+"Never" = "أبدًا";
+"3 seconds" = "3 ثوانٍ";
+"5 seconds" = "5 ثوانٍ";
+"10 seconds" = "10 ثوانٍ";
+"30 seconds" = "30 ثانية";
+"Multiple previews" = "معاينات متعددة";
+"Preview size" = "حجم المعاينة";
+"Preview" = "معاينة";
+"View" = "عرض";
 "Stack (keep all)" = "تكديس (الاحتفاظ بالكل)";
 "Replace (show only latest)" = "استبدال (عرض الأحدث فقط)";
 "Menu Bar Order" = "ترتيب شريط القوائم";
@@ -240,6 +260,9 @@
 "Output" = "الإخراج";
 "Image format:" = "صيغة الصورة:";
 "Quality:" = "الجودة:";
+"Image" = "الصورة";
+"Image format" = "صيغة الصورة";
+"Quality" = "الجودة";
 "%d%%" = "%d%%";
 "Save at standard resolution (1x)" = "حفظ بالدقة القياسية (1x)";
 "Halves dimensions on Retina displays, ~4x smaller files" = "يقلّل الأبعاد إلى النصف على شاشات Retina، ملفات أصغر بـ 4 مرات تقريبًا";
@@ -247,6 +270,7 @@
 "Ensures consistent colors across different displays" = "يضمن ألوانًا متسقة عبر الشاشات المختلفة";
 "Screenshot History" = "سجل لقطات الشاشة";
 "History size:" = "حجم السجل:";
+"History size" = "حجم السجل";
 "screenshots kept on disk (0 = off)" = "لقطات شاشة محفوظة على القرص (0 = إيقاف)";
 "Order history by last edit" = "ترتيب السجل حسب آخر تعديل";
 "Edited screenshots move to the top. Off keeps them in capture order." = "تنتقل لقطات الشاشة المُحرَّرة إلى الأعلى. إيقافه يبقيها بترتيب الالتقاط.";
@@ -258,20 +282,28 @@
 "Save action:" = "إجراء الحفظ:";
 "Save to default folder" = "الحفظ في المجلد الافتراضي";
 "Ask where to save" = "السؤال عن موضع الحفظ";
+"Saving" = "الحفظ";
+"Save action" = "إجراء الحفظ";
+"Save folder" = "مجلد الحفظ";
+"Filename" = "اسم الملف";
 "Appearance" = "المظهر";
 "Accent color:" = "لون التمييز:";
 "Icon color:" = "لون الأيقونة:";
 "Background color:" = "لون الخلفية:";
+"Theme" = "السمة";
 "Reset" = "إعادة تعيين";
 "OCR Capture:" = "التقاط OCR:";
 "Show window + copy to clipboard" = "عرض النافذة + نسخ إلى الحافظة";
 "Show window only" = "عرض النافذة فقط";
 "Copy to clipboard only" = "نسخ إلى الحافظة فقط";
+"Show results window" = "عرض نافذة النتائج";
 "Enter / Quick Capture:" = "Enter / التقاط سريع:";
+"Enter / Quick Capture" = "Enter / التقاط سريع";
 "Save to file" = "حفظ في ملف";
 "Save + copy to clipboard" = "حفظ + نسخ إلى الحافظة";
 "OCR Action" = "إجراء OCR";
 "OCR & QR Capture:" = "التقاط OCR و QR:";
+"OCR & QR Capture" = "التقاط OCR و QR";
 "OCR & QR" = "OCR و QR";
 "Text & QR Recognition" = "التعرف على النص و QR";
 "Capture OCR & QR" = "التقاط OCR و QR";
@@ -286,6 +318,9 @@
 "Clear shortcut" = "مسح الاختصار";
 "Press keys..." = "اضغط المفاتيح...";
 "Waiting..." = "بانتظار...";
+"Press a shortcut…" = "اضغط اختصارًا…";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "انقر على اختصار واضغط مجموعة مفاتيح تحتوي على معدّل واحد على الأقل (⌘، ⌥، ⌃، ⇧). Esc للإلغاء. مفاتيح الوظائف تعمل بمفردها.";
+"These apply inside the capture overlay and the editor window." = "تنطبق هذه داخل طبقة الالتقاط ونافذة المحرر.";
 
 /* Preferences - Tools */
 "Annotation Tools" = "أدوات التعليق";
@@ -299,16 +334,20 @@
 
 /* Preferences - Recording */
 "Frame rate:" = "معدل الإطارات:";
+"Frame rate" = "معدل الإطارات";
 "After recording:" = "بعد التسجيل:";
+"When done" = "عند الانتهاء";
 "Save recording to:" = "حفظ التسجيل في:";
 "Save Recording" = "حفظ التسجيل";
 "Clear" = "مسح";
 "Max height:" = "الارتفاع الأقصى:";
+"Max height" = "الارتفاع الأقصى";
 "px (0 = unlimited)" = "px (0 = بلا حدود)";
 "Behavior" = "السلوك";
 "Auto-scroll (sends synthetic scroll events)" = "تمرير تلقائي (يرسل أحداث تمرير اصطناعية)";
 "Detect fixed/sticky headers" = "اكتشاف الرؤوس الثابتة/اللاصقة";
 "Scroll speed:" = "سرعة التمرير:";
+"Scroll speed" = "سرعة التمرير";
 "Slow" = "بطيء";
 "Medium" = "متوسط";
 "Fast" = "سريع";
@@ -320,13 +359,29 @@
 "30 fps" = "30 fps";
 "60 fps" = "60 fps";
 "120 fps" = "120 fps";
+"%d fps" = "%d fps";
 "MP4 (H.264)" = "MP4 (H.264)";
 "GIF" = "GIF";
+
+/* Settings — Beautify */
+"Beautify captures" = "تجميل الالتقاطات";
+"Frame" = "الإطار";
+"Window chrome" = "إطار نافذة";
+"Rounded corners" = "زوايا مستديرة";
+"Corner radius" = "نصف قطر الزوايا";
+"Background blur" = "ضبابية الخلفية";
+"Style" = "النمط";
+"Use desktop wallpaper" = "استخدام خلفية سطح المكتب";
+"Choose image…" = "اختيار صورة…";
+"Places the capture on a background with rounded corners and a drop shadow." = "يضع الالتقاط على خلفية بزوايا مستديرة وظل.";
+"Places the capture on a gradient background with rounded corners and a drop shadow. The style is chosen from the toolbar." = "يضع الالتقاط على خلفية متدرجة بزوايا مستديرة وظل. يُختار النمط من شريط الأدوات.";
 
 /* Preferences - Upload */
 "Upload Service" = "خدمة الرفع";
 "Upload Provider" = "مزود الرفع";
 "Provider:" = "المزود:";
+"Provider" = "المزود";
+"Ask before uploading" = "السؤال قبل الرفع";
 "Google Drive" = "Google Drive";
 "Google Drive (images + videos)" = "Google Drive (صور + فيديوهات)";
 "imgbb (images only)" = "imgbb (صور فقط)";
@@ -337,11 +392,17 @@
 "Signed in" = "تم تسجيل الدخول";
 "Not signed in" = "لم يتم تسجيل الدخول";
 "Account:" = "الحساب:";
+"Account" = "الحساب";
 "Folder:" = "المجلد:";
+"Folder" = "المجلد";
 "Test Connection" = "اختبار الاتصال";
+"Connection" = "الاتصال";
+"Checking…" = "جارٍ التحقق…";
 "Fill in endpoint, bucket, and credentials first" = "أدخل نقطة النهاية والحاوية وبيانات الاعتماد أولًا";
 "Testing..." = "جارٍ الاختبار...";
 "Connection successful!" = "تم الاتصال بنجاح!";
+"Connected — the token can write to this repository." = "تم الاتصال — يمكن للرمز المميز الكتابة في هذا المستودع.";
+"Connected, but the token cannot write to this repository." = "تم الاتصال، لكن الرمز المميز لا يمكنه الكتابة في هذا المستودع.";
 "Leave empty to use default" = "اتركه فارغًا لاستخدام الافتراضي";
 "Endpoint:" = "نقطة النهاية:";
 "Region:" = "المنطقة:";
@@ -350,9 +411,17 @@
 "Secret Key:" = "المفتاح السري:";
 "Public URL:" = "الرابط العام:";
 "Path Prefix:" = "بادئة المسار:";
+"Endpoint" = "نقطة النهاية";
+"Region" = "المنطقة";
+"Bucket" = "الحاوية";
+"Access Key" = "مفتاح الوصول";
+"Secret Key" = "المفتاح السري";
+"Public URL" = "الرابط العام";
+"Path Prefix" = "بادئة المسار";
 "Make uploads publicly readable" = "جعل الملفات المرفوعة قابلة للقراءة العامة";
 "Sends the public-read ACL so uploaded files are viewable by anyone with the link. Needed for AWS S3, DigitalOcean Spaces, MinIO and Backblaze B2, which store objects privately by default. Leave off for Cloudflare R2, which has no ACLs and rejects the header." = "يرسل ACL بقيمة public-read ليتمكن أي شخص لديه الرابط من عرض الملفات المرفوعة. مطلوب لـ AWS S3 وDigitalOcean Spaces وMinIO وBackblaze B2 التي تخزّن الكائنات بشكل خاص افتراضيًا. اتركه معطلًا لـ Cloudflare R2 الذي لا يدعم ACLs ويرفض الترويسة.";
 "API key:" = "مفتاح API:";
+"API key" = "مفتاح API";
 "Upload History" = "سجل الرفع";
 "No uploads yet." = "لا توجد عمليات رفع بعد.";
 "Base URL for public access. If empty, the S3 endpoint URL is used (may not be publicly accessible)." = "الرابط الأساسي للوصول العام. إذا كان فارغًا، يُستخدم رابط نقطة نهاية S3 (قد لا يكون متاحًا للعامة).";
@@ -362,11 +431,25 @@
 "Sign in to Google Drive in Preferences" = "تسجيل الدخول إلى Google Drive في التفضيلات";
 "Video upload requires Google Drive or S3" = "رفع الفيديو يتطلب Google Drive أو S3";
 
+/* Settings — GitHub upload */
+"GitHub repository" = "مستودع GitHub";
+"GitHub repository (images + videos)" = "مستودع GitHub (صور + فيديوهات)";
+"Token" = "الرمز المميز";
+"Repository" = "المستودع";
+"Branch" = "الفرع";
+"Link style" = "نمط الرابط";
+"Custom domain" = "نطاق مخصص";
+"Domain" = "النطاق";
+"Example link" = "مثال على الرابط";
+"Create a fine-grained token with Contents write access to this one repository. The repository must be public for the links to be readable without a token." = "أنشئ رمزًا مميزًا دقيق الصلاحيات (fine-grained token) بصلاحية الكتابة في Contents لهذا المستودع وحده. يجب أن يكون المستودع عامًا حتى تكون الروابط قابلة للقراءة بدون رمز مميز.";
+"Video upload requires Google Drive, S3 or GitHub" = "رفع الفيديو يتطلب Google Drive أو S3 أو GitHub";
+
 /* Preferences - About */
 "macshot" = "macshot";
 "Version %@ (%@)" = "الإصدار %@ (%@)";
 "Made by" = "من تطوير";
 "Licensed under the GPLv3" = "مرخّص بموجب GPLv3";
+"Licensed under GPLv3" = "مرخّص بموجب GPLv3";
 "A free, open-source screenshot & screen recording tool for macOS.\nFully native — built with Swift and AppKit." = "أداة مجانية ومفتوحة المصدر لالتقاط الشاشة وتسجيلها على macOS.\nأصلية بالكامل — مبنية بـ Swift وAppKit.";
 
 /* Alerts */
@@ -410,8 +493,19 @@
 /* Upload Toast */
 "URL copied to the clipboard" = "تم نسخ الرابط إلى الحافظة";
 "Uploading... %d%%" = "جارٍ الرفع... %d%%";
+"Uploading…" = "جارٍ الرفع…";
 "Upload failed: %@" = "فشل الرفع: %@";
+
+/* Upload errors */
+"Google Drive not signed in" = "لم يتم تسجيل الدخول إلى Google Drive";
+"S3 not configured — check Settings" = "لم يتم إعداد S3 — تحقق من الإعدادات";
+"GitHub upload is not configured — check Settings." = "لم يتم إعداد الرفع إلى GitHub — تحقق من الإعدادات.";
+"GitHub rejected the token — check that it has contents write access to the repository." = "رفض GitHub الرمز المميز — تأكد من أن لديه صلاحية الكتابة في محتويات المستودع.";
+"Repository or branch not found — check the owner/repo and branch name." = "لم يتم العثور على المستودع أو الفرع — تحقق من owner/repo واسم الفرع.";
+"GitHub returned a response macshot could not read." = "أعاد GitHub استجابة تعذّر على macshot قراءتها.";
+"%@ is too large for a GitHub repository — upload it to S3 or Google Drive instead." = "%@ كبير جدًا على مستودع GitHub — ارفعه إلى S3 أو Google Drive بدلاً من ذلك.";
 "Uploaded! Link copied." = "تم الرفع! تم نسخ الرابط.";
+"Link copied: %@" = "تم نسخ الرابط: %@";
 "Uploading to %@... %d%%" = "جارٍ الرفع إلى %@... %d%%";
 "Open" = "فتح";
 
@@ -438,6 +532,7 @@
 "Choose a folder" = "اختيار مجلد";
 "Save All to Folder…" = "حفظ الكل في مجلد…";
 "Could not encode the screenshot." = "تعذّر ترميز لقطة الشاشة.";
+"Could not encode the image." = "تعذّر ترميز الصورة.";
 "Could not save the screenshot: %@" = "تعذّر حفظ لقطة الشاشة: %@";
 "Could not save the screenshot to history." = "تعذّر حفظ لقطة الشاشة في السجل.";
 
@@ -545,8 +640,11 @@
 "Pause" = "إيقاف مؤقت";
 "Resume" = "استئناف";
 "Engine:" = "المحرك:";
+"Engine" = "المحرك";
 "Google Translate" = "Google Translate";
 "Apple (on-device)" = "Apple (على الجهاز)";
+"Apple" = "Apple";
+"Google" = "Google";
 "Apple translation is faster and works offline. Google Translate supports more languages." = "ترجمة Apple أسرع وتعمل بدون اتصال. Google Translate يدعم لغات أكثر.";
 "Download language packs in System Settings…" = "قم بتنزيل حزم اللغات في إعدادات النظام…";
 "Configure S3 in Settings" = "إعداد S3 في الإعدادات";
@@ -555,6 +653,7 @@
 "Position:" = "الموضع:";
 "Size:" = "الحجم:";
 "Shape:" = "الشكل:";
+"Shape" = "الشكل";
 
 "Same as screenshots" = "نفس لقطات الشاشة";
 "  Preview size:" = "  حجم المعاينة:";
@@ -624,6 +723,7 @@
 "Preview:" = "المعاينة:";
 "Copy Screen Info" = "نسخ معلومات الشاشة";
 "Copies display and capture diagnostics to clipboard" = "نسخ تشخيصات العرض والالتقاط إلى الحافظة";
+"Copies display and capture diagnostics to the clipboard" = "نسخ تشخيصات العرض والالتقاط إلى الحافظة";
 "Accent" = "التمييز";
 "Icon" = "الأيقونة";
 "Background" = "الخلفية";

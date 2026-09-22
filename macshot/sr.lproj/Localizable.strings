@@ -53,6 +53,7 @@
 
 /* Floating Thumbnail */
 "Close All" = "Затвори све";
+"View" = "Прикажи";
 "Save" = "Сачувај";
 
 /* Editor Top Bar */
@@ -174,6 +175,18 @@
 "Smart" = "Паметно";
 "Padding" = "Размак";
 "Shadow" = "Сенка";
+/* Beautify */
+"Beautify captures" = "Улепшавај снимке";
+"Frame" = "Оквир";
+"Window chrome" = "Насловна трака прозора";
+"Rounded corners" = "Заобљени углови";
+"Corner radius" = "Полупречник углова";
+"Background blur" = "Замућење позадине";
+"Style" = "Стил";
+"Use desktop wallpaper" = "Позадина радне површине";
+"Choose image…" = "Изабери слику…";
+"Places the capture on a background with rounded corners and a drop shadow." = "Поставља снимак на позадину са заобљеним угловима и сенком.";
+"Places the capture on a gradient background with rounded corners and a drop shadow. The style is chosen from the toolbar." = "Поставља снимак на градијентну позадину са заобљеним угловима и сенком. Стил се бира у траци алата.";
 "Right-click to add points" = "Десни клик за додавање тачака";
 "Hold 1 auto-vertical  ·  Hold 2 auto-horizontal" = "Држи 1 ауто-вертикално  ·  Држи 2 ауто-хоризонтално";
 "Limit to selection" = "Ограничи на селекцију";
@@ -199,6 +212,7 @@
 "  (Tab to switch)" = "  (Tab за пребацивање)";
 "Space" = "Размак";
 "Right-click to copy" = "Десни клик за копирање";
+"Press C to copy" = "Притисните C за копирање";
 "Copied %@" = "Копирано %@";
 "Set color %@" = "Постави боју %@";
 "Draw something first to use the move tool." = "Прво нацртајте нешто да бисте користили алат за померање.";
@@ -230,6 +244,8 @@
 "Show floating thumbnail after capture" = "Прикажи плутајући приказ после снимања";
 "Launch at login" = "Покрени при пријављивању";
 "Show snap alignment guides" = "Прикажи водиље за поравнање";
+"Snapping" = "Прилепљивање";
+"Haptic feedback when snapping" = "Хаптички одзив при прилепљивању";
 "Snap selection edges to image boundaries" = "Привежи ивице избора уз границе слике";
 "Enhance browser and Electron element snapping" = "Побољшај лепљење елемената у прегледачу и Electron-у";
 "Builds the target app's accessibility tree in Element mode. Disable this if a browser or Electron app becomes slow or has input issues." = "Гради стабло доступности циљне апликације у режиму елемената. Онемогућите ако прегледач или Electron апликација постане спора или има проблема са уносом.";
@@ -247,9 +263,20 @@
 "  Multiple previews:" = "  Више прегледа:";
 "Stack (keep all)" = "Слагање (задржи све)";
 "Replace (show only latest)" = "Замена (прикажи само најновије)";
+"Floating Preview" = "Плутајући преглед";
+"Dismiss after" = "Одбаци после";
+"Never" = "Никад";
+"3 seconds" = "3 секунде";
+"5 seconds" = "5 секунди";
+"10 seconds" = "10 секунди";
+"30 seconds" = "30 секунди";
+"Multiple previews" = "Више прегледа";
 "Output" = "Излаз";
 "Image format:" = "Формат слике:";
 "Quality:" = "Квалитет:";
+"Image" = "Слика";
+"Image format" = "Формат слике";
+"Quality" = "Квалитет";
 "%d%%" = "%d%%";
 "Save at standard resolution (1x)" = "Сачувај у стандардној резолуцији (1x)";
 "Halves dimensions on Retina displays, ~4x smaller files" = "Преполовљује димензије на Retina екранима, ~4x мање датотеке";
@@ -257,11 +284,15 @@
 "Ensures consistent colors across different displays" = "Обезбеђује доследне боје на различитим екранима";
 "Screenshot History" = "Историја снимања";
 "History size:" = "Величина историје:";
+"History size" = "Величина историје";
 "screenshots kept on disk (0 = off)" = "снимака чуваних на диску (0 = искључено)";
 "Order history by last edit" = "Сортирај историју по последњој измени";
 "Edited screenshots move to the top. Off keeps them in capture order." = "Измењени снимци се померају на врх. Искључено задржава редослед снимања.";
 "Save Directory" = "Фасцикла за чување";
 "Save folder:" = "Фасцикла:";
+"Saving" = "Чување";
+"Save folder" = "Фасцикла за чување";
+"Filename" = "Име датотеке";
 "Browse…" = "Прегледај…";
 "Appearance" = "Изглед";
 "Accent color:" = "Боја акцента:";
@@ -270,14 +301,18 @@
 "Reset" = "Ресетуј";
 "OCR Capture:" = "OCR снимање:";
 "OCR & QR Capture:" = "OCR и QR снимање:";
+"OCR & QR Capture" = "OCR и QR снимање";
+"Show results window" = "Прикажи прозор с резултатима";
 "Show window + copy to clipboard" = "Прикажи прозор + копирај у оставу";
 "Show window only" = "Само прикажи прозор";
 "Copy to clipboard only" = "Само копирај у оставу";
 "Enter / Quick Capture:" = "Enter / Брзо снимање:";
+"Enter / Quick Capture" = "Enter / Брзо снимање";
 "Save to file" = "Сачувај у датотеку";
 "Save + copy to clipboard" = "Сачувај + копирај у оставу";
 "OCR Action" = "OCR радња";
 "Save action:" = "Радња чувања:";
+"Save action" = "Радња чувања";
 "Save to default folder" = "Сачувај у подразумевану фасциклу";
 "Ask where to save" = "Питај где да сачувам";
 "Show shortcuts in tooltips" = "Прикажи пречице у облачићима";
@@ -286,6 +321,9 @@
 "Default" = "Подразумевано";
 "Custom symbol" = "Прилагођени симбол";
 "Enter any SF Symbol name (e.g. camera.fill) or pick a preset. Browse names in Apple's SF Symbols app. Invalid names fall back to the default icon." = "Унесите било које SF Symbol име (нпр. camera.fill) или изаберите предефинисано. Прегледајте имена у Apple SF Symbols апликацији. Неважећа имена враћају подразумевану иконицу.";
+"Menu bar icon" = "Иконица у траци менија";
+"Symbol" = "Симбол";
+"No SF Symbol by that name — the default icon is used." = "Не постоји SF Symbol с тим именом — користи се подразумевана иконица.";
 
 /* Preferences - Shortcuts */
 "Keyboard Shortcuts" = "Пречице на тастатури";
@@ -293,6 +331,7 @@
 "Clear shortcut" = "Обриши пречицу";
 "Press keys..." = "Притисните тастере...";
 "Waiting..." = "Чекање...";
+"Press a shortcut…" = "Притисните пречицу…";
 
 /* Preferences - Tools */
 "Annotation Tools" = "Алати за означавање";
@@ -306,16 +345,20 @@
 
 /* Preferences - Recording */
 "Frame rate:" = "Брзина кадрова:";
+"Frame rate" = "Брзина кадрова";
 "After recording:" = "После снимања:";
+"When done" = "По завршетку";
 "Save recording to:" = "Сачувај снимак у:";
 "Save Recording" = "Сачувај снимак";
 "Clear" = "Обриши";
 "Max height:" = "Максимална висина:";
+"Max height" = "Максимална висина";
 "px (0 = unlimited)" = "px (0 = неограничено)";
 "Behavior" = "Понашање";
 "Auto-scroll (sends synthetic scroll events)" = "Аутоматско скроловање (шаље синтетичке догађаје скроловања)";
 "Detect fixed/sticky headers" = "Откривање фиксних/лепљивих заглавља";
 "Scroll speed:" = "Брзина скроловања:";
+"Scroll speed" = "Брзина скроловања";
 "Slow" = "Споро";
 "Medium" = "Средње";
 "Fast" = "Брзо";
@@ -327,6 +370,7 @@
 "30 fps" = "30 fps";
 "60 fps" = "60 fps";
 "120 fps" = "120 fps";
+"%d fps" = "%d fps";
 "MP4 (H.264)" = "MP4 (H.264)";
 "GIF" = "GIF";
 
@@ -334,10 +378,13 @@
 "Upload Service" = "Сервис за отпремање";
 "Upload Provider" = "Провајдер за отпремање";
 "Provider:" = "Провајдер:";
+"Provider" = "Провајдер";
 "Google Drive" = "Google Drive";
 "Google Drive (images + videos)" = "Google Drive (слике + видео)";
 "imgbb (images only)" = "imgbb (само слике)";
 "S3-Compatible (images + videos)" = "S3-компатибилно (слике + видео)";
+"GitHub repository" = "GitHub репозиторијум";
+"GitHub repository (images + videos)" = "GitHub репозиторијум (слике + видео)";
 "S3-Compatible Storage" = "S3-компатибилно складиште";
 "Sign In with Google" = "Пријавите се преко Google";
 "Sign Out" = "Одјавите се";
@@ -345,10 +392,17 @@
 "Not signed in" = "Нисте пријављени";
 "Account:" = "Налог:";
 "Folder:" = "Фасцикла:";
+"Account" = "Налог";
+"Folder" = "Фасцикла";
+"Ask before uploading" = "Питај пре отпремања";
 "Test Connection" = "Тестирај конекцију";
 "Fill in endpoint, bucket, and credentials first" = "Прво попуните крајњу тачку, кошару и акредитиве";
 "Testing..." = "Тестирање...";
 "Connection successful!" = "Конекција успешна!";
+"Connection" = "Конекција";
+"Checking…" = "Провера…";
+"Connected — the token can write to this repository." = "Повезано — токен може да пише у овај репозиторијум.";
+"Connected, but the token cannot write to this repository." = "Повезано, али токен не може да пише у овај репозиторијум.";
 "Leave empty to use default" = "Оставите празно за подразумевано";
 "Endpoint:" = "Крајња тачка:";
 "Region:" = "Регион:";
@@ -357,23 +411,42 @@
 "Secret Key:" = "Тајни кључ:";
 "Public URL:" = "Јавни URL:";
 "Path Prefix:" = "Префикс путање:";
+"Endpoint" = "Крајња тачка";
+"Region" = "Регион";
+"Bucket" = "Кошара";
+"Access Key" = "Приступни кључ";
+"Secret Key" = "Тајни кључ";
+"Public URL" = "Јавни URL";
+"Path Prefix" = "Префикс путање";
 "Make uploads publicly readable" = "Учини отпремања јавно читљивим";
 "Sends the public-read ACL so uploaded files are viewable by anyone with the link. Needed for AWS S3, DigitalOcean Spaces, MinIO and Backblaze B2, which store objects privately by default. Leave off for Cloudflare R2, which has no ACLs and rejects the header." = "Шаље ACL public-read тако да отпремљени фајлови буду доступни свима са линком. Потребно за AWS S3, DigitalOcean Spaces, MinIO и Backblaze B2, који подразумевано чувају објекте приватно. Оставите искључено за Cloudflare R2, који не подржава ACL и одбија ово заглавље.";
 "API key:" = "API кључ:";
+"API key" = "API кључ";
 "Upload History" = "Историја отпремања";
 "No uploads yet." = "Још нема отпремања.";
 "Base URL for public access. If empty, the S3 endpoint URL is used (may not be publicly accessible)." = "Основни URL за јавни приступ. Ако је празно, користи се URL S3 крајње тачке (можда неће бити јавно доступан).";
 "A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "Укључен је заједнички кључ — набавите свој бесплатни кључ на imgbb.com/api ако достигнете ограничења. Само слике (без подршке за видео).";
 "Works with AWS S3, Cloudflare R2, MinIO, DigitalOcean Spaces, Backblaze B2, and other S3-compatible services. Supports images and videos." = "Ради са AWS S3, Cloudflare R2, MinIO, DigitalOcean Spaces, Backblaze B2 и другим S3-компатибилним сервисима. Подржава слике и видео.";
+/* Uploads - GitHub */
+"Token" = "Токен";
+"Repository" = "Репозиторијум";
+"Branch" = "Грана";
+"Domain" = "Домен";
+"Custom domain" = "Прилагођени домен";
+"Link style" = "Формат линка";
+"Example link" = "Пример линка";
+"Create a fine-grained token with Contents write access to this one repository. The repository must be public for the links to be readable without a token." = "Направите fine-grained токен са Contents дозволом за писање само у овај репозиторијум. Репозиторијум мора бити јаван да би линкови били читљиви без токена.";
 "Configure S3 in Preferences" = "Подесите S3 у подешавањима";
 "Sign in to Google Drive in Preferences" = "Пријавите се на Google Drive у подешавањима";
 "Video upload requires Google Drive or S3" = "Отпремање видеа захтева Google Drive или S3";
+"Video upload requires Google Drive, S3 or GitHub" = "Отпремање видеа захтева Google Drive, S3 или GitHub";
 
 /* Preferences - About */
 "macshot" = "macshot";
 "Version %@ (%@)" = "Верзија %@ (%@)";
 "Made by" = "Направио";
 "Licensed under the GPLv3" = "Лиценцирано под GPLv3";
+"Licensed under GPLv3" = "Лиценцирано под GPLv3";
 "A free, open-source screenshot & screen recording tool for macOS.\nFully native — built with Swift and AppKit." = "Бесплатан алат отвореног кода за снимање екрана и снимање видеа на macOS.\nПотпуно нативан — направљен у Swift и AppKit.";
 
 /* Alerts */
@@ -421,6 +494,8 @@
 "Uploaded! Link copied." = "Отпремљено! Линк копиран.";
 "Uploading to %@... %d%%" = "Отпремање на %@... %d%%";
 "Open" = "Отвори";
+"Uploading…" = "Отпремање…";
+"Link copied: %@" = "Линк копиран: %@";
 
 /* Recording Toast */
 "Recording saved" = "Снимак сачуван";
@@ -445,6 +520,7 @@
 "Choose a folder" = "Изаберите фасциклу";
 "Save All to Folder…" = "Сачувај све у фасциклу…";
 "Could not encode the screenshot." = "Није могуће кодирати снимак екрана.";
+"Could not encode the image." = "Није могуће кодирати слику.";
 "Could not save the screenshot: %@" = "Није могуће сачувати снимак екрана: %@";
 "Could not save the screenshot to history." = "Није могуће сачувати снимак екрана у историју.";
 
@@ -533,6 +609,7 @@
 "Press..." = "Притисните...";
 "Reset to default" = "Врати на подразумевано";
 "Press a single key to assign it as the shortcut for that tool. These work when the overlay or editor is active." = "Притисните један тастер да га доделите као пречицу за тај алат. Ове пречице раде када је преклапање или уређивач активан.";
+"These apply inside the capture overlay and the editor window." = "Важе унутар преклапања за снимање и у прозору уређивача.";
 "Keep Separate" = "Задржи одвојено";
 "Merge Audio" = "Споји звук";
 "Audio Tracks" = "Аудио трake";
@@ -554,24 +631,39 @@
 "Engine:" = "Мотор:";
 "Google Translate" = "Google Translate";
 "Apple (on-device)" = "Apple (на уређају)";
+"Engine" = "Мотор";
+"Apple" = "Apple";
+"Google" = "Google";
 "Apple translation is faster and works offline. Google Translate supports more languages." = "Apple превод је бржи и ради офлајн. Google Translate подржава више језика.";
 "Download language packs in System Settings…" = "Преузмите језичке пакете у Подешавањима система…";
 "Configure S3 in Settings" = "Подесите S3 у Подешавањима";
 "Sign in to Google Drive in Settings" = "Пријавите се на Google Drive у Подешавањима";
+"Google Drive not signed in" = "Нисте пријављени на Google Drive";
+"S3 not configured — check Settings" = "S3 није подешен — проверите Подешавања";
+"GitHub upload is not configured — check Settings." = "Отпремање на GitHub није подешено — проверите Подешавања.";
+"GitHub rejected the token — check that it has contents write access to the repository." = "GitHub је одбио токен — проверите да ли има contents дозволу за писање у репозиторијум.";
+"Repository or branch not found — check the owner/repo and branch name." = "Репозиторијум или грана нису пронађени — проверите owner/repo и име гране.";
+"GitHub returned a response macshot could not read." = "GitHub је вратио одговор који macshot не може да прочита.";
+"%@ is too large for a GitHub repository — upload it to S3 or Google Drive instead." = "%@ је превелик за GitHub репозиторијум — отпремите га на S3 или Google Drive.";
 "Offline build: upload and cloud storage integrations are removed. Update checks may still connect to MacShot's update server. Screenshots and recordings stay local unless you share or save them yourself." = "Офлајн верзија: интеграције за отпремање и складиштење у облаку су уклоњене. Провера ажурирања и даље може да се повеже са MacShot-овим сервером за ажурирања. Снимци екрана и снимци остају локални осим ако их сами не поделите или сачувате.";
 "Position:" = "Позиција:";
 "  Position:" = "  Позиција:";
+"Position" = "Позиција";
 "Size:" = "Величина:";
 "Shape:" = "Облик:";
+"Shape" = "Облик";
 
 "Same as screenshots" = "Isto kao snimci ekrana";
 "  Preview size:" = "  Veličina pregleda:";
+"Preview size" = "Величина прегледа";
+"Preview" = "Преглед";
 "Fit image in preview (letterbox)" = "Uklopi sliku u pregled (sa trakama)";
 "(0 = off)" = "(0 = isključeno)";
 "Clear All" = "Obriši sve";
 "Clear History?" = "Obrisati istoriju?";
 "This will permanently delete all screenshots from history." = "Ovo će trajno obrisati sve snimke ekrana iz istorije.";
 "Click \"Set\" and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧) to set a shortcut." = "Kliknite \"Postavi\" i pritisnite kombinaciju tastera sa barem jednim modifikatorom (⌘, ⌥, ⌃, ⇧) da biste postavili prečicu.";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "Кликните на пречицу и притисните комбинацију тастера са најмање једним модификатором (⌘, ⌥, ⌃, ⇧). Esc отказује. Функцијски тастери раде самостално.";
 "Files are uploaded to this folder in your Google Drive. Leave empty to use \"macshot\". macshot can only use folders it created itself, so a folder you made in Drive with the same name won't be reused — a new one is created instead. Everything stays private — nothing is shared publicly." = "Фајлови се отпремају у ову фасциклу на вашем Google диску. Оставите празно да бисте користили \"macshot\". macshot може да користи само фасцикле које је сам направио, па фасцикла са истим именом коју сте ви направили на Диску неће бити поново искоришћена — уместо ње биће направљена нова. Све остаје приватно — ништа се не дели јавно.";
 
 "Pressure" = "Pritisak";
@@ -624,11 +716,13 @@
 "Preview:" = "Преглед:";
 "Copy Screen Info" = "Копирај информације о екрану";
 "Copies display and capture diagnostics to clipboard" = "Копира дијагностику екрана и снимања у оставу";
+"Copies display and capture diagnostics to the clipboard" = "Копира дијагностику екрана и снимања у оставу";
 "Accent" = "Акцент";
 "Icon" = "Иконица";
 "Background" = "Позадина";
 "Custom" = "Прилагођено";
 "Theme:" = "Тема:";
+"Theme" = "Тема";
 "Application" = "Апликација";
 "Capture area and extract text" = "Сними област и издвоји текст";
 "Capture the full screen" = "Сними цео екран";

@@ -53,6 +53,7 @@
 
 /* Floating Thumbnail */
 "Close All" = "Isara Lahat";
+"View" = "Tingnan";
 "Save" = "I-save";
 
 /* Editor Top Bar */
@@ -186,6 +187,7 @@
 "  (Tab to toggle)" = "  (Tab upang i-toggle)";
 "  (Tab to switch)" = "  (Tab upang magpalit)";
 "Right-click to copy" = "I-right-click upang kopyahin";
+"Press C to copy" = "Pindutin ang C upang kopyahin";
 "Copied %@" = "Nakopya ang %@";
 "Set color %@" = "Itakda ang kulay %@";
 "Draw something first to use the move tool." = "Gumuhit muna bago gamitin ang move tool.";
@@ -229,6 +231,8 @@
 "Launch at login" = "Buksan kapag nag-login";
 "Show snap alignment guides" = "Ipakita ang mga gabay sa pagkakahanay";
 "Snap selection edges to image boundaries" = "I-snap ang mga gilid ng seleksiyon sa hangganan ng imahe";
+"Snapping" = "Pag-snap";
+"Haptic feedback when snapping" = "Haptic feedback kapag nag-snap";
 "Enhance browser and Electron element snapping" = "Pahusayin ang element snapping ng browser at Electron";
 "Builds the target app's accessibility tree in Element mode. Disable this if a browser or Electron app becomes slow or has input issues." = "Gumagawa ng accessibility tree ng target app sa Element mode. I-disable ito kung mabagal ang browser o Electron app o may mga problema sa input.";
 "Capture mouse cursor in screenshot" = "Isama ang cursor ng mouse sa screenshot";
@@ -247,13 +251,24 @@
 "Check for beta updates" = "Tingnan ang mga beta update";
 "Thumbnail" = "Thumbnail";
 "  Dismiss after:" = "  I-dismiss pagkatapos ng:";
+"Floating Preview" = "Lumulutang na Preview";
+"Dismiss after" = "I-dismiss pagkatapos ng";
+"Never" = "Hindi kailanman";
+"3 seconds" = "3 segundo";
+"5 seconds" = "5 segundo";
+"10 seconds" = "10 segundo";
+"30 seconds" = "30 segundo";
 "seconds before auto-dismiss (0 = never)" = "segundo bago mag-auto-dismiss (0 = hindi kailanman)";
 "  Multiple previews:" = "  Maramihang preview:";
+"Multiple previews" = "Maramihang preview";
 "Stack (keep all)" = "Patong-patungin (panatilihin lahat)";
 "Replace (show only latest)" = "Palitan (ipakita lang ang pinakabago)";
 "Output" = "Output";
 "Image format:" = "Format ng larawan:";
+"Image" = "Larawan";
+"Image format" = "Format ng larawan";
 "Quality:" = "Kalidad:";
+"Quality" = "Kalidad";
 "%d%%" = "%d%%";
 "Save at standard resolution (1x)" = "I-save sa standard na resolusyon (1x)";
 "Halves dimensions on Retina displays, ~4x smaller files" = "Hinahati ang dimensyon sa Retina display, ~4x na mas maliliit na file";
@@ -261,9 +276,12 @@
 "Ensures consistent colors across different displays" = "Tinitiyak ang pare-parehong kulay sa iba't ibang display";
 "Screenshot History" = "Kasaysayan ng Screenshot";
 "History size:" = "Laki ng kasaysayan:";
+"History size" = "Laki ng kasaysayan";
 "screenshots kept on disk (0 = off)" = "mga screenshot na nakatago sa disk (0 = naka-off)";
 "Save Directory" = "Direktoryo ng Pag-save";
 "Save folder:" = "Folder na pag-save-an:";
+"Saving" = "Pag-save";
+"Save folder" = "Folder na pag-save-an";
 "Browse…" = "Mag-browse…";
 "Appearance" = "Hitsura";
 "Accent color:" = "Kulay ng accent:";
@@ -274,15 +292,22 @@
 "Custom symbol" = "Custom na simbolo";
 "Default" = "Default";
 "Enter any SF Symbol name (e.g. camera.fill) or pick a preset. Browse names in Apple's SF Symbols app. Invalid names fall back to the default icon." = "Maglagay ng anumang pangalan ng SF Symbol (hal. camera.fill) o pumili ng preset. I-browse ang mga pangalan sa SF Symbols app ng Apple. Ang mga hindi wastong pangalan ay babalik sa default na icon.";
+"Menu bar icon" = "Icon ng menu bar";
+"Symbol" = "Simbolo";
+"No SF Symbol by that name — the default icon is used." = "Walang SF Symbol na may ganoong pangalan — ginagamit ang default na icon.";
 "OCR Capture:" = "OCR Capture:";
 "OCR & QR Capture:" = "OCR & QR Capture:";
+"OCR & QR Capture" = "OCR & QR Capture";
+"Show results window" = "Ipakita ang window ng resulta";
 "Save action:" = "Aksyon sa pag-save:";
+"Save action" = "Aksyon sa pag-save";
 "Ask where to save" = "Itanong kung saan ise-save";
 "Save to default folder" = "I-save sa default na folder";
 "Show window + copy to clipboard" = "Ipakita ang window + kopyahin sa clipboard";
 "Show window only" = "Ipakita ang window lamang";
 "Copy to clipboard only" = "Kopyahin sa clipboard lamang";
 "Enter / Quick Capture:" = "Enter / Mabilisang Pagkuha:";
+"Enter / Quick Capture" = "Enter / Mabilisang Pagkuha";
 "Save to file" = "I-save sa file";
 "Save + copy to clipboard" = "I-save + kopyahin sa clipboard";
 "OCR Action" = "Aksyon ng OCR";
@@ -293,6 +318,9 @@
 "Clear shortcut" = "Burahin ang shortcut";
 "Press keys..." = "Pindutin ang mga key...";
 "Waiting..." = "Naghihintay...";
+"Press a shortcut…" = "Pindutin ang isang shortcut…";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "I-click ang isang shortcut at pindutin ang kombinasyon ng key na may kahit isang modifier (⌘, ⌥, ⌃, ⇧). Kanselahin gamit ang Esc. Gumagana nang mag-isa ang mga function key.";
+"These apply inside the capture overlay and the editor window." = "Gumagana ang mga ito sa loob ng capture overlay at ng editor window.";
 
 /* Preferences - Tools */
 "Annotation Tools" = "Mga Kasangkapan sa Pag-annotate";
@@ -306,16 +334,20 @@
 
 /* Preferences - Recording */
 "Frame rate:" = "Frame rate:";
+"Frame rate" = "Frame rate";
 "After recording:" = "Pagkatapos mag-record:";
+"When done" = "Kapag tapos na";
 "Save recording to:" = "I-save ang recording sa:";
 "Save Recording" = "I-save ang Recording";
 "Clear" = "Burahin";
 "Max height:" = "Pinakamataas na taas:";
+"Max height" = "Pinakamataas na taas";
 "px (0 = unlimited)" = "px (0 = walang limitasyon)";
 "Behavior" = "Gawi";
 "Auto-scroll (sends synthetic scroll events)" = "Auto-scroll (nagpapadala ng synthetic scroll event)";
 "Detect fixed/sticky headers" = "Tukuyin ang fixed/sticky header";
 "Scroll speed:" = "Bilis ng scroll:";
+"Scroll speed" = "Bilis ng scroll";
 "Slow" = "Mabagal";
 "Medium" = "Katamtaman";
 "Fast" = "Mabilis";
@@ -327,13 +359,29 @@
 "30 fps" = "30 fps";
 "60 fps" = "60 fps";
 "120 fps" = "120 fps";
+"%d fps" = "%d fps";
 "MP4 (H.264)" = "MP4 (H.264)";
 "GIF" = "GIF";
+
+/* Settings - Beautify */
+"Beautify captures" = "Pagandahin ang mga pagkuha";
+"Frame" = "Frame";
+"Window chrome" = "Frame ng window";
+"Rounded corners" = "Bilugang sulok";
+"Corner radius" = "Radius ng sulok";
+"Background blur" = "Blur ng background";
+"Style" = "Estilo";
+"Use desktop wallpaper" = "Gamitin ang wallpaper ng desktop";
+"Choose image…" = "Pumili ng larawan…";
+"Places the capture on a background with rounded corners and a drop shadow." = "Inilalagay ang pagkuha sa isang background na may bilugang sulok at anino.";
+"Places the capture on a gradient background with rounded corners and a drop shadow. The style is chosen from the toolbar." = "Inilalagay ang pagkuha sa isang gradient na background na may bilugang sulok at anino. Pinipili ang estilo mula sa toolbar.";
 
 /* Preferences - Upload */
 "Upload Service" = "Serbisyo ng Pag-upload";
 "Upload Provider" = "Tagapagbigay ng Upload";
 "Provider:" = "Tagapagbigay:";
+"Provider" = "Tagapagbigay";
+"Ask before uploading" = "Magtanong bago mag-upload";
 "Google Drive" = "Google Drive";
 "Google Drive (images + videos)" = "Google Drive (mga larawan + video)";
 "imgbb (images only)" = "imgbb (mga larawan lamang)";
@@ -344,22 +392,34 @@
 "Signed in" = "Naka-sign in";
 "Not signed in" = "Hindi naka-sign in";
 "Account:" = "Account:";
+"Account" = "Account";
 "Folder:" = "Folder:";
+"Folder" = "Folder";
 "Test Connection" = "Subukan ang Koneksyon";
+"Connection" = "Koneksyon";
+"Checking…" = "Sinusuri…";
 "Fill in endpoint, bucket, and credentials first" = "Punan muna ang endpoint, bucket, at mga kredensyal";
 "Testing..." = "Sinusubukan...";
 "Connection successful!" = "Matagumpay ang koneksyon!";
 "Leave empty to use default" = "Iwanang walang laman upang gamitin ang default";
 "Endpoint:" = "Endpoint:";
+"Endpoint" = "Endpoint";
 "Region:" = "Rehiyon:";
+"Region" = "Rehiyon";
 "Bucket:" = "Bucket:";
+"Bucket" = "Bucket";
 "Access Key:" = "Access Key:";
+"Access Key" = "Access Key";
 "Secret Key:" = "Secret Key:";
+"Secret Key" = "Secret Key";
 "Public URL:" = "Public URL:";
+"Public URL" = "Public URL";
 "Path Prefix:" = "Path Prefix:";
+"Path Prefix" = "Path Prefix";
 "Make uploads publicly readable" = "Gawing pampublikong nababasa ang mga upload";
 "Sends the public-read ACL so uploaded files are viewable by anyone with the link. Needed for AWS S3, DigitalOcean Spaces, MinIO and Backblaze B2, which store objects privately by default. Leave off for Cloudflare R2, which has no ACLs and rejects the header." = "Nagpapadala ng public-read ACL para makita ng kahit sino na may link ang mga na-upload na file. Kailangan para sa AWS S3, DigitalOcean Spaces, MinIO at Backblaze B2 na nag-iimbak ng mga object nang pribado bilang default. I-off para sa Cloudflare R2 na walang ACL at tinatanggihan ang header.";
 "API key:" = "API key:";
+"API key" = "API key";
 "Upload History" = "Kasaysayan ng Pag-upload";
 "No uploads yet." = "Wala pang mga upload.";
 "Base URL for public access. If empty, the S3 endpoint URL is used (may not be publicly accessible)." = "Base URL para sa pampublikong access. Kung walang laman, ang S3 endpoint URL ang gagamitin (maaaring hindi pampublikong ma-access).";
@@ -369,11 +429,32 @@
 "Sign in to Google Drive in Preferences" = "Mag-sign in sa Google Drive sa Mga Kagustuhan";
 "Video upload requires Google Drive or S3" = "Ang pag-upload ng video ay nangangailangan ng Google Drive o S3";
 
+/* Settings - Uploads: GitHub */
+"GitHub repository" = "GitHub repository";
+"GitHub repository (images + videos)" = "GitHub repository (mga larawan + video)";
+"Token" = "Token";
+"Repository" = "Repository";
+"Branch" = "Branch";
+"Domain" = "Domain";
+"Custom domain" = "Custom na domain";
+"Link style" = "Estilo ng link";
+"Example link" = "Halimbawang link";
+"Create a fine-grained token with Contents write access to this one repository. The repository must be public for the links to be readable without a token." = "Gumawa ng fine-grained token na may Contents write access sa iisang repository na ito. Kailangang public ang repository para mabasa ang mga link nang walang token.";
+"Connected — the token can write to this repository." = "Nakakonekta — makakapagsulat ang token sa repository na ito.";
+"Connected, but the token cannot write to this repository." = "Nakakonekta, ngunit hindi makakapagsulat ang token sa repository na ito.";
+"GitHub upload is not configured — check Settings." = "Hindi naka-configure ang GitHub upload — tingnan ang Settings.";
+"GitHub rejected the token — check that it has contents write access to the repository." = "Tinanggihan ng GitHub ang token — tiyaking may contents write access ito sa repository.";
+"Repository or branch not found — check the owner/repo and branch name." = "Hindi nakita ang repository o branch — tingnan ang owner/repo at pangalan ng branch.";
+"GitHub returned a response macshot could not read." = "Nagbalik ang GitHub ng tugon na hindi mabasa ng macshot.";
+"%@ is too large for a GitHub repository — upload it to S3 or Google Drive instead." = "Masyadong malaki ang %@ para sa GitHub repository — i-upload ito sa S3 o Google Drive.";
+"Video upload requires Google Drive, S3 or GitHub" = "Ang pag-upload ng video ay nangangailangan ng Google Drive, S3 o GitHub";
+
 /* Preferences - About */
 "macshot" = "macshot";
 "Version %@ (%@)" = "Bersyon %@ (%@)";
 "Made by" = "Ginawa ni";
 "Licensed under the GPLv3" = "Lisensiyado sa ilalim ng GPLv3";
+"Licensed under GPLv3" = "Lisensiyado sa ilalim ng GPLv3";
 "A free, open-source screenshot & screen recording tool for macOS.\nFully native — built with Swift and AppKit." = "Isang libre at open-source na kasangkapan sa screenshot at pag-record ng screen para sa macOS.\nGanap na native — binuo gamit ang Swift at AppKit.";
 
 /* Alerts */
@@ -417,8 +498,10 @@
 /* Upload Toast */
 "URL copied to the clipboard" = "Nakopya ang URL sa clipboard";
 "Uploading... %d%%" = "Ina-upload... %d%%";
+"Uploading…" = "Ina-upload…";
 "Upload failed: %@" = "Nabigo ang pag-upload: %@";
 "Uploaded! Link copied." = "Na-upload na! Nakopya ang link.";
+"Link copied: %@" = "Nakopya ang link: %@";
 "Uploading to %@... %d%%" = "Ina-upload sa %@... %d%%";
 "Open" = "Buksan";
 
@@ -437,6 +520,7 @@
 "Saved to %@" = "Na-save sa %@";
 "Save failed" = "Nabigo ang pag-save";
 "Could not encode the screenshot." = "Hindi ma-encode ang screenshot.";
+"Could not encode the image." = "Hindi ma-encode ang larawan.";
 "Could not save the screenshot: %@" = "Hindi ma-save ang screenshot: %@";
 "Could not save the screenshot to history." = "Hindi ma-save ang screenshot sa history.";
 
@@ -551,19 +635,28 @@
 "Pause" = "I-pause";
 "Resume" = "Ipagpatuloy";
 "Engine:" = "Engine:";
+"Engine" = "Engine";
 "Google Translate" = "Google Translate";
 "Apple (on-device)" = "Apple (sa device)";
+"Apple" = "Apple";
+"Google" = "Google";
 "Apple translation is faster and works offline. Google Translate supports more languages." = "Mas mabilis ang pagsasalin ng Apple at gumagana offline. Mas maraming wika ang sinusuportahan ng Google Translate.";
 "Download language packs in System Settings…" = "Mag-download ng mga language pack sa System Settings…";
 "Configure S3 in Settings" = "I-configure ang S3 sa Mga Setting";
 "Sign in to Google Drive in Settings" = "Mag-sign in sa Google Drive sa Mga Setting";
+"Google Drive not signed in" = "Hindi naka-sign in sa Google Drive";
+"S3 not configured — check Settings" = "Hindi naka-configure ang S3 — tingnan ang Settings";
 "Position:" = "Posisyon:";
 "  Position:" = "  Posisyon:";
+"Position" = "Posisyon";
 "Size:" = "Laki:";
 "Shape:" = "Hugis:";
+"Shape" = "Hugis";
 
 "Same as screenshots" = "Kapareho ng mga screenshot";
 "  Preview size:" = "  Laki ng preview:";
+"Preview size" = "Laki ng preview";
+"Preview" = "Preview";
 "Fit image in preview (letterbox)" = "Ipakita ang buong larawan sa preview (letterbox)";
 "(0 = off)" = "(0 = off)";
 "Clear All" = "I-clear Lahat";
@@ -622,11 +715,13 @@
 "Preview:" = "Preview:";
 "Copy Screen Info" = "Kopyahin ang Impormasyon ng Screen";
 "Copies display and capture diagnostics to clipboard" = "Kinokopya ang mga diagnostic ng display at capture sa clipboard";
+"Copies display and capture diagnostics to the clipboard" = "Kinokopya ang mga diagnostic ng display at capture sa clipboard";
 "Accent" = "Accent";
 "Icon" = "Icon";
 "Background" = "Background";
 "Custom" = "Custom";
 "Theme:" = "Tema:";
+"Theme" = "Tema";
 "Application" = "Application";
 "Capture area and extract text" = "Kumuha ng lugar at kunin ang teksto";
 "Capture the full screen" = "Kunan ang buong screen";
@@ -635,6 +730,7 @@
 "Filename Template Tokens" = "Mga Token ng Filename Template";
 "Filename tokens" = "Mga token ng filename";
 "Filename:" = "Filename:";
+"Filename" = "Filename";
 "Open an image file in the editor" = "Magbukas ng image file sa editor";
 "Open the recent captures overlay" = "Buksan ang overlay ng mga kamakailang pagkuha";
 "Open this settings window" = "Buksan ang settings window na ito";
