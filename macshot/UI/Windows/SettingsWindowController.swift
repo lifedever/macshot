@@ -119,8 +119,6 @@ class SettingsWindowController: NSWindowController, NSToolbarDelegate, NSWindowD
     private var qualityLabel: NSTextField!
     private var qualityRowLabel: NSTextField!
     private var downscaleRetinaCheckbox: NSButton!
-    private var captureMenuOrder: [CaptureMenuItemID] = []
-    private var captureMenuOrderRowsStack: NSStackView?
     // embedColorProfileCheckbox removed — native color profile is always embedded
     private var localMonitor: Any?
     #if !OFFLINE
@@ -276,11 +274,8 @@ class SettingsWindowController: NSWindowController, NSToolbarDelegate, NSWindowD
             SettingsPaneHostingView(rootView: GeneralSettingsView(model: general))
                 .configuredAsSettingsPane())
         tabContentViews["appearance"] = trackingPaneSize(
-            SettingsPaneHostingView(rootView: AppearanceSettingsView(
-                model: general,
-                menuOrderView: { [weak self] in self?.menuOrderViewForSwiftUI() ?? NSView() },
-                onResetMenuOrder: { [weak self] in self?.resetMenuOrderFromSwiftUI() }
-            )).configuredAsSettingsPane())
+            SettingsPaneHostingView(rootView: AppearanceSettingsView(model: general))
+                .configuredAsSettingsPane())
         tabContentViews["capture"] = trackingPaneSize(
             SettingsPaneHostingView(rootView: CaptureSettingsView(model: capture))
                 .configuredAsSettingsPane())
@@ -348,19 +343,6 @@ class SettingsWindowController: NSWindowController, NSToolbarDelegate, NSWindowD
         // Keep the title bar where it is rather than growing downward.
         frame.origin.y -= delta
         window.setFrame(frame, display: true, animate: false)
-    }
-
-    /// The capture-menu order list, wrapped for the SwiftUI General pane.
-    ///
-    /// Kept as AppKit per the settings convention: it is a drag-to-reorder list
-    /// with no SwiftUI equivalent worth rebuilding.
-    fileprivate func menuOrderViewForSwiftUI() -> NSView {
-        captureMenuOrder = CaptureMenuItemID.orderedItems()
-        return makeCaptureMenuOrderView()
-    }
-
-    fileprivate func resetMenuOrderFromSwiftUI() {
-        resetCaptureMenuOrder(NSButton())
     }
 
     @objc private func toolbarTabSelected(_ sender: NSToolbarItem) {
@@ -615,125 +597,6 @@ class SettingsWindowController: NSWindowController, NSToolbarDelegate, NSWindowD
         alert.addButton(withTitle: L("OK"))
         if let window = window { alert.beginSheetModal(for: window, completionHandler: nil) }
         else { alert.runModal() }
-    }
-
-    // MARK: - Capture Tab
-
-    private func makeCaptureMenuOrderView() -> NSView {
-        let box = NSView()
-        box.translatesAutoresizingMaskIntoConstraints = false
-        box.wantsLayer = true
-        box.layer?.backgroundColor = NSColor.windowBackgroundColor.withAlphaComponent(0.5).cgColor
-        box.layer?.cornerRadius = 6
-        box.layer?.borderWidth = 1
-        box.layer?.borderColor = NSColor.separatorColor.cgColor
-        box.widthAnchor.constraint(greaterThanOrEqualToConstant: 300).isActive = true
-
-        let rows = NSStackView()
-        rows.orientation = .vertical
-        rows.alignment = .leading
-        rows.spacing = 0
-        rows.translatesAutoresizingMaskIntoConstraints = false
-        box.addSubview(rows)
-        captureMenuOrderRowsStack = rows
-
-        NSLayoutConstraint.activate([
-            rows.topAnchor.constraint(equalTo: box.topAnchor, constant: 6),
-            rows.leadingAnchor.constraint(equalTo: box.leadingAnchor, constant: 8),
-            rows.trailingAnchor.constraint(equalTo: box.trailingAnchor, constant: -8),
-            rows.bottomAnchor.constraint(equalTo: box.bottomAnchor, constant: -6),
-        ])
-
-        rebuildCaptureMenuOrderRows()
-        return box
-    }
-
-    private func rebuildCaptureMenuOrderRows() {
-        guard let rows = captureMenuOrderRowsStack else { return }
-        rows.arrangedSubviews.forEach {
-            rows.removeArrangedSubview($0)
-            $0.removeFromSuperview()
-        }
-
-        for (index, itemID) in captureMenuOrder.enumerated() {
-            let icon = NSImageView(image: NSImage(systemSymbolName: itemID.symbolName, accessibilityDescription: nil) ?? NSImage())
-            icon.contentTintColor = .secondaryLabelColor
-            icon.translatesAutoresizingMaskIntoConstraints = false
-            icon.widthAnchor.constraint(equalToConstant: 18).isActive = true
-            icon.heightAnchor.constraint(equalToConstant: 18).isActive = true
-
-            let label = NSTextField(labelWithString: itemID.title)
-            label.font = NSFont.systemFont(ofSize: 13)
-            label.lineBreakMode = .byTruncatingTail
-            label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-
-            let spacer = NSView()
-
-            let upButton = captureMenuOrderButton(
-                symbolName: "chevron.up",
-                action: #selector(moveCaptureMenuItemUp(_:)),
-                tag: index,
-                toolTip: L("Move up"))
-            upButton.isEnabled = index > 0
-
-            let downButton = captureMenuOrderButton(
-                symbolName: "chevron.down",
-                action: #selector(moveCaptureMenuItemDown(_:)),
-                tag: index,
-                toolTip: L("Move down"))
-            downButton.isEnabled = index < captureMenuOrder.count - 1
-
-            let row = NSStackView(views: [icon, label, spacer, upButton, downButton])
-            row.orientation = .horizontal
-            row.alignment = .centerY
-            row.spacing = 8
-            row.translatesAutoresizingMaskIntoConstraints = false
-            row.heightAnchor.constraint(equalToConstant: 30).isActive = true
-
-            rows.addArrangedSubview(row)
-            row.widthAnchor.constraint(equalTo: rows.widthAnchor).isActive = true
-        }
-    }
-
-    private func captureMenuOrderButton(symbolName: String, action: Selector, tag: Int, toolTip: String) -> NSButton {
-        let button = NSButton(title: "", target: self, action: action)
-        button.image = NSImage(systemSymbolName: symbolName, accessibilityDescription: toolTip)
-        button.bezelStyle = .texturedRounded
-        button.imagePosition = .imageOnly
-        button.toolTip = toolTip
-        button.tag = tag
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.widthAnchor.constraint(equalToConstant: 26).isActive = true
-        button.heightAnchor.constraint(equalToConstant: 24).isActive = true
-        return button
-    }
-
-    private func saveCaptureMenuOrderAndRefreshMenu() {
-        CaptureMenuItemID.saveOrder(captureMenuOrder)
-        onHotkeyChanged?()
-    }
-
-    @objc private func moveCaptureMenuItemUp(_ sender: NSButton) {
-        let index = sender.tag
-        guard index > 0, index < captureMenuOrder.count else { return }
-        captureMenuOrder.swapAt(index, index - 1)
-        rebuildCaptureMenuOrderRows()
-        saveCaptureMenuOrderAndRefreshMenu()
-    }
-
-    @objc private func moveCaptureMenuItemDown(_ sender: NSButton) {
-        let index = sender.tag
-        guard index >= 0, index < captureMenuOrder.count - 1 else { return }
-        captureMenuOrder.swapAt(index, index + 1)
-        rebuildCaptureMenuOrderRows()
-        saveCaptureMenuOrderAndRefreshMenu()
-    }
-
-    @objc private func resetCaptureMenuOrder(_ sender: NSButton) {
-        CaptureMenuItemID.resetOrder()
-        captureMenuOrder = CaptureMenuItemID.defaultOrder
-        rebuildCaptureMenuOrderRows()
-        onHotkeyChanged?()
     }
 
     // MARK: - Shortcuts Tab

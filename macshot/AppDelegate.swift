@@ -809,7 +809,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
         }
     }
 
-    private func rebuildStatusBarMenu() {
+    /// Internal, like its siblings `refreshStatusBarIcon` and
+    /// `setMenuBarIconVisible`: the settings models call it directly when a
+    /// preference changes the menu.
+    func rebuildStatusBarMenu() {
         let menu = NSMenu()
         menu.autoenablesItems = false
 

@@ -158,6 +158,33 @@ final class GeneralSettingsModel: ObservableObject {
             && abs(x.blueComponent - y.blueComponent) < tolerance
     }
 
+    // MARK: Menu bar order
+
+    /// Order of the capture actions in the menu bar menu. Published so the list
+    /// redraws as rows move; persisted and applied to the live menu on change.
+    @Published var menuOrder: [CaptureMenuItemID] = CaptureMenuItemID.orderedItems()
+
+    func moveMenuItem(from: Int, to: Int) {
+        guard menuOrder.indices.contains(from), menuOrder.indices.contains(to) else { return }
+        menuOrder.swapAt(from, to)
+        persistMenuOrder()
+    }
+
+    func resetMenuOrder() {
+        CaptureMenuItemID.resetOrder()
+        menuOrder = CaptureMenuItemID.orderedItems()
+        rebuildMenu()
+    }
+
+    private func persistMenuOrder() {
+        CaptureMenuItemID.saveOrder(menuOrder)
+        rebuildMenu()
+    }
+
+    private func rebuildMenu() {
+        (NSApp.delegate as? AppDelegate)?.rebuildStatusBarMenu()
+    }
+
     // MARK: Lifecycle
 
     init() {

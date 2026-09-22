@@ -9,8 +9,6 @@ import SwiftUI
 @available(macOS 13.0, *)
 struct AppearanceSettingsView: View {
     @ObservedObject var model: GeneralSettingsModel
-    var menuOrderView: () -> NSView
-    var onResetMenuOrder: () -> Void
 
     /// The picker writes through to `applyThemePreset`; the stored value is
     /// derived from the live colours so picking "Custom" (or nudging a colour
@@ -35,11 +33,10 @@ struct AppearanceSettingsView: View {
             }
 
             Section {
-                AppKitView(make: menuOrderView)
-                    .frame(height: 230)
+                MenuOrderList(model: model)
                 HStack {
                     Spacer()
-                    Button(L("Reset to default"), action: onResetMenuOrder)
+                    Button(L("Reset to default")) { model.resetMenuOrder() }
                 }
             } header: {
                 Text(L("Menu Bar Order"))
