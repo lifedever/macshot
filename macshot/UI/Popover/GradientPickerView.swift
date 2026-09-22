@@ -49,14 +49,35 @@ class GradientPickerView: NSView {
     }
     private var actions: [ActionSwatch] { Self.availableActions }
 
+    override func updateTrackingAreas() {
+        super.updateTrackingAreas()
+        for area in trackingAreas { removeTrackingArea(area) }
+        // One tooltip rect per action swatch — the gradients speak for
+        // themselves, these two do not.
+        let firstActionIndex = BeautifyRenderer.styles.count + (hasCustomImage ? 1 : 0)
+        for (offset, action) in actions.enumerated() {
+            addToolTip(rectForIndex(firstActionIndex + offset),
+                       owner: action.tooltip as NSString, userData: nil)
+        }
+    }
+
+    /// The grid's natural size, so hosts that lay it out themselves — an
+    /// `NSPopover`, or SwiftUI via `NSViewRepresentable` — can ask for it
+    /// instead of reading `frame`, which they may already have overwritten.
+    static var gridSize: NSSize {
+        let hasCustom = UserDefaults.standard.data(forKey: "beautifyCustomBgImageData") != nil
+        let total = BeautifyRenderer.styles.count + (hasCustom ? 1 : 0) + availableActions.count
+        let rows = (total + 5) / 6
+        return NSSize(
+            width: 8 * 2 + CGFloat(6) * 28 + CGFloat(5) * 4,
+            height: 8 * 2 + CGFloat(rows) * 28 + CGFloat(max(0, rows - 1)) * 4)
+    }
+
+    override var intrinsicContentSize: NSSize { Self.gridSize }
+
     init(selectedIndex: Int) {
         self.selectedIndex = selectedIndex
-        let hasCustom = UserDefaults.standard.data(forKey: "beautifyCustomBgImageData") != nil
-        let total = BeautifyRenderer.styles.count + (hasCustom ? 1 : 0) + Self.availableActions.count
-        let rows = (total + 5) / 6
-        let w = 8 * 2 + CGFloat(6) * 28 + CGFloat(5) * 4
-        let h = 8 * 2 + CGFloat(rows) * 28 + CGFloat(max(0, rows - 1)) * 4
-        super.init(frame: NSRect(x: 0, y: 0, width: w, height: h))
+        super.init(frame: NSRect(origin: .zero, size: Self.gridSize))
     }
 
     required init?(coder: NSCoder) { fatalError() }
@@ -118,13 +139,17 @@ class GradientPickerView: NSView {
         for action in actions {
             let pr = rectForIndex(idx)
             let bgPath = NSBezierPath(roundedRect: pr, xRadius: 6, yRadius: 6)
-            ToolbarLayout.iconColor.withAlphaComponent(0.15).setFill()
+            // Semantic colours, not the toolbar's: this grid is also shown in
+            // Settings, whose popover follows the system appearance. The
+            // toolbar's icon colour is white, which is invisible on the light
+            // popover background.
+            NSColor.labelColor.withAlphaComponent(0.12).setFill()
             bgPath.fill()
             if let icon = NSImage(systemSymbolName: action.symbolName, accessibilityDescription: action.tooltip)?
                 .withSymbolConfiguration(symbolConfig) {
                 let tinted = icon.copy() as! NSImage
                 tinted.lockFocus()
-                ToolbarLayout.iconColor.set()
+                NSColor.labelColor.set()
                 NSRect(origin: .zero, size: tinted.size).fill(using: .sourceAtop)
                 tinted.unlockFocus()
                 let iconSize = tinted.size

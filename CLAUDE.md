@@ -6,7 +6,7 @@ Native macOS screenshot & annotation tool inspired by Flameshot. Built with Swif
 
 - **Language:** Swift 5.0
 - **UI:** AppKit (all windows created in code, storyboard is minimal — just app entry + main menu)
-- **Min Target:** macOS 12.3+ (Monterey)
+- **Min Target:** macOS 13.0+ (Ventura)
 - **Bundle ID:** com.sw33tlie.macshot.macshot
 - **Sandbox:** Enabled (entitlements: network.client, files.user-selected.read-write, files.bookmarks.app-scope)
 - **LSUIElement:** YES (menu bar only app, no dock icon — switches to `.regular` when editor windows are open)
@@ -281,7 +281,8 @@ Copy to clipboard, Save to file (PNG/JPEG/HEIC/WebP), Pin (floating always-on-to
 
 ## Coding Conventions
 
-- Pure AppKit, no SwiftUI except `BeautifyRenderer` which uses SwiftUI `MeshGradient` + `ImageRenderer` for mesh gradient rendering (macOS 15+ only, guarded with `@available`)
+- **AppKit for the capture surfaces, SwiftUI for the settings window.** The overlay, editor, toolbars, popovers, thumbnails and pins are AppKit: they draw every frame, hit-test custom geometry, and live in borderless panels, none of which SwiftUI expresses well. The settings window is a plain form with no custom drawing, so it is SwiftUI — `Form` + `.formStyle(.grouped)` renders the System Settings appearance (grouped cards, row metrics, separators, `Toggle` switches) directly instead of hand-building containers and matching the metrics by eye. `BeautifyRenderer` also uses SwiftUI (`MeshGradient` + `ImageRenderer`, macOS 15+, guarded with `@available`). Do not reach for SwiftUI inside the capture surfaces, and do not hand-build settings chrome in AppKit.
+- Settings controls that SwiftUI has no equivalent for — shortcut recording, the tool enable/reorder list, colour wells, the SF Symbol picker — stay as AppKit views wrapped in `NSViewRepresentable` rather than being reimplemented.
 - **Use proper AppKit components:** NSPopover for popovers, NSView subclasses for toolbar buttons and strips, NSSlider/NSSegmentedControl/NSButton for controls, NSScrollView for editor zoom/pan, NSTextView for text editing. Avoid reimplementing standard UI components with manual `draw()` + coordinate hit-testing.
 - **Strict concurrency:** CI builds with Xcode 16+ and `-Owholemodule` which enforces strict Swift concurrency. Any code using `@MainActor`-isolated SwiftUI APIs (e.g. `ImageRenderer`) must itself be `@MainActor`. Always mark classes/functions that touch SwiftUI rendering with `@MainActor`. Calling `@MainActor`-isolated methods (e.g. on AppDelegate) from non-`@MainActor` classes requires `MainActor.assumeIsolated { }`. **Local Debug builds do NOT catch these errors.** Before tagging a release, always verify with a Release build: `xcodebuild -scheme macshot -configuration Release build 2>&1 | grep "error:"`
 - **Tool handler pattern:** New annotation tools should implement `AnnotationToolHandler` protocol in `UI/Tools/`, not add switch cases to OverlayView. The handler's `start`/`update`/`finish` methods use `AnnotationCanvas` to access shared state.

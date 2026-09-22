@@ -118,6 +118,65 @@ class BeautifyRenderer {
         )
     }
 
+    /// One style's swatch, as drawn in the toolbar picker and the settings row.
+    static func swatchImage(styleIndex: Int, size: CGFloat) -> NSImage {
+        // Custom image background swatch
+        if styleIndex == -1 {
+            if let data = UserDefaults.standard.data(forKey: "beautifyCustomBgImageData"),
+               let img = NSImage(data: data) {
+                return NSImage(size: NSSize(width: size, height: size), flipped: false) { _ in
+                    let r = NSRect(x: 0, y: 0, width: size, height: size)
+                    let path = NSBezierPath(roundedRect: r, xRadius: 4, yRadius: 4)
+                    NSGraphicsContext.saveGraphicsState()
+                    path.addClip()
+                    img.draw(in: r, from: .zero, operation: .sourceOver, fraction: 1.0)
+                    NSGraphicsContext.restoreGraphicsState()
+                    ToolbarLayout.iconColor.withAlphaComponent(0.3).setStroke()
+                    path.lineWidth = 0.5
+                    path.stroke()
+                    return true
+                }
+            }
+            return NSImage(size: NSSize(width: size, height: size))
+        }
+        let styles = BeautifyRenderer.styles
+        guard styleIndex >= 0, styleIndex < styles.count else {
+            return NSImage(size: NSSize(width: size, height: size))
+        }
+        let style = styles[styleIndex]
+        // Use mesh rendering on macOS 15+ for mesh styles
+        if #available(macOS 15.0, *), let mesh = style.meshDef,
+           let meshImg = BeautifyRenderer.renderMeshSwatch(mesh, size: size) {
+            return NSImage(size: NSSize(width: size, height: size), flipped: false) { _ in
+                let r = NSRect(x: 0, y: 0, width: size, height: size)
+                let path = NSBezierPath(roundedRect: r, xRadius: 4, yRadius: 4)
+                NSGraphicsContext.saveGraphicsState()
+                path.addClip()
+                meshImg.draw(in: r, from: .zero, operation: .sourceOver, fraction: 1.0)
+                NSGraphicsContext.restoreGraphicsState()
+                ToolbarLayout.iconColor.withAlphaComponent(0.3).setStroke()
+                path.lineWidth = 0.5
+                path.stroke()
+                return true
+            }
+        }
+        return NSImage(size: NSSize(width: size, height: size), flipped: false) { _ in
+            let r = NSRect(x: 0, y: 0, width: size, height: size)
+            let path = NSBezierPath(roundedRect: r, xRadius: 4, yRadius: 4)
+            if let grad = NSGradient(
+                colors: style.stops.map { $0.0 },
+                atLocations: style.stops.map { $0.1 },
+                colorSpace: .deviceRGB)
+            {
+                grad.draw(in: path, angle: style.angle - 90)
+            }
+            ToolbarLayout.iconColor.withAlphaComponent(0.3).setStroke()
+            path.lineWidth = 0.5
+            path.stroke()
+            return true
+        }
+    }
+
     static let styles: [BeautifyStyle] = {
         var s: [BeautifyStyle] = []
 
