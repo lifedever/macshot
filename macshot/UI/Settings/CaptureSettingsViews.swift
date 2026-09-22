@@ -184,6 +184,9 @@ struct OutputSettingsView: View {
                 } label: {
                     Text(L("Preview")).foregroundStyle(.secondary)
                 }
+                Text(L("Screenshots and recordings both save here, under this name."))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
 
             Section(L("Image")) {

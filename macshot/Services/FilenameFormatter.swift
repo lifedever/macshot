@@ -1,11 +1,12 @@
 import Foundation
 
 enum FilenameFormatter {
+    /// One template for everything macshot writes. Recordings used to carry
+    /// their own ("Recording {date} at {time}") alongside their own save
+    /// folder, so where a file landed and what it was called depended on which
+    /// of two places in Settings you had last edited.
     static let defaultTemplate = "Screenshot {date} at {time}"
     static let userDefaultsKey = "filenameTemplate"
-
-    static let defaultRecordingTemplate = "Recording {date} at {time}"
-    static let recordingUserDefaultsKey = "recordingFilenameTemplate"
 
     /// Renders a filename *without* extension from a user-editable template.
     ///

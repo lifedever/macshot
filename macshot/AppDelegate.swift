@@ -2671,15 +2671,33 @@ extension AppDelegate: OverlayWindowControllerDelegate {
         // Detach webcam preview before dismissing overlays so we can reuse the live session
         let existingWebcam = controller.detachWebcamPreview()
 
+        let delay = delayOverride ?? UserDefaults.standard.integer(forKey: "captureDelaySeconds")
+
+        // Put the region marker up BEFORE the overlay comes down. Both draw
+        // the same scrim outside the selection; dismissing first and building
+        // the marker a run loop later left one frame with no scrim at all,
+        // which reads as the whole screen flashing just as recording starts.
+        //
+        // Safe to do ahead of the dismiss: the marker is a non-titled panel
+        // with hidesOnDeactivate off, so neither the activation-policy change
+        // nor activating the previous app disturbs it. The countdown path
+        // builds its own marker, so skip it when there is a delay.
+        if delay == 0 {
+            selectionBorderOverlay?.close()
+            let border = SelectionBorderOverlay(screen: screen)
+            border.setSelectionRect(rect)
+            border.orderFrontRegardless()
+            selectionBorderOverlay = border
+        }
+
         // Use the same focus return path as normal screenshot confirm:
-        // dismissOverlays with refocus → returnFocusIfNeeded → NSApp.hide(nil).
+        // dismissOverlays with refocus → returnFocusIfNeeded.
         // This reliably transfers focus AND mouse event routing.
-        // Then create recording UI on the next run loop — all non-activating
-        // panels, so they appear without stealing focus back.
+        // Then create the rest of the recording UI on the next run loop — all
+        // non-activating panels, so they appear without stealing focus back.
         dismissOverlays()  // refocusPreviousApp: true (default) — handles focus
         previousApp = nil
 
-        let delay = delayOverride ?? UserDefaults.standard.integer(forKey: "captureDelaySeconds")
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             if delay > 0 {
@@ -2832,13 +2850,19 @@ extension AppDelegate: OverlayWindowControllerDelegate {
         }
         recordingEngine = engine
 
-        // Always show selection border so user knows what area is being recorded
-        // (may already exist from countdown — recreate to be safe)
-        selectionBorderOverlay?.close()
-        let border = SelectionBorderOverlay(screen: screen)
-        border.setSelectionRect(rect)
-        border.orderFrontRegardless()
-        selectionBorderOverlay = border
+        // Always show selection border so user knows what area is being recorded.
+        // Reuse the one already up — from the countdown, or from the start of
+        // this request — rather than closing and rebuilding it, which would
+        // blink the scrim off and on again for a frame.
+        if let existing = selectionBorderOverlay {
+            existing.setSelectionRect(rect)
+            existing.orderFrontRegardless()
+        } else {
+            let border = SelectionBorderOverlay(screen: screen)
+            border.setSelectionRect(rect)
+            border.orderFrontRegardless()
+            selectionBorderOverlay = border
+        }
 
         if !hideHUD {
             // Show the floating timer HUD
@@ -2975,15 +2999,13 @@ extension AppDelegate: OverlayWindowControllerDelegate {
     /// flow so the user doesn't end up staring at a deep sandbox path.
     ///
     /// Resolution order:
-    ///   1. Recording save directory (if configured + bookmark still valid)
-    ///   2. Same as screenshots (if configured + bookmark still valid)
-    ///   3. Save panel — user picks a location explicitly
+    ///   1. The save folder from Settings (if its bookmark is still valid)
+    ///   2. Save panel — user picks a location explicitly
     ///
     /// On a collision at the destination, we append " (N)" to the filename
     /// so nothing gets silently overwritten.
     private func revealRecordingInFinder(tmpURL: URL) {
-        guard let directory = SaveDirectoryAccess.resolveRecordingDirectoryIfAccessible()
-            ?? SaveDirectoryAccess.resolveIfAccessible() else {
+        guard let directory = SaveDirectoryAccess.resolveIfAccessible() else {
             promptToSaveRecording(tmpURL: tmpURL)
             return
         }

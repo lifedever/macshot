@@ -764,6 +764,7 @@
 "Repository or branch not found — check the owner/repo and branch name." = "找不到仓库或分支，检查 owner/repo 和分支名。";
 "Save action" = "存储方式";
 "Save folder" = "存储文件夹";
+"Screenshots and recordings both save here, under this name." = "截图和录屏都保存到这里，用这个名称。";
 "Saving" = "存储";
 "Scroll speed" = "滚动速度";
 "Secret Key" = "Secret Key";

@@ -316,6 +316,7 @@
 "Saving" = "Desament";
 "Save action" = "Acció de desat";
 "Save folder" = "Carpeta de desat";
+"Screenshots and recordings both save here, under this name." = "Les captures i els enregistraments es desen aquí, amb aquest nom.";
 "Filename" = "Nom de fitxer";
 "History size" = "Mida de l'historial";
 "Engine" = "Motor";

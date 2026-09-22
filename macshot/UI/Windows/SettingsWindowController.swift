@@ -103,8 +103,6 @@ class SettingsWindowController: NSWindowController, NSToolbarDelegate, NSWindowD
     private var disableSelectionShadowCheckbox: NSButton!
     private var filenameTemplateField: NSTextField!
     private var filenameTemplatePreview: NSTextField!
-    private var recordingFilenameTemplateField: NSTextField!
-    private var recordingFilenameTemplatePreview: NSTextField!
     private var autoUpdateCheckbox: NSButton!
     private var betaUpdateCheckbox: NSButton!
     private var accentColorWell: NSColorWell!
@@ -143,7 +141,6 @@ class SettingsWindowController: NSWindowController, NSToolbarDelegate, NSWindowD
     // Recording tab controls
     private var recordingFPSPopup: NSPopUpButton!
     private var recordingOnStopPopup: NSPopUpButton!
-    private var recSavePathField: NSTextField!
     // Webcam controls
     private var webcamPositionPopup: NSPopUpButton!
     private var webcamSizeSlider: NSSlider!
@@ -1402,23 +1399,6 @@ class SettingsWindowController: NSWindowController, NSToolbarDelegate, NSWindowD
         UserDefaults.standard.set(values[sender.indexOfSelectedItem], forKey: "webcamShape")
     }
 
-    @objc private func browseRecSavePath(_ sender: NSButton) {
-        let panel = NSOpenPanel()
-        panel.canChooseDirectories = true
-        panel.canChooseFiles = false
-        panel.allowsMultipleSelection = false
-        panel.directoryURL = SaveDirectoryAccess.recordingDirectoryHint()
-        panel.begin { [weak self] response in
-            guard response == .OK, let url = panel.url else { return }
-            SaveDirectoryAccess.saveRecordingDirectory(url: url)
-            self?.recSavePathField.stringValue = url.path
-        }
-    }
-    @objc private func clearRecSavePath(_ sender: NSButton) {
-        SaveDirectoryAccess.clearRecordingDirectory()
-        recSavePathField.stringValue = SaveDirectoryAccess.recordingDisplayPath
-    }
-    // MARK: - Scroll Capture actions
     @objc private func scrollAutoScrollChanged(_ sender: NSButton) {
         let on = sender.state == .on
         UserDefaults.standard.set(on, forKey: "scrollAutoScrollEnabled")
@@ -1615,32 +1595,6 @@ class SettingsWindowController: NSWindowController, NSToolbarDelegate, NSWindowD
         let sampleIndex = template.contains("{index}") ? 1 : nil
         let base = FilenameFormatter.format(template: template, windowTitle: sampleWindow, index: sampleIndex, date: sampleDate)
         preview.stringValue = "\(L("Preview:")) \(base).\(ImageEncoder.fileExtension)"
-    }
-
-    @objc private func recordingFilenameTemplateCommitted(_ sender: NSTextField) {
-        let trimmed = sender.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
-        let value = trimmed.isEmpty ? FilenameFormatter.defaultRecordingTemplate : sender.stringValue
-        if trimmed.isEmpty {
-            sender.stringValue = FilenameFormatter.defaultRecordingTemplate
-        }
-        UserDefaults.standard.set(value, forKey: FilenameFormatter.recordingUserDefaultsKey)
-        updateRecordingFilenamePreview()
-    }
-
-    @objc private func recordingFilenameTemplateReset(_ sender: NSButton) {
-        recordingFilenameTemplateField.stringValue = FilenameFormatter.defaultRecordingTemplate
-        UserDefaults.standard.set(FilenameFormatter.defaultRecordingTemplate, forKey: FilenameFormatter.recordingUserDefaultsKey)
-        updateRecordingFilenamePreview()
-    }
-
-    fileprivate func updateRecordingFilenamePreview() {
-        guard let field = recordingFilenameTemplateField, let preview = recordingFilenameTemplatePreview else { return }
-        let raw = field.stringValue
-        let template = raw.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? FilenameFormatter.defaultRecordingTemplate : raw
-        let sampleDate = sampleFilenameDate()
-        let sampleIndex = template.contains("{index}") ? 1 : nil
-        let base = FilenameFormatter.format(template: template, windowTitle: nil, index: sampleIndex, date: sampleDate, fallback: FilenameFormatter.defaultRecordingTemplate)
-        preview.stringValue = "\(L("Preview:")) \(base).mp4"
     }
 
     private func sampleFilenameDate() -> Date {
@@ -1847,9 +1801,6 @@ extension SettingsWindowController: NSTextFieldDelegate {
             // the default template at commit time (see controlTextDidEndEditing).
             UserDefaults.standard.set(field.stringValue, forKey: FilenameFormatter.userDefaultsKey)
             updateFilenamePreview()
-        } else if field === recordingFilenameTemplateField {
-            UserDefaults.standard.set(field.stringValue, forKey: FilenameFormatter.recordingUserDefaultsKey)
-            updateRecordingFilenamePreview()
         } else if field === menuBarIconSymbolField {
             applyMenuBarIconSymbol(field.stringValue)
         }
@@ -1864,10 +1815,6 @@ extension SettingsWindowController: NSTextFieldDelegate {
             field.stringValue = FilenameFormatter.defaultTemplate
             UserDefaults.standard.set(FilenameFormatter.defaultTemplate, forKey: FilenameFormatter.userDefaultsKey)
             updateFilenamePreview()
-        } else if field === recordingFilenameTemplateField, trimmed.isEmpty {
-            field.stringValue = FilenameFormatter.defaultRecordingTemplate
-            UserDefaults.standard.set(FilenameFormatter.defaultRecordingTemplate, forKey: FilenameFormatter.recordingUserDefaultsKey)
-            updateRecordingFilenamePreview()
         }
     }
 }

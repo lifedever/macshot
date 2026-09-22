@@ -278,6 +278,7 @@
 "Saving" = "Speichern";
 "Save action" = "Speicheraktion";
 "Save folder" = "Speicherordner";
+"Screenshots and recordings both save here, under this name." = "Bildschirmfotos und Aufnahmen werden hier unter diesem Namen gesichert.";
 "Filename" = "Dateiname";
 "Save action:" = "Speicheraktion:";
 "Save to default folder" = "In Standardordner sichern";

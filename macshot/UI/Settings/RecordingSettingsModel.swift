@@ -17,52 +17,6 @@ final class RecordingSettingsModel: ObservableObject {
         didSet { store(frameRate, "recordingFPS", oldValue) }
     }
 
-    /// Display path of the recording save folder, or the default location when
-    /// the user has not picked one.
-    @Published var saveFolderPath: String
-
-    @Published var filenameTemplate: String {
-        didSet {
-            guard filenameTemplate != oldValue else { return }
-            let trimmed = filenameTemplate.trimmingCharacters(in: .whitespacesAndNewlines)
-            let value = trimmed.isEmpty ? FilenameFormatter.defaultRecordingTemplate : filenameTemplate
-            UserDefaults.standard.set(value, forKey: FilenameFormatter.recordingUserDefaultsKey)
-        }
-    }
-
-    /// What the current template produces, so the effect of a token is visible
-    /// while typing instead of only after the next recording.
-    var filenamePreview: String {
-        let template = filenameTemplate.trimmingCharacters(in: .whitespacesAndNewlines)
-        let effective = template.isEmpty ? FilenameFormatter.defaultRecordingTemplate : template
-        return FilenameFormatter.format(template: effective, windowTitle: nil) + ".mp4"
-    }
-
-    func resetFilenameTemplate() {
-        filenameTemplate = FilenameFormatter.defaultRecordingTemplate
-    }
-
-    func browseSaveFolder() {
-        let panel = NSOpenPanel()
-        panel.canChooseDirectories = true
-        panel.canChooseFiles = false
-        panel.allowsMultipleSelection = false
-        panel.canCreateDirectories = true
-        panel.prompt = L("Choose a folder")
-        panel.directoryURL = SaveDirectoryAccess.recordingDirectoryHint()
-        // Modal rather than the sheet the AppKit pane used: the SwiftUI pane has
-        // no window reference to attach one to, and this panel is not tied to
-        // anything the user can interact with behind it.
-        guard panel.runModal() == .OK, let url = panel.url else { return }
-        SaveDirectoryAccess.saveRecordingDirectory(url: url)
-        saveFolderPath = url.path
-    }
-
-    func clearSaveFolder() {
-        SaveDirectoryAccess.clearRecordingDirectory()
-        saveFolderPath = SaveDirectoryAccess.recordingDisplayPath
-    }
-
     // MARK: Behaviour
 
     static let onStopValues = ["editor", "finder", "clipboard"]
@@ -105,9 +59,6 @@ final class RecordingSettingsModel: ObservableObject {
         let defaults = UserDefaults.standard
         let storedFPS = defaults.object(forKey: "recordingFPS") as? Int ?? 30
         frameRate = Self.frameRates.contains(storedFPS) ? storedFPS : 30
-        saveFolderPath = SaveDirectoryAccess.recordingDisplayPath
-        filenameTemplate = defaults.string(forKey: FilenameFormatter.recordingUserDefaultsKey)
-            ?? FilenameFormatter.defaultRecordingTemplate
         onStop = defaults.string(forKey: "recordingOnStop") ?? "editor"
         hideHUD = defaults.bool(forKey: "hideRecordingHUD")
         webcamPosition = defaults.string(forKey: "webcamPosition") ?? "bottomRight"

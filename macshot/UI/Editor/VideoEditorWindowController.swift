@@ -1959,7 +1959,7 @@ private final class VideoEditorView: NSView {
             saveVideoAs()
             return
         }
-        guard let dirURL = SaveDirectoryAccess.resolveRecordingDirectoryIfAccessible() else {
+        guard let dirURL = SaveDirectoryAccess.resolveIfAccessible() else {
             saveVideoAs()
             return
         }
@@ -1980,7 +1980,7 @@ private final class VideoEditorView: NSView {
         panel.allowedContentTypes = saveAsGIF ? [.gif] : (isGIF ? [.gif] : [.mpeg4Movie])
         let ext = saveAsGIF ? "gif" : videoURL.pathExtension
         panel.nameFieldStringValue = videoURL.deletingPathExtension().lastPathComponent + ".\(ext)"
-        panel.directoryURL = SaveDirectoryAccess.recordingDirectoryHint()
+        panel.directoryURL = SaveDirectoryAccess.directoryHint()
         let completion: (NSApplication.ModalResponse) -> Void = { [weak self] response in
             guard let self = self, !self.isExporting,
                   response == .OK, let url = panel.url else { return }

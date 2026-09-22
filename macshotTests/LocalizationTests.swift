@@ -215,7 +215,7 @@ final class LocalizationTests: XCTestCase {
     /// ban. A locale that climbs above its budget has almost certainly been
     /// re-damaged; the fix is to repair the strings, not to raise the number.
     private static let diacriticSuspectBudget: [String: Int] = [
-        "ca": 2, "cs": 6, "es": 3, "fr": 4, "hr": 1, "pl": 1,
+        "ca": 2, "cs": 6, "es": 3, "fr": 4, "hr": 1,
         "pt": 3, "pt-BR": 3, "ro": 20, "sk": 3, "sv": 1, "vi": 18,
     ]
 
@@ -265,6 +265,7 @@ final class LocalizationTests: XCTestCase {
         case "fr": validPlainWords = ["copie"]
         case "pt": validPlainWords = ["copia"]
         case "ca": validPlainWords = ["copia"]
+        case "pl": validPlainWords = ["nazwa", "aplikacje"]
         case "cs": validPlainWords = ["souboru"]
         case "hu": validPlainWords = ["nevet"]
         case "ro": validPlainWords = ["captura", "bara", "fereastra", "rata",

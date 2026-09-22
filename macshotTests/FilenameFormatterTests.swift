@@ -181,10 +181,14 @@ final class FilenameFormatterTests: XCTestCase {
         XCTAssertEqual(name, "Untitled", "there must always be some name to save under")
     }
 
-    func testRecordingTemplateDefaultIsDistinct() {
-        XCTAssertNotEqual(FilenameFormatter.defaultRecordingTemplate, FilenameFormatter.defaultTemplate)
-        XCTAssertTrue(FilenameFormatter.format(
-            template: FilenameFormatter.defaultRecordingTemplate, date: fixedDate).hasPrefix("Recording"))
+    /// Screenshots and recordings share one template and one save folder.
+    /// They each had their own, so a file's name and location depended on
+    /// which of two panes had been edited last.
+    func testOneTemplateCoversScreenshotsAndRecordings() {
+        withDefaults([FilenameFormatter.userDefaultsKey: "shot-{index}"]) {
+            let template = UserDefaults.standard.string(forKey: FilenameFormatter.userDefaultsKey)
+            XCTAssertEqual(FilenameFormatter.format(template: template ?? "", index: 3), "shot-3")
+        }
     }
 
     // MARK: - Defaults-driven convenience

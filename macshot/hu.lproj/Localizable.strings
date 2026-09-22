@@ -330,6 +330,7 @@
 "Saving" = "Mentés";
 "Save action" = "Mentési művelet";
 "Save folder" = "Mentési mappa";
+"Screenshots and recordings both save here, under this name." = "A képernyőképek és a felvételek is ide, ezen a néven mentődnek.";
 "Filename" = "Fájlnév";
 "History size" = "Előzmények mérete";
 "Engine" = "Motor";

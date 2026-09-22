@@ -281,6 +281,7 @@
 "Saving" = "Lagring";
 "Save action" = "Lagringshandling";
 "Save folder" = "Lagringsmappe";
+"Screenshots and recordings both save here, under this name." = "Skjermbilder og opptak lagres her, med dette navnet.";
 "Filename" = "Filnavn";
 "Appearance" = "Utseende";
 "Accent color:" = "Aksentfarge:";

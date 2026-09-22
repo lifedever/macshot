@@ -281,6 +281,7 @@
 "Saving" = "Tallennus";
 "Save action" = "Tallennustoiminto";
 "Save folder" = "Tallennuskansio";
+"Screenshots and recordings both save here, under this name." = "Kuvakaappaukset ja tallenteet tallentuvat tänne tällä nimellä.";
 "Filename" = "Tiedostonimi";
 "Appearance" = "Ulkoasu";
 "Accent color:" = "Korostusväri:";

@@ -316,6 +316,7 @@
 "Saving" = "Salvare";
 "Save action" = "Acțiune salvare";
 "Save folder" = "Dosar de salvare";
+"Screenshots and recordings both save here, under this name." = "Capturile și înregistrările se salvează aici, cu acest nume.";
 "Filename" = "Nume fișier";
 "History size" = "Dimensiune istoric";
 "Engine" = "Motor";

@@ -50,7 +50,6 @@ enum SettingsPortability {
     static let excludedKeys: Set<String> = [
         // Save directories: paths + security-scoped bookmarks are machine-specific.
         "saveDirectory", "saveDirectoryBookmark",
-        "recordingSaveDirectory", "recordingSaveDirectoryBookmark",
         // Selection geometry / last-used resolution: tied to this machine's displays.
         "lastSelectionRect", "lastSelectionScreenFrame",
         "preSelectionResolutionPresetKind", "preSelectionResolutionPresetAspect",

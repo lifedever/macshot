@@ -89,12 +89,12 @@ final class RecordingEngine: NSObject {
             }
             let defaults = UserDefaults.standard
             let savedFPS = defaults.integer(forKey: "recordingFPS")
-            let template = defaults.string(forKey: FilenameFormatter.recordingUserDefaultsKey) ?? FilenameFormatter.defaultRecordingTemplate
+            let template = defaults.string(forKey: FilenameFormatter.userDefaultsKey) ?? FilenameFormatter.defaultTemplate
             configuration = try RecordingConfiguration(displayID: displayID, rect: rect, displayBounds: screen.frame,
                 backingScale: screen.backingScaleFactor, frameRate: fpsOverride ?? ((1...120).contains(savedFPS) ? savedFPS : 30),
                 microphone: defaults.bool(forKey: "recordMicAudio"), systemAudio: defaults.bool(forKey: "recordSystemAudio"),
                 microphoneDeviceID: defaults.string(forKey: "selectedMicDeviceUID"), excludedWindows: excludeWindowNumbers,
-                filename: FilenameFormatter.format(template: template, fallback: FilenameFormatter.defaultRecordingTemplate))
+                filename: FilenameFormatter.format(template: template))
         } catch {
             guard lifecycle.begin() != nil else { return }
             stopRecording(error: error)

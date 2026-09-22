@@ -288,6 +288,7 @@
 "Saving" = "Enregistrement";
 "Save action" = "Action d'enregistrement";
 "Save folder" = "Dossier";
+"Screenshots and recordings both save here, under this name." = "Les captures et les enregistrements sont enregistrés ici, sous ce nom.";
 "Filename" = "Nom de fichier";
 "Appearance" = "Apparence";
 "Accent color:" = "Couleur d'accentuation :";

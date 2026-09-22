@@ -292,6 +292,7 @@
 "Save folder:" = "Фасцикла:";
 "Saving" = "Чување";
 "Save folder" = "Фасцикла за чување";
+"Screenshots and recordings both save here, under this name." = "Снимци екрана и видео-записи чувају се овде, под овим именом.";
 "Filename" = "Име датотеке";
 "Browse…" = "Прегледај…";
 "Appearance" = "Изглед";

@@ -285,6 +285,7 @@
 "Saving" = "Kaydetme";
 "Save action" = "Kaydetme eylemi";
 "Save folder" = "Kayıt klasörü";
+"Screenshots and recordings both save here, under this name." = "Ekran görüntüleri ve kayıtlar buraya, bu adla kaydedilir.";
 "Filename" = "Dosya adı";
 "Appearance" = "Görünüm";
 "Accent color:" = "Vurgu rengi:";

@@ -281,6 +281,7 @@
 "Saving" = "Gravação";
 "Save action" = "Ação ao guardar";
 "Save folder" = "Pasta de gravação";
+"Screenshots and recordings both save here, under this name." = "As capturas e as gravações são guardadas aqui, com este nome.";
 "Filename" = "Nome do ficheiro";
 "Appearance" = "Aparência";
 "Accent color:" = "Cor de destaque:";
