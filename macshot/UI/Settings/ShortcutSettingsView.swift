@@ -14,10 +14,19 @@ struct ShortcutSettingsView: View {
 
     var body: some View {
         Form {
+            // Two columns. Twelve of these stacked ran past the bottom of the
+            // window on anything smaller than a desktop display, and the pane
+            // cannot scroll. A shortcut row is a label and a key cap pinned to
+            // opposite ends, so a single column was spending 400pt of the
+            // window's width on the gap between them.
             Section {
-                ForEach(HotkeyManager.HotkeySlot.allCases, id: \.rawValue) { slot in
-                    HotkeyRow(slot: slot, model: model, onChange: onHotkeyChanged)
+                let slots = HotkeyManager.HotkeySlot.allCases
+                let half = (slots.count + 1) / 2
+                HStack(alignment: .top, spacing: 20) {
+                    hotkeyColumn(Array(slots.prefix(half)))
+                    hotkeyColumn(Array(slots.dropFirst(half)))
                 }
+                .padding(.vertical, 2)
             } header: {
                 Text(L("Keyboard Shortcuts"))
             } footer: {
@@ -36,6 +45,15 @@ struct ShortcutSettingsView: View {
         }
         .formStyle(.grouped)
         .scrollDisabled(true)
+    }
+
+    private func hotkeyColumn(_ slots: [HotkeyManager.HotkeySlot]) -> some View {
+        VStack(spacing: 10) {
+            ForEach(slots, id: \.rawValue) { slot in
+                HotkeyRow(slot: slot, model: model, onChange: onHotkeyChanged)
+            }
+        }
+        .frame(maxWidth: .infinity)
     }
 }
 
