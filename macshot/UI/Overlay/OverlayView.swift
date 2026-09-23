@@ -35,8 +35,15 @@ protocol OverlayViewDelegate: AnyObject {
     /// Copy the colour under the pointer and end the capture. Routed through the delegate
     /// because the pointer can be on a different screen than the overlay that got the key.
     func overlayViewDidRequestPointerColorPick()
+    /// F pressed on the key overlay: select the display under the pointer
+    /// instead if that is another overlay. Returns true when it did.
+    func overlayViewDidRequestWholeScreenAtPointer() -> Bool
     func overlayViewRemoteSelectionDidFinish(_ rect: NSRect)
     func overlayViewDidRequestAddCapture()
+}
+
+extension OverlayViewDelegate {
+    func overlayViewDidRequestWholeScreenAtPointer() -> Bool { false }
 }
 
 /// An entry in the undo/redo history.
@@ -9640,6 +9647,24 @@ class OverlayView: NSView {
         }
     }
 
+    /// Select this whole display, as the F key does.
+    func selectWholeScreen() {
+        guard state == .idle else { return }
+        selectionRect = bounds
+        selectionIsFullScreen = true
+        state = .selected
+        hoveredSnapRect = nil
+        applyBeautifyPolicyForSelection()
+        if autoQuickSaveMode {
+            autoQuickSaveMode = false
+            overlayDelegate?.overlayViewDidRequestQuickSave()
+        } else {
+            showToolbars = true
+            overlayDelegate?.overlayViewDidFinishSelection(selectionRect)
+            needsDisplay = true
+        }
+    }
+
     func commitTextFieldIfNeeded() {
         guard textEditor.isEditing else { return }
         textToolDoubleClickCopyDeadline = 0
@@ -9967,19 +9992,10 @@ class OverlayView: NSView {
         if state == .idle && snapMode != .off
             && KeyboardShortcutMatcher.matches(event, character: "f", modifiers: [])
         {
-            selectionRect = bounds
-            selectionIsFullScreen = true
-            state = .selected
-            hoveredSnapRect = nil
-            applyBeautifyPolicyForSelection()
-            if autoQuickSaveMode {
-                autoQuickSaveMode = false
-                overlayDelegate?.overlayViewDidRequestQuickSave()
-            } else {
-                showToolbars = true
-                overlayDelegate?.overlayViewDidFinishSelection(selectionRect)
-                needsDisplay = true
-            }
+            // Like "c": keys reach only the key overlay, but F means the
+            // screen under the pointer, which may be another display's.
+            if overlayDelegate?.overlayViewDidRequestWholeScreenAtPointer() == true { return }
+            selectWholeScreen()
             return
         }
 

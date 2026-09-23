@@ -96,6 +96,11 @@ protocol OverlayWindowControllerDelegate: AnyObject {
     func overlayCrossScreenImage(_ controller: OverlayWindowController) -> NSImage?
     func overlayDidChangeSnapMode(_ controller: OverlayWindowController)
     func overlayDidRequestPointerColorPick(_ controller: OverlayWindowController)
+    func overlayDidRequestWholeScreenAtPointer(_ controller: OverlayWindowController) -> Bool
+}
+
+extension OverlayWindowControllerDelegate {
+    func overlayDidRequestWholeScreenAtPointer(_ controller: OverlayWindowController) -> Bool { false }
 }
 
 /// Manages one fullscreen overlay per screen.
@@ -793,6 +798,17 @@ extension OverlayWindowController: OverlayViewDelegate {
 
     func overlayViewDidChangeSnapMode() {
         overlayDelegate?.overlayDidChangeSnapMode(self)
+    }
+
+    func overlayViewDidRequestWholeScreenAtPointer() -> Bool {
+        overlayDelegate?.overlayDidRequestWholeScreenAtPointer(self) ?? false
+    }
+
+    /// Select this whole display and take the keyboard, for F pressed while
+    /// another display's overlay had it.
+    func selectWholeScreen() {
+        makeKey()
+        overlayView?.selectWholeScreen()
     }
 
     func overlayViewDidRequestPointerColorPick() {

@@ -1527,6 +1527,17 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
             }
         }
 
+        // Every overlay made itself key as it was shown, so the last screen in
+        // the list kept the keyboard — whichever screen the pointer was on.
+        // F then selected the wrong display, and after "Capture Full Screen"
+        // Return went to an idle overlay and did nothing. The screen being
+        // captured from is the one that takes keys.
+        if let keyController = controllers.first(where: { $0.screen == mouseScreen })
+            ?? controllers.first(where: { $0.screen == NSScreen.main }),
+           controllers.count > 1 {
+            keyController.makeKey()
+        }
+
         captureTimingTrace?.mark("overlays installed and shown — INTERACTIVE")
         // Beacon: schedule periodic main-runloop marks so we can see if the
         // runloop is alive between INTERACTIVE and the first user event.
@@ -3560,6 +3571,14 @@ extension AppDelegate: OverlayWindowControllerDelegate {
     /// setup that is frequently *not* the one the pointer is over, and only that one holds
     /// the right screenshot. So ask each overlay in turn to sample the global pointer
     /// position and let the one that owns that screen answer.
+    func overlayDidRequestWholeScreenAtPointer(_ controller: OverlayWindowController) -> Bool {
+        let pointer = NSEvent.mouseLocation
+        guard let target = overlayControllers.first(where: { $0.screen.frame.contains(pointer) }),
+              target !== controller else { return false }
+        target.selectWholeScreen()
+        return true
+    }
+
     func overlayDidRequestPointerColorPick(_ controller: OverlayWindowController) {
         let pointer = NSEvent.mouseLocation
         var picked = controller.copyColorAtGlobalPoint(pointer)
