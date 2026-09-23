@@ -284,6 +284,9 @@ class DetachedEditorWindowController: NSObject, NSWindowDelegate {
 
     func windowShouldClose(_ sender: NSWindow) -> Bool {
         guard let view = overlayView else { return true }
+        // Typing that has not left the text box is an edit too — commit it so
+        // it counts toward "Save changes?" instead of closing without a word.
+        view.commitTextFieldIfNeeded()
 
         // Only warn when the user actually changed something since the editor's
         // clean baseline (captured at open, after existing annotations + edit
@@ -349,6 +352,11 @@ class DetachedEditorWindowController: NSObject, NSWindowDelegate {
     }
 
     private func captureHistorySave() -> HistorySave? {
+        // Every editor output and Done renders through here. The top bar's
+        // buttons do not pass through the canvas, so text still being typed
+        // would otherwise be left out — and a re-edited label, already lifted
+        // out of the annotations, written back to history without it.
+        overlayView?.commitTextFieldIfNeeded()
         guard let view = overlayView, let composited = view.captureSelectedRegion() else { return nil }
         return HistorySave(image: applyPostProcessing(composited), annotationData: currentAnnotationData(),
             undoState: view.undoStateIdentity, editState: view.captureEditState(), revision: contentRevision)

@@ -463,6 +463,9 @@ class OverlayWindowController {
     }
 
     private func captureRegion() -> NSImage? {
+        // Every output path renders through here; typing still in the text
+        // box belongs in the result.
+        overlayView?.commitTextFieldIfNeeded()
         return overlayDelegate?.overlayCrossScreenImage(self)
             ?? overlayView?.captureSelectedRegion()
     }

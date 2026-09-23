@@ -58,6 +58,23 @@ class TextEditingController {
 
     /// The annotation being re-edited (removed from canvas, restored on cancel).
     var editingAnnotation: Annotation?
+    /// Where `editingAnnotation` sat in the canvas's list, so it goes back at
+    /// the same depth instead of jumping above everything drawn after it.
+    var editingAnnotationIndex: Int?
+
+    /// Lift an existing text annotation off the canvas for editing.
+    func beginEditing(_ annotation: Annotation, canvas: TextEditingCanvas) {
+        editingAnnotation = annotation
+        editingAnnotationIndex = canvas.annotations.firstIndex { $0 === annotation }
+        if let index = editingAnnotationIndex {
+            canvas.annotations.remove(at: index)
+        }
+    }
+
+    private func restoreEditedAnnotation(_ annotation: Annotation, canvas: TextEditingCanvas) {
+        let index = min(editingAnnotationIndex ?? canvas.annotations.count, canvas.annotations.count)
+        canvas.annotations.insert(annotation, at: index)
+    }
 
     // MARK: - Font construction
 
@@ -394,40 +411,85 @@ class TextEditingController {
                 width: canvasEnd.x - canvasOrigin.x,
                 height: canvasEnd.y - canvasOrigin.y)
 
-            let annotation = Annotation(
-                tool: .text,
-                startPoint: canvasFrame.origin,
-                endPoint: NSPoint(x: canvasFrame.maxX, y: canvasFrame.maxY),
-                color: canvas.opacityAppliedColor(for: .text),
-                strokeWidth: canvas.currentStrokeWidth)
-            annotation.attributedText = attrStr
-            annotation.text = text
-            annotation.fontSize = fontSize
-            annotation.isBold = bold
-            annotation.isItalic = italic
-            annotation.isUnderline = underline
-            annotation.isStrikethrough = strikethrough
-            annotation.fontFamilyName = fontFamily == "System" ? nil : fontFamily
-            annotation.textBgColor = bgEnabled ? bgColor : nil
-            annotation.textOutlineColor = outlineEnabled ? outlineColor : nil
-            annotation.textGlyphStrokeColor = glyphStrokeEnabled ? glyphStrokeColor : nil
-            annotation.textAlignment = alignment
-            annotation.textImage = img
-            annotation.textDrawRect = canvasFrame
-            canvas.annotations.append(annotation)
-            canvas.undoStack.append(.added(annotation))
+            if let original = editingAnnotation {
+                // Re-editing keeps the same annotation, so one undo returns the
+                // previous text. Committing a replacement object instead made
+                // undo remove the text outright, and redo then stacked the old
+                // and new versions on top of each other.
+                let before = original.clone()
+                apply(attrStr, text: text, image: img, frame: canvasFrame, canvas: canvas, to: original)
+                restoreEditedAnnotation(original, canvas: canvas)
+                if !Self.textMatches(original, before) {
+                    canvas.undoStack.append(.propertyChange(annotation: original, snapshot: before))
+                    canvas.redoStack.removeAll()
+                }
+            } else {
+                let annotation = Annotation(
+                    tool: .text,
+                    startPoint: canvasFrame.origin,
+                    endPoint: NSPoint(x: canvasFrame.maxX, y: canvasFrame.maxY),
+                    color: canvas.opacityAppliedColor(for: .text),
+                    strokeWidth: canvas.currentStrokeWidth)
+                apply(attrStr, text: text, image: img, frame: canvasFrame, canvas: canvas, to: annotation)
+                canvas.annotations.append(annotation)
+                canvas.undoStack.append(.added(annotation))
+                canvas.redoStack.removeAll()
+            }
+        } else if let original = editingAnnotation {
+            // Emptying a label deletes it — as an undoable deletion, not by
+            // silently dropping the annotation that was lifted off the canvas.
+            let index = min(editingAnnotationIndex ?? canvas.annotations.count, canvas.annotations.count)
+            canvas.undoStack.append(.deleted(original, index))
             canvas.redoStack.removeAll()
         }
         editingAnnotation = nil
+        editingAnnotationIndex = nil
         sv.removeFromSuperview()
         dismiss()
+    }
+
+    private func apply(_ attrStr: NSAttributedString, text: String, image: NSImage, frame canvasFrame: NSRect,
+                       canvas: TextEditingCanvas, to annotation: Annotation) {
+        annotation.startPoint = canvasFrame.origin
+        annotation.endPoint = NSPoint(x: canvasFrame.maxX, y: canvasFrame.maxY)
+        annotation.color = canvas.opacityAppliedColor(for: .text)
+        annotation.strokeWidth = canvas.currentStrokeWidth
+        annotation.attributedText = attrStr
+        annotation.text = text
+        annotation.fontSize = fontSize
+        annotation.isBold = bold
+        annotation.isItalic = italic
+        annotation.isUnderline = underline
+        annotation.isStrikethrough = strikethrough
+        annotation.fontFamilyName = fontFamily == "System" ? nil : fontFamily
+        annotation.textBgColor = bgEnabled ? bgColor : nil
+        annotation.textOutlineColor = outlineEnabled ? outlineColor : nil
+        annotation.textGlyphStrokeColor = glyphStrokeEnabled ? glyphStrokeColor : nil
+        annotation.textAlignment = alignment
+        annotation.textImage = image
+        annotation.textDrawRect = canvasFrame
+    }
+
+    /// Whether re-editing left the label as it was — opening and leaving a
+    /// label untouched should not add an undo step or mark the editor dirty.
+    private static func textMatches(_ a: Annotation, _ b: Annotation) -> Bool {
+        a.text == b.text
+            && (a.attributedText?.isEqual(to: b.attributedText ?? NSAttributedString()) ?? (b.attributedText == nil))
+            && a.textDrawRect == b.textDrawRect
+            && a.fontSize == b.fontSize && a.fontFamilyName == b.fontFamilyName
+            && a.isBold == b.isBold && a.isItalic == b.isItalic
+            && a.isUnderline == b.isUnderline && a.isStrikethrough == b.isStrikethrough
+            && a.color == b.color && a.textBgColor == b.textBgColor
+            && a.textOutlineColor == b.textOutlineColor && a.textGlyphStrokeColor == b.textGlyphStrokeColor
+            && a.textAlignment == b.textAlignment
     }
 
     /// Cancel editing, restoring the original annotation if re-editing.
     func cancel(canvas: TextEditingCanvas) {
         if let ann = editingAnnotation {
-            canvas.annotations.append(ann)
+            restoreEditedAnnotation(ann, canvas: canvas)
             editingAnnotation = nil
+            editingAnnotationIndex = nil
         }
         scrollView?.removeFromSuperview()
         dismiss()

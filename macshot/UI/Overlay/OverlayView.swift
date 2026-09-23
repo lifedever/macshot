@@ -8851,6 +8851,13 @@ class OverlayView: NSView {
     }
 
     func handleToolbarAction(_ action: ToolbarButtonAction, mousePoint: NSPoint = .zero) {
+        // A text box still being typed in is not an annotation yet. Toolbar
+        // buttons are their own views, so clicking one never reaches the
+        // canvas's mouseDown, which is where typing used to get committed:
+        // Copy/Save/Pin/… produced the image without the text, and a
+        // re-edited label — already lifted out of `annotations` — vanished
+        // from history for good.
+        if Self.actionReadsCanvas(action) { commitTextFieldIfNeeded() }
         switch action {
         case .tool(let tool):
             commitTextFieldIfNeeded()
@@ -9353,12 +9360,9 @@ class OverlayView: NSView {
                 needsDisplay = true
                 // If double-click, immediately enter edit mode
                 if let event = NSApp.currentEvent, event.clickCount >= 2 {
-                    textEditor.editingAnnotation = existingAnn
                     textEditor.restoreState(from: existingAnn)
-                    if let idx = annotations.firstIndex(where: { $0 === existingAnn }) {
-                        annotations.remove(at: idx)
-                        selectedAnnotation = nil
-                    }
+                    textEditor.beginEditing(existingAnn, canvas: self)
+                    selectedAnnotation = nil
                     showTextField(
                         at: existingAnn.textDrawRect.origin,
                         existingText: existingAnn.attributedText,
@@ -9496,12 +9500,9 @@ class OverlayView: NSView {
         // Double-click on text annotation — enter edit mode
         if selected.tool == .text && selected.hitTest(point: point) {
             if let event = NSApp.currentEvent, event.clickCount >= 2 {
-                textEditor.editingAnnotation = selected
                 textEditor.restoreState(from: selected)
-                if let idx = annotations.firstIndex(where: { $0 === selected }) {
-                    annotations.remove(at: idx)
-                    selectedAnnotation = nil
-                }
+                textEditor.beginEditing(selected, canvas: self)
+                selectedAnnotation = nil
                 showTextField(
                     at: selected.textDrawRect.origin, existingText: selected.attributedText,
                     existingFrame: selected.textDrawRect)
@@ -9572,6 +9573,17 @@ class OverlayView: NSView {
         }
         UserDefaults.standard.set(!current, forKey: key)
         rebuildToolbarLayout()
+    }
+
+    /// Actions that render the canvas or hand it somewhere else.
+    private static func actionReadsCanvas(_ action: ToolbarButtonAction) -> Bool {
+        switch action {
+        case .copy, .save, .upload, .share, .pin, .ocr, .autoRedact, .removeBackground,
+             .invertColors, .translate, .detach, .scrollCapture, .addCapture, .record, .startRecord:
+            return true
+        default:
+            return false
+        }
     }
 
     func commitTextFieldIfNeeded() {

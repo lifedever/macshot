@@ -317,6 +317,13 @@ class Annotation {
         anchorPoints = src.anchorPoints
         textDrawRect = src.textDrawRect
         rotation = src.rotation
+        if tool == .text {
+            // Undoing a re-edit of a label restores what it said, not only
+            // how it was styled.
+            text = src.text
+            attributedText = src.attributedText
+            textImage = src.textImage
+        }
         if tool == .loupe {
             loupeSourceRect = src.loupeSourceRect
             bakedBlurNSImage = nil
