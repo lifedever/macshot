@@ -295,6 +295,7 @@
 "Symbol" = "Símbol";
 "No SF Symbol by that name — the default icon is used." = "Cap SF Symbol amb aquest nom — s'utilitza la icona per defecte.";
 "Theme" = "Tema";
+"The Default theme follows the system's Light or Dark appearance." = "El tema per defecte segueix l'aparença clara o fosca del sistema.";
 "Accent color:" = "Color d'accent:";
 "Icon color:" = "Color de la icona:";
 "Background color:" = "Color de fons:";

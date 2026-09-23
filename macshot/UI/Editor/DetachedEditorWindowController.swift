@@ -144,7 +144,13 @@ class DetachedEditorWindowController: NSObject, NSWindowDelegate {
         scrollView.hasHorizontalScroller = true
         scrollView.autohidesScrollers = true
         scrollView.drawsBackground = true
-        scrollView.backgroundColor = NSColor(white: 0.15, alpha: 1.0)
+        // The canvas backdrop follows the toolbar surfaces: a fixed dark grey
+        // put light toolbars on a dark window in Light mode.
+        // Resolved at each draw, so it also follows a switch while the editor
+        // is open.
+        scrollView.backgroundColor = NSColor(name: nil) { _ in
+            ToolbarLayout.isDarkSurface ? NSColor(white: 0.15, alpha: 1.0) : NSColor(white: 0.88, alpha: 1.0)
+        }
         // We handle magnification ourselves in OverlayView.scrollWheel/magnify
         // to avoid NSScrollView's internal elastic physics at the zoom boundary.
         // Setting allowsMagnification=false prevents NSScrollView from fighting our zoom.

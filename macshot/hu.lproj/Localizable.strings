@@ -311,6 +311,7 @@
 "Symbol" = "Szimbólum";
 "No SF Symbol by that name — the default icon is used." = "Nincs ilyen nevű SF Symbol — az alapértelmezett ikon lesz használatban.";
 "Theme" = "Téma";
+"The Default theme follows the system's Light or Dark appearance." = "Az alapértelmezett téma a rendszer világos vagy sötét megjelenését követi.";
 "OCR Capture:" = "OCR rögzítés:";
 "OCR & QR Capture:" = "OCR és QR rögzítés:";
 "Text & QR Recognition" = "Szöveg- és QR-felismerés";

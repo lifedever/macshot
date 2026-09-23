@@ -728,6 +728,7 @@
 "Custom" = "Прилагођено";
 "Theme:" = "Тема:";
 "Theme" = "Тема";
+"The Default theme follows the system's Light or Dark appearance." = "Подразумевана тема прати светли или тамни изглед система.";
 "Application" = "Апликација";
 "Capture area and extract text" = "Сними област и издвоји текст";
 "Capture the full screen" = "Сними цео екран";

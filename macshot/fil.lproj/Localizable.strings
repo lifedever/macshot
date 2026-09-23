@@ -727,6 +727,7 @@
 "Custom" = "Custom";
 "Theme:" = "Tema:";
 "Theme" = "Tema";
+"The Default theme follows the system's Light or Dark appearance." = "Sinusunod ng Default na tema ang Light o Dark na itsura ng system.";
 "Application" = "Application";
 "Capture area and extract text" = "Kumuha ng lugar at kunin ang teksto";
 "Capture the full screen" = "Kunan ang buong screen";

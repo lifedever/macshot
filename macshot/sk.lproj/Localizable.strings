@@ -726,6 +726,7 @@
 "Custom" = "Vlastné";
 "Theme:" = "Téma:";
 "Theme" = "Téma";
+"The Default theme follows the system's Light or Dark appearance." = "Predvolený motív sa riadi svetlým alebo tmavým vzhľadom systému.";
 "Application" = "Aplikácia";
 "Capture area and extract text" = "Zachytiť oblasť a extrahovať text";
 "Capture the full screen" = "Zachytiť celú obrazovku";

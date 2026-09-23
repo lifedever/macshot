@@ -723,6 +723,7 @@
 "Custom" = "Własny";
 "Theme:" = "Motyw:";
 "Theme" = "Motyw";
+"The Default theme follows the system's Light or Dark appearance." = "Motyw domyślny podąża za jasnym lub ciemnym wyglądem systemu.";
 "Application" = "Aplikacja";
 "Capture area and extract text" = "Przechwyć obszar i wyodrębnij tekst";
 "Capture the full screen" = "Przechwyć pełny ekran";

@@ -727,6 +727,7 @@
 "Custom" = "Tùy chỉnh";
 "Theme:" = "Chủ đề:";
 "Theme" = "Chủ đề";
+"The Default theme follows the system's Light or Dark appearance." = "Chủ đề Mặc định theo giao diện Sáng hoặc Tối của hệ thống.";
 "Application" = "Ứng dụng";
 "Capture area and extract text" = "Chụp vùng chọn và trích xuất văn bản";
 "Capture the full screen" = "Chụp toàn bộ màn hình";

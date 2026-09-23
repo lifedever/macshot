@@ -294,6 +294,7 @@
 "Icon color:" = "צבע סמל:";
 "Background color:" = "צבע רקע:";
 "Theme" = "ערכת נושא";
+"The Default theme follows the system's Light or Dark appearance." = "ערכת הנושא ברירת המחדל עוקבת אחר המראה הבהיר או הכהה של המערכת.";
 "Reset" = "איפוס";
 "OCR Capture:" = "לכידת OCR:";
 "Show window + copy to clipboard" = "הצג חלון + העתק ללוח";

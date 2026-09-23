@@ -473,6 +473,8 @@ class OverlayView: NSView {
             }
         }
     }
+    /// Space between the bottom strip and the tool options row.
+    private static let toolbarRowGap: CGFloat = 6
     private var bottomStripView: ToolbarStripView?
     private var rightStripView: ToolbarStripView?
     private var toolOptionsRowView: ToolOptionsRowView?
@@ -1242,11 +1244,22 @@ class OverlayView: NSView {
             name: .toolbarColorsDidChange, object: nil)
     }
 
+    /// The default theme follows the system's light or dark appearance, and
+    /// this view is reused from capture to capture — so a switch in System
+    /// Settings has to repaint toolbars that already exist.
+    override func viewDidChangeEffectiveAppearance() {
+        super.viewDidChangeEffectiveAppearance()
+        guard bottomStripView != nil || rightStripView != nil || toolOptionsRowView != nil else { return }
+        handleToolbarColorsChanged()
+    }
+
     @objc private func handleToolbarColorsChanged() {
-        // Rebuild toolbars and options row with new colors.
-        if let row = toolOptionsRowView {
-            row.layer?.backgroundColor = ToolbarLayout.bgColor.cgColor
-        }
+        // Rebuild toolbars and options row with new colors. The surfaces copy
+        // their colours into their layers, so they are repainted explicitly.
+        bottomStripView?.applyToolbarSurface()
+        rightStripView?.applyToolbarSurface()
+        toolOptionsRowView?.applyToolbarSurface()
+        resolutionBox?.applyToolbarSurface(cornerRadius: 8)
         toolOptionsRowView?.appearance = ToolbarLayout.appearance
         rebuildToolbarLayout()
         if let tool = toolOptionsRowView?.currentTool {
@@ -6153,7 +6166,9 @@ class OverlayView: NSView {
         bottomBarRect = NSRect(origin: bottomStrip.frame.origin, size: bottomStrip.frame.size)
         rightBarRect = rightStrip.frame
 
-        // Position options row — above bottom bar in editor, below in overlay
+        // Position options row — above bottom bar in editor, below in overlay.
+        // Far enough from the bar that the two read as separate surfaces,
+        // each with its own edge and shadow.
         if let row = toolOptionsRowView, !row.isHidden {
             // Use the wider of the bottom bar and the row's natural content width
             let rowW = max(bottomBarRect.width, row.contentWidth)
@@ -6163,13 +6178,13 @@ class OverlayView: NSView {
                 // In editor mode, center the options row the same way as the bottom bar
                 let cb = chromeParentView?.bounds ?? bounds
                 let rowX = max(4, cb.midX - rowW / 2)
-                row.frame.origin = NSPoint(x: rowX, y: bottomBarRect.maxY + 2)
+                row.frame.origin = NSPoint(x: rowX, y: bottomBarRect.maxY + Self.toolbarRowGap)
                 row.autoresizingMask = [.minXMargin, .maxXMargin, .maxYMargin]
             } else {
                 // Center the options row relative to the bottom bar, clamped to view bounds
                 var rowX = bottomBarRect.midX - rowW / 2
                 rowX = max(4, min(rowX, bounds.maxX - rowW - 4))
-                rowY = bottomBarRect.minY - row.frame.height - 2
+                rowY = bottomBarRect.minY - row.frame.height - Self.toolbarRowGap
                 row.frame.origin = NSPoint(x: rowX, y: rowY)
             }
             optionsRowRect = NSRect(origin: row.frame.origin, size: row.frame.size)

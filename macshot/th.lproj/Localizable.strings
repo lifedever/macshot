@@ -727,6 +727,7 @@
 "Custom" = "กำหนดเอง";
 "Theme:" = "ธีม:";
 "Theme" = "ธีม";
+"The Default theme follows the system's Light or Dark appearance." = "ธีมเริ่มต้นจะเปลี่ยนตามลักษณะสว่างหรือมืดของระบบ";
 "Application" = "แอปพลิเคชัน";
 "Capture area and extract text" = "จับภาพพื้นที่และดึงข้อความ";
 "Capture the full screen" = "จับภาพเต็มหน้าจอ";

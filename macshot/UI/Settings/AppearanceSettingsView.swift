@@ -21,7 +21,7 @@ struct AppearanceSettingsView: View {
 
     var body: some View {
         Form {
-            Section(L("Appearance")) {
+            Section {
                 Picker(L("Theme"), selection: themeSelection) {
                     ForEach(Array(model.themePresetNames.enumerated()), id: \.offset) { index, name in
                         Text(name).tag(index)
@@ -30,6 +30,10 @@ struct AppearanceSettingsView: View {
                 ColorPicker(L("Accent"), selection: $model.accentColor, supportsOpacity: false)
                 ColorPicker(L("Icon"), selection: $model.iconColor, supportsOpacity: false)
                 ColorPicker(L("Background"), selection: $model.backgroundColor, supportsOpacity: false)
+            } header: {
+                Text(L("Appearance"))
+            } footer: {
+                Text(L("The Default theme follows the system's Light or Dark appearance."))
             }
 
             Section {

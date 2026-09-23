@@ -727,6 +727,7 @@
 "Custom" = "Kustom";
 "Theme:" = "Tema:";
 "Theme" = "Tema";
+"The Default theme follows the system's Light or Dark appearance." = "Tema Default mengikuti tampilan Terang atau Gelap sistem.";
 "Application" = "Aplikasi";
 "Capture area and extract text" = "Tangkap area dan ekstrak teks";
 "Capture the full screen" = "Tangkap seluruh layar";

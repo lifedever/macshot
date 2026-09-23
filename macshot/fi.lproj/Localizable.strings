@@ -315,6 +315,7 @@
 "Symbol" = "Symboli";
 "No SF Symbol by that name — the default icon is used." = "Tämännimistä SF Symbol -symbolia ei ole — käytetään oletuskuvaketta.";
 "Theme" = "Teema";
+"The Default theme follows the system's Light or Dark appearance." = "Oletusteema seuraa järjestelmän vaaleaa tai tummaa ulkoasua.";
 
 /* Preferences - Shortcuts */
 "Keyboard Shortcuts" = "Pikanäppäimet";

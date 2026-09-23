@@ -299,6 +299,7 @@
 "Symbol" = "Symbool";
 "No SF Symbol by that name — the default icon is used." = "Er bestaat geen SF Symbol met die naam — het standaardpictogram wordt gebruikt.";
 "Theme" = "Thema";
+"The Default theme follows the system's Light or Dark appearance." = "Het standaardthema volgt de lichte of donkere weergave van het systeem.";
 "OCR Capture:" = "OCR-opname:";
 "OCR & QR Capture:" = "OCR & QR-opname:";
 "Show window + copy to clipboard" = "Venster tonen + kopiëren naar klembord";

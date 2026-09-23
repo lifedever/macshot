@@ -708,6 +708,7 @@
 /* Settings — SwiftUI panes */
 "Menu bar icon" = "選單列圖示";
 "Theme" = "主題";
+"The Default theme follows the system's Light or Dark appearance." = "預設主題會跟隨系統的淺色或深色外觀。";
 "No SF Symbol by that name — the default icon is used." = "沒有這個名字的 SF Symbol，用的是預設圖示。";
 "%d fps" = "%d fps";
 "10 seconds" = "10 秒";

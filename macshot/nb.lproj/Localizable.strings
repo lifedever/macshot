@@ -315,6 +315,7 @@
 "Symbol" = "Symbol";
 "No SF Symbol by that name — the default icon is used." = "Det finnes ingen SF Symbol med det navnet — standardikonet brukes.";
 "Theme" = "Tema";
+"The Default theme follows the system's Light or Dark appearance." = "Standardtemaet følger systemets lyse eller mørke utseende.";
 
 /* Preferences - Shortcuts */
 "Keyboard Shortcuts" = "Tastatursnarveier";

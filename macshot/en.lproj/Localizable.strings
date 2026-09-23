@@ -703,6 +703,7 @@
 /* Settings — SwiftUI panes */
 "Menu bar icon" = "Menu bar icon";
 "Theme" = "Theme";
+"The Default theme follows the system's Light or Dark appearance." = "The Default theme follows the system's Light or Dark appearance.";
 "No SF Symbol by that name — the default icon is used." = "No SF Symbol by that name — the default icon is used.";
 "%d fps" = "%d fps";
 "10 seconds" = "10 seconds";

@@ -304,6 +304,7 @@
 "Symbol" = "सिंबल";
 "No SF Symbol by that name — the default icon is used." = "इस नाम का कोई SF Symbol नहीं है — डिफ़ॉल्ट आइकन उपयोग किया जाएगा।";
 "Theme" = "थीम";
+"The Default theme follows the system's Light or Dark appearance." = "डिफ़ॉल्ट थीम सिस्टम के लाइट या डार्क रूप का अनुसरण करती है।";
 "OCR Capture:" = "OCR कैप्चर:";
 "OCR & QR Capture:" = "OCR और QR कैप्चर:";
 "Show window + copy to clipboard" = "विंडो दिखाएँ + क्लिपबोर्ड पर कॉपी करें";

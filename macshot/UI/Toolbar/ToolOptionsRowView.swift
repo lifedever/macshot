@@ -42,12 +42,15 @@ class ToolOptionsRowView: NSView {
 
     override init(frame: NSRect) {
         super.init(frame: frame)
-        wantsLayer = true
-        layer?.cornerRadius = 6
-        layer?.backgroundColor = ToolbarLayout.bgColor.cgColor
+        applyToolbarSurface()
         // Match appearance to toolbar background brightness so system controls
         // (NSSegmentedControl labels, NSTextField, NSButton titles) stay readable.
         appearance = ToolbarLayout.appearance
+    }
+
+    override func setFrameSize(_ newSize: NSSize) {
+        super.setFrameSize(newSize)
+        applyToolbarSurface()
     }
 
     required init?(coder: NSCoder) { fatalError() }

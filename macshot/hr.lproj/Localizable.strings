@@ -726,6 +726,7 @@
 "Custom" = "Prilagođeno";
 "Theme:" = "Tema:";
 "Theme" = "Tema";
+"The Default theme follows the system's Light or Dark appearance." = "Zadana tema prati svijetli ili tamni izgled sustava.";
 "Application" = "Aplikacija";
 "Capture area and extract text" = "Snimi područje i izdvoji tekst";
 "Capture the full screen" = "Snimi cijeli zaslon";

@@ -294,6 +294,7 @@
 "Icon color:" = "لون الأيقونة:";
 "Background color:" = "لون الخلفية:";
 "Theme" = "السمة";
+"The Default theme follows the system's Light or Dark appearance." = "يتبع السمة الافتراضية مظهر النظام الفاتح أو الداكن.";
 "Reset" = "إعادة تعيين";
 "OCR Capture:" = "التقاط OCR:";
 "Show window + copy to clipboard" = "عرض النافذة + نسخ إلى الحافظة";

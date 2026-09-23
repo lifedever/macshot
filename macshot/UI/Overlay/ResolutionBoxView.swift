@@ -35,9 +35,7 @@ final class ResolutionBoxView: NSView, NSTextFieldDelegate {
 
     init() {
         super.init(frame: .zero)
-        wantsLayer = true
-        layer?.cornerRadius = 6
-        layer?.backgroundColor = ToolbarLayout.bgColor.cgColor
+        applyToolbarSurface(cornerRadius: 8)
         appearance = ToolbarLayout.appearance
 
         configureField(widthField)
@@ -62,6 +60,11 @@ final class ResolutionBoxView: NSView, NSTextFieldDelegate {
     }
 
     required init?(coder: NSCoder) { fatalError() }
+
+    override func setFrameSize(_ newSize: NSSize) {
+        super.setFrameSize(newSize)
+        applyToolbarSurface(cornerRadius: 8)
+    }
 
     private func configureField(_ f: NSTextField) {
         f.font = NSFont.monospacedDigitSystemFont(ofSize: 12, weight: .medium)

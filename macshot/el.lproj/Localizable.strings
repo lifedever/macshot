@@ -256,6 +256,7 @@
 "Symbol" = "Σύμβολο";
 "No SF Symbol by that name — the default icon is used." = "Δεν υπάρχει SF Symbol με αυτό το όνομα — χρησιμοποιείται το προεπιλεγμένο εικονίδιο.";
 "Theme" = "Θέμα";
+"The Default theme follows the system's Light or Dark appearance." = "Το προεπιλεγμένο θέμα ακολουθεί τη φωτεινή ή τη σκουρόχρωμη εμφάνιση του συστήματος.";
 "Hotkeys still work. To show the icon again, re-launch macshot." = "Τα πλήκτρα συντόμευσης λειτουργούν ακόμα. Για εμφάνιση του εικονιδίου, επανεκκινήστε το macshot.";
 "Check for updates automatically" = "Αυτόματος έλεγχος ενημερώσεων";
 "Check for beta updates" = "Έλεγχος για ενημερώσεις beta";

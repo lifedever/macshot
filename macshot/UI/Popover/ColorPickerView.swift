@@ -289,7 +289,9 @@ class ColorPickerView: NSView {
     }
 
     private func drawHexDisplay(in rect: NSRect) {
-        NSColor(white: 0.2, alpha: 0.8).setFill()
+        // A field tint from the glyph colour, so it reads on the popover in
+        // light and dark alike (a fixed dark grey hid the hex in Light mode).
+        ToolbarLayout.iconColor.withAlphaComponent(ToolbarLayout.isDarkSurface ? 0.10 : 0.07).setFill()
         NSBezierPath(roundedRect: rect, xRadius: 4, yRadius: 4).fill()
 
         // Preview circle

@@ -244,6 +244,7 @@
 "Symbol" = "Simbol";
 "No SF Symbol by that name — the default icon is used." = "Niciun SF Symbol cu acest nume — se folosește pictograma implicită.";
 "Theme" = "Tema";
+"The Default theme follows the system's Light or Dark appearance." = "Tema implicită urmează aspectul luminos sau întunecat al sistemului.";
 "Hotkeys still work. To show the icon again, re-launch macshot." = "Scurtăturile funcționează în continuare. Pentru a afișa din nou pictograma, repornește macshot.";
 "Check for updates automatically" = "Verifică actualizările automat";
 "Check for beta updates" = "Verifică actualizările beta";

@@ -247,6 +247,7 @@
 "Symbol" = "প্রতীক";
 "No SF Symbol by that name — the default icon is used." = "এই নামে কোনো SF Symbol নেই — ডিফল্ট আইকন ব্যবহার করা হচ্ছে।";
 "Theme" = "থিম";
+"The Default theme follows the system's Light or Dark appearance." = "ডিফল্ট থিম সিস্টেমের লাইট বা ডার্ক চেহারা অনুসরণ করে।";
 "Hotkeys still work. To show the icon again, re-launch macshot." = "হটকি এখনও কাজ করে। আইকন আবার দেখাতে macshot পুনরায় চালু করুন।";
 "Check for updates automatically" = "স্বয়ংক্রিয়ভাবে আপডেট পরীক্ষা করুন";
 "Check for beta updates" = "বিটা আপডেট পরীক্ষা করুন";

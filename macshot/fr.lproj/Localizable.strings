@@ -305,6 +305,7 @@
 "Symbol" = "Symbole";
 "No SF Symbol by that name — the default icon is used." = "Aucun SF Symbol de ce nom — l'icône par défaut est utilisée.";
 "Theme" = "Thème";
+"The Default theme follows the system's Light or Dark appearance." = "Le thème par défaut suit l'apparence claire ou sombre du système.";
 "OCR Capture:" = "Capture OCR :";
 "OCR & QR Capture:" = "Capture OCR & QR :";
 "Show window + copy to clipboard" = "Afficher la fenêtre + copier dans le presse-papiers";

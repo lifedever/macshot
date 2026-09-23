@@ -238,10 +238,38 @@ enum ToolbarActionPreferences {
 
 class ToolbarLayout {
 
-    // Default theme colors (Flameshot purple style)
+    // Default theme: the Flameshot purple accent on a surface that follows the
+    // system appearance — light bar and dark glyphs in Light mode, dark bar
+    // and light glyphs in Dark mode. A colour picked in Settings is stored and
+    // wins over these. Resolved when read rather than as a dynamic NSColor,
+    // because many surfaces copy the colour into a layer when they are built,
+    // outside any drawing pass that would resolve it.
     static let defaultAccentColor = NSColor(calibratedRed: 0.55, green: 0.30, blue: 0.85, alpha: 1.0)
-    static let defaultIconColor = NSColor.white
-    static let defaultBgColor = NSColor(white: 0.12, alpha: 1.0)
+    static var defaultIconColor: NSColor {
+        isSystemDark ? NSColor(white: 0.94, alpha: 1.0) : NSColor(white: 0.17, alpha: 1.0)
+    }
+    static var defaultBgColor: NSColor {
+        isSystemDark ? NSColor(white: 0.15, alpha: 1.0) : NSColor(white: 0.985, alpha: 1.0)
+    }
+    /// The colours of the fixed dark look that was the default before the
+    /// toolbar followed the system. Someone who picked "Default" then has
+    /// exactly these stored; `migrateStoredDefaultTheme` clears them.
+    static let legacyDefaultIconColor = NSColor.white
+    static let legacyDefaultBgColor = NSColor(white: 0.12, alpha: 1.0)
+
+    static var isSystemDark: Bool {
+        guard let app = NSApp else { return true }
+        return app.effectiveAppearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
+    }
+
+    /// No toolbar colour has been chosen in Settings: the default theme, which
+    /// follows the system appearance.
+    static var usesDefaultTheme: Bool {
+        let defaults = UserDefaults.standard
+        return defaults.data(forKey: "toolbarAccentColor") == nil
+            && defaults.data(forKey: "toolbarIconColor") == nil
+            && defaults.data(forKey: "toolbarBgColor") == nil
+    }
 
     // User-customizable colors — read from UserDefaults with defaults matching the original look
     static var accentColor: NSColor {
@@ -296,10 +324,50 @@ class ToolbarLayout {
     /// Appearance matching the toolbar background brightness.
     /// Dark background → `.darkAqua`, light background → `.aqua`.
     static var appearance: NSAppearance? {
+        NSAppearance(named: isDarkSurface ? .darkAqua : .aqua)
+    }
+
+    /// Whether the toolbar surfaces are dark, from the background actually in use.
+    static var isDarkSurface: Bool {
         let color = bgColor.usingColorSpace(.deviceRGB) ?? bgColor
         var brightness: CGFloat = 0
         color.getHue(nil, saturation: nil, brightness: &brightness, alpha: nil)
-        return NSAppearance(named: brightness > 0.5 ? .aqua : .darkAqua)
+        return brightness <= 0.5
+    }
+
+    // MARK: Surface
+
+    /// Corner radius of the toolbar surfaces — strips, options row, size box.
+    static let surfaceCornerRadius: CGFloat = 10
+    /// The hairline that separates a surface from what is behind it, taken
+    /// from the glyph colour so it suits light and dark themes alike.
+    static var surfaceBorderColor: NSColor { iconColor.withAlphaComponent(isDarkSurface ? 0.12 : 0.10) }
+
+    /// Clear stored colours that equal the old fixed default, so a user who
+    /// had merely picked "Default" gets the default that follows the system.
+    static func migrateStoredDefaultTheme(defaults: UserDefaults = .standard) {
+        let key = "toolbarDefaultThemeFollowsSystem"
+        guard !defaults.bool(forKey: key) else { return }
+        defaults.set(true, forKey: key)
+        func stored(_ key: String) -> NSColor? {
+            guard let data = defaults.data(forKey: key) else { return nil }
+            return try? NSKeyedUnarchiver.unarchivedObject(ofClass: NSColor.self, from: data)
+        }
+        guard let accent = stored("toolbarAccentColor"), let icon = stored("toolbarIconColor"),
+              let bg = stored("toolbarBgColor"),
+              sameColour(accent, defaultAccentColor), sameColour(icon, legacyDefaultIconColor),
+              sameColour(bg, legacyDefaultBgColor) else { return }
+        defaults.removeObject(forKey: "toolbarAccentColor")
+        defaults.removeObject(forKey: "toolbarIconColor")
+        defaults.removeObject(forKey: "toolbarBgColor")
+    }
+
+    static func sameColour(_ a: NSColor, _ b: NSColor) -> Bool {
+        guard let x = a.usingColorSpace(.deviceRGB), let y = b.usingColorSpace(.deviceRGB) else { return false }
+        let tolerance = 0.01
+        return abs(x.redComponent - y.redComponent) < tolerance
+            && abs(x.greenComponent - y.greenComponent) < tolerance
+            && abs(x.blueComponent - y.blueComponent) < tolerance
     }
 
     /// Save background color to UserDefaults.
@@ -533,5 +601,28 @@ class ToolbarLayout {
         }
 
         return buttons
+    }
+}
+
+extension NSView {
+    /// Give this view the toolbar surface: theme fill, a hairline edge and a
+    /// soft shadow, resolved for the current theme and system appearance.
+    /// Call again when the bounds or the appearance change — the shadow path
+    /// follows the bounds, and the colours are copied into the layer.
+    func applyToolbarSurface(cornerRadius: CGFloat = ToolbarLayout.surfaceCornerRadius) {
+        wantsLayer = true
+        guard let layer else { return }
+        let dark = ToolbarLayout.isDarkSurface
+        layer.backgroundColor = ToolbarLayout.bgColor.cgColor
+        layer.cornerRadius = cornerRadius
+        layer.borderColor = ToolbarLayout.surfaceBorderColor.cgColor
+        layer.borderWidth = 1 / max(1, window?.backingScaleFactor ?? NSScreen.main?.backingScaleFactor ?? 2)
+        layer.masksToBounds = false
+        layer.shadowColor = NSColor.black.cgColor
+        layer.shadowOpacity = dark ? 0.38 : 0.14
+        layer.shadowRadius = dark ? 12 : 14
+        layer.shadowOffset = CGSize(width: 0, height: -3)
+        layer.shadowPath = CGPath(roundedRect: bounds, cornerWidth: cornerRadius,
+                                  cornerHeight: cornerRadius, transform: nil)
     }
 }

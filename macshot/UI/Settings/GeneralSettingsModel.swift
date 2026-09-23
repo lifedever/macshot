@@ -120,8 +120,11 @@ final class GeneralSettingsModel: ObservableObject {
     /// Index of the preset whose three colours match the current ones, or the
     /// trailing "Custom" entry when they match none.
     var selectedThemeIndex: Int {
+        // "Default" is no stored colours at all: it follows the system
+        // appearance, so it cannot be recognised by comparing colours.
+        if ToolbarLayout.usesDefaultTheme { return 0 }
         let current = (ToolbarLayout.accentColor, ToolbarLayout.iconColor, ToolbarLayout.bgColor)
-        for (index, preset) in ThemePreset.all.enumerated() {
+        for (index, preset) in ThemePreset.all.enumerated() where index > 0 {
             if Self.sameColour(preset.accent, current.0),
                Self.sameColour(preset.icon, current.1),
                Self.sameColour(preset.bg, current.2) {
@@ -133,18 +136,31 @@ final class GeneralSettingsModel: ObservableObject {
 
     func applyThemePreset(at index: Int) {
         guard index >= 0, index < ThemePreset.all.count else { return }  // "Custom" — no-op
-        let preset = ThemePreset.all[index]
-        ToolbarLayout.saveAccentColor(preset.accent)
-        ToolbarLayout.saveIconColor(preset.icon)
-        ToolbarLayout.saveBgColor(preset.bg)
-        accentColor = Color(preset.accent)
-        iconColor = Color(preset.icon)
-        backgroundColor = Color(preset.bg)
+        isApplyingPreset = true
+        defer { isApplyingPreset = false }
+        if index == 0 {
+            // Default: store nothing, so the toolbar keeps following the
+            // system's light or dark appearance.
+            ToolbarLayout.resetColors()
+        } else {
+            let preset = ThemePreset.all[index]
+            ToolbarLayout.saveAccentColor(preset.accent)
+            ToolbarLayout.saveIconColor(preset.icon)
+            ToolbarLayout.saveBgColor(preset.bg)
+        }
+        accentColor = Color(ToolbarLayout.accentColor)
+        iconColor = Color(ToolbarLayout.iconColor)
+        backgroundColor = Color(ToolbarLayout.bgColor)
         NotificationCenter.default.post(name: .toolbarColorsDidChange, object: nil)
     }
 
+    /// Set while a preset writes the three colours, so the colour wells'
+    /// own write-back does not store them a second time — for Default that
+    /// would pin the system's current look and stop it following changes.
+    private var isApplyingPreset = false
+
     private func applyToolbarColour(_ new: Color, _ old: Color, _ save: (NSColor) -> Void) {
-        guard new != old else { return }
+        guard !isApplyingPreset, new != old else { return }
         save(NSColor(new))
         NotificationCenter.default.post(name: .toolbarColorsDidChange, object: nil)
         objectWillChange.send()   // the preset popup reflects the new colours

@@ -10,6 +10,16 @@ class EditorTopBarView: NSView {
     private var doneButton: NSButton?
     var onDone: (() -> Void)?
 
+    private let bottomBorder = NSView()
+
+    /// Follow a light/dark switch while the editor is open: the colours are
+    /// copied into layers when the bar is built.
+    override func viewDidChangeEffectiveAppearance() {
+        super.viewDidChangeEffectiveAppearance()
+        layer?.backgroundColor = ToolbarLayout.bgColor.cgColor
+        bottomBorder.layer?.backgroundColor = ToolbarLayout.surfaceBorderColor.cgColor
+    }
+
     override init(frame: NSRect) {
         super.init(frame: frame)
         wantsLayer = true
@@ -36,9 +46,9 @@ class EditorTopBarView: NSView {
         zoomButton.action = #selector(zoomButtonClicked)
 
         // Bottom border
-        let border = NSView()
+        let border = bottomBorder
         border.wantsLayer = true
-        border.layer?.backgroundColor = NSColor(white: 0.25, alpha: 1.0).cgColor
+        border.layer?.backgroundColor = ToolbarLayout.surfaceBorderColor.cgColor
         border.translatesAutoresizingMaskIntoConstraints = false
         addSubview(border)
 

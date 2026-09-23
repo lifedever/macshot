@@ -726,6 +726,7 @@
 "Custom" = "Власний";
 "Theme:" = "Тема:";
 "Theme" = "Тема";
+"The Default theme follows the system's Light or Dark appearance." = "Тема «За замовчуванням» відповідає світлому або темному вигляду системи.";
 "Application" = "Програма";
 "Capture area and extract text" = "Захопити область і розпізнати текст";
 "Capture the full screen" = "Захопити весь екран";

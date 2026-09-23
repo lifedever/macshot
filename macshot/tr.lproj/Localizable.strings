@@ -294,6 +294,7 @@
 "Icon color:" = "Simge rengi:";
 "Background color:" = "Arka plan rengi:";
 "Theme" = "Tema";
+"The Default theme follows the system's Light or Dark appearance." = "Varsayılan tema, sistemin Açık veya Koyu görünümünü izler.";
 "Reset" = "Sıfırla";
 "OCR Capture:" = "OCR Yakalama:";
 "Show window + copy to clipboard" = "Pencere göster + panoya kopyala";

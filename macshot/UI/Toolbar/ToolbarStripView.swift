@@ -1,7 +1,7 @@
 import Cocoa
 
-/// Real NSView container for a row (horizontal) or column (vertical) of ToolbarButtonViews.
-/// Dark rounded background matching the existing toolbar look.
+/// Real NSView container for a row (horizontal) or column (vertical) of ToolbarButtonViews,
+/// on the shared toolbar surface (see `applyToolbarSurface`).
 class ToolbarStripView: NSView {
 
     enum Orientation { case horizontal, vertical }
@@ -24,12 +24,18 @@ class ToolbarStripView: NSView {
     var onRightClick: ((ToolbarButtonAction, NSView) -> Void)?
     var onHover: ((ToolbarButtonAction, Bool) -> Void)?
 
-    private let padding: CGFloat = 4
-    private let spacing: CGFloat = 2
+    private let padding: CGFloat = 5
+    private let spacing: CGFloat = 1
 
     init(orientation: Orientation) {
         self.orientation = orientation
         super.init(frame: .zero)
+        applyToolbarSurface()
+    }
+
+    override func setFrameSize(_ newSize: NSSize) {
+        super.setFrameSize(newSize)
+        applyToolbarSurface()
     }
 
     required init?(coder: NSCoder) { fatalError() }
@@ -129,10 +135,6 @@ class ToolbarStripView: NSView {
         }
     }
 
-    override func draw(_ dirtyRect: NSRect) {
-        ToolbarLayout.bgColor.setFill()
-        NSBezierPath(roundedRect: bounds, xRadius: 6, yRadius: 6).fill()
-    }
 
     // Consume clicks on gaps between buttons so they don't fall through to OverlayView.
     // In editor mode (passesThrough), let gap clicks pass through so drawing works

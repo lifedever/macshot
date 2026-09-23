@@ -1,7 +1,7 @@
 import Cocoa
 
 /// Real NSView for a single toolbar button. Handles its own hover, press, drawing.
-/// Matches the existing dark toolbar look: purple accent, SF Symbols, color swatches.
+/// Themed from ToolbarLayout: accent pill when selected, SF Symbols, color swatches.
 class ToolbarButtonView: NSView {
 
     var action: ToolbarButtonAction
@@ -38,7 +38,10 @@ class ToolbarButtonView: NSView {
     var onHover: ((ToolbarButtonAction, Bool) -> Void)?  // (action, isHovered)
 
     static let size: CGFloat = 32
-    private static let radius: CGFloat = 6
+    private static let radius: CGFloat = 7
+    /// The highlight sits inside the button, so neighbouring highlights read
+    /// as separate pills rather than one block.
+    private static let highlightInset: CGFloat = 2
 
     var tooltipText: String = ""
 
@@ -76,25 +79,43 @@ class ToolbarButtonView: NSView {
         needsDisplay = true
     }
 
+    /// Glyph colour on the accent fill of a selected button: white, unless
+    /// the accent is so light that white would disappear into it.
+    private static var onAccentColor: NSColor {
+        let accent = ToolbarLayout.accentColor.usingColorSpace(.deviceRGB) ?? ToolbarLayout.accentColor
+        var brightness: CGFloat = 0, saturation: CGFloat = 0
+        accent.getHue(nil, saturation: &saturation, brightness: &brightness, alpha: nil)
+        return brightness > 0.85 && saturation < 0.35 ? NSColor(white: 0.12, alpha: 1) : .white
+    }
+
+    override func viewDidChangeEffectiveAppearance() {
+        super.viewDidChangeEffectiveAppearance()
+        cachedIcon = nil
+        cachedIconIsOn = nil
+        needsDisplay = true
+    }
+
     override func draw(_ dirtyRect: NSRect) {
         // Background
         let bg: NSColor
         if isPressed {
-            bg = ToolbarLayout.accentColor.withAlphaComponent(0.6)
+            bg = isOn ? ToolbarLayout.accentColor.withAlphaComponent(0.75)
+                      : ToolbarLayout.iconColor.withAlphaComponent(ToolbarLayout.isDarkSurface ? 0.20 : 0.13)
         } else if isOn {
             bg = ToolbarLayout.accentColor
         } else if isHovered {
-            bg = ToolbarLayout.iconColor.withAlphaComponent(0.12)
+            bg = ToolbarLayout.iconColor.withAlphaComponent(ToolbarLayout.isDarkSurface ? 0.12 : 0.07)
         } else {
             bg = NSColor.clear
         }
+        let highlight = bounds.insetBy(dx: Self.highlightInset, dy: Self.highlightInset)
         bg.setFill()
-        NSBezierPath(roundedRect: bounds, xRadius: Self.radius, yRadius: Self.radius).fill()
+        NSBezierPath(roundedRect: highlight, xRadius: Self.radius, yRadius: Self.radius).fill()
 
         // Mic level fill — green bar rising from the bottom inside the button
         if micLevel > 0.001 {
             NSGraphicsContext.saveGraphicsState()
-            NSBezierPath(roundedRect: bounds, xRadius: Self.radius, yRadius: Self.radius).addClip()
+            NSBezierPath(roundedRect: highlight, xRadius: Self.radius, yRadius: Self.radius).addClip()
             let fillH = bounds.height * CGFloat(min(micLevel, 1.0))
             let fillRect = NSRect(x: bounds.minX, y: bounds.minY, width: bounds.width, height: fillH)
             NSColor.systemGreen.withAlphaComponent(0.45).setFill()
@@ -119,7 +140,7 @@ class ToolbarButtonView: NSView {
         guard let name = sfSymbol else { return }
         let currentIsOn = isOn
         if cachedIcon == nil || cachedIconIsOn != currentIsOn {
-            let color = currentIsOn ? (selectedTintColor ?? ToolbarLayout.iconColor) : tintColor
+            let color = currentIsOn ? (selectedTintColor ?? Self.onAccentColor) : tintColor
             let key = Self.cacheKey(name: name, isOn: currentIsOn, color: color)
             if let cached = Self.iconCache[key] {
                 cachedIcon = cached

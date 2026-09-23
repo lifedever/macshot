@@ -294,6 +294,7 @@
 "Icon color:" = "رنگ آیکون:";
 "Background color:" = "رنگ پس‌زمینه:";
 "Theme" = "تم";
+"The Default theme follows the system's Light or Dark appearance." = "پوستهٔ پیش‌فرض از حالت روشن یا تیرهٔ سیستم پیروی می‌کند.";
 "Reset" = "بازنشانی";
 "OCR Capture:" = "ضبط OCR:";
 "Show window + copy to clipboard" = "نمایش پنجره + کپی به کلیپ‌بورد";

@@ -309,6 +309,7 @@
 "Symbol" = "சின்னம்";
 "No SF Symbol by that name — the default icon is used." = "அந்தப் பெயரில் SF Symbol இல்லை — இயல்புநிலை ஐகான் பயன்படுத்தப்படும்.";
 "Theme" = "தீம்";
+"The Default theme follows the system's Light or Dark appearance." = "இயல்புநிலை தீம் கணினியின் லைட் அல்லது டார்க் தோற்றத்தைப் பின்பற்றும்.";
 "Background color:" = "பின்னணி நிறம்:";
 "Reset" = "மீட்டமை";
 "OCR Capture:" = "OCR பிடிப்பு:";
