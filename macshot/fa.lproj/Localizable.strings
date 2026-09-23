@@ -636,6 +636,7 @@
 /* Save/Discard, Recording, Translation Engine, Upload, Inspector */
 "Save changes?" = "تغییرات ذخیره شود؟";
 "Your annotations will be lost if you close without saving." = "حاشیه‌نویسی‌های شما در صورت بستن بدون ذخیره از دست خواهند رفت.";
+"Your edits to this video will be lost if you close without saving." = "اگر بدون ذخیره ببندید، ویرایش‌های این ویدیو از بین می‌رود.";
 "Save & Close" = "ذخیره و بستن";
 "Discard" = "صرف‌نظر";
 "Stop Recording" = "توقف ضبط ویدیو";
@@ -720,6 +721,7 @@
 "Copied!" = "کپی شد!";
 "Converting to GIF…" = "در حال تبدیل به GIF…";
 "GIF conversion failed" = "تبدیل GIF ناموفق بود";
+"Edits to a GIF file can't be saved" = "ویرایش‌های فایل GIF ذخیره نمی‌شوند";
 "No video track found" = "هیچ تراک ویدیویی یافت نشد";
 "Preview:" = "پیش‌نمایش:";
 "Copy Screen Info" = "کپی اطلاعات صفحه";

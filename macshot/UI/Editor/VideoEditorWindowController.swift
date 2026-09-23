@@ -3,6 +3,47 @@ import AVFoundation
 import AVKit
 import UniformTypeIdentifiers
 
+/// Picks the file the video editor's Save button writes in the save folder.
+///
+/// The take's own name is used, and an existing file there is replaced only
+/// when it is this take's copy: the file this editor saved before, or the
+/// unedited copy published when the recording finished (the same size as the
+/// source). Any other file under that name is left alone and the next free
+/// "Name (n)" is used instead.
+enum VideoQuickSaveDestination {
+    static func choose(in folder: URL, base: String, ext: String,
+                       previouslySaved: URL?, source: URL) -> (url: URL, replacing: Bool) {
+        let fm = FileManager.default
+        let sourceSize = fileSize(of: source)
+        for n in 1...999 {
+            let name = n == 1 ? "\(base).\(ext)" : "\(base) (\(n)).\(ext)"
+            let candidate = folder.appendingPathComponent(name)
+            guard fm.fileExists(atPath: candidate.path) else { return (candidate, false) }
+            let isOwnSave = previouslySaved?.standardizedFileURL == candidate.standardizedFileURL
+            let isPublishedCopy = sourceSize > 0 && fileSize(of: candidate) == sourceSize
+            if isOwnSave || isPublishedCopy { return (candidate, true) }
+        }
+        return (folder.appendingPathComponent("\(base) \(UUID().uuidString.prefix(8)).\(ext)"), false)
+    }
+
+    private static func fileSize(of url: URL) -> Int {
+        (try? url.resourceValues(forKeys: [.fileSizeKey]).fileSize) ?? 0
+    }
+}
+
+/// Cmd+Q closes the editor rather than quitting the menu-bar app, the same as
+/// the image editor — and it goes through `performClose`, so unsaved edits
+/// are asked about instead of discarded with the whole app.
+private final class VideoEditorWindow: NSWindow {
+    override func performKeyEquivalent(with event: NSEvent) -> Bool {
+        if KeyboardShortcutMatcher.matches(event, character: "q", modifiers: .command) {
+            performClose(nil)
+            return true
+        }
+        return super.performKeyEquivalent(with: event)
+    }
+}
+
 /// Standalone video editor window for trimming and exporting recorded videos.
 final class VideoEditorWindowController: NSObject, NSWindowDelegate {
 
@@ -98,7 +139,7 @@ final class VideoEditorWindowController: NSObject, NSWindowDelegate {
         let winX = screen.frame.midX - winW / 2
         let winY = screen.frame.midY - winH / 2
 
-        let win = NSWindow(
+        let win = VideoEditorWindow(
             contentRect: NSRect(x: winX, y: winY, width: winW, height: winH),
             styleMask: [.titled, .closable, .miniaturizable, .resizable],
             backing: .buffered, defer: false
@@ -123,6 +164,31 @@ final class VideoEditorWindowController: NSObject, NSWindowDelegate {
         self.window = win
         self.editorView = view
         return true
+    }
+
+    /// Trims, cuts and effects exist only in this window until they are
+    /// saved. Closing used to drop them without a word.
+    func windowShouldClose(_ sender: NSWindow) -> Bool {
+        guard let view = editorView, view.hasUnsavedEdits else { return true }
+        let alert = NSAlert()
+        alert.messageText = L("Save changes?")
+        alert.informativeText = L("Your edits to this video will be lost if you close without saving.")
+        alert.addButton(withTitle: L("Save & Close"))
+        alert.addButton(withTitle: L("Discard"))
+        alert.addButton(withTitle: L("Cancel"))
+        alert.alertStyle = .warning
+        alert.beginSheetModal(for: sender) { [weak view, weak sender] response in
+            switch response {
+            case .alertFirstButtonReturn:
+                view?.saveThenClose { sender?.close() }
+            case .alertSecondButtonReturn:
+                view?.discardUnsavedEdits()
+                sender?.close()
+            default:
+                break
+            }
+        }
+        return false
     }
 
     func windowWillClose(_ notification: Notification) {
@@ -303,6 +369,14 @@ private final class VideoEditorView: NSView {
     private var savedURL: URL? {
         didSet { if savedURL == nil { editRevision &+= 1 } }
     }
+    /// The timeline as last saved (or as opened), compared by value to decide
+    /// whether closing would lose anything.
+    private var savedEditSignature = Data()
+    /// The timeline a running save is writing. Closing while that save runs
+    /// loses nothing: exports outlive the window.
+    private var pendingSaveSignature: Data?
+    /// Set by "Save & Close"; run once that save has been written.
+    private var closeAfterSave: (() -> Void)?
     private var statusMessage: String?
     private var statusIsError: Bool = false
     private var statusTimer: Timer?
@@ -617,6 +691,67 @@ private final class VideoEditorView: NSView {
 
         generateThumbnails()
         needsDisplay = true
+        savedEditSignature = editSignature()
+    }
+
+    // MARK: - Unsaved edits
+
+    /// The edits a user makes to this video — trim, cuts, speed, freezes,
+    /// effects and mute — encoded so two states compare by value. Output
+    /// settings (quality, size, MP4 or GIF) are remembered preferences, not
+    /// edits, and are left out.
+    private func editSignature() -> Data {
+        struct Signature: Encodable {
+            let trimStart: Double
+            let trimEnd: Double
+            let muted: Bool
+            let cuts: [VideoCutSegment]
+            let speed: [VideoSpeedSegment]
+            let freeze: [VideoFreezeSegment]
+            let zoom: [VideoZoomSegment]
+            let censor: [VideoCensorSegment]
+            let text: [VideoTextSegment]
+        }
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .sortedKeys
+        // JSONEncoder throws on NaN or infinity; a throw would make every
+        // state compare equal and silently turn the close prompt off.
+        encoder.nonConformingFloatEncodingStrategy = .convertToString(
+            positiveInfinity: "inf", negativeInfinity: "-inf", nan: "nan")
+        let signature = Signature(trimStart: trimStart, trimEnd: trimEnd, muted: isMuted,
+                                  cuts: cutSegments, speed: speedSegments, freeze: freezeSegments,
+                                  zoom: zoomSegments, censor: censorSegments, text: textSegments)
+        return (try? encoder.encode(signature)) ?? Data()
+    }
+
+    var hasUnsavedEdits: Bool {
+        let current = editSignature()
+        return current != savedEditSignature && current != pendingSaveSignature
+    }
+
+    func discardUnsavedEdits() {
+        savedEditSignature = editSignature()
+    }
+
+    /// Save as the Save button would, then run `close` once the file is
+    /// written. A cancelled Save As panel or a failed export keeps the window.
+    func saveThenClose(_ close: @escaping () -> Void) {
+        closeAfterSave = close
+        saveVideo()
+        // Nothing started — already exporting, or no destination offered.
+        if !isExporting, pendingSaveSignature == nil, !isShowingSavePanel { closeAfterSave = nil }
+    }
+
+    private var isShowingSavePanel = false
+
+    /// A save of `signature` finished. Marks it as the saved state and, after
+    /// "Save & Close", closes the window.
+    private func saveDidFinish(signature: Data, success: Bool) {
+        pendingSaveSignature = nil
+        if success { savedEditSignature = signature }
+        let close = closeAfterSave
+        closeAfterSave = nil
+        if success, !hasUnsavedEdits { close?() }
     }
 
     private func generateThumbnails() {
@@ -1762,7 +1897,9 @@ private final class VideoEditorView: NSView {
         if exportAsGIF && !isGIF && !(savedURL?.pathExtension.lowercased() == "gif") {
             showStatus(L("Converting to GIF…"))
             let tmpURL = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString + ".gif")
-            convertToGIF(destURL: tmpURL) { [weak self] success in
+            // A scratch file for the clipboard, not a save: it must not become
+            // savedURL or count as having saved the edits.
+            convertToGIF(destURL: tmpURL, cacheResult: false) { [weak self] success in
                 guard let self = self, success else { return }
                 self.copyGIFData(from: tmpURL)
             }
@@ -1773,7 +1910,11 @@ private final class VideoEditorView: NSView {
         // export pipeline — copying the raw source URL would silently discard
         // them (#193). savedURL is reset to nil on every edit, so it being nil
         // with pending edits means the source file is stale.
-        if savedURL == nil && hasPendingEdits {
+        if savedURL == nil && needsExportForOutput {
+            guard asset != nil else {
+                showStatus(L("Edits to a GIF file can't be saved"), isError: true)
+                return
+            }
             showStatus(L("Exporting..."))
             exportEditedTemp { [weak self] result in
                 guard let self = self else { return }
@@ -1797,11 +1938,30 @@ private final class VideoEditorView: NSView {
             return
         }
 
+        // The saved file sits in the save folder, outside the sandbox, and
+        // the save's own access to it ended with the save.
+        let folderAccess = SaveDirectoryAccess.resolveIfAccessible()
+        defer { folderAccess?.stopAccessingSecurityScopedResource() }
         if isGIF || url.pathExtension.lowercased() == "gif" {
             copyGIFData(from: url)
         } else {
             copyMP4Data(from: url)
         }
+    }
+
+    /// Edits to the timeline itself, as opposed to export settings.
+    private var hasTimelineEdits: Bool {
+        trimStart > 0.01 || (duration - trimEnd) > 0.01 || isMuted
+            || !zoomSegments.isEmpty || !censorSegments.isEmpty || !textSegments.isEmpty
+            || !cutSegments.isEmpty || !speedSegments.isEmpty || !freezeSegments.isEmpty
+    }
+
+    /// Whether an output has to be exported rather than copied. A GIF source
+    /// has no asset to export from and ignores the MP4 size and quality
+    /// settings — remembered from earlier videos, they made even an
+    /// untouched GIF look edited, and it then could not be saved at all.
+    private var needsExportForOutput: Bool {
+        asset == nil ? hasTimelineEdits : hasPendingEdits
     }
 
     /// True when the timeline differs from the source file on disk — the same
@@ -1977,13 +2137,25 @@ private final class VideoEditorView: NSView {
             return
         }
         let ext = exportAsGIF ? "gif" : videoURL.pathExtension
-        let name = videoURL.deletingPathExtension().lastPathComponent + ".\(ext)"
-        let destURL = dirURL.appendingPathComponent(name)
+        let base = videoURL.deletingPathExtension().lastPathComponent
+        let destination = quickSaveDestination(in: dirURL, base: base, ext: ext)
         if exportAsGIF && !isGIF {
-            convertToGIF(destURL: destURL)
+            convertToGIF(destURL: destination.url)
         } else {
-            saveToDestination(destURL, dirURL: dirURL)
+            saveToDestination(destination.url, dirURL: dirURL, replacingExisting: destination.replacing)
         }
+    }
+
+    /// Where the Save button writes: the take's own name in the save folder,
+    /// replacing it only when the file there is this take's copy — the one
+    /// this editor saved, or the unedited copy published when the recording
+    /// finished. Anything else under that name belongs to someone else: a
+    /// video opened from another folder shares its name with an unrelated
+    /// file, or the take was published as "Name (2)" because the name was
+    /// taken. Save used to replace those without asking.
+    private func quickSaveDestination(in folder: URL, base: String, ext: String) -> (url: URL, replacing: Bool) {
+        VideoQuickSaveDestination.choose(in: folder, base: base, ext: ext,
+                                         previouslySaved: savedURL, source: mediaURL)
     }
 
     private func saveVideoAs() {
@@ -1994,13 +2166,19 @@ private final class VideoEditorView: NSView {
         let ext = saveAsGIF ? "gif" : videoURL.pathExtension
         panel.nameFieldStringValue = videoURL.deletingPathExtension().lastPathComponent + ".\(ext)"
         panel.directoryURL = SaveDirectoryAccess.directoryHint()
+        isShowingSavePanel = true
         let completion: (NSApplication.ModalResponse) -> Void = { [weak self] response in
-            guard let self = self, !self.isExporting,
-                  response == .OK, let url = panel.url else { return }
+            guard let self = self else { return }
+            self.isShowingSavePanel = false
+            guard !self.isExporting, response == .OK, let url = panel.url else {
+                self.closeAfterSave = nil
+                return
+            }
             if saveAsGIF {
                 self.convertToGIF(destURL: url)
             } else {
-                self.saveToDestination(url, dirURL: nil)
+                // The panel has already asked about replacing an existing file.
+                self.saveToDestination(url, dirURL: nil, replacingExisting: true)
             }
         }
         if let window = window {
@@ -2193,6 +2371,8 @@ private final class VideoEditorView: NSView {
             completion?(false)
             return
         }
+        let signature = editSignature()
+        if cacheResult { pendingSaveSignature = signature }
         startExport(status: L("Processing GIF…"), title: destURL.lastPathComponent, operation: { cancellation, progress in
             try await GIFExporter.export(request, cancellation: cancellation, progress: progress)
         }, completion: { [weak self] result in
@@ -2200,7 +2380,10 @@ private final class VideoEditorView: NSView {
             case .success:
                 sourceSnapshot?.didSave(at: destURL)
                 if cacheResult, self?.editRevision == revision { self?.savedURL = destURL }
-                self?.showSavedStatus(for: destURL)
+                // Not through self: the editor may have closed while the
+                // export ran, and the result still needs announcing.
+                AppDelegate.showSavedToast(for: destURL)
+                if cacheResult { self?.saveDidFinish(signature: signature, success: true) }
                 completion?(true)
             case .failure(let error):
                 if !(error is CancellationError) {
@@ -2208,6 +2391,7 @@ private final class VideoEditorView: NSView {
                     if let self { self.showStatus(message, isError: true) }
                     else { (NSApp.delegate as? AppDelegate)?.showFailureToast(message) }
                 }
+                if cacheResult { self?.saveDidFinish(signature: signature, success: false) }
                 completion?(false)
             }
         })
@@ -2243,25 +2427,34 @@ private final class VideoEditorView: NSView {
             outputURL: outputURL, sourceLease: sourceLease)
     }
 
-    private func saveToDestination(_ destURL: URL, dirURL: URL?) {
+    private func saveToDestination(_ destURL: URL, dirURL: URL?, replacingExisting: Bool) {
         let directoryLease = SaveDirectoryLease(alreadyAccessing: dirURL)
         guard !isExporting else { return }
-        let needsExport = hasPendingEdits
+        let needsExport = needsExportForOutput
         let sourceURL = mediaURL
         let sourceLease = self.sourceLease
         let sourceSnapshot = self.sourceSnapshot
         let revision = editRevision
-        guard !needsExport || asset != nil else { return }
+        // A GIF source has no asset to export from. Save used to return here
+        // without a word, so the button looked broken.
+        guard !needsExport || asset != nil else {
+            showStatus(L("Edits to a GIF file can't be saved"), isError: true)
+            closeAfterSave = nil
+            return
+        }
         let timeRange = CMTimeRange(start: CMTime(seconds: trimStart, preferredTimescale: 1_000_000_000),
                                     end: CMTime(seconds: trimEnd, preferredTimescale: 1_000_000_000))
         let job: VideoExportJob?
         if needsExport, let asset {
             guard let prepared = prepareExport(asset: asset, timeRange: timeRange, outputURL: destURL) else {
                 showStatus(L("Export failed"), isError: true)
+                closeAfterSave = nil
                 return
             }
             job = prepared
         } else { job = nil }
+        let signature = editSignature()
+        pendingSaveSignature = signature
         startExport(status: needsExport ? L("Exporting...") : L("Saving..."), title: destURL.lastPathComponent,
             operation: { cancellation, progress in
                 let save = try await MediaExportIO.perform { () throws -> AtomicMediaSave in
@@ -2276,7 +2469,8 @@ private final class VideoEditorView: NSView {
                     }
                 }
                 try await MediaExportIO.perform {
-                    try save.commit(beforePublish: { try cancellation.beginPublication() })
+                    try save.commit(overwritingExisting: replacingExisting,
+                                    beforePublish: { try cancellation.beginPublication() })
                 }
             }, completion: { [weak self, directoryLease, sourceLease] result in
                 defer { withExtendedLifetime(directoryLease) {}; withExtendedLifetime(sourceLease) {} }
@@ -2284,8 +2478,12 @@ private final class VideoEditorView: NSView {
                 case .success:
                     sourceSnapshot?.didSave(at: destURL)
                     if self?.editRevision == revision { self?.savedURL = destURL }
-                    self?.showSavedStatus(for: destURL)
+                    // Not through self: the editor may have closed while the
+                    // export ran, and the result still needs announcing.
+                    AppDelegate.showSavedToast(for: destURL)
+                    self?.saveDidFinish(signature: signature, success: true)
                 case .failure(let error):
+                    self?.saveDidFinish(signature: signature, success: false)
                     guard !(error is CancellationError) else { return }
                     let message = L("Save failed") + ": " + error.localizedDescription
                     if let self { self.showStatus(message, isError: true) }
@@ -2438,9 +2636,13 @@ private final class VideoEditorView: NSView {
         }
 
         let sourceLease = self.sourceLease
+        // Held until the upload finishes when it reads the saved file, which
+        // is in the save folder outside the sandbox. The save's own access
+        // ended with the save, so the read failed on a permission error.
+        var folderLease: SaveDirectoryLease?
         let uploadFileURL: (URL, Bool) -> Void = { fileURL, isTemp in
-            let wrappedCompletion: (Result<String, Error>) -> Void = { [sourceLease] result in
-                defer { withExtendedLifetime(sourceLease) {} }
+            let wrappedCompletion: (Result<String, Error>) -> Void = { [sourceLease, folderLease] result in
+                defer { withExtendedLifetime(sourceLease) {}; withExtendedLifetime(folderLease) {} }
                 if isTemp { try? FileManager.default.removeItem(at: fileURL) }
                 completionHandler(result)
             }
@@ -2456,7 +2658,10 @@ private final class VideoEditorView: NSView {
         }
 
         if let savedURL {
+            folderLease = SaveDirectoryLease(alreadyAccessing: SaveDirectoryAccess.resolveIfAccessible())
             uploadFileURL(savedURL, false)
+        } else if asset == nil && hasTimelineEdits {
+            showStatus(L("Edits to a GIF file can't be saved"), isError: true)
         } else if exportAsGIF && !isGIF {
             let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString + ".gif")
             convertToGIF(destURL: url, cacheResult: false) { success in

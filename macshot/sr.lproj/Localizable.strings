@@ -626,6 +626,7 @@
 /* Save/Discard, Recording, Translation Engine, Upload, Inspector */
 "Save changes?" = "Сачувати измене?";
 "Your annotations will be lost if you close without saving." = "Ваше ознаке ће бити изгубљене ако затворите без чувања.";
+"Your edits to this video will be lost if you close without saving." = "Измене овог видео снимка биће изгубљене ако затворите без чувања.";
 "Save & Close" = "Сачувај и затвори";
 "Discard" = "Одбаци";
 "Stop Recording" = "Заустави снимање";
@@ -715,6 +716,7 @@
 "Copied!" = "Копирано!";
 "Converting to GIF…" = "Претварање у GIF…";
 "GIF conversion failed" = "Претварање у GIF није успело";
+"Edits to a GIF file can't be saved" = "Измене GIF датотеке не могу да се сачувају";
 "No video track found" = "Видео трака није пронађена";
 "Preview:" = "Преглед:";
 "Copy Screen Info" = "Копирај информације о екрану";

@@ -646,6 +646,7 @@
 "Unlimited" = "Korlátlan";
 "Save changes?" = "Mentsük a változtatásokat?";
 "Your annotations will be lost if you close without saving." = "A jegyzeteid elvesznek, ha mentés nélkül bezárod.";
+"Your edits to this video will be lost if you close without saving." = "A videón végzett módosítások elvesznek, ha mentés nélkül zárja be.";
 "Save & Close" = "Mentés és bezárás";
 "Discard" = "Elvetés";
 "Stop Recording" = "Felvétel leállítása";
@@ -718,6 +719,7 @@
 "Copied!" = "Másolva!";
 "Converting to GIF…" = "Konvertálás GIF-re…";
 "GIF conversion failed" = "GIF konvertálás sikertelen";
+"Edits to a GIF file can't be saved" = "GIF-fájl módosításai nem menthetők";
 "No video track found" = "Nem található videósáv";
 "Preview:" = "Előnézet:";
 "Copy Screen Info" = "Képernyő információ másolása";

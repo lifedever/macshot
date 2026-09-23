@@ -637,6 +637,7 @@
 /* Save Confirmation / Recording / Translation / Upload / Inspector */
 "Save changes?" = "حفظ التغييرات؟";
 "Your annotations will be lost if you close without saving." = "ستفقد التعليقات التوضيحية إذا أغلقت بدون حفظ.";
+"Your edits to this video will be lost if you close without saving." = "ستفقد تعديلاتك على هذا الفيديو إذا أغلقته دون حفظ.";
 "Save & Close" = "حفظ وإغلاق";
 "Discard" = "تجاهل";
 "Stop Recording" = "إيقاف التسجيل";
@@ -722,6 +723,7 @@
 "Copied!" = "تم النسخ!";
 "Converting to GIF…" = "جارٍ التحويل إلى GIF…";
 "GIF conversion failed" = "فشل التحويل إلى GIF";
+"Edits to a GIF file can't be saved" = "لا يمكن حفظ التعديلات على ملف GIF";
 "No video track found" = "لم يتم العثور على مسار فيديو";
 "Preview:" = "المعاينة:";
 "Copy Screen Info" = "نسخ معلومات الشاشة";

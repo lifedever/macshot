@@ -634,6 +634,7 @@
 /* Save/Discard, Recording, Translation Engine, Upload, Inspector */
 "Save changes?" = "Simpan perubahan?";
 "Your annotations will be lost if you close without saving." = "Anotasi anda akan hilang jika anda menutup tanpa menyimpan.";
+"Your edits to this video will be lost if you close without saving." = "Suntingan anda pada video ini akan hilang jika anda menutup tanpa menyimpan.";
 "Save & Close" = "Simpan & Tutup";
 "Discard" = "Buang";
 "Stop Recording" = "Hentikan Rakaman";
@@ -716,6 +717,7 @@
 "Copied!" = "Disalin!";
 "Converting to GIF…" = "Menukar ke GIF…";
 "GIF conversion failed" = "Penukaran GIF gagal";
+"Edits to a GIF file can't be saved" = "Suntingan pada fail GIF tidak dapat disimpan";
 "No video track found" = "Tiada trek video ditemui";
 "Preview:" = "Pratonton:";
 "Copy Screen Info" = "Salin Maklumat Skrin";

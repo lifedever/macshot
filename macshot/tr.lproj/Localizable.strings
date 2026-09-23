@@ -637,6 +637,7 @@
 /* Save Confirmation / Recording / Translation / Upload / Inspector */
 "Save changes?" = "Değişiklikler kaydedilsin mi?";
 "Your annotations will be lost if you close without saving." = "Kaydetmeden kapatırsanız açıklamalarınız kaybolacak.";
+"Your edits to this video will be lost if you close without saving." = "Kaydetmeden kapatırsanız bu videodaki düzenlemeleriniz kaybolur.";
 "Save & Close" = "Kaydet ve Kapat";
 "Discard" = "Vazgeç";
 "Stop Recording" = "Kaydı Durdur";
@@ -722,6 +723,7 @@
 "Copied!" = "Kopyalandı!";
 "Converting to GIF…" = "GIF'e dönüştürülüyor…";
 "GIF conversion failed" = "GIF dönüştürme başarısız";
+"Edits to a GIF file can't be saved" = "GIF dosyasındaki düzenlemeler kaydedilemez";
 "No video track found" = "Video izi bulunamadı";
 "Preview:" = "Önizleme:";
 "Copy Screen Info" = "Ekran Bilgilerini Kopyala";

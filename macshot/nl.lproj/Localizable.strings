@@ -632,6 +632,7 @@
 "Unlimited" = "Onbeperkt";
 "Save changes?" = "Wijzigingen opslaan?";
 "Your annotations will be lost if you close without saving." = "Je annotaties gaan verloren als je sluit zonder op te slaan.";
+"Your edits to this video will be lost if you close without saving." = "Je bewerkingen van deze video gaan verloren als je sluit zonder te bewaren.";
 "Save & Close" = "Opslaan en sluiten";
 "Discard" = "Verwerpen";
 "Stop Recording" = "Opname stoppen";
@@ -708,6 +709,7 @@
 "Copied!" = "Gekopieerd!";
 "Converting to GIF…" = "Omzetten naar GIF…";
 "GIF conversion failed" = "GIF-conversie mislukt";
+"Edits to a GIF file can't be saved" = "Bewerkingen van een GIF-bestand kunnen niet worden bewaard";
 "No video track found" = "Geen videotrack gevonden";
 "Preview:" = "Voorbeeld:";
 "Copy Screen Info" = "Scherminfo kopiëren";

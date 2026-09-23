@@ -632,6 +632,7 @@
 /* Save/Discard, Recording, Translation Engine, Upload, Inspector */
 "Save changes?" = "I-save ang mga pagbabago?";
 "Your annotations will be lost if you close without saving." = "Mawawala ang iyong mga anotasyon kung isasara mo nang hindi nagse-save.";
+"Your edits to this video will be lost if you close without saving." = "Mawawala ang mga edit mo sa video na ito kung isasara mo nang hindi sine-save.";
 "Save & Close" = "I-save at Isara";
 "Discard" = "Itapon";
 "Stop Recording" = "Ihinto ang Pag-record";
@@ -714,6 +715,7 @@
 "Copied!" = "Nakopya!";
 "Converting to GIF…" = "Kinokonverte sa GIF…";
 "GIF conversion failed" = "Nabigo ang pag-convert sa GIF";
+"Edits to a GIF file can't be saved" = "Hindi mase-save ang mga edit sa GIF file";
 "No video track found" = "Walang nakitang video track";
 "Preview:" = "Preview:";
 "Copy Screen Info" = "Kopyahin ang Impormasyon ng Screen";

@@ -643,6 +643,7 @@
 /* Save Confirmation / Recording / Translation / Upload / Inspector */
 "Save changes?" = "Spara \U00E4ndringar?";
 "Your annotations will be lost if you close without saving." = "Dina anteckningar f\U00F6rloras om du st\U00E4nger utan att spara.";
+"Your edits to this video will be lost if you close without saving." = "Dina ändringar i den här videon går förlorade om du stänger utan att spara.";
 "Save & Close" = "Spara och st\U00E4ng";
 "Discard" = "Kasta";
 "Stop Recording" = "Stoppa inspelning";
@@ -719,6 +720,7 @@
 "Copied!" = "Kopierat!";
 "Converting to GIF…" = "Konverterar till GIF…";
 "GIF conversion failed" = "GIF-konvertering misslyckades";
+"Edits to a GIF file can't be saved" = "Ändringar i en GIF-fil kan inte sparas";
 "No video track found" = "Inget videospår hittades";
 "Preview:" = "Förhandsvisning:";
 "Copy Screen Info" = "Kopiera skärminfo";

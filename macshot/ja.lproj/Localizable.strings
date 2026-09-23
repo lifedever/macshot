@@ -621,6 +621,7 @@
 "Unlimited" = "無制限";
 "Save changes?" = "変更を保存しますか?";
 "Your annotations will be lost if you close without saving." = "保存せずに閉じると、注釈が失われます。";
+"Your edits to this video will be lost if you close without saving." = "保存せずに閉じると、このビデオの編集内容が失われます。";
 "Save & Close" = "保存して閉じる";
 "Discard" = "破棄";
 "Stop Recording" = "録画を停止";
@@ -703,6 +704,7 @@
 "Copied!" = "コピーしました!";
 "Converting to GIF…" = "GIF に変換中…";
 "GIF conversion failed" = "GIF 変換に失敗しました";
+"Edits to a GIF file can't be saved" = "GIF ファイルの編集は保存できません";
 "No video track found" = "動画トラックが見つかりません";
 "Preview:" = "プレビュー:";
 "Copy Screen Info" = "画面情報をコピー";

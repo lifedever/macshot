@@ -624,6 +624,7 @@
 "Unlimited" = "Без ограничений";
 "Save changes?" = "Сохранить изменения?";
 "Your annotations will be lost if you close without saving." = "Ваши аннотации будут потеряны, если вы закроете без сохранения.";
+"Your edits to this video will be lost if you close without saving." = "Изменения в этом видео будут потеряны, если закрыть его без сохранения.";
 "Save & Close" = "Сохранить и закрыть";
 "Discard" = "Отклонить";
 "Stop Recording" = "Остановить запись";
@@ -713,6 +714,7 @@
 "Copied!" = "Скопировано!";
 "Converting to GIF…" = "Преобразование в GIF…";
 "GIF conversion failed" = "Ошибка преобразования в GIF";
+"Edits to a GIF file can't be saved" = "Изменения в GIF-файле нельзя сохранить";
 "No video track found" = "Видеодорожка не найдена";
 "Preview:" = "Превью:";
 "Copy Screen Info" = "Копировать информацию об экране";

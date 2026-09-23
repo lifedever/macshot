@@ -637,6 +637,7 @@
 "Unlimited" = "Nelimitat";
 "Save changes?" = "Salvezi modificările?";
 "Your annotations will be lost if you close without saving." = "Adnotările tale vor fi pierdute dacă închizi fără a salva.";
+"Your edits to this video will be lost if you close without saving." = "Modificările aduse acestui videoclip se vor pierde dacă închideți fără să salvați.";
 "Save & Close" = "Salvează și închide";
 "Discard" = "Renunță";
 "Stop Recording" = "Oprește înregistrarea";
@@ -718,6 +719,7 @@
 "Copied!" = "Copiat!";
 "Converting to GIF…" = "Se convertește în GIF…";
 "GIF conversion failed" = "Conversia în GIF a eșuat";
+"Edits to a GIF file can't be saved" = "Modificările unui fișier GIF nu pot fi salvate";
 "No video track found" = "Nu s-a găsit nicio pistă video";
 "Preview:" = "Previzualizare:";
 "Copy Screen Info" = "Copiază informațiile despre ecran";

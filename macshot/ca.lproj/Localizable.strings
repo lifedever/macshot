@@ -639,6 +639,7 @@
 /* Save/Discard, Recording, Translation Engine, Upload, Inspector */
 "Save changes?" = "Desar els canvis?";
 "Your annotations will be lost if you close without saving." = "Les vostres anotacions es perdran si tanqueu sense desar.";
+"Your edits to this video will be lost if you close without saving." = "Si tanqueu sense desar, es perdran les edicions d'aquest vídeo.";
 "Save & Close" = "Desar i tancar";
 "Discard" = "Descartar";
 "Stop Recording" = "Aturar gravació";
@@ -712,6 +713,7 @@
 "Copied!" = "Copiat!";
 "Converting to GIF…" = "Convertint a GIF…";
 "GIF conversion failed" = "La conversió a GIF ha fallat";
+"Edits to a GIF file can't be saved" = "No es poden desar les edicions d'un fitxer GIF";
 "No video track found" = "No s'ha trobat cap pista de vídeo";
 "Preview:" = "Previsualització:";
 "Copy Screen Info" = "Copiar informació de pantalla";

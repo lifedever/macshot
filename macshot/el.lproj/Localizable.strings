@@ -647,6 +647,7 @@
 /* Save/Discard, Recording, Translation Engine, Upload, Inspector */
 "Save changes?" = "Αποθήκευση αλλαγών;";
 "Your annotations will be lost if you close without saving." = "Οι σημειώσεις σας θα χαθούν αν κλείσετε χωρίς αποθήκευση.";
+"Your edits to this video will be lost if you close without saving." = "Οι επεξεργασίες σε αυτό το βίντεο θα χαθούν αν κλείσετε χωρίς αποθήκευση.";
 "Save & Close" = "Αποθήκευση & Κλείσιμο";
 "Discard" = "Απόρριψη";
 "Stop Recording" = "Διακοπή εγγραφής";
@@ -720,6 +721,7 @@
 "Copied!" = "Αντιγράφηκε!";
 "Converting to GIF…" = "Μετατροπή σε GIF…";
 "GIF conversion failed" = "Η μετατροπή σε GIF απέτυχε";
+"Edits to a GIF file can't be saved" = "Οι επεξεργασίες σε αρχείο GIF δεν μπορούν να αποθηκευτούν";
 "No video track found" = "Δεν βρέθηκε κομμάτι βίντεο";
 "Preview:" = "Προεπισκόπηση:";
 "Copy Screen Info" = "Αντιγραφή πληροφοριών οθόνης";

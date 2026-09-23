@@ -643,6 +643,7 @@
 /* Save Confirmation / Recording / Translation / Upload / Inspector */
 "Save changes?" = "Gem \U00E6ndringer?";
 "Your annotations will be lost if you close without saving." = "Dine annotationer g\U00E5r tabt, hvis du lukker uden at gemme.";
+"Your edits to this video will be lost if you close without saving." = "Dine redigeringer af denne video går tabt, hvis du lukker uden at gemme.";
 "Save & Close" = "Gem og luk";
 "Discard" = "Kassér";
 "Stop Recording" = "Stop optagelse";
@@ -719,6 +720,7 @@
 "Copied!" = "Kopieret!";
 "Converting to GIF\U2026" = "Konverterer til GIF\U2026";
 "GIF conversion failed" = "GIF-konvertering mislykkedes";
+"Edits to a GIF file can't be saved" = "Redigeringer af en GIF-fil kan ikke gemmes";
 "No video track found" = "Intet videospor fundet";
 "Preview:" = "Forh\U00E5ndsvisning:";
 "Copy Screen Info" = "Kopi\U00E9r sk\U00E6rminfo";

@@ -540,6 +540,7 @@
 /* Save dialog + misc */
 "Save changes?" = "Save changes?";
 "Your annotations will be lost if you close without saving." = "Your annotations will be lost if you close without saving.";
+"Your edits to this video will be lost if you close without saving." = "Your edits to this video will be lost if you close without saving.";
 "Save & Close" = "Save & Close";
 "Discard" = "Discard";
 "Stop Recording" = "Stop Recording";
@@ -611,6 +612,7 @@
 "Copied!" = "Copied!";
 "Converting to GIF…" = "Converting to GIF…";
 "GIF conversion failed" = "GIF conversion failed";
+"Edits to a GIF file can't be saved" = "Edits to a GIF file can't be saved";
 "No video track found" = "No video track found";
 "Preview:" = "Preview:";
 "Copy Screen Info" = "Copy Screen Info";

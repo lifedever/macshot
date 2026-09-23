@@ -647,6 +647,7 @@
 /* Save/Discard, Recording, Translation Engine, Upload, Inspector */
 "Save changes?" = "மாற்றங்களைச் சேமிக்கவா?";
 "Your annotations will be lost if you close without saving." = "சேமிக்காமல் மூடினால் உங்கள் குறிப்புகள் இழக்கப்படும்.";
+"Your edits to this video will be lost if you close without saving." = "சேமிக்காமல் மூடினால், இந்த வீடியோவில் செய்த திருத்தங்கள் இழக்கப்படும்.";
 "Save & Close" = "சேமி & மூடு";
 "Discard" = "நிராகரி";
 "Stop Recording" = "பதிவை நிறுத்து";
@@ -720,6 +721,7 @@
 "Copied!" = "நகலெடுக்கப்பட்டது!";
 "Converting to GIF…" = "GIF ஆக மாற்றுகிறது…";
 "GIF conversion failed" = "GIF மாற்றம் தோல்வியடைந்தது";
+"Edits to a GIF file can't be saved" = "GIF கோப்பில் செய்த திருத்தங்களைச் சேமிக்க முடியாது";
 "No video track found" = "காணொளி தடம் எதுவும் கிடைக்கவில்லை";
 "Preview:" = "முன்னோட்டம்:";
 "Copy Screen Info" = "திரை தகவலை நகலெடு";

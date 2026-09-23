@@ -631,6 +631,7 @@
 "Unlimited" = "ไม่จำกัด";
 "Save changes?" = "บันทึกการเปลี่ยนแปลง?";
 "Your annotations will be lost if you close without saving." = "คำอธิบายประกอบของคุณจะหายไปหากปิดโดยไม่บันทึก";
+"Your edits to this video will be lost if you close without saving." = "หากปิดโดยไม่บันทึก การแก้ไขวิดีโอนี้จะหายไป";
 "Save & Close" = "บันทึกและปิด";
 "Discard" = "ยกเลิก";
 "Stop Recording" = "หยุดบันทึก";
@@ -714,6 +715,7 @@
 "Copied!" = "คัดลอกแล้ว!";
 "Converting to GIF…" = "กำลังแปลงเป็น GIF…";
 "GIF conversion failed" = "การแปลง GIF ล้มเหลว";
+"Edits to a GIF file can't be saved" = "ไม่สามารถบันทึกการแก้ไขไฟล์ GIF ได้";
 "No video track found" = "ไม่พบแทร็กวิดีโอ";
 "Preview:" = "ตัวอย่าง:";
 "Copy Screen Info" = "คัดลอกข้อมูลหน้าจอ";

@@ -624,6 +624,7 @@
 "Unlimited" = "Неограничено";
 "Save changes?" = "Запазване на промените?";
 "Your annotations will be lost if you close without saving." = "Вашите анотации ще бъдат загубени, ако затворите без запазване.";
+"Your edits to this video will be lost if you close without saving." = "Редакциите на това видео ще бъдат изгубени, ако затворите, без да запишете.";
 "Save & Close" = "Запази и затвори";
 "Discard" = "Отхвърли";
 "Stop Recording" = "Спиране на записа";
@@ -713,6 +714,7 @@
 "Copied!" = "Копирано!";
 "Converting to GIF…" = "Преобразуване в GIF…";
 "GIF conversion failed" = "Преобразуването в GIF е неуспешно";
+"Edits to a GIF file can't be saved" = "Редакциите на GIF файл не могат да бъдат записани";
 "No video track found" = "Не е намерена видео пътечка";
 "Preview:" = "Предварителен преглед:";
 "Copy Screen Info" = "Копиране на информация за екрана";

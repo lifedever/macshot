@@ -631,6 +631,7 @@
 "Unlimited" = "Không giới hạn";
 "Save changes?" = "Lưu thay đổi?";
 "Your annotations will be lost if you close without saving." = "Các chú thích của bạn sẽ bị mất nếu đóng mà không lưu.";
+"Your edits to this video will be lost if you close without saving." = "Các chỉnh sửa video này sẽ bị mất nếu bạn đóng mà không lưu.";
 "Save & Close" = "Lưu và đóng";
 "Discard" = "Bỏ qua";
 "Stop Recording" = "Dừng quay";
@@ -714,6 +715,7 @@
 "Copied!" = "Đã sao chép!";
 "Converting to GIF…" = "Đang chuyển đổi sang GIF…";
 "GIF conversion failed" = "Chuyển đổi GIF thất bại";
+"Edits to a GIF file can't be saved" = "Không thể lưu chỉnh sửa cho tệp GIF";
 "No video track found" = "Không tìm thấy rãnh video";
 "Preview:" = "Xem trước:";
 "Copy Screen Info" = "Sao chép thông tin màn hình";

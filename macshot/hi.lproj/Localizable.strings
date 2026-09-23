@@ -646,6 +646,7 @@
 /* Save Confirmation / Recording / Translation / Upload / Inspector */
 "Save changes?" = "परिवर्तन सहेजें?";
 "Your annotations will be lost if you close without saving." = "यदि आप सहेजे बिना बंद करते हैं तो आपकी टिप्पणियाँ खो जाएँगी।";
+"Your edits to this video will be lost if you close without saving." = "सहेजे बिना बंद करने पर इस वीडियो के संपादन खो जाएँगे।";
 "Save & Close" = "सहेजें और बंद करें";
 "Discard" = "त्यागें";
 "Stop Recording" = "रिकॉर्डिंग रोकें";
@@ -718,6 +719,7 @@
 "Copied!" = "कॉपी किया गया!";
 "Converting to GIF…" = "GIF में परिवर्तित हो रहा है…";
 "GIF conversion failed" = "GIF रूपांतरण विफल";
+"Edits to a GIF file can't be saved" = "GIF फ़ाइल के संपादन सहेजे नहीं जा सकते";
 "No video track found" = "कोई वीडियो ट्रैक नहीं मिला";
 "Preview:" = "पूर्वावलोकन:";
 "Copy Screen Info" = "स्क्रीन जानकारी कॉपी करें";

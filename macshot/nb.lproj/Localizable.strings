@@ -644,6 +644,7 @@
 /* Save Confirmation / Recording / Translation / Upload / Inspector */
 "Save changes?" = "Lagre endringer?";
 "Your annotations will be lost if you close without saving." = "Kommentarene dine g\U00E5r tapt hvis du lukker uten \U00E5 lagre.";
+"Your edits to this video will be lost if you close without saving." = "Endringene dine i denne videoen går tapt hvis du lukker uten å arkivere.";
 "Save & Close" = "Lagre og lukk";
 "Discard" = "Forkast";
 "Stop Recording" = "Stopp opptak";
@@ -719,6 +720,7 @@
 "Copied!" = "Kopiert!";
 "Converting to GIF…" = "Konverterer til GIF…";
 "GIF conversion failed" = "GIF-konvertering mislyktes";
+"Edits to a GIF file can't be saved" = "Endringer i en GIF-fil kan ikke arkiveres";
 "No video track found" = "Fant ikke noe videospor";
 "Preview:" = "Forhåndsvisning:";
 "Copy Screen Info" = "Kopier skjerminformasjon";

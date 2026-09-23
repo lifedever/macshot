@@ -624,6 +624,7 @@
 "Unlimited" = "Без обмежень";
 "Save changes?" = "Зберегти зміни?";
 "Your annotations will be lost if you close without saving." = "Ваші анотації буде втрачено, якщо ви закриєте без збереження.";
+"Your edits to this video will be lost if you close without saving." = "Зміни в цьому відео буде втрачено, якщо закрити його без збереження.";
 "Save & Close" = "Зберегти і закрити";
 "Discard" = "Відхилити";
 "Stop Recording" = "Зупинити запис";
@@ -713,6 +714,7 @@
 "Copied!" = "Скопійовано!";
 "Converting to GIF…" = "Перетворення на GIF…";
 "GIF conversion failed" = "Помилка перетворення на GIF";
+"Edits to a GIF file can't be saved" = "Зміни у файлі GIF не можна зберегти";
 "No video track found" = "Відеодоріжку не знайдено";
 "Preview:" = "Попередній перегляд:";
 "Copy Screen Info" = "Копіювати інформацію про екран";

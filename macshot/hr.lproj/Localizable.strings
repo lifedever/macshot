@@ -625,6 +625,7 @@
 "Unlimited" = "Neograničeno";
 "Save changes?" = "Spremiti promjene?";
 "Your annotations will be lost if you close without saving." = "Vaše oznake će biti izgubljene ako zatvorite bez spremanja.";
+"Your edits to this video will be lost if you close without saving." = "Izmjene ovog videozapisa bit će izgubljene ako zatvorite bez spremanja.";
 "Save & Close" = "Spremi i zatvori";
 "Discard" = "Odbaci";
 "Stop Recording" = "Zaustavi snimanje";
@@ -713,6 +714,7 @@
 "Copied!" = "Kopirano!";
 "Converting to GIF…" = "Pretvaranje u GIF…";
 "GIF conversion failed" = "Pretvaranje u GIF nije uspjelo";
+"Edits to a GIF file can't be saved" = "Izmjene GIF datoteke ne mogu se spremiti";
 "No video track found" = "Videozapis nije pronađen";
 "Preview:" = "Pregled:";
 "Copy Screen Info" = "Kopiraj informacije o zaslonu";

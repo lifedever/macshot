@@ -618,6 +618,7 @@
 "Unlimited" = "Illimitato";
 "Save changes?" = "Salvare le modifiche?";
 "Your annotations will be lost if you close without saving." = "Le annotazioni andranno perse se chiudi senza salvare.";
+"Your edits to this video will be lost if you close without saving." = "Le modifiche a questo video andranno perse se chiudi senza salvare.";
 "Save & Close" = "Salva e chiudi";
 "Discard" = "Scarta";
 "Stop Recording" = "Interrompi registrazione";
@@ -694,6 +695,7 @@
 "Copied!" = "Copiato!";
 "Converting to GIF…" = "Conversione in GIF…";
 "GIF conversion failed" = "Conversione GIF fallita";
+"Edits to a GIF file can't be saved" = "Le modifiche a un file GIF non possono essere salvate";
 "No video track found" = "Nessuna traccia video trovata";
 "Preview:" = "Anteprima:";
 "Copy Screen Info" = "Copia info schermo";

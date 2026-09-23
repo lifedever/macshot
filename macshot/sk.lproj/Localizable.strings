@@ -624,6 +624,7 @@
 "Unlimited" = "Neobmedzené";
 "Save changes?" = "Uložiť zmeny?";
 "Your annotations will be lost if you close without saving." = "Vaše anotácie budú stratené, ak zavriete bez uloženia.";
+"Your edits to this video will be lost if you close without saving." = "Ak zatvoríte bez uloženia, úpravy tohto videa sa stratia.";
 "Save & Close" = "Uložiť a zavrieť";
 "Discard" = "Zahodiť";
 "Stop Recording" = "Zastaviť nahrávanie";
@@ -713,6 +714,7 @@
 "Copied!" = "Skopírované!";
 "Converting to GIF…" = "Konvertovanie na GIF…";
 "GIF conversion failed" = "Konverzia GIF zlyhala";
+"Edits to a GIF file can't be saved" = "Úpravy súboru GIF nie je možné uložiť";
 "No video track found" = "Nenašla sa žiadna video stopa";
 "Preview:" = "Náhľad:";
 "Copy Screen Info" = "Kopírovať informácie o obrazovke";

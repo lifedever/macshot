@@ -642,6 +642,7 @@
 /* Save Confirmation / Recording / Translation / Upload / Inspector */
 "Save changes?" = "Tallenna muutokset?";
 "Your annotations will be lost if you close without saving." = "Merkint\U00E4si menetet\U00E4\U00E4n, jos suljet tallentamatta.";
+"Your edits to this video will be lost if you close without saving." = "Tähän videoon tekemäsi muokkaukset menetetään, jos suljet tallentamatta.";
 "Save & Close" = "Tallenna ja sulje";
 "Discard" = "Hylk\U00E4\U00E4";
 "Stop Recording" = "Pys\U00E4yt\U00E4 nauhoitus";
@@ -717,6 +718,7 @@
 "Copied!" = "Kopioitu!";
 "Converting to GIF…" = "Muunnetaan GIF-muotoon…";
 "GIF conversion failed" = "GIF-muunnos epäonnistui";
+"Edits to a GIF file can't be saved" = "GIF-tiedoston muokkauksia ei voi tallentaa";
 "No video track found" = "Videoraitaa ei löydy";
 "Preview:" = "Esikatselu:";
 "Copy Screen Info" = "Kopioi näytön tiedot";

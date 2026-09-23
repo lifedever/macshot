@@ -552,6 +552,7 @@
 /* Save Confirmation / Recording / Translation / Upload / Inspector */
 "Save changes?" = "儲存更改？";
 "Your annotations will be lost if you close without saving." = "如果不儲存就關閉，您的標註將會遺失。";
+"Your edits to this video will be lost if you close without saving." = "如果不儲存就關閉，對這段影片的編輯將會遺失。";
 "Save & Close" = "儲存並關閉";
 "Discard" = "捨棄";
 "Stop Recording" = "停止錄製";
@@ -626,6 +627,7 @@
 "Copied!" = "已拷貝！";
 "Converting to GIF…" = "正在轉換為 GIF⋯";
 "GIF conversion failed" = "GIF 轉換失敗";
+"Edits to a GIF file can't be saved" = "無法儲存對 GIF 檔案的編輯";
 "No video track found" = "找不到影片軌道";
 "Preview:" = "預覽：";
 "Copy Screen Info" = "拷貝螢幕資訊";

@@ -647,6 +647,7 @@
 /* Save/Discard, Recording, Translation Engine, Upload, Inspector */
 "Save changes?" = "পরিবর্তনগুলো সংরক্ষণ করবেন?";
 "Your annotations will be lost if you close without saving." = "সংরক্ষণ না করে বন্ধ করলে আপনার টীকাগুলো হারিয়ে যাবে।";
+"Your edits to this video will be lost if you close without saving." = "সংরক্ষণ না করে বন্ধ করলে এই ভিডিওর সম্পাদনাগুলি হারিয়ে যাবে।";
 "Save & Close" = "সংরক্ষণ ও বন্ধ";
 "Discard" = "বাতিল";
 "Stop Recording" = "রেকর্ডিং বন্ধ করুন";
@@ -720,6 +721,7 @@
 "Copied!" = "কপি হয়েছে!";
 "Converting to GIF…" = "GIF-এ রূপান্তর হচ্ছে…";
 "GIF conversion failed" = "GIF রূপান্তর ব্যর্থ";
+"Edits to a GIF file can't be saved" = "GIF ফাইলের সম্পাদনা সংরক্ষণ করা যায় না";
 "No video track found" = "কোনো ভিডিও ট্র্যাক পাওয়া যায়নি";
 "Preview:" = "প্রিভিউ:";
 "Copy Screen Info" = "স্ক্রিন তথ্য কপি করুন";
