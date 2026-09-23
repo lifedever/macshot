@@ -450,4 +450,25 @@ extension OverlayView {
         NSColor.systemBlue.withAlphaComponent(0.85).setStroke()
         border.stroke()
     }
+
+    /// Whether the hovered window extends past the display this overlay
+    /// covers — across onto another screen, or past the edge.
+    ///
+    /// The snap highlight is clipped to this display, but a window snap
+    /// captures the entire window on its own. For such a window the two
+    /// disagree: the whole window was squeezed into the clipped selection,
+    /// and annotations were offset against it. It is taken as an ordinary
+    /// crop of what this display shows instead.
+    var hoveredSnapWindowRunsOffDisplay: Bool {
+        guard let windowID = hoveredSnapWindowID, let viewWindow = window,
+              let info = (CGWindowListCopyWindowInfo([.optionIncludingWindow], windowID)
+                as? [[String: Any]])?.first,
+              let b = info[kCGWindowBounds as String] as? [String: CGFloat]
+        else { return false }
+        let screenH = NSScreen.screens.first?.frame.height ?? NSScreen.main?.frame.height ?? 0
+        let w = b["Width"] ?? 0, h = b["Height"] ?? 0
+        let appKitRect = NSRect(x: b["X"] ?? 0, y: screenH - (b["Y"] ?? 0) - h, width: w, height: h)
+        let viewRect = appKitRect.offsetBy(dx: -viewWindow.frame.origin.x, dy: -viewWindow.frame.origin.y)
+        return !bounds.insetBy(dx: -1, dy: -1).contains(viewRect)
+    }
 }

@@ -7494,7 +7494,7 @@ class OverlayView: NSView {
         } else if snapMode != .off, let snapRect = hoveredSnapRect, !snapRect.isEmpty {
             // Click (no drag) with snap on — select the hovered target.
             selectionRect = snapRect
-            selectionIsWindowSnap = snapMode == .window
+            selectionIsWindowSnap = snapMode == .window && !hoveredSnapWindowRunsOffDisplay
             snappedWindowID = selectionIsWindowSnap ? hoveredSnapWindowID : nil
             // Only whole-window snaps use the independent capture that preserves
             // transparent corners. Element snaps are ordinary screen crops.
@@ -7702,7 +7702,7 @@ class OverlayView: NSView {
             overlayDelegate?.overlayViewDidFinishSelection(selectionRect)
         } else if snapMode != .off, let snapRect = hoveredSnapRect, !snapRect.isEmpty {
             selectionRect = snapRect
-            selectionIsWindowSnap = snapMode == .window
+            selectionIsWindowSnap = snapMode == .window && !hoveredSnapWindowRunsOffDisplay
             snappedWindowID = selectionIsWindowSnap ? hoveredSnapWindowID : nil
             if selectionIsWindowSnap, let wid = hoveredSnapWindowID, let screen = window?.screen {
                 snappedWindowWasOccluded = ScreenCaptureManager.windowIsOccluded(windowID: wid)
