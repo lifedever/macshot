@@ -64,6 +64,8 @@ final class ToastCenter {
 
     private var panel: NSPanel?
     private var dismissTask: DispatchWorkItem?
+    /// Shown and not on its way out.
+    private var isOnScreen = false
 
     /// Show `message`, replacing anything currently on screen.
     /// - Parameter swatch: optional colour chip drawn after the text — used by the colour
@@ -89,21 +91,29 @@ final class ToastCenter {
         let panel = existingPanel(size: size)
         panel.ignoresMouseEvents = action == nil
         panel.contentView = content
-        panel.setFrame(NSRect(x: x, y: restingY - Self.slideDistance,
-                              width: size.width, height: size.height),
-                       display: false)
-        panel.alphaValue = 0
-        panel.orderFrontRegardless()
+        let resting = NSRect(x: x, y: restingY, width: size.width, height: size.height)
 
-        // Spring-ish rise, matching the feel of PasteMemo's
-        // `.spring(response: 0.48, dampingFraction: 0.7)`.
-        NSAnimationContext.runAnimationGroup { ctx in
-            ctx.duration = Self.slideDuration
-            ctx.timingFunction = Self.slideCurve
-            panel.animator().setFrame(NSRect(x: x, y: restingY, width: size.width, height: size.height),
-                                      display: true)
-            panel.animator().alphaValue = 1
+        // Already up: change the text where it stands. Progress updates arrive
+        // several times a second, and replaying the entrance for each one
+        // kept the toast fading out and sliding back in the whole time.
+        if isOnScreen && panel.isVisible {
+            panel.setFrame(resting, display: true)
+            panel.alphaValue = 1
+        } else {
+            panel.setFrame(resting.offsetBy(dx: 0, dy: -Self.slideDistance), display: false)
+            panel.alphaValue = 0
+            panel.orderFrontRegardless()
+
+            // Spring-ish rise, matching the feel of PasteMemo's
+            // `.spring(response: 0.48, dampingFraction: 0.7)`.
+            NSAnimationContext.runAnimationGroup { ctx in
+                ctx.duration = Self.slideDuration
+                ctx.timingFunction = Self.slideCurve
+                panel.animator().setFrame(resting, display: true)
+                panel.animator().alphaValue = 1
+            }
         }
+        isOnScreen = true
 
         let task = DispatchWorkItem { [weak self] in self?.dismiss() }
         dismissTask = task
@@ -113,6 +123,7 @@ final class ToastCenter {
     func dismiss() {
         dismissTask?.cancel()
         dismissTask = nil
+        isOnScreen = false
         guard let panel, panel.isVisible else { return }
         // Exact mirror of the entrance: same distance, same duration, same curve.
         let sunk = panel.frame.offsetBy(dx: 0, dy: -Self.slideDistance)
@@ -121,7 +132,9 @@ final class ToastCenter {
             ctx.timingFunction = Self.slideCurve
             panel.animator().setFrame(sunk, display: true)
             panel.animator().alphaValue = 0
-        }, completionHandler: {
+        }, completionHandler: { [weak self] in
+            // A toast shown while this one was sinking reuses the panel.
+            guard self?.isOnScreen != true else { return }
             panel.orderOut(nil)
         })
     }

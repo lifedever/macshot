@@ -1708,16 +1708,13 @@ private final class VideoEditorView: NSView {
         isExporting = true
         let token = UUID()
         activeExportToken = token
-        showStatus(status, persist: true)
-        let job = MediaExportCoordinator.shared.start(title: title, status: status, operation: { [weak self] cancellation, report in
-            let progress: @Sendable (Double) -> Void = { [weak self] fraction in
+        // Progress belongs to the export's own progress window. It used to be
+        // echoed into the toast too, re-shown on every update — five times a
+        // second the toast faded out and slid back in for the whole export.
+        let job = MediaExportCoordinator.shared.start(title: title, status: status, operation: { cancellation, report in
+            let progress: @Sendable (Double) -> Void = { fraction in
                 guard fraction.isFinite else { return }
                 report(fraction)
-                let percent = Int(max(0, min(1, fraction)) * 100)
-                DispatchQueue.main.async {
-                    guard self?.activeExportToken == token, self?.activeExportJob?.isCancelling != true else { return }
-                    self?.showStatus(status + " \(percent)%", persist: true)
-                }
             }
             try await operation(cancellation, progress)
         }, completion: { [weak self] result in
@@ -1725,7 +1722,7 @@ private final class VideoEditorView: NSView {
             self?.activeExportJob = nil
             self?.activeExportToken = nil
             if case .failure(let error) = result, error is CancellationError {
-                self?.showStatus(L("Cancelled"))
+                ToastCenter.shared.show(L("Cancelled"), icon: .info, duration: 3)
             }
             self?.needsDisplay = true
             completion(result)
