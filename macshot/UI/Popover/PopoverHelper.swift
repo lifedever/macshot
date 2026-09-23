@@ -56,6 +56,28 @@ enum PopoverHelper {
         installOutsideClickMonitors()
     }
 
+    /// Show a menu list anchored to `view`, scrolling when it is taller than
+    /// `maxHeight`. The one presentation every toolbar secondary menu uses.
+    static func showList(_ list: ListPickerView, relativeTo rect: NSRect, of view: NSView,
+                         preferredEdge: NSRectEdge = .maxY, maxHeight: CGFloat = 360) {
+        let natural = list.preferredSize
+        list.frame.size = NSSize(width: max(list.frame.width, natural.width), height: natural.height)
+        guard natural.height > maxHeight else {
+            show(list, size: list.frame.size, relativeTo: rect, of: view, preferredEdge: preferredEdge)
+            return
+        }
+        let size = NSSize(width: list.frame.width, height: maxHeight)
+        let scrollView = NSScrollView(frame: NSRect(origin: .zero, size: size))
+        scrollView.hasVerticalScroller = true
+        scrollView.hasHorizontalScroller = false
+        scrollView.scrollerStyle = .overlay
+        scrollView.drawsBackground = false
+        scrollView.borderType = .noBorder
+        scrollView.documentView = list
+        show(scrollView, size: size, relativeTo: rect, of: view, preferredEdge: preferredEdge)
+        DispatchQueue.main.async { list.scrollToSelected() }
+    }
+
     /// Time the most recent popover was dismissed — used to implement
     /// click-the-anchor-to-toggle-closed (the outside click auto-dismisses a
     /// semitransient popover before the button handler runs, so the handler

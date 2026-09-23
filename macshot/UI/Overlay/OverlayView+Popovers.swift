@@ -104,9 +104,13 @@ extension OverlayView {
                 self?.needsDisplay = true
             }
 
+            // As wide as the longest language name needs, never narrower
+            // than before.
+            let listW = max(pickerW, picker.preferredSize.width)
+            picker.frame.size.width = listW
             let contentH = picker.frame.height
             let maxH: CGFloat = 350
-            let popoverSize = NSSize(width: pickerW, height: min(maxH, contentH))
+            let popoverSize = NSSize(width: listW, height: min(maxH, contentH))
 
             let scrollView = NSScrollView(frame: NSRect(origin: .zero, size: popoverSize))
             scrollView.hasVerticalScroller = true
@@ -310,6 +314,7 @@ extension OverlayView {
         let labelFont = NSFont.systemFont(ofSize: 11, weight: .medium)
         let labelColor = NSColor.secondaryLabelColor
 
+        // Rows are stacked from the bottom up (the container is not flipped).
         func addRow(label: String, control: NSView, controlWidth: CGFloat = 140) {
             let lbl = NSTextField(labelWithString: label)
             lbl.font = labelFont
@@ -321,141 +326,8 @@ extension OverlayView {
             y += 28
         }
 
-        // Read current effective values (session override > UserDefaults default)
-        let effectiveFPS =
-            sessionRecordingFPS
-            ?? (UserDefaults.standard.integer(forKey: "recordingFPS") > 0
-                ? UserDefaults.standard.integer(forKey: "recordingFPS") : 30)
-        let effectiveOnStop =
-            sessionRecordingOnStop ?? UserDefaults.standard.string(forKey: "recordingOnStop")
-            ?? "editor"
-
-        // FPS popup
-        let fpsPopup = NSPopUpButton()
-        fpsPopup.controlSize = .small
-        fpsPopup.font = NSFont.systemFont(ofSize: 11)
-        fpsPopup.addItems(withTitles: ["15", "30", "60", "120"])
-        if effectiveFPS <= 15 {
-            fpsPopup.selectItem(at: 0)
-        } else if effectiveFPS <= 30 {
-            fpsPopup.selectItem(at: 1)
-        } else if effectiveFPS <= 60 {
-            fpsPopup.selectItem(at: 2)
-        } else {
-            fpsPopup.selectItem(at: 3)
-        }
-
-        // Handlers write to session overrides, not UserDefaults
-        class FPSHandler: NSObject {
-            weak var overlayView: OverlayView?
-            init(overlayView: OverlayView?) {
-                self.overlayView = overlayView
-                super.init()
-            }
-            @objc func changed(_ sender: NSPopUpButton) {
-                if let title = sender.selectedItem?.title, let fps = Int(title) {
-                    overlayView?.sessionRecordingFPS = fps
-                }
-            }
-        }
-
-        class WhenDoneHandler: NSObject {
-            weak var overlayView: OverlayView?
-            init(overlayView: OverlayView?) {
-                self.overlayView = overlayView
-                super.init()
-            }
-            @objc func changed(_ sender: NSPopUpButton) {
-                let values = ["editor", "finder", "clipboard"]
-                overlayView?.sessionRecordingOnStop = values[sender.indexOfSelectedItem]
-            }
-        }
-
-        let fpsHandler = FPSHandler(overlayView: self)
-        fpsPopup.target = fpsHandler
-        fpsPopup.action = #selector(FPSHandler.changed(_:))
-        objc_setAssociatedObject(fpsPopup, "handler", fpsHandler, .OBJC_ASSOCIATION_RETAIN)
-
-        // When done popup
-        let whenDonePopup = NSPopUpButton()
-        whenDonePopup.addItems(withTitles: [L("Open editor"), L("Show in Finder"), L("Copy to clipboard")])
-        whenDonePopup.controlSize = .small
-        whenDonePopup.font = NSFont.systemFont(ofSize: 11)
-        switch effectiveOnStop {
-        case "finder": whenDonePopup.selectItem(at: 1)
-        case "clipboard": whenDonePopup.selectItem(at: 2)
-        default: whenDonePopup.selectItem(at: 0)
-        }
-
-        let whenDoneHandler = WhenDoneHandler(overlayView: self)
-        whenDonePopup.target = whenDoneHandler
-        whenDonePopup.action = #selector(WhenDoneHandler.changed(_:))
-        objc_setAssociatedObject(
-            whenDonePopup, "handler", whenDoneHandler, .OBJC_ASSOCIATION_RETAIN)
-
-        // Delay popup
-        let delayPopup = NSPopUpButton()
-        delayPopup.controlSize = .small
-        delayPopup.font = NSFont.systemFont(ofSize: 11)
-        let delayOptions = [0, 3, 5, 10, 30]
-        for s in delayOptions {
-            delayPopup.addItem(withTitle: s == 0 ? L("None") : String(format: L("%d seconds"), s))
-        }
-        let effectiveDelay = sessionRecordingDelay ?? UserDefaults.standard.integer(forKey: "captureDelaySeconds")
-        if let idx = delayOptions.firstIndex(of: effectiveDelay) {
-            delayPopup.selectItem(at: idx)
-        }
-
-        class DelayHandler: NSObject {
-            weak var overlayView: OverlayView?
-            let options: [Int]
-            init(overlayView: OverlayView?, options: [Int]) {
-                self.overlayView = overlayView
-                self.options = options
-                super.init()
-            }
-            @objc func changed(_ sender: NSPopUpButton) {
-                overlayView?.sessionRecordingDelay = options[sender.indexOfSelectedItem]
-            }
-        }
-        let delayHandler = DelayHandler(overlayView: self, options: delayOptions)
-        delayPopup.target = delayHandler
-        delayPopup.action = #selector(DelayHandler.changed(_:))
-        objc_setAssociatedObject(delayPopup, "handler", delayHandler, .OBJC_ASSOCIATION_RETAIN)
-
-        // Hide HUD checkbox
-        let effectiveHideHUD = sessionHideRecordingHUD ?? UserDefaults.standard.bool(forKey: "hideRecordingHUD")
-        let hideHUDCheck = NSButton(checkboxWithTitle: L("Hide controls"), target: nil, action: nil)
-        hideHUDCheck.controlSize = .small
-        hideHUDCheck.font = NSFont.systemFont(ofSize: 11)
-        hideHUDCheck.state = effectiveHideHUD ? .on : .off
-
-        class HideHUDHandler: NSObject {
-            weak var overlayView: OverlayView?
-            init(overlayView: OverlayView?) { self.overlayView = overlayView; super.init() }
-            @objc func changed(_ sender: NSButton) {
-                overlayView?.sessionHideRecordingHUD = (sender.state == .on)
-            }
-        }
-        let hideHUDHandler = HideHUDHandler(overlayView: self)
-        hideHUDCheck.target = hideHUDHandler
-        hideHUDCheck.action = #selector(HideHUDHandler.changed(_:))
-        objc_setAssociatedObject(hideHUDCheck, "handler", hideHUDHandler, .OBJC_ASSOCIATION_RETAIN)
-
-        addRow(label: L("FPS:"), control: fpsPopup)
-        addRow(label: L("When done:"), control: whenDonePopup)
-        addRow(label: L("Delay:"), control: delayPopup)
-        addRow(label: "", control: hideHUDCheck)
-
-        // Webcam settings (only when webcam is enabled)
+        // Webcam settings (only when webcam is enabled) sit under the list.
         if UserDefaults.standard.bool(forKey: "recordWebcam") {
-            // Separator
-            let sep = NSBox()
-            sep.boxType = .separator
-            sep.frame = NSRect(x: 10, y: y + 2, width: 220, height: 1)
-            container.addSubview(sep)
-            y += 10
-
             // Position
             let posSeg = NSSegmentedControl(labels: ["↙", "↘", "↖", "↗"], trackingMode: .selectOne, target: nil, action: nil)
             let currentPos = UserDefaults.standard.string(forKey: "webcamPosition") ?? "bottomRight"
@@ -527,9 +399,75 @@ extension OverlayView {
             addRow(label: L("Cam pos:"), control: posSeg)
             addRow(label: L("Cam size:"), control: sizeSlider)
             addRow(label: L("Cam shape:"), control: shapeSeg)
+
+            let sep = NSBox()
+            sep.boxType = .separator
+            sep.frame = NSRect(x: 10, y: y + 2, width: 220, height: 1)
+            container.addSubview(sep)
+            y += 6
         }
 
-        let size = NSSize(width: 240, height: y + 4)
+        // Frame rate, what happens when the recording stops, the countdown and
+        // the HUD, as one checkmark list in the toolbar's style. These were
+        // pop-up buttons whose native menus sat oddly beside the toolbar. The
+        // choices apply to this session only (see the session overrides).
+        let fpsOptions = [15, 30, 60, 120]
+        let onStopOptions = ["editor", "finder", "clipboard"]
+        let onStopTitles = [L("Open editor"), L("Show in Finder"), L("Copy to clipboard")]
+        let delayOptions = [0, 3, 5, 10, 30]
+        let delayHeader = L("Delay:").trimmingCharacters(in: CharacterSet(charactersIn: ":： "))
+
+        let list = ListPickerView()
+        let fpsStart = 1
+        let onStopStart = fpsStart + fpsOptions.count + 1
+        let delayStart = onStopStart + onStopOptions.count + 1
+        let hideHUDIndex = delayStart + delayOptions.count + 1
+        func currentItems() -> [ListPickerView.Item] {
+            let savedFPS = UserDefaults.standard.integer(forKey: "recordingFPS")
+            let fps = sessionRecordingFPS ?? (savedFPS > 0 ? savedFPS : 30)
+            let fpsChoice = fpsOptions.first { fps <= $0 } ?? fpsOptions[fpsOptions.count - 1]
+            let onStop = sessionRecordingOnStop ?? UserDefaults.standard.string(forKey: "recordingOnStop") ?? "editor"
+            let delay = sessionRecordingDelay ?? UserDefaults.standard.integer(forKey: "captureDelaySeconds")
+            let hideHUD = sessionHideRecordingHUD ?? UserDefaults.standard.bool(forKey: "hideRecordingHUD")
+            var items: [ListPickerView.Item] = [.header(L("Frame rate"))]
+            items += fpsOptions.map { .init(title: "\($0) fps", isSelected: $0 == fpsChoice) }
+            items.append(.header(L("When done")))
+            items += zip(onStopOptions, onStopTitles).map { .init(title: $0.1, isSelected: $0.0 == onStop) }
+            items.append(.header(delayHeader))
+            items += delayOptions.map {
+                .init(title: $0 == 0 ? L("None") : String(format: L("%d seconds"), $0), isSelected: $0 == delay)
+            }
+            items.append(.separator)
+            items.append(.init(title: L("Hide controls"), isSelected: hideHUD))
+            return items
+        }
+        list.items = currentItems()
+        list.onSelect = { [weak self, weak list] index in
+            guard let self else { return }
+            switch index {
+            case fpsStart..<(fpsStart + fpsOptions.count):
+                self.sessionRecordingFPS = fpsOptions[index - fpsStart]
+            case onStopStart..<(onStopStart + onStopOptions.count):
+                self.sessionRecordingOnStop = onStopOptions[index - onStopStart]
+            case delayStart..<(delayStart + delayOptions.count):
+                self.sessionRecordingDelay = delayOptions[index - delayStart]
+            case hideHUDIndex:
+                let hidden = self.sessionHideRecordingHUD ?? UserDefaults.standard.bool(forKey: "hideRecordingHUD")
+                self.sessionHideRecordingHUD = !hidden
+            default:
+                return
+            }
+            // Stay open, like a settings panel, and move the checkmark.
+            list?.items = currentItems()
+        }
+
+        let listSize = list.preferredSize
+        let width = max(240, listSize.width)
+        list.frame = NSRect(x: 0, y: y, width: width, height: listSize.height)
+        container.addSubview(list)
+        y += listSize.height
+
+        let size = NSSize(width: width, height: y + 4)
         container.frame.size = size
 
         if let anchor = anchorView {

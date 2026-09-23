@@ -128,61 +128,51 @@ class EditorTopBarView: NSView {
     // MARK: - Zoom dropdown
 
     @objc private func zoomButtonClicked() {
-        let menu = NSMenu()
-        menu.autoenablesItems = false
-
-        let zoomIn = NSMenuItem(title: L("Zoom In"), action: #selector(zoomInAction), keyEquivalent: "+")
-        zoomIn.keyEquivalentModifierMask = .command
-        zoomIn.target = self
-        menu.addItem(zoomIn)
-
-        let zoomOut = NSMenuItem(title: L("Zoom Out"), action: #selector(zoomOutAction), keyEquivalent: "-")
-        zoomOut.keyEquivalentModifierMask = .command
-        zoomOut.target = self
-        menu.addItem(zoomOut)
-
-        menu.addItem(.separator())
-
-        let fitCanvas = NSMenuItem(title: L("Fit Canvas"), action: #selector(fitCanvasAction), keyEquivalent: "1")
-        fitCanvas.keyEquivalentModifierMask = .command
-        fitCanvas.target = self
-        menu.addItem(fitCanvas)
-
-        menu.addItem(.separator())
-
-        let presets: [(String, CGFloat, String)] = [
-            ("50%", 0.5, ""),
-            ("100%", 1.0, "0"),
-            ("200%", 2.0, ""),
-        ]
+        if PopoverHelper.toggleClosedIfOpen() { return }
         let currentMag = overlayView?.enclosingScrollView?.magnification ?? 1.0
-        for (title, mag, key) in presets {
-            let item = NSMenuItem(title: title, action: #selector(zoomPresetAction(_:)), keyEquivalent: key)
-            if !key.isEmpty { item.keyEquivalentModifierMask = .command }
-            item.target = self
-            item.tag = Int(mag * 100)
-            if abs(currentMag - mag) < 0.01 { item.state = .on }
-            menu.addItem(item)
+        let presets: [(title: String, magnification: CGFloat, shortcut: String?)] = [
+            ("50%", 0.5, nil), ("100%", 1.0, "⌘0"), ("200%", 2.0, nil),
+        ]
+        let list = ListPickerView()
+        list.items = [
+            .init(title: L("Zoom In"), isSelected: false, shortcut: "⌘+"),
+            .init(title: L("Zoom Out"), isSelected: false, shortcut: "⌘−"),
+            .separator,
+            .init(title: L("Fit Canvas"), isSelected: false, shortcut: "⌘1"),
+            .separator,
+        ] + presets.map { preset in
+            .init(title: preset.title, isSelected: abs(currentMag - preset.magnification) < 0.01,
+                  shortcut: preset.shortcut)
         }
-
-        menu.popUp(positioning: nil, at: NSPoint(x: 0, y: zoomButton.bounds.height + 2), in: zoomButton)
+        list.onSelect = { [weak self] index in
+            PopoverHelper.dismiss()
+            switch index {
+            case 0: self?.zoomInAction()
+            case 1: self?.zoomOutAction()
+            case 3: self?.fitCanvasAction()
+            default:
+                let presetIndex = index - 5
+                if presets.indices.contains(presetIndex) { self?.applyZoom(presets[presetIndex].magnification) }
+            }
+        }
+        PopoverHelper.showList(list, relativeTo: zoomButton.bounds, of: zoomButton, preferredEdge: .minY)
     }
 
-    @objc private func zoomInAction() {
+    private func zoomInAction() {
         guard let sv = overlayView?.enclosingScrollView, let doc = sv.documentView else { return }
         let newMag = min(sv.maxMagnification, sv.magnification * 1.25)
         sv.setMagnification(newMag, centeredAt: NSPoint(x: doc.bounds.midX, y: doc.bounds.midY))
         updateZoom(newMag)
     }
 
-    @objc private func zoomOutAction() {
+    private func zoomOutAction() {
         guard let sv = overlayView?.enclosingScrollView, let doc = sv.documentView else { return }
         let newMag = max(sv.minMagnification, sv.magnification / 1.25)
         sv.setMagnification(newMag, centeredAt: NSPoint(x: doc.bounds.midX, y: doc.bounds.midY))
         updateZoom(newMag)
     }
 
-    @objc private func fitCanvasAction() {
+    private func fitCanvasAction() {
         guard let sv = overlayView?.enclosingScrollView, let doc = sv.documentView else { return }
         let docUnscaledW = doc.frame.width / sv.magnification
         let docUnscaledH = doc.frame.height / sv.magnification
@@ -194,8 +184,7 @@ class EditorTopBarView: NSView {
         updateZoom(clamped)
     }
 
-    @objc private func zoomPresetAction(_ sender: NSMenuItem) {
-        let mag = CGFloat(sender.tag) / 100.0
+    private func applyZoom(_ mag: CGFloat) {
         guard let sv = overlayView?.enclosingScrollView else { return }
         sv.magnification = mag
         updateZoom(mag)

@@ -8588,24 +8588,26 @@ class OverlayView: NSView {
             showRedactTypePopover(
                 anchorRect: anchorView.convert(anchorView.bounds, to: self), anchorView: anchorView)
         case .save:
-            let menu = NSMenu()
+            if PopoverHelper.toggleClosedIfOpen() { return }
+            // The other way to save: Save As when Save goes to the folder, and
+            // the folder when Save asks where.
+            let alternative: (title: String, run: () -> Void)
             switch SaveActionPreference.current {
             case .saveToFolder:
-                let saveAsItem = NSMenuItem(
-                    title: L("Save As..."), action: #selector(saveAsMenuAction), keyEquivalent: "")
-                saveAsItem.target = self
-                menu.addItem(saveAsItem)
+                alternative = (L("Save As..."), { [weak self] in self?.overlayDelegate?.overlayViewDidRequestSaveAs() })
             case .askWhereToSave:
                 let folderName = URL(fileURLWithPath: SaveDirectoryAccess.displayPath).lastPathComponent
-                let saveToFolderItem = NSMenuItem(
-                    title: "\(L("Save to")) \(folderName)",
-                    action: #selector(saveToFolderMenuAction),
-                    keyEquivalent: "")
-                saveToFolderItem.target = self
-                menu.addItem(saveToFolderItem)
+                alternative = ("\(L("Save to")) \(folderName)",
+                               { [weak self] in self?.overlayDelegate?.overlayViewDidRequestFileSave() })
             }
-            menu.popUp(
-                positioning: nil, at: NSPoint(x: 0, y: anchorView.bounds.height), in: anchorView)
+            let list = ListPickerView()
+            list.items = [.init(title: alternative.title, isSelected: false,
+                                icon: NSImage(systemSymbolName: "square.and.arrow.down", accessibilityDescription: nil))]
+            list.onSelect = { _ in
+                PopoverHelper.dismiss()
+                alternative.run()
+            }
+            showToolbarList(list, from: anchorView)
         case .upload:
             #if !OFFLINE
             showUploadConfirmPopover(
@@ -8625,68 +8627,63 @@ class OverlayView: NSView {
         }
     }
 
+    /// A toolbar button's secondary choices, opened beside it: above a button
+    /// in the bottom bar, to the left of one in the side bar.
+    private func showToolbarList(_ list: ListPickerView, from anchorView: NSView) {
+        let edge: NSRectEdge = isButton(anchorView, inStrip: rightStripView) ? .minX : .maxY
+        PopoverHelper.showList(list, relativeTo: anchorView.bounds, of: anchorView, preferredEdge: edge)
+    }
+
     private func showKeystrokeModeMenu(anchorView: NSView) {
-        let menu = NSMenu()
+        if PopoverHelper.toggleClosedIfOpen() { return }
         let allKeys = UserDefaults.standard.bool(forKey: "keystrokeShowAll")
-
-        let shortcutsItem = NSMenuItem(title: L("Shortcuts Only"), action: #selector(keystrokeModeShortcuts), keyEquivalent: "")
-        shortcutsItem.target = self
-        if !allKeys { shortcutsItem.state = .on }
-        menu.addItem(shortcutsItem)
-
-        let allItem = NSMenuItem(title: L("All Keystrokes"), action: #selector(keystrokeModeAll), keyEquivalent: "")
-        allItem.target = self
-        if allKeys { allItem.state = .on }
-        menu.addItem(allItem)
-
-        menu.popUp(positioning: nil, at: NSPoint(x: 0, y: anchorView.bounds.height), in: anchorView)
-    }
-
-    @objc private func keystrokeModeShortcuts() {
-        UserDefaults.standard.set(false, forKey: "keystrokeShowAll")
-    }
-
-    @objc private func keystrokeModeAll() {
-        UserDefaults.standard.set(true, forKey: "keystrokeShowAll")
+        let list = ListPickerView()
+        list.items = [
+            .init(title: L("Shortcuts Only"), isSelected: !allKeys),
+            .init(title: L("All Keystrokes"), isSelected: allKeys),
+        ]
+        list.onSelect = { index in
+            UserDefaults.standard.set(index == 1, forKey: "keystrokeShowAll")
+            PopoverHelper.dismiss()
+        }
+        showToolbarList(list, from: anchorView)
     }
 
     private func showMicDeviceMenu(anchorView: NSView) {
-        let menu = NSMenu()
+        if PopoverHelper.toggleClosedIfOpen() { return }
         let savedUID = UserDefaults.standard.string(forKey: "selectedMicDeviceUID")
         let micOn = UserDefaults.standard.bool(forKey: "recordMicAudio")
-
-        // "None" option — turns off mic recording
-        let noneItem = NSMenuItem(title: L("None"), action: #selector(micMenuNone), keyEquivalent: "")
-        noneItem.target = self
-        if !micOn { noneItem.state = .on }
-        menu.addItem(noneItem)
-        menu.addItem(NSMenuItem.separator())
 
         // List available audio input devices (filter out virtual aggregate devices)
         let devices = AVCaptureDevice.DiscoverySession(
             deviceTypes: [.builtInMicrophone, .externalUnknown],
             mediaType: .audio, position: .unspecified).devices
             .filter { !$0.uniqueID.contains("CADefaultDeviceAggregate") }
-        for device in devices {
-            let item = NSMenuItem(title: device.localizedName, action: #selector(micMenuSelectDevice(_:)), keyEquivalent: "")
-            item.target = self
-            item.representedObject = device.uniqueID
-            if micOn && (savedUID == device.uniqueID || (savedUID == nil && device == AVCaptureDevice.default(for: .audio))) {
-                item.state = .on
-            }
-            menu.addItem(item)
+        let list = ListPickerView()
+        // "None" turns mic recording off.
+        list.items = [.init(title: L("None"), isSelected: !micOn), .separator] + devices.map { device in
+            .init(title: device.localizedName,
+                  isSelected: micOn && (savedUID == device.uniqueID
+                      || (savedUID == nil && device == AVCaptureDevice.default(for: .audio))))
         }
-        menu.popUp(positioning: nil, at: NSPoint(x: 0, y: anchorView.bounds.height), in: anchorView)
+        list.onSelect = { [weak self] index in
+            PopoverHelper.dismiss()
+            if index == 0 {
+                self?.micMenuNone()
+            } else if devices.indices.contains(index - 2) {
+                self?.selectMicDevice(uid: devices[index - 2].uniqueID)
+            }
+        }
+        showToolbarList(list, from: anchorView)
     }
 
-    @objc private func micMenuNone() {
+    private func micMenuNone() {
         UserDefaults.standard.set(false, forKey: "recordMicAudio")
         stopMicLevelMonitor()
         rebuildToolbarLayout()
     }
 
-    @objc private func micMenuSelectDevice(_ sender: NSMenuItem) {
-        guard let uid = sender.representedObject as? String else { return }
+    private func selectMicDevice(uid: String) {
         UserDefaults.standard.set(uid, forKey: "selectedMicDeviceUID")
         UserDefaults.standard.set(true, forKey: "recordMicAudio")
         rebuildToolbarLayout()
@@ -8859,37 +8856,35 @@ class OverlayView: NSView {
     }
 
     private func showWebcamDeviceMenu(anchorView: NSView) {
-        let menu = NSMenu()
+        if PopoverHelper.toggleClosedIfOpen() { return }
         let savedUID = UserDefaults.standard.string(forKey: "selectedCameraDeviceUID")
         let webcamOn = UserDefaults.standard.bool(forKey: "recordWebcam")
 
-        let noneItem = NSMenuItem(title: L("None"), action: #selector(webcamMenuNone), keyEquivalent: "")
-        noneItem.target = self
-        if !webcamOn { noneItem.state = .on }
-        menu.addItem(noneItem)
-        menu.addItem(NSMenuItem.separator())
-
         let devices = WebcamOverlay.availableCameras
-        for device in devices {
-            let item = NSMenuItem(title: device.localizedName, action: #selector(webcamMenuSelectDevice(_:)), keyEquivalent: "")
-            item.target = self
-            item.representedObject = device.uniqueID
-            if webcamOn && (savedUID == device.uniqueID || (savedUID == nil && device == AVCaptureDevice.default(for: .video))) {
-                item.state = .on
-            }
-            menu.addItem(item)
+        let list = ListPickerView()
+        list.items = [.init(title: L("None"), isSelected: !webcamOn), .separator] + devices.map { device in
+            .init(title: device.localizedName,
+                  isSelected: webcamOn && (savedUID == device.uniqueID
+                      || (savedUID == nil && device == AVCaptureDevice.default(for: .video))))
         }
-        menu.popUp(positioning: nil, at: NSPoint(x: 0, y: anchorView.bounds.height), in: anchorView)
+        list.onSelect = { [weak self] index in
+            PopoverHelper.dismiss()
+            if index == 0 {
+                self?.webcamMenuNone()
+            } else if devices.indices.contains(index - 2) {
+                self?.selectWebcamDevice(uid: devices[index - 2].uniqueID)
+            }
+        }
+        showToolbarList(list, from: anchorView)
     }
 
-    @objc private func webcamMenuNone() {
+    private func webcamMenuNone() {
         UserDefaults.standard.set(false, forKey: "recordWebcam")
         dismissWebcamSetupPreview()
         rebuildToolbarLayout()
     }
 
-    @objc private func webcamMenuSelectDevice(_ sender: NSMenuItem) {
-        guard let uid = sender.representedObject as? String else { return }
+    private func selectWebcamDevice(uid: String) {
         UserDefaults.standard.set(uid, forKey: "selectedCameraDeviceUID")
         UserDefaults.standard.set(true, forKey: "recordWebcam")
         rebuildToolbarLayout()
@@ -9850,14 +9845,6 @@ class OverlayView: NSView {
         t = max(0, min(1, t))
         let proj = NSPoint(x: a.x + t * dx, y: a.y + t * dy)
         return hypot(point.x - proj.x, point.y - proj.y)
-    }
-
-    @objc private func saveAsMenuAction() {
-        overlayDelegate?.overlayViewDidRequestSaveAs()
-    }
-
-    @objc private func saveToFolderMenuAction() {
-        overlayDelegate?.overlayViewDidRequestFileSave()
     }
 
     // MARK: - Keyboard
