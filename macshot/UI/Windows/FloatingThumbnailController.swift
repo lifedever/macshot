@@ -1256,8 +1256,11 @@ private class ThumbnailView: NSView {
         }
         if saveBtnRect.contains(p)   { onSave?();   return }
 
-        // Click anywhere else on thumbnail — dismiss
-        if isHovering { onClose?() }
+        // Click anywhere else on the card opens it for editing, as clicking
+        // the system screenshot thumbnail does. Closing has the × and the
+        // swipe. The second click of a double-click is ignored so it doesn't
+        // ask for the editor twice.
+        if isHovering, event.clickCount <= 1 { onEdit?() }
     }
 
     override func scrollWheel(with event: NSEvent) {
