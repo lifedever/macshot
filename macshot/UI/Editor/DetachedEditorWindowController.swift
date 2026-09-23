@@ -367,7 +367,16 @@ class DetachedEditorWindowController: NSObject, NSWindowDelegate {
         newestHistorySaveRevision = save.revision
         let finalImage = save.image
         let data = save.annotationData
+        // Set below, before the save can complete. The cards showing this
+        // capture are refreshed whether or not the editor is still open:
+        // Copy closes it straight after starting the save, and the cards
+        // used to keep the old image — reopening one then wrote the old
+        // annotations back over the new ones.
+        var savedEntryID: String?
         let finished: (Bool) -> Void = { [weak self] success in
+            if success, let id = savedEntryID {
+                (NSApp.delegate as? AppDelegate)?.refreshThumbnail(for: id, image: finalImage, annotationData: data)
+            }
             guard let self else { completion?(success); return }
             let unchanged = self.overlayView?.undoStateIdentity == save.undoState
                 && self.overlayView?.captureEditState() == save.editState
@@ -376,9 +385,6 @@ class DetachedEditorWindowController: NSObject, NSWindowDelegate {
                 self.lastSavedUndoState = save.undoState
                 self.lastSavedEditState = save.editState
                 self.refreshDoneButtonVisibility()
-                if let id = self.historyEntryID {
-                    (NSApp.delegate as? AppDelegate)?.refreshThumbnail(for: id, image: finalImage, annotationData: data)
-                }
             }
             completion?(success && unchanged)
         }
@@ -395,11 +401,13 @@ class DetachedEditorWindowController: NSObject, NSWindowDelegate {
             return
         }
         if let id = historyEntryID, history.containsEntry(id: id) {
+            savedEntryID = id
             history.updateEntry(id: id, compositedImage: finalImage, rawImage: data?.rawImage,
                 annotations: data?.annotations, editState: data?.editState, completion: finished)
         } else {
             historyEntryID = history.add(image: finalImage, rawImage: data?.rawImage,
                 annotations: data?.annotations, editState: data?.editState, completion: finished)
+            savedEntryID = historyEntryID
             if historyEntryID != nil {
                 topBar?.onDone = { [weak self] in self?.commitToHistory() }
             }
