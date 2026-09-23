@@ -60,8 +60,17 @@ protocol NSHostingViewProtocolMarker: AnyObject {}
 /// grows or shrinks on its own — the upload pane swapping provider fields, the
 /// General pane revealing the custom-symbol row — resizes the window too,
 /// rather than only doing so at the moment the tab is selected.
-final class SettingsPaneHostingView<Content: View>: NSHostingView<Content>, NSHostingViewProtocolMarker {
+///
+/// Not generic on purpose. As `SettingsPaneHostingView<Content>` the Release
+/// build crashed Xcode 26's Swift 6.3.3 (EarlyPerfInliner, on this class's
+/// deinit); Xcode 27 compiled it fine. Erasing the pane to `AnyView` costs
+/// nothing here — a pane's root type never changes.
+final class SettingsPaneHostingView: NSHostingView<AnyView>, NSHostingViewProtocolMarker {
     var onIntrinsicContentSizeChange: (() -> Void)?
+
+    convenience init<Pane: View>(rootView pane: Pane) {
+        self.init(rootView: AnyView(pane))
+    }
 
     override func invalidateIntrinsicContentSize() {
         super.invalidateIntrinsicContentSize()

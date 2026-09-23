@@ -309,7 +309,7 @@ class SettingsWindowController: NSWindowController, NSToolbarDelegate, NSWindowD
             )).configuredAsSettingsPane())
     }
 
-    private func trackingPaneSize<V: View>(_ pane: SettingsPaneHostingView<V>) -> NSView {
+    private func trackingPaneSize(_ pane: SettingsPaneHostingView) -> NSView {
         pane.onIntrinsicContentSizeChange = { [weak self, weak pane] in
             guard let self, let pane, pane.superview != nil else { return }
             // Deferred: this fires from inside layout, and resizing the window
