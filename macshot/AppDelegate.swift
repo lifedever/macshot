@@ -1952,15 +1952,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
         }
         controller.onPin = { [weak self, weak controller] in
             guard let self = self, let controller = controller else { return }
-            let image = controller.image
-            let data = controller.annotationData
-            ScreenshotHistory.shared.add(
-                image: image,
-                rawImage: data?.rawImage,
-                annotations: data?.annotations,
-                editState: data?.editState
-            )
-            self.showPin(image: image)
+            self.recordThumbnailInHistory(controller)
+            self.showPin(image: controller.image)
         }
         controller.onEdit = { [weak controller] in
             guard let controller else { return }
@@ -1992,19 +1985,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
         #if !OFFLINE
         controller.onUpload = { [weak self, weak controller] in
             guard let self = self, let controller = controller else { return }
-            let image = controller.image
-            let data = controller.annotationData
-            ScreenshotHistory.shared.add(
-                image: image,
-                rawImage: data?.rawImage,
-                annotations: data?.annotations,
-                editState: data?.editState
-            )
-            self.showUploadProgress(image: image)
+            self.recordThumbnailInHistory(controller)
+            self.showUploadProgress(image: controller.image)
         }
         #endif
-        controller.onTransform = { transformed in
-            if let id = historyEntryID {
+        controller.onTransform = { [weak controller] transformed in
+            if let id = controller?.historyEntryID ?? historyEntryID {
                 ScreenshotHistory.shared.updateEntry(id: id, compositedImage: transformed, rawImage: nil, annotations: nil)
             }
         }
@@ -2109,6 +2095,20 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
         padding: CGFloat
     ) -> CGFloat {
         corner.isLeft ? frame.minX + padding : frame.maxX - width - padding
+    }
+
+    /// Pin and Upload keep what they act on in history. A card from a normal
+    /// capture already has its entry; writing another one listed the same shot
+    /// twice in Recent Captures. Only a card without a live entry gets one.
+    private func recordThumbnailInHistory(_ controller: FloatingThumbnailController) {
+        if let id = controller.historyEntryID, ScreenshotHistory.shared.containsEntry(id: id) { return }
+        let data = controller.annotationData
+        controller.historyEntryID = ScreenshotHistory.shared.add(
+            image: controller.image,
+            rawImage: data?.rawImage,
+            annotations: data?.annotations,
+            editState: data?.editState
+        )
     }
 
     /// Update a floating thumbnail's image if it matches the given history entry.
@@ -3581,7 +3581,7 @@ extension AppDelegate: OverlayWindowControllerDelegate {
             saveImageToConfiguredFolder(image)
         }
         playCopySound()
-        showFloatingThumbnail(image: image)
+        showFloatingThumbnail(image: image, historyEntryID: entryID)
 
         if UserDefaults.standard.bool(forKey: "quickCaptureOpenEditor") {
             DetachedEditorWindowController.open(image: image, historyEntryID: entryID, disableBeautify: true)
