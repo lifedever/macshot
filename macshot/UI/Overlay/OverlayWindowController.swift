@@ -930,22 +930,26 @@ extension OverlayWindowController: OverlayViewDelegate {
                 let finalNSImage = NSImage(cgImage: finalCGImage, size: image.size)
 
                 DispatchQueue.main.async {
-                    // quickCaptureMode: 0=save, 1=copy, 2=both, 3=do nothing
+                    // Same outputs as Return: quickCaptureMode 0=save, 1=copy,
+                    // 2=both, 3=do nothing (thumbnail only).
                     let mode = UserDefaults.standard.object(forKey: "quickCaptureMode") as? Int ?? 1
+                    let windowTitle = self.capturedWindowTitle
                     if mode == 1 || mode == 2 {
                         self.copyImageToClipboard(finalNSImage)
                     }
                     self.playCopySound()
                     self.dismiss()
                     self.overlayDelegate?.overlayDidConfirm(self, capturedImage: finalNSImage, annotationData: nil)
+                    if mode == 0 || mode == 2 {
+                        ImageSaveService.saveToConfiguredFolder(finalNSImage, windowTitle: windowTitle)
+                    }
                 }
             } catch {
                 #if DEBUG
                     print("Vision background removal error: \(error.localizedDescription)")
                 #endif
                 DispatchQueue.main.async {
-                    self.overlayView?.showOverlayError(
-                        "Background removal failed — no clear subject found.")
+                    self.overlayView?.showOverlayError(L("No subject found"))
                 }
             }
         }

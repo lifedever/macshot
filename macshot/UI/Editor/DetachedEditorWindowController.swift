@@ -598,24 +598,41 @@ extension DetachedEditorWindowController: OverlayViewDelegate {
         let request = VNGenerateForegroundInstanceMaskRequest()
         let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
         DispatchQueue.global(qos: .userInitiated).async {
-            do {
-                try handler.perform([request])
-                guard let result = request.results?.first else { return }
-                let mask = try result.generateScaledMaskForImage(forInstances: result.allInstances, from: handler)
-                let orig = CIImage(cgImage: cgImage)
-                guard let filter = CIFilter(name: "CIBlendWithMask") else { return }
-                filter.setValue(orig, forKey: kCIInputImageKey)
-                filter.setValue(CIImage(cvPixelBuffer: mask), forKey: kCIInputMaskImageKey)
-                filter.setValue(CIImage(color: .clear).cropped(to: orig.extent), forKey: kCIInputBackgroundImageKey)
-                guard let out = filter.outputImage,
-                      let cg = CIContext().createCGImage(out, from: out.extent) else { return }
-                DispatchQueue.main.async {
-                    let finalImage = NSImage(cgImage: cg, size: image.size)
-                    ImageEncoder.copyToClipboard(finalImage)
-                    self.playCopySound()
-                    (NSApp.delegate as? AppDelegate)?.showFloatingThumbnail(image: finalImage)
+            let cutout: CGImage? = {
+                do {
+                    try handler.perform([request])
+                    guard let result = request.results?.first else { return nil }
+                    let mask = try result.generateScaledMaskForImage(forInstances: result.allInstances, from: handler)
+                    let orig = CIImage(cgImage: cgImage)
+                    guard let filter = CIFilter(name: "CIBlendWithMask") else { return nil }
+                    filter.setValue(orig, forKey: kCIInputImageKey)
+                    filter.setValue(CIImage(cvPixelBuffer: mask), forKey: kCIInputMaskImageKey)
+                    filter.setValue(CIImage(color: .clear).cropped(to: orig.extent), forKey: kCIInputBackgroundImageKey)
+                    guard let out = filter.outputImage else { return nil }
+                    return CIContext().createCGImage(out, from: out.extent)
+                } catch {
+                    return nil
                 }
-            } catch {}
+            }()
+            DispatchQueue.main.async {
+                // Failing silently left the button looking broken.
+                guard let cg = cutout else {
+                    self.overlayView?.showOverlayError(L("No subject found"))
+                    return
+                }
+                let finalImage = NSImage(cgImage: cg, size: image.size)
+                // Same outputs as Return: quickCaptureMode 0=save, 1=copy,
+                // 2=both, 3=do nothing (thumbnail only).
+                let mode = UserDefaults.standard.object(forKey: "quickCaptureMode") as? Int ?? 1
+                if mode == 1 || mode == 2 {
+                    ImageEncoder.copyToClipboard(finalImage)
+                }
+                if mode == 0 || mode == 2 {
+                    ImageSaveService.saveToConfiguredFolder(finalImage, sheetWindow: self.window)
+                }
+                self.playCopySound()
+                (NSApp.delegate as? AppDelegate)?.showFloatingThumbnail(image: finalImage)
+            }
         }
     }
 
