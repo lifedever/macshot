@@ -40,10 +40,12 @@ class ColorPickerView: NSView {
     ]
 
     private let cols = 6
-    private let swatchSize: CGFloat = 24
-    private let padding: CGFloat = 6
-    private let customSlotSize: CGFloat = 20
-    private let customSlotSpacing: CGFloat = 6
+    // Room between everything: at 6pt the swatches, slots and bars pressed
+    // against one another.
+    private let swatchSize: CGFloat = 26
+    private let padding: CGFloat = 8
+    private let customSlotSize: CGFloat = 22
+    private let customSlotSpacing: CGFloat = 7  // 7 slots of 22 span exactly the 6 swatch columns
     private let opacityBarHeight: CGFloat = 12
     private let gradientSize: CGFloat = 140
     private let brightnessBarHeight: CGFloat = 16

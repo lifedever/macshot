@@ -81,10 +81,7 @@ class EmojiPickerView: NSView {
             if tabRect.contains(pt) {
                 categoryIndex = i
                 updateSize()
-                // Resize the popover
-                if let popover = window?.value(forKey: "_popover") as? NSPopover {
-                    popover.contentSize = frame.size
-                }
+                PopoverHelper.resizeActive(toContentSize: frame.size)
                 needsDisplay = true
                 return
             }
