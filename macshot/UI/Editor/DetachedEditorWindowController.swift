@@ -58,6 +58,17 @@ class DetachedEditorWindowController: NSObject, NSWindowDelegate {
     /// persists "arrow" globally, wiping the user's last-tool memory across
     /// the whole app.
     static func open(image: NSImage, tool: AnnotationTool? = nil, color: NSColor? = nil, strokeWidth: CGFloat? = nil, annotations: [Annotation] = [], historyEntryID: String? = nil, fromCapture: Bool = false, disableBeautify: Bool = false, editState: CaptureEditState? = nil) {
+        // One capture, one editor. The card, the history panel and "also open
+        // in editor" can all ask for the same entry; a second window would
+        // hold a stale copy whose save overwrites the first one's edits.
+        if let historyEntryID,
+           let existing = activeControllers.first(where: { $0.historyEntryID == historyEntryID }),
+           let window = existing.window {
+            if window.isMiniaturized { window.deminiaturize(nil) }
+            window.makeKeyAndOrderFront(nil)
+            NSApp.activate(ignoringOtherApps: true)
+            return
+        }
         let controller = DetachedEditorWindowController()
         controller.historyEntryID = historyEntryID
         controller.disableBeautifyOnOpen = disableBeautify

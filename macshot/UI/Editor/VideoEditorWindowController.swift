@@ -9,6 +9,9 @@ final class VideoEditorWindowController: NSObject, NSWindowDelegate {
     private var window: NSWindow?
     private var editorView: VideoEditorView?
     private var preparationJob: MediaExportCoordinator.Job?
+    /// The URL this editor was opened for, so a second request for the same
+    /// take raises this window instead of building another one.
+    private var requestedURL: URL?
     private static var activeControllers: [VideoEditorWindowController] = []
 
     /// Open a video in the editor.
@@ -18,7 +21,20 @@ final class VideoEditorWindowController: NSObject, NSWindowDelegate {
     ///     the editor and its background readers release it. Durable recordings
     ///     are always retained. Pass false for other user-owned files.
     static func open(url: URL, deleteOnClose: Bool = true) {
+        // A finished recording can open the editor on its own ("When done")
+        // while its card offers Edit too. One take gets one window.
+        let requested = url.standardizedFileURL
+        if let existing = activeControllers.first(where: { $0.requestedURL == requested }) {
+            // Still preparing: its window appears when that finishes.
+            if let window = existing.window {
+                if window.isMiniaturized { window.deminiaturize(nil) }
+                window.makeKeyAndOrderFront(nil)
+                NSApp.activate(ignoringOtherApps: true)
+            }
+            return
+        }
         let controller = VideoEditorWindowController()
+        controller.requestedURL = requested
         activeControllers.append(controller)
         if activeControllers.count == 1 {
             NSApp.setActivationPolicy(.regular)
