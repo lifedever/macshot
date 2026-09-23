@@ -43,7 +43,11 @@ class ColorPickerView: NSView {
     // Room between everything: at 6pt the swatches, slots and bars pressed
     // against one another.
     private let swatchSize: CGFloat = 26
-    private let padding: CGFloat = 8
+    /// Space between swatches, slots and bars.
+    private let gap: CGFloat = 8
+    /// Margin inside the picker's own bounds. The panel it opens in already
+    /// insets it, so this is kept small; the two added up read as too roomy.
+    private let edge: CGFloat = 4
     private let customSlotSize: CGFloat = 22
     private let customSlotSpacing: CGFloat = 7  // 7 slots of 22 span exactly the 6 swatch columns
     private let opacityBarHeight: CGFloat = 12
@@ -76,11 +80,11 @@ class ColorPickerView: NSView {
     // MARK: - Preferred size
 
     var preferredSize: NSSize {
-        let pickerWidth = CGFloat(cols) * (swatchSize + padding) + padding
-        let presetH = CGFloat(2) * (swatchSize + padding)
-        let pickerHeight = padding + presetH + padding + customSlotSize + padding
-            + opacityBarHeight + padding + gradientSize + padding + brightnessBarHeight
-            + padding + hexRowHeight + padding
+        let pickerWidth = CGFloat(cols) * swatchSize + CGFloat(cols - 1) * gap + edge * 2
+        let presetH = swatchSize * 2 + gap
+        let pickerHeight = edge + presetH + gap + customSlotSize + gap
+            + opacityBarHeight + gap + gradientSize + gap + brightnessBarHeight
+            + gap + hexRowHeight + edge
         return NSSize(width: pickerWidth, height: pickerHeight)
     }
 
@@ -101,12 +105,12 @@ class ColorPickerView: NSView {
         var cursorY = bounds.maxY
 
         // --- 1. Preset color swatches ---
-        cursorY -= padding
+        cursorY -= edge
         for (i, color) in Self.presetColors.enumerated() {
             let col = i % cols
             let row = i / cols
-            let x = padding + CGFloat(col) * (swatchSize + padding)
-            let y = cursorY - swatchSize - CGFloat(row) * (swatchSize + padding)
+            let x = edge + CGFloat(col) * (swatchSize + gap)
+            let y = cursorY - swatchSize - CGFloat(row) * (swatchSize + gap)
             let r = NSRect(x: x, y: y, width: swatchSize, height: swatchSize)
 
             color.setFill()
@@ -122,10 +126,10 @@ class ColorPickerView: NSView {
                 border.stroke()
             }
         }
-        cursorY -= CGFloat(2) * (swatchSize + padding)
+        cursorY -= swatchSize * 2 + gap
 
         // --- 2. Custom color slots ---
-        cursorY -= padding
+        cursorY -= gap
         customSlotRects = []
         let totalCustomW = CGFloat(customColors.count) * customSlotSize + CGFloat(customColors.count - 1) * customSlotSpacing
         let customStartX = (pickerWidth - totalCustomW) / 2
@@ -163,15 +167,15 @@ class ColorPickerView: NSView {
         cursorY -= customSlotSize
 
         // --- 3. Opacity slider ---
-        cursorY -= padding
-        let oRect = NSRect(x: padding, y: cursorY - opacityBarHeight, width: pickerWidth - padding * 2, height: opacityBarHeight)
+        cursorY -= gap
+        let oRect = NSRect(x: edge, y: cursorY - opacityBarHeight, width: pickerWidth - edge * 2, height: opacityBarHeight)
         opacitySliderRect = oRect
         drawOpacitySlider(in: oRect)
         cursorY -= opacityBarHeight
 
         // --- 4. HSB gradient ---
-        cursorY -= padding
-        let gRect = NSRect(x: padding, y: cursorY - gradientSize, width: pickerWidth - padding * 2, height: gradientSize)
+        cursorY -= gap
+        let gRect = NSRect(x: edge, y: cursorY - gradientSize, width: pickerWidth - edge * 2, height: gradientSize)
         gradientRect = gRect
         drawHSBGradient(in: gRect)
         Self.strokeEdge(of: NSBezierPath(roundedRect: gRect.insetBy(dx: 0.25, dy: 0.25), xRadius: 5, yRadius: 5))
@@ -188,15 +192,15 @@ class ColorPickerView: NSView {
         cursorY -= gradientSize
 
         // --- 5. Brightness slider ---
-        cursorY -= padding
-        let bRect = NSRect(x: padding, y: cursorY - brightnessBarHeight, width: pickerWidth - padding * 2, height: brightnessBarHeight)
+        cursorY -= gap
+        let bRect = NSRect(x: edge, y: cursorY - brightnessBarHeight, width: pickerWidth - edge * 2, height: brightnessBarHeight)
         brightnessSliderRect = bRect
         drawBrightnessSlider(in: bRect)
         cursorY -= brightnessBarHeight
 
         // --- 6. Hex display ---
-        cursorY -= padding
-        let hRect = NSRect(x: padding, y: cursorY - hexRowHeight, width: pickerWidth - padding * 2, height: hexRowHeight)
+        cursorY -= gap
+        let hRect = NSRect(x: edge, y: cursorY - hexRowHeight, width: pickerWidth - edge * 2, height: hexRowHeight)
         hexDisplayRect = hRect
         drawHexDisplay(in: hRect)
     }
@@ -358,8 +362,8 @@ class ColorPickerView: NSView {
         for (i, color) in Self.presetColors.enumerated() {
             let col = i % cols
             let row = i / cols
-            let x = padding + CGFloat(col) * (swatchSize + padding)
-            let y = bounds.maxY - padding - swatchSize - CGFloat(row) * (swatchSize + padding)
+            let x = edge + CGFloat(col) * (swatchSize + gap)
+            let y = bounds.maxY - edge - swatchSize - CGFloat(row) * (swatchSize + gap)
             if NSRect(x: x, y: y, width: swatchSize, height: swatchSize).contains(point) {
                 selectedColor = color
                 syncHSBFromColor(color)

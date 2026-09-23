@@ -18,10 +18,10 @@ enum PopoverHelper {
 
     /// Space between the panel's edge and its content, so pickers are not
     /// pressed against the border.
-    static let contentInset: CGFloat = 10
+    static let contentInset: CGFloat = 5
     /// Lists carry their own row padding and a full-width highlight; a wide
     /// inset on top of that left the highlight floating in the panel.
-    static let listInset: CGFloat = 4
+    static let listInset: CGFloat = 2
 
     /// Show `contentView` (of `size`) in a panel beside `rect` of `view`.
     static func show(_ contentView: NSView, size: NSSize, relativeTo rect: NSRect, of view: NSView,
