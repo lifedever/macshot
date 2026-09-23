@@ -283,6 +283,7 @@
 "Ask where to save" = "저장 위치 묻기";
 "Disable shadow outside selection" = "선택 영역 바깥 그림자 비활성화";
 "Show shortcuts in tooltips" = "툴팁에 단축키 표시";
+"Edit Keys…" = "키 편집…";
 "OCR Capture:" = "OCR 캡처:";
 "OCR & QR Capture:" = "OCR & QR 캡처:";
 "OCR & QR Capture" = "OCR & QR 캡처";

@@ -238,6 +238,7 @@
 "Use window title in saved filename" = "சேமிக்கும் கோப்புப் பெயரில் சாளரத் தலைப்பைப் பயன்படுத்து";
 "Disable shadow outside selection" = "தேர்வுக்கு வெளியே நிழலை முடக்கு";
 "Show shortcuts in tooltips" = "கருவித்துணுக்குகளில் குறுக்குவழிகளைக் காட்டு";
+"Edit Keys…" = "விசைகளைத் திருத்து…";
 
 /* Capture Presets */
 "Aspect ratio" = "விகிதம்";

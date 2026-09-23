@@ -227,6 +227,7 @@
 "Hide capture instructions" = "Opname-instructies verbergen";
 "Disable shadow outside selection" = "Schaduw buiten selectie uitschakelen";
 "Show shortcuts in tooltips" = "Sneltoetsen in knopinfo tonen";
+"Edit Keys…" = "Toetsen bewerken…";
 "Use window title in saved filename" = "Venstertitel gebruiken in bestandsnaam";
 "Hide menu bar icon" = "Menubalkpictogram verbergen";
 "Hotkeys still work. To show the icon again, re-launch macshot." = "Sneltoetsen werken nog steeds. Start macshot opnieuw op om het pictogram weer te tonen.";

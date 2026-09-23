@@ -283,6 +283,7 @@
 "Ask where to save" = "保存先を確認";
 "Disable shadow outside selection" = "選択範囲外のシャドウを無効化";
 "Show shortcuts in tooltips" = "ツールチップにショートカットを表示";
+"Edit Keys…" = "キーを編集…";
 "OCR Capture:" = "OCR キャプチャ:";
 "OCR & QR Capture:" = "OCR & QR キャプチャ:";
 "OCR & QR Capture" = "OCR & QR キャプチャ";

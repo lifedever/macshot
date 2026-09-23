@@ -245,6 +245,7 @@
 "Hide capture instructions" = "Απόκρυψη οδηγιών λήψης";
 "Disable shadow outside selection" = "Απενεργοποίηση σκιάς εκτός επιλογής";
 "Show shortcuts in tooltips" = "Εμφάνιση συντομεύσεων στις επεξηγήσεις";
+"Edit Keys…" = "Επεξεργασία πλήκτρων…";
 "Use window title in saved filename" = "Χρήση τίτλου παραθύρου στο όνομα αρχείου";
 "Hide menu bar icon" = "Απόκρυψη εικονιδίου γραμμής μενού";
 "Menu bar icon:" = "Εικονίδιο γραμμής μενού:";

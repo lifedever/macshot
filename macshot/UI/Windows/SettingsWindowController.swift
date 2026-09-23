@@ -287,7 +287,8 @@ class SettingsWindowController: NSWindowController, NSToolbarDelegate, NSWindowD
                 .configuredAsSettingsPane())
         tabContentViews["shortcuts"] = trackingPaneSize(
             SettingsPaneHostingView(rootView: ShortcutSettingsView(
-                onHotkeyChanged: { [weak self] in self?.onHotkeyChanged?() }
+                onHotkeyChanged: { [weak self] in self?.onHotkeyChanged?() },
+                onEditorCommandChanged: { [weak self] in self?.onEditorCommandShortcutChanged?() }
             )).configuredAsSettingsPane())
         tabContentViews["tools"] = trackingPaneSize(
             SettingsPaneHostingView(rootView: ToolsSettingsView(captureModel: capture))

@@ -233,6 +233,7 @@
 "Hide capture instructions" = "कैप्चर निर्देश छिपाएँ";
 "Disable shadow outside selection" = "चयन के बाहर छाया अक्षम करें";
 "Show shortcuts in tooltips" = "टूलटिप में शॉर्टकट दिखाएँ";
+"Edit Keys…" = "कुंजियाँ संपादित करें…";
 
 /* Capture Presets — aspect ratio / resolution */
 "Aspect ratio & resolution presets" = "पहलू अनुपात और रिज़ॉल्यूशन प्रीसेट";

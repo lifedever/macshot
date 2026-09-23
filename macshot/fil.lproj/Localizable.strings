@@ -241,6 +241,7 @@
 "Hide capture instructions" = "Itago ang mga tagubilin sa pagkuha ng screenshot";
 "Disable shadow outside selection" = "I-disable ang anino sa labas ng pinili";
 "Show shortcuts in tooltips" = "Ipakita ang mga shortcut sa mga tooltip";
+"Edit Keys…" = "I-edit ang mga Key…";
 "Use window title in saved filename" = "Gamitin ang pamagat ng window sa na-save na filename";
 "Hide menu bar icon" = "Itago ang icon sa menu bar";
 "Hotkeys still work. To show the icon again, re-launch macshot." = "Gumagana pa rin ang mga hotkey. Upang ipakita muli ang icon, i-restart ang macshot.";

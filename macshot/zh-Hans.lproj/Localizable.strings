@@ -265,6 +265,7 @@
 "Ask where to save" = "询问保存位置";
 "Disable shadow outside selection" = "禁用选区外的阴影";
 "Show shortcuts in tooltips" = "在工具提示中显示快捷键";
+"Edit Keys…" = "编辑按键…";
 "OCR Capture:" = "OCR 捕获:";
 "OCR & QR Capture:" = "OCR & QR 捕获:";
 "Show window + copy to clipboard" = "显示窗口 + 拷贝到剪贴板";

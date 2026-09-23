@@ -240,6 +240,7 @@
 "Hide capture instructions" = "Ẩn hướng dẫn chụp màn hình";
 "Disable shadow outside selection" = "Tắt bóng tối bên ngoài vùng chọn";
 "Show shortcuts in tooltips" = "Hiển thị phím tắt trong chú giải công cụ";
+"Edit Keys…" = "Sửa phím…";
 "Use window title in saved filename" = "Dùng tiêu đề cửa sổ trong tên tệp";
 "Hide menu bar icon" = "Ẩn biểu tượng thanh menu";
 "Hotkeys still work. To show the icon again, re-launch macshot." = "Phím tắt vẫn hoạt động. Để hiện lại biểu tượng, hãy khởi chạy lại macshot.";

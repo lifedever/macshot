@@ -235,6 +235,7 @@
 "Hide capture instructions" = "Masquer les instructions de capture";
 "Disable shadow outside selection" = "Désactiver l'ombre en dehors de la sélection";
 "Show shortcuts in tooltips" = "Afficher les raccourcis dans les info-bulles";
+"Edit Keys…" = "Modifier les touches…";
 "Use window title in saved filename" = "Utiliser le titre de la fenêtre dans le nom du fichier";
 "Hide menu bar icon" = "Masquer l'icône de la barre des menus";
 "Hotkeys still work. To show the icon again, re-launch macshot." = "Les raccourcis restent actifs. Pour réafficher l'icône, relancez macshot.";

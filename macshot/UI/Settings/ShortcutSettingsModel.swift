@@ -84,4 +84,42 @@ final class ShortcutSettingsModel: ObservableObject {
         EditorCommandShortcutManager.reset(action)
         revision += 1
     }
+
+    // MARK: Single-key tool shortcuts
+
+    /// Lost in the SwiftUI rebuild along with the tool keys below, which left
+    /// no way to change or restore either.
+    @Published var showToolShortcutsInTooltips: Bool =
+        UserDefaults.standard.bool(forKey: "showToolShortcutsInTooltips") {
+        didSet {
+            guard showToolShortcutsInTooltips != oldValue else { return }
+            UserDefaults.standard.set(showToolShortcutsInTooltips, forKey: "showToolShortcutsInTooltips")
+        }
+    }
+
+    func display(for tool: ToolShortcutManager.Action) -> String {
+        _ = revision
+        return ToolShortcutManager.displayString(for: tool)
+    }
+
+    func isAssigned(_ tool: ToolShortcutManager.Action) -> Bool {
+        _ = revision
+        return !ToolShortcutManager.key(for: tool).isEmpty
+    }
+
+    func isCustomised(_ tool: ToolShortcutManager.Action) -> Bool {
+        _ = revision
+        return ToolShortcutManager.key(for: tool) != tool.defaultKey
+    }
+
+    /// An empty key leaves the tool without a shortcut.
+    func assign(_ tool: ToolShortcutManager.Action, key: String) {
+        ToolShortcutManager.setKey(key, for: tool)
+        revision += 1
+    }
+
+    func reset(_ tool: ToolShortcutManager.Action) {
+        ToolShortcutManager.setKey(tool.defaultKey, for: tool)
+        revision += 1
+    }
 }

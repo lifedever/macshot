@@ -306,6 +306,7 @@
 "Ask where to save" = "Kysy tallennuspaikka";
 "Disable shadow outside selection" = "Poista varjo valinnan ulkopuolelta";
 "Show shortcuts in tooltips" = "Näytä pikanäppäimet työkaluvihjeissä";
+"Edit Keys…" = "Muokkaa näppäimiä…";
 "Menu bar icon:" = "Valikkopalkin kuvake:";
 "Default" = "Oletus";
 "Custom symbol" = "Mukautettu symboli";

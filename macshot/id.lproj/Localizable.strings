@@ -241,6 +241,7 @@
 "Hide capture instructions" = "Sembunyikan petunjuk pengambilan tangkapan layar";
 "Disable shadow outside selection" = "Nonaktifkan bayangan di luar seleksi";
 "Show shortcuts in tooltips" = "Tampilkan pintasan di tooltip";
+"Edit Keys…" = "Edit Tombol…";
 "Use window title in saved filename" = "Gunakan judul jendela di nama file tersimpan";
 "Hide menu bar icon" = "Sembunyikan ikon bilah menu";
 "Hotkeys still work. To show the icon again, re-launch macshot." = "Tombol pintas tetap berfungsi. Untuk menampilkan ikon kembali, jalankan ulang macshot.";

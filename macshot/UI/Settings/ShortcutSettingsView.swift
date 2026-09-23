@@ -11,6 +11,11 @@ import SwiftUI
 struct ShortcutSettingsView: View {
     @StateObject private var model = ShortcutSettingsModel()
     var onHotkeyChanged: () -> Void
+    /// The main menu carries Undo/Redo as key equivalents; it is rebuilt when
+    /// either changes, or the menu kept showing the old chord until relaunch.
+    var onEditorCommandChanged: () -> Void
+
+    @State private var showingToolKeys = false
 
     var body: some View {
         Form {
@@ -35,8 +40,12 @@ struct ShortcutSettingsView: View {
 
             Section {
                 ForEach(EditorCommandShortcutManager.Action.allCases, id: \.rawValue) { command in
-                    EditorCommandRow(command: command, model: model)
+                    EditorCommandRow(command: command, model: model, onChange: onEditorCommandChanged)
                 }
+                LabeledContent(L("Tools")) {
+                    Button(L("Edit Keys…")) { showingToolKeys = true }
+                }
+                Toggle(L("Show shortcuts in tooltips"), isOn: $model.showToolShortcutsInTooltips)
             } header: {
                 Text(L("Overlay / Editor Shortcuts"))
             } footer: {
@@ -45,6 +54,9 @@ struct ShortcutSettingsView: View {
         }
         .formStyle(.grouped)
         .scrollDisabled(true)
+        .sheet(isPresented: $showingToolKeys) {
+            ToolKeysSheet(model: model)
+        }
     }
 
     private func hotkeyColumn(_ slots: [HotkeyManager.HotkeySlot]) -> some View {
@@ -138,6 +150,7 @@ private struct HotkeyRow: View {
 private struct EditorCommandRow: View {
     let command: EditorCommandShortcutManager.Action
     @ObservedObject var model: ShortcutSettingsModel
+    var onChange: () -> Void
 
     @State private var recording = false
     @State private var monitor: Any?
@@ -163,7 +176,10 @@ private struct EditorCommandRow: View {
             .buttonStyle(.plain)
 
             if model.isCustomised(command) && !recording {
-                Button { model.reset(command) } label: {
+                Button {
+                    model.reset(command)
+                    onChange()
+                } label: {
                     Image(systemName: "arrow.counterclockwise")
                         .font(.system(size: 12, weight: .medium))
                         .frame(width: 28, height: 28)
@@ -181,9 +197,16 @@ private struct EditorCommandRow: View {
         recording = true
         monitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
             if event.keyCode == 53 { stop(); return nil }
-            let mods = event.modifierFlags.intersection([.command, .control, .option, .shift])
-            guard let chars = event.charactersIgnoringModifiers, !chars.isEmpty else { return nil }
-            model.assign(command, modifiers: mods, character: chars.lowercased())
+            // These are menu key equivalents, so Command is required; Shift,
+            // Option and Control may be added to tell chords apart. The
+            // character goes through the matcher so it follows the keyboard
+            // layout, and falls back to Latin on Russian or Arabic input —
+            // the raw character would be stored as "я" and never match.
+            let modifiers = KeyboardShortcutMatcher.modifiers(in: event)
+            guard modifiers.contains(.command),
+                  let character = KeyboardShortcutMatcher.semanticCharacter(for: event) else { return nil }
+            model.assign(command, modifiers: modifiers, character: character)
+            onChange()
             stop()
             return nil
         }
@@ -193,5 +216,118 @@ private struct EditorCommandRow: View {
         if let monitor { NSEvent.removeMonitor(monitor) }
         monitor = nil
         recording = false
+    }
+}
+
+/// The single-key tool shortcuts. Too many to fit the Shortcuts pane, which
+/// cannot scroll, so they open in a sheet of their own.
+private struct ToolKeysSheet: View {
+    @ObservedObject var model: ShortcutSettingsModel
+    @Environment(\.dismiss) private var dismiss
+
+    /// One recorder for the whole list, so two rows can never both be
+    /// listening for the same keystroke.
+    @State private var recording: ToolShortcutManager.Action?
+    @State private var monitor: Any?
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Form {
+                Section {
+                    ForEach(ToolShortcutManager.Action.allCases, id: \.rawValue) { tool in
+                        row(tool)
+                    }
+                } footer: {
+                    Text(L("Press a single key to assign it as the shortcut for that tool. These work when the overlay or editor is active."))
+                }
+            }
+            .formStyle(.grouped)
+            Divider()
+            HStack {
+                Spacer()
+                Button(L("Done")) { dismiss() }
+                    .keyboardShortcut(.defaultAction)
+            }
+            .padding(12)
+        }
+        .frame(width: 440, height: 520)
+        .onDisappear { stop() }
+    }
+
+    private func row(_ tool: ToolShortcutManager.Action) -> some View {
+        let isRecording = recording == tool
+        return HStack(spacing: 8) {
+            Text(tool.label)
+            Spacer()
+            Button {
+                isRecording ? stop() : start(tool)
+            } label: {
+                Text(isRecording ? L("Press a shortcut…") : model.display(for: tool))
+                    .font(.system(size: 13, weight: .medium))
+                    .monospacedDigit()
+                    .foregroundStyle(model.isAssigned(tool) || isRecording ? .primary : .secondary)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8, style: .continuous)
+                            .fill(isRecording ? Color.accentColor.opacity(0.18)
+                                              : Color.primary.opacity(0.08))
+                    )
+            }
+            .buttonStyle(.plain)
+
+            if model.isCustomised(tool) && !isRecording {
+                Button { model.reset(tool) } label: {
+                    Image(systemName: "arrow.counterclockwise")
+                        .font(.system(size: 12, weight: .medium))
+                        .frame(width: 28, height: 28)
+                        .background(Circle().fill(Color.primary.opacity(0.08)))
+                }
+                .buttonStyle(.plain)
+                .help(L("Reset to default"))
+            }
+        }
+    }
+
+    private func start(_ tool: ToolShortcutManager.Action) {
+        stop()
+        recording = tool
+        monitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
+            switch event.keyCode {
+            case 53:            // Esc cancels
+                stop()
+                return nil
+            case 51, 117:       // Delete clears the shortcut
+                model.assign(tool, key: "")
+                stop()
+                return nil
+            default:
+                break
+            }
+            // A tool key fires on its own while the overlay is up, so chords
+            // are not accepted — and neither are Return, Tab, arrows or
+            // function keys, which the overlay already uses.
+            let modifiers = KeyboardShortcutMatcher.modifiers(in: event)
+            guard modifiers.intersection([.command, .option, .control]).isEmpty,
+                  let character = KeyboardShortcutMatcher.semanticCharacter(for: event),
+                  Self.isAssignable(character) else { return nil }
+            model.assign(tool, key: character)
+            stop()
+            return nil
+        }
+    }
+
+    private func stop() {
+        if let monitor { NSEvent.removeMonitor(monitor) }
+        monitor = nil
+        recording = nil
+    }
+
+    static func isAssignable(_ character: String) -> Bool {
+        guard !character.isEmpty else { return false }
+        if character == " " { return true }
+        return !character.unicodeScalars.contains { scalar in
+            scalar.value < 0x20 || scalar.value == 0x7F || (0xF700...0xF8FF).contains(scalar.value)
+        }
     }
 }

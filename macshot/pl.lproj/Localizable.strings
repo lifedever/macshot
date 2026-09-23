@@ -241,6 +241,7 @@
 "Hide capture instructions" = "Ukryj instrukcje przechwytywania";
 "Disable shadow outside selection" = "Wyłącz przyciemnienie poza zaznaczeniem";
 "Show shortcuts in tooltips" = "Pokazuj skróty w podpowiedziach";
+"Edit Keys…" = "Edytuj klawisze…";
 "Use window title in saved filename" = "Użyj tytułu okna w nazwie pliku";
 "Hide menu bar icon" = "Ukryj ikonę na pasku menu";
 "Hotkeys still work. To show the icon again, re-launch macshot." = "Skróty nadal działają. Aby przywrócić ikonę, uruchom ponownie macshot.";

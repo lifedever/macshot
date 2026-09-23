@@ -318,6 +318,7 @@
 "Save to default folder" = "Сохранять в папку по умолчанию";
 "Ask where to save" = "Спрашивать, куда сохранять";
 "Show shortcuts in tooltips" = "Показывать сочетания в подсказках";
+"Edit Keys…" = "Изменить клавиши…";
 "Disable shadow outside selection" = "Отключить затемнение вне выделения";
 "Menu bar icon:" = "Значок в строке меню:";
 "Default" = "По умолчанию";

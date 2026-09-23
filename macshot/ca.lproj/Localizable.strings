@@ -233,6 +233,7 @@
 "Hide capture instructions" = "Amagar les instruccions de captura";
 "Disable shadow outside selection" = "Desactivar l'ombra fora de la selecció";
 "Show shortcuts in tooltips" = "Mostrar dreceres als consells d'eina";
+"Edit Keys…" = "Edita les tecles…";
 "Use window title in saved filename" = "Utilitzar el títol de la finestra al nom del fitxer";
 "Hide menu bar icon" = "Amagar la icona de la barra de menús";
 "Hotkeys still work. To show the icon again, re-launch macshot." = "Les dreceres segueixen funcionant. Per mostrar la icona de nou, reinicieu macshot.";

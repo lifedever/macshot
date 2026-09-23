@@ -221,6 +221,7 @@
 "Hide capture instructions" = "הסתר הוראות צילום";
 "Disable shadow outside selection" = "השבת הצללה מחוץ לבחירה";
 "Show shortcuts in tooltips" = "הצג קיצורים בתיאורי כלים";
+"Edit Keys…" = "עריכת מקשים…";
 "Use window title in saved filename" = "השתמש בכותרת חלון בשם הקובץ";
 "Hide menu bar icon" = "הסתר סמל שורת התפריטים";
 "Hotkeys still work. To show the icon again, re-launch macshot." = "מקשי קיצור עדיין פועלים. להצגת הסמל שוב, הפעל מחדש את macshot.";

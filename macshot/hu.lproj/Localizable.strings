@@ -245,6 +245,7 @@
 "Hide capture instructions" = "Rögzítési útmutató elrejtése";
 "Disable shadow outside selection" = "Árnyék letiltása a kijelölésen kívül";
 "Show shortcuts in tooltips" = "Gyorsbillentyűk megjelenítése a buboréksúgókban";
+"Edit Keys…" = "Billentyűk szerkesztése…";
 "Use window title in saved filename" = "Ablakcím használata a mentett fájlnévben";
 "Hide menu bar icon" = "Menüsor ikon elrejtése";
 "Hotkeys still work. To show the icon again, re-launch macshot." = "A gyorsbillentyűk továbbra is működnek. Az ikon újbóli megjelenítéséhez indítsd újra a macshot-ot.";

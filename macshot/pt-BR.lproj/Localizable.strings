@@ -228,6 +228,7 @@
 "Hide capture instructions" = "Ocultar instruções de captura";
 "Disable shadow outside selection" = "Desativar sombra fora da seleção";
 "Show shortcuts in tooltips" = "Mostrar atalhos nas dicas de ferramenta";
+"Edit Keys…" = "Editar teclas…";
 "Use window title in saved filename" = "Usar título da janela no nome do arquivo salvo";
 "Hide menu bar icon" = "Ocultar ícone da barra de menus";
 "Hotkeys still work. To show the icon again, re-launch macshot." = "Os atalhos continuam funcionando. Para mostrar o ícone novamente, reabra o macshot.";

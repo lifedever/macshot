@@ -221,6 +221,7 @@
 "Hide capture instructions" = "Yakalama talimatlarını gizle";
 "Disable shadow outside selection" = "Seçim dışındaki gölgeyi devre dışı bırak";
 "Show shortcuts in tooltips" = "Kısayolları ipuçlarında göster";
+"Edit Keys…" = "Tuşları Düzenle…";
 "Use window title in saved filename" = "Kaydedilen dosya adında pencere başlığını kullan";
 "Hide menu bar icon" = "Menü çubuğu simgesini gizle";
 "Hotkeys still work. To show the icon again, re-launch macshot." = "Kısayol tuşları çalışmaya devam eder. Simgeyi tekrar göstermek için macshot'u yeniden başlatın.";

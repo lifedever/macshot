@@ -221,6 +221,7 @@
 "Hide capture instructions" = "پنهان کردن راهنمای تصویربرداری";
 "Disable shadow outside selection" = "غیرفعال کردن سایه خارج از انتخاب";
 "Show shortcuts in tooltips" = "نمایش میانبرها در راهنمای ابزار";
+"Edit Keys…" = "ویرایش کلیدها…";
 "Use window title in saved filename" = "استفاده از عنوان پنجره در نام فایل ذخیره‌شده";
 "Hide menu bar icon" = "پنهان کردن آیکون نوار منو";
 "Hotkeys still work. To show the icon again, re-launch macshot." = "کلیدهای میانبر همچنان کار می‌کنند. برای نمایش مجدد آیکون، macshot را دوباره اجرا کنید.";

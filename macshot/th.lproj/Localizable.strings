@@ -240,6 +240,7 @@
 "Hide capture instructions" = "ซ่อนคำแนะนำการจับภาพหน้าจอ";
 "Disable shadow outside selection" = "ปิดเงานอกพื้นที่ที่เลือก";
 "Show shortcuts in tooltips" = "แสดงปุ่มลัดในคำแนะนำเครื่องมือ";
+"Edit Keys…" = "แก้ไขปุ่ม…";
 "Use window title in saved filename" = "ใช้ชื่อหน้าต่างในชื่อไฟล์ที่บันทึก";
 "Hide menu bar icon" = "ซ่อนไอคอนแถบเมนู";
 "Hotkeys still work. To show the icon again, re-launch macshot." = "ปุ่มลัดยังใช้งานได้ เปิด macshot ใหม่เพื่อแสดงไอคอนอีกครั้ง";
