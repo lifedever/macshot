@@ -16,7 +16,19 @@ final class HistoryOverlayController: NSObject, QLPreviewPanelDataSource, QLPrev
     var onDismiss: (() -> Void)?
 
     // Quick Look state
-    private var quickLookEntryIndex: Int = -1
+    /// The file Quick Look is showing, resolved when it opened so later
+    /// history writes cannot shift it onto a different capture.
+    private var quickLookURL: URL?
+    private var quickLookCloseObserver: NSObjectProtocol?
+    /// Quick Look holds its data source and delegate unretained. The panel
+    /// closes itself before the preview appears and the app then drops this
+    /// controller, which left Quick Look messaging a freed object on the next
+    /// key press or when it closed. Kept alive here until the preview closes.
+    private static var quickLookOwner: HistoryOverlayController?
+    /// The entry a context menu was opened on. Menu items used to carry its
+    /// position, which a history write landing while the menu was open
+    /// shifted onto a neighbouring capture — Delete removed the wrong one.
+    private var contextMenuEntryID: String?
 
     private static let panelHeight: CGFloat = 240
     private static let animationDuration: TimeInterval = 0.12
@@ -221,13 +233,30 @@ final class HistoryOverlayController: NSObject, QLPreviewPanelDataSource, QLPrev
     }
 
     func quickLook(index: Int) {
-        quickLookEntryIndex = index
+        let entries = ScreenshotHistory.shared.entries
+        guard index >= 0, index < entries.count else { return }
+        quickLookURL = ScreenshotHistory.shared.fileURL(for: entries[index])
         dismiss()
         guard let qlPanel = QLPreviewPanel.shared() else { return }
+        Self.quickLookOwner = self
         qlPanel.dataSource = self
         qlPanel.delegate = self
         qlPanel.reloadData()
         qlPanel.makeKeyAndOrderFront(nil)
+
+        quickLookCloseObserver.map(NotificationCenter.default.removeObserver)
+        quickLookCloseObserver = NotificationCenter.default.addObserver(
+            forName: NSWindow.willCloseNotification, object: qlPanel, queue: .main
+        ) { [weak self, weak qlPanel] _ in
+            MainActor.assumeIsolated {
+                guard let self else { return }
+                if qlPanel?.dataSource === self { qlPanel?.dataSource = nil }
+                if qlPanel?.delegate === self { qlPanel?.delegate = nil }
+                self.quickLookCloseObserver.map(NotificationCenter.default.removeObserver)
+                self.quickLookCloseObserver = nil
+                if Self.quickLookOwner === self { Self.quickLookOwner = nil }
+            }
+        }
     }
 
     func saveToFile(index: Int) {
@@ -299,6 +328,7 @@ final class HistoryOverlayController: NSObject, QLPreviewPanelDataSource, QLPrev
         let entries = ScreenshotHistory.shared.entries
         guard globalIndex >= 0, globalIndex < entries.count else { return }
         let fileURL = ScreenshotHistory.shared.fileURL(for: entries[globalIndex])
+        contextMenuEntryID = entries[globalIndex].id
 
         let menu = NSMenu()
 
@@ -360,39 +390,42 @@ final class HistoryOverlayController: NSObject, QLPreviewPanelDataSource, QLPrev
         NSMenu.popUpContextMenu(menu, with: NSApp.currentEvent!, for: view)
     }
 
-    @objc private func contextCopy(_ sender: NSMenuItem) { copyAndDismiss(index: sender.tag) }
-    @objc private func contextSave(_ sender: NSMenuItem) { saveToFile(index: sender.tag) }
-    @objc private func contextOpenEditor(_ sender: NSMenuItem) { openInEditor(index: sender.tag) }
-    @objc private func contextPin(_ sender: NSMenuItem) { pinToScreen(index: sender.tag) }
+    /// Where the context menu's entry is now; -1 once it has gone, which
+    /// every action below treats as nothing to do.
+    private var contextMenuIndex: Int {
+        guard let id = contextMenuEntryID else { return -1 }
+        return ScreenshotHistory.shared.entries.firstIndex { $0.id == id } ?? -1
+    }
+
+    @objc private func contextCopy(_ sender: NSMenuItem) { copyAndDismiss(index: contextMenuIndex) }
+    @objc private func contextSave(_ sender: NSMenuItem) { saveToFile(index: contextMenuIndex) }
+    @objc private func contextOpenEditor(_ sender: NSMenuItem) { openInEditor(index: contextMenuIndex) }
+    @objc private func contextPin(_ sender: NSMenuItem) { pinToScreen(index: contextMenuIndex) }
     #if !OFFLINE
-    @objc private func contextUpload(_ sender: NSMenuItem) { uploadEntry(index: sender.tag) }
+    @objc private func contextUpload(_ sender: NSMenuItem) { uploadEntry(index: contextMenuIndex) }
     #endif
-    @objc private func contextQuickLook(_ sender: NSMenuItem) { quickLook(index: sender.tag) }
-    @objc private func contextOCR(_ sender: NSMenuItem) { runOCR(index: sender.tag) }
-    @objc private func contextDelete(_ sender: NSMenuItem) { deleteEntry(index: sender.tag) }
+    @objc private func contextQuickLook(_ sender: NSMenuItem) { quickLook(index: contextMenuIndex) }
+    @objc private func contextOCR(_ sender: NSMenuItem) { runOCR(index: contextMenuIndex) }
+    @objc private func contextDelete(_ sender: NSMenuItem) { deleteEntry(index: contextMenuIndex) }
     @objc private func contextTransform(_ sender: NSMenuItem) {
-        guard let index = sender.representedObject as? Int,
-              let transform = ImageContextTransform(rawValue: sender.tag) else { return }
-        transformEntry(index: index, transform: transform)
+        guard let transform = ImageContextTransform(rawValue: sender.tag) else { return }
+        transformEntry(index: contextMenuIndex, transform: transform)
     }
     @objc private func contextOpenWith(_ sender: NSMenuItem) {
         guard let appURL = sender.representedObject as? URL else { return }
-        openEntry(index: sender.tag, with: appURL)
+        openEntry(index: contextMenuIndex, with: appURL)
     }
     @objc private func contextShare(_ sender: NSMenuItem) {
         guard let service = sender.representedObject as? NSSharingService else { return }
-        shareEntry(index: sender.tag, service: service)
+        shareEntry(index: contextMenuIndex, service: service)
     }
 
     // MARK: - QLPreviewPanelDataSource
 
-    func numberOfPreviewItems(in panel: QLPreviewPanel!) -> Int { 1 }
+    func numberOfPreviewItems(in panel: QLPreviewPanel!) -> Int { quickLookURL == nil ? 0 : 1 }
 
     func previewPanel(_ panel: QLPreviewPanel!, previewItemAt index: Int) -> (any QLPreviewItem)! {
-        let entries = ScreenshotHistory.shared.entries
-        guard quickLookEntryIndex >= 0, quickLookEntryIndex < entries.count else { return nil }
-        let entry = entries[quickLookEntryIndex]
-        return ScreenshotHistory.shared.fileURL(for: entry) as NSURL?
+        quickLookURL as NSURL?
     }
 }
 
@@ -524,8 +557,10 @@ private final class HistoryPanelView: NSView, NSDraggingSource {
             previewLoadsInFlight.removeValue(forKey: id)
         }
         previewLRU.removeAll { changedIDs.contains($0) }
+        let selectedID = globalIndexForSelected().map { entries[$0].id }
+        let selectedPosition = selectedIndex
         entries = updated
-        applyFilter()
+        applyFilter(keepingSelectionOf: selectedID, near: selectedPosition)
         // Previews are loaded lazily as cards become visible — see
         // requestPreviewIfNeeded(for:) and prefetchPreviewsAroundVisible().
         // Kick off prefetch for the first screenful so the panel doesn't
@@ -640,17 +675,46 @@ private final class HistoryPanelView: NSView, NSDraggingSource {
         }
     }
 
-    private func applyFilter() {
+    /// Rebuild the visible cards. A new filter starts at the most recent card;
+    /// a reload of the same list — after a delete, or any history write while
+    /// the panel is open — keeps the selection and the scroll position.
+    /// Resetting to the first card there meant a second ⌫ deleted the newest
+    /// capture instead of the next one, with the list jumped back to the start.
+    private func applyFilter(keepingSelectionOf selectedID: String? = nil, near position: Int? = nil) {
         filteredIndices = entries.enumerated().compactMap { (i, entry) in
             activeFilter.matches(entry) ? i : nil
         }
-        scrollOffset = 0
-        // Default keyboard focus to the leftmost (most recent) card so the user
-        // can immediately arrow/Enter without moving the mouse.
-        selectedIndex = filteredIndices.isEmpty ? -1 : 0
+        let isReload = selectedID != nil || position != nil
+        if !isReload {
+            scrollOffset = 0
+            // Default keyboard focus to the leftmost (most recent) card so the user
+            // can immediately arrow/Enter without moving the mouse.
+            selectedIndex = filteredIndices.isEmpty ? -1 : 0
+        } else if let id = selectedID,
+                  let kept = filteredIndices.firstIndex(where: { entries[$0].id == id }) {
+            selectedIndex = kept
+        } else {
+            // The selected card went away: select what took its place.
+            selectedIndex = filteredIndices.isEmpty ? -1 : min(max(position ?? 0, 0), filteredIndices.count - 1)
+        }
         layoutCards()
+        scrollOffset = min(scrollOffset, max(contentWidth - bounds.width, 0))
+        if isReload { syncHoverWithPointer() }
         prefetchPreviewsAroundVisible()
         needsDisplay = true
+    }
+
+    /// After the cards move under a still pointer, the hovered card is the one
+    /// now beneath it — and, as on a mouse move, that is the selection.
+    private func syncHoverWithPointer() {
+        guard let window else { hoveredIndex = -1; return }
+        let point = convert(window.mouseLocationOutsideOfEventStream, from: nil)
+        hoveredIndex = cardRects.indices.first(where: { i in
+            var rect = cardRects[i]
+            rect.origin.x -= scrollOffset
+            return rect.contains(point)
+        }) ?? -1
+        if hoveredIndex >= 0 { selectedIndex = hoveredIndex }
     }
 
     private func layoutCards() {
@@ -1190,8 +1254,8 @@ private final class HistoryPanelView: NSView, NSDraggingSource {
 
     private func activateSelectedForDelete() {
         guard let idx = globalIndexForSelected() else { return }
-        // loadEntries (called from deleteEntry) resets selectedIndex via
-        // applyFilter → 0, so arrows keep working after a deletion.
+        // loadEntries (called from deleteEntry) moves the selection to the
+        // card that takes this one's place, so repeated ⌫ works along the row.
         controller?.deleteEntry(index: idx)
     }
 }

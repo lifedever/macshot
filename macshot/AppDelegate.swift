@@ -3667,7 +3667,7 @@ extension AppDelegate: NSMenuDelegate {
             return
         }
 
-        for (i, entry) in entries.enumerated() {
+        for entry in entries {
             // Lead with where the shot came from when we know: a column of
             // dimensions and ages gives no way to tell one capture from another.
             let source = entry.windowTitle?.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -3677,7 +3677,9 @@ extension AppDelegate: NSMenuDelegate {
                 : "\(dimensions)  —  \(entry.timeAgoString)"
             let item = NSMenuItem(title: title, action: #selector(copyHistoryEntry(_:)), keyEquivalent: "")
             item.target = self
-            item.tag = i
+            // Identify the entry, not its row: a history write landing while
+            // the menu is open shifts every position by one.
+            item.representedObject = entry.id
             item.image = ScreenshotHistory.shared.loadThumbnail(for: entry)
             menu.addItem(item)
         }
@@ -3700,10 +3702,9 @@ extension AppDelegate: NSMenuDelegate {
             MenuPreviewController.shared.hide()
             return
         }
-        let entries = ScreenshotHistory.shared.entries
-        let index = item.tag
-        guard index >= 0, index < entries.count,
-              let preview = ScreenshotHistory.shared.loadPreview(for: entries[index])
+        guard let id = item.representedObject as? String,
+              let entry = ScreenshotHistory.shared.entries.first(where: { $0.id == id }),
+              let preview = ScreenshotHistory.shared.loadPreview(for: entry)
         else {
             MenuPreviewController.shared.hide()
             return
@@ -3717,10 +3718,8 @@ extension AppDelegate: NSMenuDelegate {
     }
 
     @objc private func copyHistoryEntry(_ sender: NSMenuItem) {
-        let index = sender.tag
-        let entries = ScreenshotHistory.shared.entries
-        guard index >= 0, index < entries.count else { return }
-        let entry = entries[index]
+        guard let id = sender.representedObject as? String,
+              let entry = ScreenshotHistory.shared.entries.first(where: { $0.id == id }) else { return }
         guard let image = ScreenshotHistory.shared.loadImage(for: entry) else { return }
 
         ImageEncoder.copyToClipboard(image)
