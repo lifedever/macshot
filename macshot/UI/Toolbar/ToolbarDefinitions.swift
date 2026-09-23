@@ -618,11 +618,59 @@ extension NSView {
         layer.borderColor = ToolbarLayout.surfaceBorderColor.cgColor
         layer.borderWidth = 1 / max(1, window?.backingScaleFactor ?? NSScreen.main?.backingScaleFactor ?? 2)
         layer.masksToBounds = false
+        // Strong enough to lift a light bar off a light screenshot or the
+        // grey of the dimmed overlay; at 0.14 it disappeared on both.
         layer.shadowColor = NSColor.black.cgColor
-        layer.shadowOpacity = dark ? 0.38 : 0.14
-        layer.shadowRadius = dark ? 12 : 14
-        layer.shadowOffset = CGSize(width: 0, height: -3)
+        layer.shadowOpacity = dark ? 0.55 : 0.32
+        layer.shadowRadius = dark ? 12 : 11
+        layer.shadowOffset = CGSize(width: 0, height: -4)
         layer.shadowPath = CGPath(roundedRect: bounds, cornerWidth: cornerRadius,
                                   cornerHeight: cornerRadius, transform: nil)
+    }
+}
+
+// MARK: - Toolbar tooltips
+
+extension ToolbarLayout {
+    /// Tooltips are the inverse of the toolbar — dark with white text beside a
+    /// light bar, light with dark text beside a dark one — so they stand out
+    /// from both the bar and a screenshot. Taking the bar's own colours made a
+    /// white tooltip vanish into a light screenshot.
+    static var tooltipBackgroundColor: NSColor {
+        isDarkSurface ? NSColor(white: 0.95, alpha: 1) : NSColor(white: 0.14, alpha: 0.96)
+    }
+    static var tooltipTextColor: NSColor {
+        isDarkSurface ? NSColor(white: 0.10, alpha: 1) : .white
+    }
+    static let tooltipFont = NSFont.systemFont(ofSize: 11, weight: .medium)
+    private static let tooltipPadding = NSSize(width: 8, height: 4)
+    static let tooltipCornerRadius: CGFloat = 6
+
+    static func tooltipSize(for text: String) -> NSSize {
+        let textSize = (text as NSString).size(withAttributes: [.font: tooltipFont])
+        return NSSize(width: ceil(textSize.width) + tooltipPadding.width * 2,
+                      height: ceil(textSize.height) + tooltipPadding.height * 2)
+    }
+
+    /// Draw a tooltip pill filling `rect`, optionally with its own drop shadow
+    /// (for tooltips painted straight into a larger view).
+    static func drawTooltip(_ text: String, in rect: NSRect, withShadow: Bool) {
+        let path = NSBezierPath(roundedRect: rect, xRadius: tooltipCornerRadius, yRadius: tooltipCornerRadius)
+        NSGraphicsContext.saveGraphicsState()
+        if withShadow {
+            let shadow = NSShadow()
+            shadow.shadowColor = NSColor.black.withAlphaComponent(0.28)
+            shadow.shadowBlurRadius = 8
+            shadow.shadowOffset = NSSize(width: 0, height: -2)
+            shadow.set()
+        }
+        tooltipBackgroundColor.setFill()
+        path.fill()
+        NSGraphicsContext.restoreGraphicsState()
+        let attrs: [NSAttributedString.Key: Any] = [.font: tooltipFont, .foregroundColor: tooltipTextColor]
+        let textSize = (text as NSString).size(withAttributes: attrs)
+        (text as NSString).draw(at: NSPoint(x: rect.minX + (rect.width - textSize.width) / 2,
+                                            y: rect.minY + (rect.height - textSize.height) / 2),
+                                withAttributes: attrs)
     }
 }

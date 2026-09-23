@@ -8489,15 +8489,9 @@ class OverlayView: NSView {
               let btn = hoveredTooltipButtonView,
               !PopoverHelper.isVisible else { return }
 
-        let attrs: [NSAttributedString.Key: Any] = [
-            .font: NSFont.systemFont(ofSize: 11, weight: .medium),
-            .foregroundColor: ToolbarLayout.iconColor,
-        ]
-        let str = tooltip as NSString
-        let textSize = str.size(withAttributes: attrs)
-        let pad: CGFloat = 6
-        let tipW = textSize.width + pad * 2
-        let tipH = textSize.height + pad
+        let tipSize = ToolbarLayout.tooltipSize(for: tooltip)
+        let tipW = tipSize.width
+        let tipH = tipSize.height
 
         // Convert the button's rect to OverlayView coordinates. The button may
         // live in a separate glass chrome panel (different window), so go through
@@ -8532,9 +8526,7 @@ class OverlayView: NSView {
             y: max(bounds.minY + 2, min(tipRect.minY, bounds.maxY - tipH - 2)),
             width: tipW, height: tipH)
 
-        ToolbarLayout.bgColor.setFill()
-        NSBezierPath(roundedRect: clamped, xRadius: 4, yRadius: 4).fill()
-        str.draw(at: NSPoint(x: clamped.minX + pad, y: clamped.minY + pad / 2), withAttributes: attrs)
+        ToolbarLayout.drawTooltip(tooltip, in: clamped, withShadow: true)
     }
 
     /// In editor mode, show tooltip as a floating NSView in the chrome parent (container),
@@ -8554,15 +8546,9 @@ class OverlayView: NSView {
             return
         }
 
-        let attrs: [NSAttributedString.Key: Any] = [
-            .font: NSFont.systemFont(ofSize: 11, weight: .medium),
-            .foregroundColor: NSColor.white,
-        ]
-        let str = tooltip as NSString
-        let textSize = str.size(withAttributes: attrs)
-        let pad: CGFloat = 6
-        let tipW = textSize.width + pad * 2
-        let tipH = textSize.height + pad
+        let tipSize = ToolbarLayout.tooltipSize(for: tooltip)
+        let tipW = tipSize.width
+        let tipH = tipSize.height
 
         let btnFrame = btn.convert(btn.bounds, to: parent)
         let isBottomBar = btn.superview === bottomStripView
@@ -11274,15 +11260,28 @@ extension OverlayView: TextEditingCanvas {}
 private class TooltipBackgroundView: NSView {
     var text: String = ""
 
+    override init(frame: NSRect) {
+        super.init(frame: frame)
+        // The view is exactly the pill's size, so its shadow comes from the
+        // layer rather than being painted (and clipped) inside the bounds.
+        wantsLayer = true
+        layer?.masksToBounds = false
+        layer?.shadowColor = NSColor.black.cgColor
+        layer?.shadowOpacity = 0.28
+        layer?.shadowRadius = 4
+        layer?.shadowOffset = CGSize(width: 0, height: -2)
+    }
+
+    required init?(coder: NSCoder) { fatalError() }
+
+    override func setFrameSize(_ newSize: NSSize) {
+        super.setFrameSize(newSize)
+        layer?.shadowPath = CGPath(roundedRect: bounds, cornerWidth: ToolbarLayout.tooltipCornerRadius,
+                                   cornerHeight: ToolbarLayout.tooltipCornerRadius, transform: nil)
+    }
+
     override func draw(_ dirtyRect: NSRect) {
-        let attrs: [NSAttributedString.Key: Any] = [
-            .font: NSFont.systemFont(ofSize: 11, weight: .medium),
-            .foregroundColor: ToolbarLayout.iconColor,
-        ]
-        ToolbarLayout.bgColor.setFill()
-        NSBezierPath(roundedRect: bounds, xRadius: 4, yRadius: 4).fill()
-        let pad: CGFloat = 6
-        (text as NSString).draw(at: NSPoint(x: pad, y: pad / 2), withAttributes: attrs)
+        ToolbarLayout.drawTooltip(text, in: bounds, withShadow: false)
     }
 }
 
