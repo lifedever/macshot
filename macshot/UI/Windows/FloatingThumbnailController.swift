@@ -382,17 +382,19 @@ class FloatingThumbnailController: NSObject, NSDraggingSource, QLPreviewPanelDat
         view.onDismissDragEnded = { [weak self] offset in self?.endDismissDrag(offset: offset) }
         view.onDismissDragCancelled = { [weak self] in self?.cancelDismissDrag() }
         view.onContextMenu = { [weak self] event, view in self?.showContextMenu(event: event, in: view) }
-        view.onClose    = { [weak self] in self?.dismiss() }
+        // Every way the user closes the card slides it out, as the timer
+        // does; the buttons used to make it vanish on the spot.
+        view.onClose    = { [weak self] in self?.dismissAnimated() }
         // Handing the capture to another app ends this card's job, same as
         // uploading or saving does.
-        view.onQuickLook = { [weak self] in self?.openInDefaultApp(); self?.dismiss() }
-        view.onSave     = { [weak self] in self?.onSave?();     self?.dismiss() }
-        view.onPin      = { [weak self] in self?.onPin?();      self?.dismiss() }
-        view.onEdit     = { [weak self] in self?.onEdit?();     self?.dismiss() }
+        view.onQuickLook = { [weak self] in self?.openInDefaultApp(); self?.dismissAnimated() }
+        view.onSave     = { [weak self] in self?.onSave?();     self?.dismissAnimated() }
+        view.onPin      = { [weak self] in self?.onPin?();      self?.dismissAnimated() }
+        view.onEdit     = { [weak self] in self?.onEdit?();     self?.dismissAnimated() }
         #if !OFFLINE
-        view.onUpload   = { [weak self] in self?.onUpload?();   self?.dismiss() }
+        view.onUpload   = { [weak self] in self?.onUpload?();   self?.dismissAnimated() }
         #endif
-        view.onDelete   = { [weak self] in self?.onDelete?();   self?.dismiss() }
+        view.onDelete   = { [weak self] in self?.onDelete?();   self?.dismissAnimated() }
         view.onCloseAll = { [weak self] in self?.onCloseAll?() }
         view.onSaveAll  = { [weak self] in self?.onSaveAll?() }
         view.onHoverEnter = { [weak self] in self?.pauseAutoDismiss() }
@@ -519,15 +521,15 @@ class FloatingThumbnailController: NSObject, NSDraggingSource, QLPreviewPanelDat
         NSMenu.popUpContextMenu(menu, with: event, for: view)
     }
 
-    @objc private func contextCopy() { onCopy?(); dismiss() }
-    @objc private func contextSave() { onSave?(); dismiss() }
-    @objc private func contextSaveAs() { onSaveAs?(); dismiss() }
-    @objc private func contextPin() { onPin?(); dismiss() }
+    @objc private func contextCopy() { onCopy?(); dismissAnimated() }
+    @objc private func contextSave() { onSave?(); dismissAnimated() }
+    @objc private func contextSaveAs() { onSaveAs?(); dismissAnimated() }
+    @objc private func contextPin() { onPin?(); dismissAnimated() }
     #if !OFFLINE
-    @objc private func contextUpload() { onUpload?(); dismiss() }
+    @objc private func contextUpload() { onUpload?(); dismissAnimated() }
     #endif
-    @objc private func contextOpenEditor() { onEdit?(); dismiss() }
-    @objc private func contextDelete() { onDelete?(); dismiss() }
+    @objc private func contextOpenEditor() { onEdit?(); dismissAnimated() }
+    @objc private func contextDelete() { onDelete?(); dismissAnimated() }
     @objc private func contextCloseAll() { onCloseAll?() }
     @objc private func contextSaveAll() { onSaveAll?() }
     @objc private func contextOCR() { onOCR?() }
@@ -616,8 +618,21 @@ class FloatingThumbnailController: NSObject, NSDraggingSource, QLPreviewPanelDat
         }
     }
 
+    /// Slide the card out the way the timer does, then remove it.
+    func dismissAnimated() {
+        pauseAutoDismiss()
+        animateOut()
+    }
+
+    /// Set once the card has started leaving, so a second click during the
+    /// slide cannot start it again.
+    private var isAnimatingOut = false
+    /// The card is sliding out, and its slot in the stack is being given up.
+    var isLeaving: Bool { isAnimatingOut }
+
     private func animateOut() {
-        guard let window = window else { return }
+        guard let window = window, !isAnimatingOut else { return }
+        isAnimatingOut = true
         isInteractiveDismissActive = true
         if isScrollDismissHostActive {
             animateScrollDismissHostOut()

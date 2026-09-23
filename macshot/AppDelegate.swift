@@ -1904,9 +1904,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
             #endif
             controller.onCloseAll = { [weak self] in
                 guard let self else { return }
-                let all = self.thumbnailControllers
-                self.thumbnailControllers.removeAll()
-                for c in all { c.dismiss() }
+                // Slide them all out; each leaves the list as it finishes.
+                for c in self.thumbnailControllers { c.dismissAnimated() }
             }
             self.thumbnailControllers.append(controller)
             controller.show(at: NSPoint(x: slot.x, y: slot.y), corner: slot.corner)
@@ -2024,9 +2023,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
         }
         controller.onCloseAll = { [weak self] in
             guard let self = self else { return }
-            let all = self.thumbnailControllers
-            self.thumbnailControllers.removeAll()
-            for c in all { c.dismiss() }
+            // Slide them all out; each leaves the list as it finishes.
+            for c in self.thumbnailControllers { c.dismissAnimated() }
         }
         controller.onSaveAll = { [weak self] in
             self?.saveAllThumbnailsToFolder()
@@ -2086,7 +2084,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
         // transparent shadow margin on each side.
         let margin = FloatingThumbnailController.shadowMargin
         var y = corner.isTop ? frame.maxY - padding : frame.minY + padding
-        for c in thumbnailControllers {
+        // A card sliding out keeps its place until it is gone; moving it would
+        // yank it back into the stack mid-slide.
+        for c in thumbnailControllers where !c.isLeaving {
             let card = c.windowFrame.insetBy(dx: margin, dy: margin).size
             let x = thumbnailX(for: card.width, in: frame, corner: corner, padding: padding) - margin
             let yOrigin: CGFloat
