@@ -53,9 +53,17 @@ final class ScrollCaptureController {
 
     // MARK: - Settings
 
-    private var autoScrollEnabled: Bool = false
-    private var autoScrollSpeed: Int = 3
-    private var maxScrollHeight: Int = 30000
+    /// Fallbacks for settings that were never written. The settings pane reads
+    /// these too: it used to carry its own (on, medium, unlimited) and showed
+    /// the opposite of what a capture actually did.
+    static let defaultAutoScrollEnabled = false
+    static let defaultAutoScrollSpeed = 3
+    /// 0 means unlimited.
+    static let defaultMaxScrollHeight = 30000
+
+    private var autoScrollEnabled: Bool = defaultAutoScrollEnabled
+    private var autoScrollSpeed: Int = defaultAutoScrollSpeed
+    private var maxScrollHeight: Int = defaultMaxScrollHeight
     private var frozenDetectionEnabled: Bool = true
 
     // MARK: - Private
@@ -127,9 +135,9 @@ final class ScrollCaptureController {
         guard !isActive, !isCancelled else { return }
 
         let ud = UserDefaults.standard
-        autoScrollEnabled = ud.object(forKey: "scrollAutoScrollEnabled") as? Bool ?? false
-        autoScrollSpeed = ud.object(forKey: "scrollAutoScrollSpeed") as? Int ?? 3
-        maxScrollHeight = ud.object(forKey: "scrollMaxHeight") as? Int ?? 30000
+        autoScrollEnabled = ud.object(forKey: "scrollAutoScrollEnabled") as? Bool ?? Self.defaultAutoScrollEnabled
+        autoScrollSpeed = ud.object(forKey: "scrollAutoScrollSpeed") as? Int ?? Self.defaultAutoScrollSpeed
+        maxScrollHeight = ud.object(forKey: "scrollMaxHeight") as? Int ?? Self.defaultMaxScrollHeight
         frozenDetectionEnabled = ud.object(forKey: "scrollFrozenDetection") as? Bool ?? true
 
         // Convert AppKit coords to CG coords (top-left origin) for CGWindowListCreateImage

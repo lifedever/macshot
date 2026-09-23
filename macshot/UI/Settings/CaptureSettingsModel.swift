@@ -67,12 +67,21 @@ final class CaptureSettingsModel: ObservableObject {
     @Published var thumbnailAutoDismiss: Int {
         didSet { store(thumbnailAutoDismiss, "thumbnailAutoDismiss", oldValue) }
     }
-    /// 0 = stack, 1 = replace.
+    /// 0 = stack, 1 = replace — the picker's tags. Stored as the Bool the
+    /// card reads; see `ThumbnailPlacementPreferences`.
     @Published var thumbnailStacking: Int {
-        didSet { store(thumbnailStacking, "thumbnailStacking", oldValue) }
+        didSet {
+            guard thumbnailStacking != oldValue else { return }
+            ThumbnailPlacementPreferences.setStacks(thumbnailStacking == 0)
+        }
     }
+    /// Index into `FloatingThumbnailCorner.allCases`, stored as its raw value.
     @Published var thumbnailCorner: Int {
-        didSet { store(thumbnailCorner, "thumbnailCorner", oldValue) }
+        didSet {
+            guard thumbnailCorner != oldValue,
+                  FloatingThumbnailCorner.allCases.indices.contains(thumbnailCorner) else { return }
+            ThumbnailPlacementPreferences.setCorner(FloatingThumbnailCorner.allCases[thumbnailCorner])
+        }
     }
     @Published var thumbnailScale: Double {
         didSet { store(thumbnailScale, "thumbnailScale", oldValue) }
@@ -134,9 +143,10 @@ final class CaptureSettingsModel: ObservableObject {
         ImageEncoder.Format.allCases.filter { ImageEncoder.isFormatAvailable($0) }
     }
 
-    /// Only JPEG and WebP carry a quality setting; PNG and HEIC ignore it.
+    /// Whether the encoder applies the quality value to this format — JPEG,
+    /// HEIC, WebP and AVIF do; PNG is lossless.
     var formatHasQuality: Bool {
-        imageFormat == "jpeg" || imageFormat == "webp"
+        ImageEncoder.Format(rawValue: imageFormat)?.hasQuality ?? false
     }
 
     @Published var imageQuality: Double {
@@ -234,12 +244,12 @@ final class CaptureSettingsModel: ObservableObject {
 
     init() {
         let ud = UserDefaults.standard
-        quickCaptureMode = ud.integer(forKey: "quickCaptureMode")
+        quickCaptureMode = ud.object(forKey: "quickCaptureMode") as? Int ?? 1
         quickCaptureOpenEditor = ud.bool(forKey: "quickCaptureOpenEditor")
         closeEditorAfterCopy = DetachedEditorWindowController.closesAfterCopy
         ocrAction = ud.integer(forKey: "ocrAction")
         playSound = ud.object(forKey: "playCopySound") as? Bool ?? true
-        rememberLastTool = ud.bool(forKey: "rememberLastTool")
+        rememberLastTool = ud.object(forKey: "rememberLastTool") as? Bool ?? true
         captureCursor = ud.bool(forKey: "captureCursor")
         doubleClickToCopy = ud.object(forKey: "doubleClickToCopy") as? Bool ?? true
         hideInstructions = ud.bool(forKey: "hideCaptureInstructions")
@@ -250,29 +260,29 @@ final class CaptureSettingsModel: ObservableObject {
         browserElementSnap = ud.object(forKey: OverlayView.browserElementSnapEnabledKey) as? Bool ?? true
         showThumbnail = ud.object(forKey: "showFloatingThumbnail") as? Bool ?? true
         thumbnailAutoDismiss = ud.object(forKey: "thumbnailAutoDismiss") as? Int ?? 5
-        thumbnailStacking = ud.integer(forKey: "thumbnailStacking")
-        thumbnailCorner = ud.integer(forKey: "thumbnailCorner")
+        thumbnailStacking = ThumbnailPlacementPreferences.stacks() ? 0 : 1
+        thumbnailCorner = FloatingThumbnailCorner.allCases.firstIndex(of: ThumbnailPlacementPreferences.corner()) ?? 0
         thumbnailScale = ud.object(forKey: "thumbnailScale") as? Double ?? 1.0
-        thumbnailLetterbox = ud.bool(forKey: "thumbnailLetterbox")
+        thumbnailLetterbox = ud.object(forKey: "thumbnailLetterbox") as? Bool ?? true
         saveAction = SaveActionPreference.current.rawValue
         saveFolderPath = SaveDirectoryAccess.displayPath
         filenameTemplate = ud.string(forKey: FilenameFormatter.userDefaultsKey) ?? FilenameFormatter.defaultTemplate
         imageFormat = ud.string(forKey: "imageFormat") ?? "png"
-        imageQuality = ud.object(forKey: "imageQuality") as? Double ?? 0.9
+        imageQuality = Double(ImageEncoder.quality)
         downscaleRetina = ud.bool(forKey: "downscaleRetina")
         historyUnlimited = ud.bool(forKey: "historyUnlimited")
-        historySize = ud.object(forKey: "historySize") as? Int ?? 20
-        historyOrderByLastEdit = ud.bool(forKey: "historyOrderByLastEdit")
-        autoScroll = ud.object(forKey: "scrollAutoScrollEnabled") as? Bool ?? true
-        scrollSpeed = ud.object(forKey: "scrollAutoScrollSpeed") as? Int ?? 2
-        scrollMaxHeight = ud.integer(forKey: "scrollMaxHeight")
+        historySize = ud.object(forKey: "historySize") as? Int ?? ScreenshotHistory.defaultMaxEntries
+        historyOrderByLastEdit = ScreenshotHistory.orderByLastEdit
+        autoScroll = ud.object(forKey: "scrollAutoScrollEnabled") as? Bool ?? ScrollCaptureController.defaultAutoScrollEnabled
+        scrollSpeed = ud.object(forKey: "scrollAutoScrollSpeed") as? Int ?? ScrollCaptureController.defaultAutoScrollSpeed
+        scrollMaxHeight = ud.object(forKey: "scrollMaxHeight") as? Int ?? ScrollCaptureController.defaultMaxScrollHeight
         detectFrozenHeaders = ud.object(forKey: "scrollFrozenDetection") as? Bool ?? true
         useAppleTranslation = TranslationService.provider == .apple
         beautifyEnabled = ud.object(forKey: "beautifyEnabled") as? Bool ?? true
         beautifyMode = ud.integer(forKey: "beautifyMode")
         beautifyPadding = ud.object(forKey: "beautifyPadding") as? Double ?? 48
         beautifyCornerRadius = ud.object(forKey: "beautifyCornerRadius") as? Double ?? 10
-        beautifyShadowRadius = ud.object(forKey: "beautifyShadowRadius") as? Double ?? 30
+        beautifyShadowRadius = ud.object(forKey: "beautifyShadowRadius") as? Double ?? 20
         beautifyBackgroundBlur = ud.object(forKey: "beautifyBgBlur") as? Double ?? 0
         beautifyStyleIndex = ud.integer(forKey: "beautifyStyleIndex")
     }

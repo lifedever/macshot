@@ -175,7 +175,7 @@ enum ImageContextMenu {
     }
 }
 
-enum FloatingThumbnailCorner: String {
+enum FloatingThumbnailCorner: String, CaseIterable {
     case bottomRight
     case bottomLeft
     case topRight
@@ -187,6 +187,50 @@ enum FloatingThumbnailCorner: String {
 
     var isTop: Bool {
         self == .topLeft || self == .topRight
+    }
+}
+
+/// The card's placement preferences, read and written in one place.
+///
+/// The corner is stored as the case's raw value and stacking as a Bool
+/// (true = keep every card). The SwiftUI settings rebuild wrote both as the
+/// picker's Int tag instead, which the card never understood: the corner fell
+/// back to bottom right and stacking came out inverted. Those Int values are
+/// still read here — an Int is told apart from a stored Bool by its CF type —
+/// so nobody who changed the setting in the meantime loses the choice.
+enum ThumbnailPlacementPreferences {
+    static let cornerKey = "thumbnailCorner"
+    static let stackingKey = "thumbnailStacking"
+
+    static func corner(defaults: UserDefaults = .standard) -> FloatingThumbnailCorner {
+        let stored = defaults.object(forKey: cornerKey)
+        if let raw = stored as? String, let corner = FloatingThumbnailCorner(rawValue: raw) {
+            return corner
+        }
+        if let number = stored as? NSNumber, !isBoolean(number),
+           FloatingThumbnailCorner.allCases.indices.contains(number.intValue) {
+            return FloatingThumbnailCorner.allCases[number.intValue]
+        }
+        return .bottomRight
+    }
+
+    static func setCorner(_ corner: FloatingThumbnailCorner, defaults: UserDefaults = .standard) {
+        defaults.set(corner.rawValue, forKey: cornerKey)
+    }
+
+    /// True when every card is kept; false when a new card replaces the rest.
+    static func stacks(defaults: UserDefaults = .standard) -> Bool {
+        guard let number = defaults.object(forKey: stackingKey) as? NSNumber else { return true }
+        // Rebuilt settings stored the picker tag: 0 = stack, 1 = replace.
+        return isBoolean(number) ? number.boolValue : number.intValue == 0
+    }
+
+    static func setStacks(_ stacks: Bool, defaults: UserDefaults = .standard) {
+        defaults.set(stacks, forKey: stackingKey)
+    }
+
+    private static func isBoolean(_ number: NSNumber) -> Bool {
+        CFGetTypeID(number) == CFBooleanGetTypeID()
     }
 }
 

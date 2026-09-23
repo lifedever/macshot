@@ -56,9 +56,13 @@ final class ScreenshotHistory {
         hiddenIDs[id] == nil && (pendingRecords[id] != nil || committedRecords.contains { $0.id == id })
     }
 
+    /// Shared with the settings pane, which showed 20 while retention kept 10
+    /// and so deleted captures the pane said were still kept.
+    static let defaultMaxEntries = 10
+
     var maxEntries: Int {
         if UserDefaults.standard.bool(forKey: "historyUnlimited") { return Int.max }
-        return max(0, UserDefaults.standard.object(forKey: "historySize") as? Int ?? 10)
+        return max(0, UserDefaults.standard.object(forKey: "historySize") as? Int ?? Self.defaultMaxEntries)
     }
     static var orderByLastEdit: Bool {
         UserDefaults.standard.object(forKey: "historyOrderByLastEdit") as? Bool ?? true

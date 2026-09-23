@@ -1859,7 +1859,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
         Task { @MainActor [weak self] in
             guard let self, let poster = await Self.posterFrame(for: url) else { return }
 
-            let stacking = UserDefaults.standard.object(forKey: "thumbnailStacking") as? Bool ?? true
+            let stacking = ThumbnailPlacementPreferences.stacks()
             if !stacking {
                 self.thumbnailControllers.forEach { $0.dismiss() }
                 self.thumbnailControllers.removeAll()
@@ -1921,7 +1921,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
         let enabled = UserDefaults.standard.object(forKey: "showFloatingThumbnail") as? Bool ?? true
         guard enabled else { return }
 
-        let stacking = UserDefaults.standard.object(forKey: "thumbnailStacking") as? Bool ?? true
+        let stacking = ThumbnailPlacementPreferences.stacks()
         if !stacking {
             // Replace mode: dismiss all existing thumbnails
             thumbnailControllers.forEach { $0.dismiss() }
@@ -2084,8 +2084,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
     }
 
     private func thumbnailCorner() -> FloatingThumbnailCorner {
-        let rawValue = UserDefaults.standard.string(forKey: "thumbnailCorner") ?? FloatingThumbnailCorner.bottomRight.rawValue
-        return FloatingThumbnailCorner(rawValue: rawValue) ?? .bottomRight
+        ThumbnailPlacementPreferences.corner()
     }
 
     private func thumbnailX(
@@ -3315,7 +3314,7 @@ extension AppDelegate: OverlayWindowControllerDelegate {
         scrollCaptureController = scc
 
         // Read max height for the overlay HUD progress bar
-        let maxH = UserDefaults.standard.object(forKey: "scrollMaxHeight") as? Int ?? 30000
+        let maxH = UserDefaults.standard.object(forKey: "scrollMaxHeight") as? Int ?? ScrollCaptureController.defaultMaxScrollHeight
 
         // Tell the triggering overlay to enter scroll capture mode
         controller.setScrollCaptureState(isActive: true, maxHeight: maxH)

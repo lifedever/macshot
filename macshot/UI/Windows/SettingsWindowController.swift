@@ -157,6 +157,9 @@ class SettingsWindowController: NSWindowController, NSToolbarDelegate, NSWindowD
     /// Shared by the General and Appearance panes.
     private var generalSettingsModel: GeneralSettingsModel?
 
+    /// Set when the window closes; the next `showWindow` rebuilds the panes.
+    private var needsPaneRebuild = false
+
     var onHotkeyChanged: (() -> Void)?
     var onEditorCommandShortcutChanged: (() -> Void)?
 
@@ -1744,6 +1747,17 @@ class SettingsWindowController: NSWindowController, NSToolbarDelegate, NSWindowD
     }
 
     func showWindow() {
+        // The panes read the defaults once, when they are built, and this
+        // controller outlives the window. Rebuild on every opening so values
+        // changed elsewhere in the meantime — beautify from the toolbar, the
+        // webcam from the recording bar — show as they now are. Otherwise the
+        // pane showed the stale value, and picking the option it displayed
+        // wrote nothing, because it already matched.
+        if needsPaneRebuild {
+            needsPaneRebuild = false
+            buildPanes()
+            showTab(id: currentTabID)
+        }
         window?.center()
         window?.makeKeyAndOrderFront(nil)
         NSApp.setActivationPolicy(.regular)
@@ -1751,6 +1765,7 @@ class SettingsWindowController: NSWindowController, NSToolbarDelegate, NSWindowD
     }
 
     func windowWillClose(_ notification: Notification) {
+        needsPaneRebuild = true
         stopShortcutRecording()
         stopCommandShortcutRecording()
         stopToolShortcutRecording()

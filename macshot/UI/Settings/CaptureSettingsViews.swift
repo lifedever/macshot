@@ -17,9 +17,12 @@ struct CaptureSettingsView: View {
                     Text(L("Do nothing")).tag(3)
                 }
                 Toggle(L("Also open in Editor"), isOn: $model.quickCaptureOpenEditor)
+                // Tags are the values the capture reads: 0 = window + copy,
+                // 1 = window only, 2 = copy only.
                 Picker(L("OCR & QR Capture"), selection: $model.ocrAction) {
-                    Text(L("Show results window")).tag(0)
-                    Text(L("Copy to clipboard")).tag(1)
+                    Text(L("Show window + copy to clipboard")).tag(0)
+                    Text(L("Show window only")).tag(1)
+                    Text(L("Copy to clipboard only")).tag(2)
                 }
             }
 
