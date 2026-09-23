@@ -7399,8 +7399,11 @@ class OverlayView: NSView {
         return false
     }
 
+    /// A capture-overlay gesture only. In the editor a double-click selects or
+    /// edits what is under it, as in any document editor; treating it as
+    /// "copy" there copied the whole image and closed the window.
     private var isDoubleClickToCopyEnabled: Bool {
-        UserDefaults.standard.object(forKey: "doubleClickToCopy") as? Bool ?? true
+        !isEditorMode && (UserDefaults.standard.object(forKey: "doubleClickToCopy") as? Bool ?? true)
     }
 
     private func hasPendingTextToolDoubleClickCopy(for event: NSEvent) -> Bool {
