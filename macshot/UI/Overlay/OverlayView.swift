@@ -893,6 +893,8 @@ class OverlayView: NSView {
     }
 
     func startScrollCaptureMode() {
+        // Entering twice would leak the first tap, monitors and HUD.
+        if isScrollCapturing { stopScrollCaptureMode() }
         isScrollCapturing = true
         updateResolutionBox()  // hide the box during scroll capture
         scrollCaptureStripCount = 0
@@ -932,7 +934,10 @@ class OverlayView: NSView {
         scrollCaptureKeyMonitor = NSEvent.addGlobalMonitorForEvents(matching: .keyDown) { event in
             handleScrollKey(event)
         }
-        scrollCaptureLocalKeyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
+        scrollCaptureLocalKeyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
+            // Only while this session runs: a monitor left behind swallowed
+            // Esc in every macshot window.
+            guard let self, self.isScrollCapturing else { return event }
             handleScrollKey(event)
             if event.keyCode == 53 { return nil }  // consume
             return event
@@ -11103,6 +11108,9 @@ class OverlayView: NSView {
     }
 
     func reset() {
+        // A pooled overlay dismissed mid-session must not keep the session's
+        // event tap, key monitors or HUD alive into the next capture.
+        if isScrollCapturing { stopScrollCaptureMode() }
         restoreSystemCursorAfterPicker()
         state = .idle
         selectionRect = .zero

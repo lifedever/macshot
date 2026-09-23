@@ -1629,6 +1629,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
 
     @objc private func spaceDidChange() {
         guard !overlayControllers.isEmpty else { return }
+        // A scroll capture has to be cancelled, not just have its overlay
+        // taken away: the session, its HUD and its event tap would otherwise
+        // carry on with nothing on screen to stop them.
+        if let controller = scrollCaptureOverlayController, scrollCaptureController != nil {
+            overlayDidRequestCancelScrollCapture(controller)
+            return
+        }
         dismissOverlays()
     }
 
@@ -3288,6 +3295,10 @@ extension AppDelegate: OverlayWindowControllerDelegate {
     }
 
     func overlayDidRequestScrollCapture(_ controller: OverlayWindowController, rect: NSRect, screen: NSScreen) {
+        // One session at a time; a second would orphan the first's HUD, event
+        // tap and key monitor. (Other screens' overlays are dismissed when a
+        // session starts, so this is a backstop.)
+        guard scrollCaptureController == nil else { return }
         if !AXIsProcessTrusted() {
             dismissOverlays()
             let opts = [kAXTrustedCheckOptionPrompt.takeUnretainedValue(): true] as CFDictionary
@@ -3308,6 +3319,17 @@ extension AppDelegate: OverlayWindowControllerDelegate {
         }
 
         scrollCaptureOverlayController = controller
+
+        // The other screens' overlays stayed up — frozen, dimmed, clickable,
+        // and still in scroll-capture mode — so a click on one started a
+        // second session over this one. The first session's HUD, its event
+        // tap (which swallows mouse-moved system-wide) and its Esc monitor
+        // were then never removed until quit. The capture happens on this
+        // screen only; the rest go back to the live desktop.
+        for other in overlayControllers where other !== controller {
+            other.dismiss()
+        }
+        overlayControllers.removeAll { $0 !== controller }
 
         let scc = ScrollCaptureController(captureRect: rect, screen: screen)
         scc.excludedWindowIDs = overlayControllers.map { $0.windowNumber }
