@@ -72,6 +72,55 @@ final class UploadSettingsModel: ObservableObject {
     @Published var s3PathPrefix: String  { didSet { store(s3PathPrefix, "s3PathPrefix", oldValue) } }
     @Published var s3PublicRead: Bool    { didSet { store(s3PublicRead, "s3PublicRead", oldValue) } }
 
+    /// Result of the last S3 "Test Connection", shown inline under the button.
+    @Published var s3TestResult: String?
+    @Published var s3TestFailed = false
+
+    /// Writes a small marker object to the bucket with the current settings.
+    /// This used to call the AppKit pane's handler, whose fields no longer
+    /// exist after the SwiftUI rebuild — the button crashed the app.
+    func testS3() {
+        guard S3Uploader.shared.isConfigured else {
+            s3TestResult = L("Fill in endpoint, bucket, and credentials first")
+            s3TestFailed = true
+            return
+        }
+        s3TestResult = L("Testing...")
+        s3TestFailed = false
+        let testData = Data("macshot connection test".utf8)
+        let testKey = ".macshot_test_\(UUID().uuidString.prefix(8)).txt"
+        S3Uploader.shared.upload(data: testData, filename: testKey, contentType: "text/plain") { [weak self] result in
+            guard let self else { return }
+            switch result {
+            case .success:
+                self.s3TestResult = L("Connection successful!")
+                self.s3TestFailed = false
+            case .failure(let error):
+                self.s3TestResult = error.localizedDescription
+                self.s3TestFailed = true
+            }
+        }
+    }
+
+    // MARK: imgbb upload history
+
+    /// An imgbb upload made with the shared key can only be removed through its
+    /// delete link, so the links are kept and listed — newest first.
+    struct ImgbbUpload: Identifiable {
+        let id: Int
+        let link: String
+        let deleteURL: String
+    }
+
+    static let imgbbHistoryLimit = 5
+
+    var imgbbUploads: [ImgbbUpload] {
+        let stored = UserDefaults.standard.array(forKey: "imgbbUploads") as? [[String: String]] ?? []
+        return stored.enumerated().reversed().prefix(Self.imgbbHistoryLimit).map { index, entry in
+            ImgbbUpload(id: index, link: entry["link"] ?? "", deleteURL: entry["deleteURL"] ?? "")
+        }
+    }
+
     // MARK: GitHub
 
     @Published var githubToken: String       { didSet { store(githubToken, "githubToken", oldValue) } }

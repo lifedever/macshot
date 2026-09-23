@@ -296,9 +296,7 @@ class SettingsWindowController: NSWindowController, NSToolbarDelegate, NSWindowD
             SettingsPaneHostingView(rootView: RecordingSettingsView()).configuredAsSettingsPane())
         #if !OFFLINE
         tabContentViews["uploads"] = trackingPaneSize(
-            SettingsPaneHostingView(rootView: UploadSettingsView(
-                onTestS3: { [weak self] in self?.s3TestTapped(NSButton()) }
-            )).configuredAsSettingsPane())
+            SettingsPaneHostingView(rootView: UploadSettingsView()).configuredAsSettingsPane())
         #endif
         tabContentViews["about"] = trackingPaneSize(
             SettingsPaneHostingView(rootView: AboutSettingsView(
@@ -942,37 +940,6 @@ class SettingsWindowController: NSWindowController, NSToolbarDelegate, NSWindowD
 
     @objc private func s3PublicReadChanged(_ sender: NSButton) {
         UserDefaults.standard.set(sender.state == .on, forKey: "s3PublicRead")
-    }
-
-    @objc private func s3TestTapped(_ sender: NSButton) {
-        // Save current field values first
-        s3FieldChanged(s3EndpointField)
-
-        guard S3Uploader.shared.isConfigured else {
-            s3StatusLabel.stringValue = L("Fill in endpoint, bucket, and credentials first")
-            s3StatusLabel.textColor = .systemOrange
-            return
-        }
-
-        s3TestBtn.isEnabled = false
-        s3StatusLabel.stringValue = L("Testing...")
-        s3StatusLabel.textColor = .secondaryLabelColor
-
-        // Upload a tiny test file
-        let testData = Data("macshot connection test".utf8)
-        let testKey = ".macshot_test_\(UUID().uuidString.prefix(8)).txt"
-        S3Uploader.shared.upload(data: testData, filename: testKey, contentType: "text/plain") { [weak self] result in
-            guard let self = self else { return }
-            self.s3TestBtn.isEnabled = true
-            switch result {
-            case .success:
-                self.s3StatusLabel.stringValue = L("Connection successful!")
-                self.s3StatusLabel.textColor = .systemGreen
-            case .failure(let error):
-                self.s3StatusLabel.stringValue = error.localizedDescription
-                self.s3StatusLabel.textColor = .systemRed
-            }
-        }
     }
 
     private func reloadUploadsTab() {

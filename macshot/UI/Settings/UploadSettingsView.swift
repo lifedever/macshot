@@ -1,4 +1,5 @@
 #if !OFFLINE
+import AppKit
 import SwiftUI
 
 /// The Uploads settings pane.
@@ -8,7 +9,6 @@ import SwiftUI
 /// made it hard to tell which credentials were actually in use.
 struct UploadSettingsView: View {
     @StateObject private var model = UploadSettingsModel()
-    var onTestS3: () -> Void
 
     var body: some View {
         Form {
@@ -32,6 +32,7 @@ struct UploadSettingsView: View {
         .scrollDisabled(true)
     }
 
+    @ViewBuilder
     private var imgbbSection: some View {
         Section {
             TextField(L("API key"), text: $model.imgbbKey)
@@ -39,6 +40,31 @@ struct UploadSettingsView: View {
             Text("imgbb")
         } footer: {
             Text(L("A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)."))
+        }
+        let uploads = model.imgbbUploads
+        if !uploads.isEmpty {
+            Section(L("Upload History")) {
+                ForEach(uploads) { upload in
+                    LabeledContent {
+                        HStack(spacing: 8) {
+                            Button(L("Copy")) {
+                                NSPasteboard.general.clearContents()
+                                NSPasteboard.general.setString(upload.link, forType: .string)
+                            }
+                            Button(L("Delete")) {
+                                if let url = URL(string: upload.deleteURL) { NSWorkspace.shared.open(url) }
+                            }
+                            .disabled(URL(string: upload.deleteURL) == nil)
+                            .help(upload.deleteURL)
+                        }
+                    } label: {
+                        Text(upload.link)
+                            .truncationMode(.middle)
+                            .lineLimit(1)
+                            .textSelection(.enabled)
+                    }
+                }
+            }
         }
     }
 
@@ -68,7 +94,14 @@ struct UploadSettingsView: View {
             field(L("Path Prefix"), $model.s3PathPrefix, placeholder: "screenshots/")
             Toggle(L("Make uploads publicly readable"), isOn: $model.s3PublicRead)
             LabeledContent(L("Connection")) {
-                Button(L("Test Connection"), action: onTestS3)
+                Button(L("Test Connection")) { model.testS3() }
+            }
+            if let result = model.s3TestResult {
+                Text(result)
+                    .font(.callout)
+                    .foregroundStyle(model.s3TestFailed ? Color.red : .secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
     }
