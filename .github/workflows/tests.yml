@@ -113,27 +113,59 @@ jobs:
         run: |
           XC=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1)
           if [ -z "$XC" ]; then XC=$(ls -d /Applications/Xcode*.app | sort -V | tail -1); fi
+          echo "Using $XC"
           sudo xcode-select -s "$XC/Contents/Developer"
+          xcodebuild -version
 
+      # The console shows only "error:" lines, and a failure can print none —
+      # the build just fails with no reason given. Keep the whole log, print
+      # what surrounds the failure, and upload the file.
       - name: Build Release (normal variant)
         run: |
-          set -o pipefail
+          set +e -o pipefail
           xcodebuild build \
             -scheme macshot \
             -configuration Release \
             -destination 'platform=macOS' \
             CODE_SIGNING_ALLOWED=NO \
+            2>&1 | tee xcodebuild-release.log \
             | { grep -E "error:|\*\* BUILD" || true; }
-          exit ${PIPESTATUS[0]}
+          status=${PIPESTATUS[0]}
+          if [ "$status" -ne 0 ]; then
+            echo "::group::Failure context"
+            grep -nE -A12 "error|[Ss]tack dump|signal|crash|failed with" xcodebuild-release.log | cut -c1-600 | tail -300
+            echo "::endgroup::"
+          fi
+          exit $status
 
+      # Run even when the normal variant failed, so one run reports both.
       - name: Build Release (offline variant)
+        if: ${{ !cancelled() }}
         run: |
-          set -o pipefail
+          set +e -o pipefail
           xcodebuild build \
             -scheme macshot \
             -configuration Release \
             -destination 'platform=macOS' \
             CODE_SIGNING_ALLOWED=NO \
             SWIFT_ACTIVE_COMPILATION_CONDITIONS='$(inherited) OFFLINE' \
+            2>&1 | tee xcodebuild-release-offline.log \
             | { grep -E "error:|\*\* BUILD" || true; }
-          exit ${PIPESTATUS[0]}
+          status=${PIPESTATUS[0]}
+          if [ "$status" -ne 0 ]; then
+            echo "::group::Failure context"
+            grep -nE -A12 "error|[Ss]tack dump|signal|crash|failed with" xcodebuild-release-offline.log | cut -c1-600 | tail -300
+            echo "::endgroup::"
+          fi
+          exit $status
+
+      - name: Upload build logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-build-logs
+          path: |
+            xcodebuild-release.log
+            xcodebuild-release-offline.log
+          if-no-files-found: ignore
+          retention-days: 7
