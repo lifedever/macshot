@@ -8627,11 +8627,17 @@ class OverlayView: NSView {
         }
     }
 
-    /// A toolbar button's secondary choices, opened beside it: above a button
-    /// in the bottom bar, to the left of one in the side bar.
+    /// Which side of a toolbar button its popover opens on. A button in the
+    /// side bar opens to the left, clear of the bar: opening above it covered
+    /// the buttons higher up. Elsewhere the caller's usual side is kept.
+    func toolbarPopoverEdge(for anchor: NSView, otherwise edge: NSRectEdge = .maxY) -> NSRectEdge {
+        isButton(anchor, inStrip: rightStripView) ? .minX : edge
+    }
+
+    /// A toolbar button's secondary choices, opened beside it.
     private func showToolbarList(_ list: ListPickerView, from anchorView: NSView) {
-        let edge: NSRectEdge = isButton(anchorView, inStrip: rightStripView) ? .minX : .maxY
-        PopoverHelper.showList(list, relativeTo: anchorView.bounds, of: anchorView, preferredEdge: edge)
+        PopoverHelper.showList(list, relativeTo: anchorView.bounds, of: anchorView,
+                               preferredEdge: toolbarPopoverEdge(for: anchorView))
     }
 
     private func showKeystrokeModeMenu(anchorView: NSView) {
@@ -10945,7 +10951,8 @@ class OverlayView: NSView {
 
         let size = picker.preferredSize
         if let anchor = anchorView {
-            PopoverHelper.show(picker, size: size, relativeTo: anchor.bounds, of: anchor, preferredEdge: .minY)
+            PopoverHelper.show(picker, size: size, relativeTo: anchor.bounds, of: anchor,
+                               preferredEdge: toolbarPopoverEdge(for: anchor, otherwise: .minY))
         } else if anchorRect != .zero {
             PopoverHelper.showAtPoint(picker, size: size, at: NSPoint(x: anchorRect.midX, y: anchorRect.midY), in: self, preferredEdge: .minY)
         } else {

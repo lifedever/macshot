@@ -108,11 +108,14 @@ class ColorPickerView: NSView {
             let r = NSRect(x: x, y: y, width: swatchSize, height: swatchSize)
 
             color.setFill()
-            NSBezierPath(roundedRect: r, xRadius: 4, yRadius: 4).fill()
+            NSBezierPath(roundedRect: r, xRadius: 5, yRadius: 5).fill()
+            // A hairline on every swatch: white vanished into a light popover
+            // and black into a dark one.
+            Self.strokeEdge(of: NSBezierPath(roundedRect: r.insetBy(dx: 0.25, dy: 0.25), xRadius: 5, yRadius: 5))
 
             if colorsMatch(selectedColor, color) {
                 ToolbarLayout.iconColor.setStroke()
-                let border = NSBezierPath(roundedRect: r.insetBy(dx: -1, dy: -1), xRadius: 5, yRadius: 5)
+                let border = NSBezierPath(roundedRect: r.insetBy(dx: -2.5, dy: -2.5), xRadius: 7, yRadius: 7)
                 border.lineWidth = 2
                 border.stroke()
             }
@@ -133,6 +136,7 @@ class ColorPickerView: NSView {
             if let saved = customColors[i] {
                 saved.setFill()
                 NSBezierPath(ovalIn: r).fill()
+                Self.strokeEdge(of: NSBezierPath(ovalIn: r.insetBy(dx: 0.25, dy: 0.25)))
                 if selectedColorSlot == i {
                     ToolbarLayout.iconColor.setStroke()
                     let b = NSBezierPath(ovalIn: r.insetBy(dx: -2, dy: -2))
@@ -168,6 +172,7 @@ class ColorPickerView: NSView {
         let gRect = NSRect(x: padding, y: cursorY - gradientSize, width: pickerWidth - padding * 2, height: gradientSize)
         gradientRect = gRect
         drawHSBGradient(in: gRect)
+        Self.strokeEdge(of: NSBezierPath(roundedRect: gRect.insetBy(dx: 0.25, dy: 0.25), xRadius: 5, yRadius: 5))
 
         // Crosshair
         let cx = gRect.minX + hue * gRect.width
@@ -215,29 +220,56 @@ class ColorPickerView: NSView {
         let path = NSBezierPath(roundedRect: rect, xRadius: 4, yRadius: 4)
         NSGradient(starting: selectedColor.withAlphaComponent(0), ending: selectedColor.withAlphaComponent(1))?.draw(in: path, angle: 0)
 
-        // Border
-        ToolbarLayout.iconColor.withAlphaComponent(0.3).setStroke()
-        let border = NSBezierPath(roundedRect: rect, xRadius: 4, yRadius: 4)
-        border.lineWidth = 0.5
-        border.stroke()
+        Self.strokeEdge(of: NSBezierPath(roundedRect: rect.insetBy(dx: 0.25, dy: 0.25), xRadius: 4, yRadius: 4))
 
-        // Thumb
-        let thumbX = rect.minX + opacity * rect.width
-        let thumbH = rect.height + 4
-        let thumbRect = NSRect(x: thumbX - 4, y: rect.midY - thumbH / 2, width: 8, height: thumbH)
-        ToolbarLayout.iconColor.setFill()
-        NSBezierPath(roundedRect: thumbRect, xRadius: 3, yRadius: 3).fill()
-        NSColor.black.withAlphaComponent(0.3).setStroke()
-        NSBezierPath(roundedRect: thumbRect, xRadius: 3, yRadius: 3).stroke()
-
-        // Label
+        // Label, on the side away from the thumb so the thumb never covers it.
         let label = "\(Int(opacity * 100))%" as NSString
         let attrs: [NSAttributedString.Key: Any] = [
-            .font: NSFont.monospacedDigitSystemFont(ofSize: 8, weight: .medium),
-            .foregroundColor: ToolbarLayout.iconColor.withAlphaComponent(0.8),
+            .font: NSFont.monospacedDigitSystemFont(ofSize: 8, weight: .semibold),
+            .foregroundColor: NSColor.white,
+            .shadow: Self.labelShadow,
         ]
         let size = label.size(withAttributes: attrs)
-        label.draw(at: NSPoint(x: rect.maxX - size.width - 2, y: rect.midY - size.height / 2), withAttributes: attrs)
+        let labelX = opacity > 0.5 ? rect.minX + 4 : rect.maxX - size.width - 4
+        label.draw(at: NSPoint(x: labelX, y: rect.midY - size.height / 2), withAttributes: attrs)
+
+        drawThumb(at: rect.minX + opacity * rect.width, in: rect)
+    }
+
+    private static let labelShadow: NSShadow = {
+        let shadow = NSShadow()
+        shadow.shadowColor = NSColor.black.withAlphaComponent(0.6)
+        shadow.shadowBlurRadius = 1.5
+        shadow.shadowOffset = .zero
+        return shadow
+    }()
+
+    /// The hairline that gives swatches, the colour field and the bars an
+    /// edge against the popover, from the glyph colour so it suits either look.
+    private static func strokeEdge(of path: NSBezierPath) {
+        ToolbarLayout.iconColor.withAlphaComponent(ToolbarLayout.isDarkSurface ? 0.25 : 0.18).setStroke()
+        path.lineWidth = 0.5
+        path.stroke()
+    }
+
+    /// A white slider thumb with a soft shadow, like the system colour sliders;
+    /// it reads on any colour the bar shows, in light and dark alike.
+    private func drawThumb(at x: CGFloat, in rect: NSRect) {
+        let thumbH = rect.height + 4
+        let thumbRect = NSRect(x: x - 4, y: rect.midY - thumbH / 2, width: 8, height: thumbH)
+        let path = NSBezierPath(roundedRect: thumbRect, xRadius: 3, yRadius: 3)
+        NSGraphicsContext.saveGraphicsState()
+        let shadow = NSShadow()
+        shadow.shadowColor = NSColor.black.withAlphaComponent(0.35)
+        shadow.shadowBlurRadius = 2
+        shadow.shadowOffset = NSSize(width: 0, height: -0.5)
+        shadow.set()
+        NSColor.white.setFill()
+        path.fill()
+        NSGraphicsContext.restoreGraphicsState()
+        NSColor.black.withAlphaComponent(0.2).setStroke()
+        path.lineWidth = 0.5
+        path.stroke()
     }
 
     private func drawHSBGradient(in rect: NSRect) {
@@ -278,21 +310,18 @@ class ColorPickerView: NSView {
         let currentHS = NSColor(calibratedHue: hue, saturation: saturation, brightness: 1, alpha: 1)
         let path = NSBezierPath(roundedRect: rect, xRadius: 4, yRadius: 4)
         NSGradient(starting: .black, ending: currentHS)?.draw(in: path, angle: 0)
-
-        let bx = rect.minX + brightness * rect.width
-        let thumbH = rect.height + 4
-        let thumbRect = NSRect(x: bx - 4, y: rect.midY - thumbH / 2, width: 8, height: thumbH)
-        ToolbarLayout.iconColor.setFill()
-        NSBezierPath(roundedRect: thumbRect, xRadius: 3, yRadius: 3).fill()
-        NSColor.black.withAlphaComponent(0.3).setStroke()
-        NSBezierPath(roundedRect: thumbRect, xRadius: 3, yRadius: 3).stroke()
+        Self.strokeEdge(of: NSBezierPath(roundedRect: rect.insetBy(dx: 0.25, dy: 0.25), xRadius: 4, yRadius: 4))
+        drawThumb(at: rect.minX + brightness * rect.width, in: rect)
     }
 
     private func drawHexDisplay(in rect: NSRect) {
-        // A field tint from the glyph colour, so it reads on the popover in
-        // light and dark alike (a fixed dark grey hid the hex in Light mode).
-        ToolbarLayout.iconColor.withAlphaComponent(ToolbarLayout.isDarkSurface ? 0.10 : 0.07).setFill()
-        NSBezierPath(roundedRect: rect, xRadius: 4, yRadius: 4).fill()
+        // A near-solid field: the popover is translucent glass, and a faint
+        // tint let whatever sat behind it show through the hex. (A fixed dark
+        // grey before that hid the hex in Light mode.)
+        let field = NSBezierPath(roundedRect: rect, xRadius: 5, yRadius: 5)
+        (ToolbarLayout.isDarkSurface ? NSColor.black.withAlphaComponent(0.35) : NSColor.white.withAlphaComponent(0.85)).setFill()
+        field.fill()
+        Self.strokeEdge(of: NSBezierPath(roundedRect: rect.insetBy(dx: 0.25, dy: 0.25), xRadius: 5, yRadius: 5))
 
         // Preview circle
         let circleSize: CGFloat = 12

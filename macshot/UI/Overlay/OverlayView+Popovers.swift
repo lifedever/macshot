@@ -33,7 +33,7 @@ extension OverlayView {
 
         if let anchor = anchorView {
             PopoverHelper.show(
-                container, size: size, relativeTo: anchor.bounds, of: anchor, preferredEdge: .maxY)
+                container, size: size, relativeTo: anchor.bounds, of: anchor, preferredEdge: toolbarPopoverEdge(for: anchor, otherwise: .maxY))
         } else {
             PopoverHelper.showAtPoint(
                 container, size: size, at: NSPoint(x: anchorRect.maxX + 4, y: anchorRect.midY),
@@ -65,7 +65,7 @@ extension OverlayView {
         let size = picker.preferredSize
         if let anchor = anchorView {
             PopoverHelper.show(
-                picker, size: size, relativeTo: anchor.bounds, of: anchor, preferredEdge: .maxY)
+                picker, size: size, relativeTo: anchor.bounds, of: anchor, preferredEdge: toolbarPopoverEdge(for: anchor, otherwise: .maxY))
         } else {
             PopoverHelper.showAtPoint(
                 picker, size: size, at: NSPoint(x: anchorRect.maxX + 4, y: anchorRect.midY),
@@ -124,7 +124,7 @@ extension OverlayView {
             if let anchor = anchorView {
                 PopoverHelper.show(
                     scrollView, size: popoverSize, relativeTo: anchor.bounds, of: anchor,
-                    preferredEdge: .maxY)
+                    preferredEdge: toolbarPopoverEdge(for: anchor, otherwise: .maxY))
             } else {
                 PopoverHelper.showAtPoint(
                     scrollView, size: popoverSize,
@@ -178,7 +178,7 @@ extension OverlayView {
         if let anchor = anchorView {
             PopoverHelper.show(
                 picker, size: picker.preferredSize, relativeTo: anchor.bounds, of: anchor,
-                preferredEdge: .minY)
+                preferredEdge: toolbarPopoverEdge(for: anchor, otherwise: .minY))
         } else {
             PopoverHelper.showAtPoint(
                 picker, size: picker.preferredSize,
@@ -295,7 +295,7 @@ extension OverlayView {
         if let anchor = anchorView {
             PopoverHelper.show(
                 picker, size: picker.preferredSize, relativeTo: anchor.bounds, of: anchor,
-                preferredEdge: .minY)
+                preferredEdge: toolbarPopoverEdge(for: anchor, otherwise: .minY))
         } else {
             PopoverHelper.showAtPoint(
                 picker, size: picker.preferredSize,
@@ -472,7 +472,7 @@ extension OverlayView {
 
         if let anchor = anchorView {
             PopoverHelper.show(
-                container, size: size, relativeTo: anchor.bounds, of: anchor, preferredEdge: .maxY)
+                container, size: size, relativeTo: anchor.bounds, of: anchor, preferredEdge: toolbarPopoverEdge(for: anchor, otherwise: .maxY))
         } else {
             PopoverHelper.showAtPoint(
                 container, size: size,
@@ -579,7 +579,7 @@ extension OverlayView {
         let size = picker.preferredSize
         if let anchor = anchorView {
             PopoverHelper.show(
-                picker, size: size, relativeTo: anchor.bounds, of: anchor, preferredEdge: .maxY)
+                picker, size: size, relativeTo: anchor.bounds, of: anchor, preferredEdge: toolbarPopoverEdge(for: anchor, otherwise: .maxY))
         } else {
             PopoverHelper.showAtPoint(
                 picker, size: size,
