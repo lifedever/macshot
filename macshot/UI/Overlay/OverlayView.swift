@@ -43,12 +43,15 @@ protocol OverlayViewDelegate: AnyObject {
 enum UndoEntry {
     case added(Annotation)  // annotation was added; undo removes it
     case deleted(Annotation, Int)  // annotation was deleted at index; undo re-inserts it
-    /// Image transform (crop/flip): stores the previous image and annotation offsets to restore.
-    /// `previousSnappedWindowImage` is non-nil only for transforms that also
-    /// changed the separately-captured window image beautify's window-snap
-    /// mode draws from.
+    /// Image transform (crop/flip/expand): stores the previous image, and each
+    /// annotation paired with a clone of how it was before the transform.
+    /// Crop and canvas expansion shift every annotation and flip mirrors
+    /// them; undo used to restore only the pixels, leaving the marks where
+    /// the transform had put them. `previousSnappedWindowImage` is non-nil
+    /// only for transforms that also changed the separately-captured window
+    /// image beautify's window-snap mode draws from.
     case imageTransform(previousImage: NSImage, previousSnappedWindowImage: NSImage?,
-                        annotationOffsets: [(Annotation, CGFloat, CGFloat)])
+                        annotationStates: [(annotation: Annotation, state: Annotation)])
     /// Property change: stores the annotation and a snapshot taken before the edit.
     case propertyChange(annotation: Annotation, snapshot: Annotation)
 
@@ -4181,6 +4184,42 @@ class OverlayView: NSView {
 
     // MARK: - Editor Image Transforms
 
+    /// Every annotation paired with a copy of its current state, taken before
+    /// a transform moves or mirrors it.
+    func annotationStatesForUndo() -> [(annotation: Annotation, state: Annotation)] {
+        annotations.map { (annotation: $0, state: $0.clone()) }
+    }
+
+    /// Put each annotation back into its saved state and return the states it
+    /// had, so the opposite direction (redo after undo) can swap them back.
+    /// Call after the image and canvas bounds have been swapped, so censor
+    /// and loupe annotations re-bake against the image they now sit on.
+    private func swapAnnotationStates(
+        _ states: [(annotation: Annotation, state: Annotation)]
+    ) -> [(annotation: Annotation, state: Annotation)] {
+        let swapped = states.map { entry -> (annotation: Annotation, state: Annotation) in
+            let current = entry.annotation.clone()
+            entry.annotation.copyProperties(from: entry.state)
+            return (annotation: entry.annotation, state: current)
+        }
+        rebakeImageDerivedAnnotations(states.map(\.annotation))
+        return swapped
+    }
+
+    /// Pixelate, blur and loupe annotations hold pixels sampled from the
+    /// screenshot. After the screenshot itself changes under them — a flip,
+    /// or undoing a crop — they must sample it again.
+    private func rebakeImageDerivedAnnotations(_ anns: [Annotation]) {
+        guard let image = screenshotImage else { return }
+        let bounds = captureDrawRect
+        for ann in anns where ann.tool == .pixelate || ann.tool == .blur || ann.tool == .loupe {
+            ann.sourceImage = image
+            ann.sourceImageBounds = bounds
+            ann.bakedBlurNSImage = nil
+            if ann.tool == .loupe { ann.bakeLoupe() } else { ann.bakePixelate() }
+        }
+    }
+
     func flipImageHorizontally() {
         guard let original = screenshotImage,
             let cgImage = original.cgImage(forProposedRect: nil, context: nil, hints: nil)
@@ -4188,7 +4227,8 @@ class OverlayView: NSView {
 
         // Save state for undo
         let prevImage = original.copy() as! NSImage
-        undoStack.append(.imageTransform(previousImage: prevImage, previousSnappedWindowImage: nil, annotationOffsets: []))
+        undoStack.append(.imageTransform(previousImage: prevImage, previousSnappedWindowImage: nil,
+                                         annotationStates: annotationStatesForUndo()))
         redoStack.removeAll()
 
         let w = cgImage.width
@@ -4210,22 +4250,11 @@ class OverlayView: NSView {
 
         screenshotImage = NSImage(cgImage: flipped, size: original.size)
 
-        // Mirror annotation X coordinates around the image center
-        let imgW = original.size.width
+        // Mirror annotations around the image center
         for ann in annotations {
-            ann.startPoint.x = selectionRect.minX + (selectionRect.maxX - ann.startPoint.x)
-            ann.endPoint.x = selectionRect.minX + (selectionRect.maxX - ann.endPoint.x)
-            if let cp = ann.controlPoint {
-                ann.controlPoint = NSPoint(
-                    x: selectionRect.minX + (selectionRect.maxX - cp.x), y: cp.y)
-            }
-            // Mirror freeform points
-            if let pts = ann.points {
-                ann.points = pts.map {
-                    NSPoint(x: selectionRect.minX + (selectionRect.maxX - $0.x), y: $0.y)
-                }
-            }
+            ann.mirror(horizontally: true, in: selectionRect)
         }
+        rebakeImageDerivedAnnotations(annotations)
 
         cachedCompositedImage = nil
         needsDisplay = true
@@ -4237,7 +4266,8 @@ class OverlayView: NSView {
         else { return }
 
         let prevImage = original.copy() as! NSImage
-        undoStack.append(.imageTransform(previousImage: prevImage, previousSnappedWindowImage: nil, annotationOffsets: []))
+        undoStack.append(.imageTransform(previousImage: prevImage, previousSnappedWindowImage: nil,
+                                         annotationStates: annotationStatesForUndo()))
         redoStack.removeAll()
 
         let w = cgImage.width
@@ -4258,20 +4288,11 @@ class OverlayView: NSView {
 
         screenshotImage = NSImage(cgImage: flipped, size: original.size)
 
-        // Mirror annotation Y coordinates around the image center
+        // Mirror annotations around the image center
         for ann in annotations {
-            ann.startPoint.y = selectionRect.minY + (selectionRect.maxY - ann.startPoint.y)
-            ann.endPoint.y = selectionRect.minY + (selectionRect.maxY - ann.endPoint.y)
-            if let cp = ann.controlPoint {
-                ann.controlPoint = NSPoint(
-                    x: cp.x, y: selectionRect.minY + (selectionRect.maxY - cp.y))
-            }
-            if let pts = ann.points {
-                ann.points = pts.map {
-                    NSPoint(x: $0.x, y: selectionRect.minY + (selectionRect.maxY - $0.y))
-                }
-            }
+            ann.mirror(horizontally: false, in: selectionRect)
         }
+        rebakeImageDerivedAnnotations(annotations)
 
         cachedCompositedImage = nil
         needsDisplay = true
@@ -4385,8 +4406,8 @@ class OverlayView: NSView {
         let prevImage = original.copy() as! NSImage
         let shiftDx = -targetRect.origin.x
         let shiftDy = -targetRect.origin.y
-        let offsets = annotations.map { ($0, shiftDx, shiftDy) }
-        undoStack.append(.imageTransform(previousImage: prevImage, previousSnappedWindowImage: nil, annotationOffsets: offsets))
+        undoStack.append(.imageTransform(previousImage: prevImage, previousSnappedWindowImage: nil,
+                                         annotationStates: annotationStatesForUndo()))
 
         screenshotImage = NSImage(cgImage: newCG, size: NSSize(width: newPtW, height: newPtH))
         cachedOpaqueRect = nil  // invalidate — image content changed
@@ -4484,7 +4505,7 @@ class OverlayView: NSView {
         undoStack.append(.imageTransform(
             previousImage: original.copy() as? NSImage ?? original,
             previousSnappedWindowImage: previousSnapped,
-            annotationOffsets: []))
+            annotationStates: []))
         redoStack.removeAll()
 
         screenshotImage = invertedScreenshot
@@ -5078,7 +5099,8 @@ class OverlayView: NSView {
 
         // Save state for undo before modifying
         let prevImage = originalImage.copy() as! NSImage
-        undoStack.append(.imageTransform(previousImage: prevImage, previousSnappedWindowImage: nil, annotationOffsets: []))
+        undoStack.append(.imageTransform(previousImage: prevImage, previousSnappedWindowImage: nil,
+                                         annotationStates: annotationStatesForUndo()))
         redoStack.removeAll()
 
         let dx = selectionRect.minX - canvasRect.minX
@@ -10313,13 +10335,10 @@ class OverlayView: NSView {
             ann.copyProperties(from: snapshot)
             redoStack.append(.propertyChange(annotation: ann, snapshot: currentSnapshot))
             cachedCompositedImage = nil
-        case .imageTransform(let previousImage, let previousSnapped, _):
+        case .imageTransform(let previousImage, let previousSnapped, let states):
             // Undo crop/flip — swap the current image with the saved one
             let currentImage = screenshotImage?.copy() as? NSImage ?? previousImage
             let currentSnapped = previousSnapped != nil ? snappedWindowImage : nil
-            redoStack.append(.imageTransform(previousImage: currentImage,
-                                             previousSnappedWindowImage: currentSnapped,
-                                             annotationOffsets: []))
             screenshotImage = previousImage
             if previousSnapped != nil { snappedWindowImage = previousSnapped }
             // Update selectionRect to match restored image size
@@ -10327,10 +10346,24 @@ class OverlayView: NSView {
                 selectionRect = NSRect(origin: .zero, size: previousImage.size)
                 if isInsideScrollView { frame.size = previousImage.size }
             }
+            redoStack.append(.imageTransform(previousImage: currentImage,
+                                             previousSnappedWindowImage: currentSnapped,
+                                             annotationStates: swapAnnotationStates(states)))
             cachedCompositedImage = nil
             resetZoom()
+            syncEditorSizeLabel()
         }
         needsDisplay = true
+    }
+
+    /// The editor's top bar shows the canvas size; undo and redo of a crop or
+    /// expansion change it just as the transform itself does.
+    private func syncEditorSizeLabel() {
+        guard isEditorMode,
+              let cg = screenshotImage?.cgImage(forProposedRect: nil, context: nil, hints: nil),
+              let topBar = chromeParentView?.subviews.compactMap({ $0 as? EditorTopBarView }).first
+        else { return }
+        topBar.updateSizeLabel(width: cg.width, height: cg.height)
     }
 
     private func clearHoverIfNeeded(_ removed: [Annotation]) {
@@ -10380,21 +10413,22 @@ class OverlayView: NSView {
             ann.copyProperties(from: snapshot)
             undoStack.append(.propertyChange(annotation: ann, snapshot: currentSnapshot))
             cachedCompositedImage = nil
-        case .imageTransform(let redoImage, let redoSnapped, _):
+        case .imageTransform(let redoImage, let redoSnapped, let states):
             // Redo crop/flip — swap back
             let currentImage = screenshotImage?.copy() as? NSImage ?? redoImage
             let currentSnapped = redoSnapped != nil ? snappedWindowImage : nil
-            undoStack.append(.imageTransform(previousImage: currentImage,
-                                             previousSnappedWindowImage: currentSnapped,
-                                             annotationOffsets: []))
             screenshotImage = redoImage
             if redoSnapped != nil { snappedWindowImage = redoSnapped }
             if isEditorMode {
                 selectionRect = NSRect(origin: .zero, size: redoImage.size)
                 if isInsideScrollView { frame.size = redoImage.size }
             }
+            undoStack.append(.imageTransform(previousImage: currentImage,
+                                             previousSnappedWindowImage: currentSnapped,
+                                             annotationStates: swapAnnotationStates(states)))
             cachedCompositedImage = nil
             if !isInsideScrollView { resetZoom() }
+            syncEditorSizeLabel()
         }
         needsDisplay = true
     }

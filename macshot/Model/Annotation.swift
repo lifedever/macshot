@@ -526,6 +526,47 @@ class Annotation {
         }
     }
 
+    /// Mirror every stored coordinate across the vertical (horizontal flip)
+    /// or horizontal (vertical flip) centre line of `bounds`, so the mark
+    /// stays on what it pointed at after the image is flipped.
+    ///
+    /// Text keeps reading left to right: its box moves to the mirrored spot
+    /// but the glyphs are not reversed. Flip used to move only the endpoints
+    /// and freeform points, so labels, multi-point arrows, rotation and a
+    /// loupe's source area stayed behind on the old side.
+    func mirror(horizontally: Bool, in bounds: NSRect) {
+        func flip(_ p: NSPoint) -> NSPoint {
+            horizontally
+                ? NSPoint(x: bounds.minX + bounds.maxX - p.x, y: p.y)
+                : NSPoint(x: p.x, y: bounds.minY + bounds.maxY - p.y)
+        }
+        func flip(_ r: NSRect) -> NSRect {
+            var out = r
+            if horizontally {
+                out.origin.x = bounds.minX + bounds.maxX - r.maxX
+            } else {
+                out.origin.y = bounds.minY + bounds.maxY - r.maxY
+            }
+            return out
+        }
+        if tool == .text && textDrawRect != .zero {
+            textDrawRect = flip(textDrawRect)
+            startPoint = textDrawRect.origin
+            endPoint = NSPoint(x: textDrawRect.maxX, y: textDrawRect.maxY)
+        } else {
+            startPoint = flip(startPoint)
+            endPoint = flip(endPoint)
+        }
+        controlPoint = controlPoint.map(flip)
+        points = points?.map(flip)
+        anchorPoints = anchorPoints?.map(flip)
+        loupeSourceRect = loupeSourceRect.map(flip)
+        // A mirror reverses the sense of rotation.
+        rotation = -rotation
+        bakedBlurNSImage = nil
+        outlineGlowImage = nil
+    }
+
     // MARK: - Geometry helpers
 
     /// Approximate the arc length of a cubic bezier by sampling.
