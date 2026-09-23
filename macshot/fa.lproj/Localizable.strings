@@ -540,7 +540,7 @@
 
 /* Scroll Capture HUD */
 "Auto Scroll" = "پیمایش خودکار";
-"Stop" = "توقف";
+"Confirm" = "تایید";
 "Scrolling..." = "در حال پیمایش...";
 
 /* Effects Picker (Adjust popover) */

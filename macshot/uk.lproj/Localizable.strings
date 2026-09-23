@@ -528,7 +528,7 @@
 
 /* Scroll Capture HUD */
 "Auto Scroll" = "Автопрокрутка";
-"Stop" = "Зупинити";
+"Confirm" = "Підтвердити";
 "Scrolling..." = "Прокрутка...";
 
 /* Effects Picker (Adjust popover) */

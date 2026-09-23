@@ -532,7 +532,7 @@
 
 /* Scroll Capture HUD */
 "Auto Scroll" = "Deslocamento Automático";
-"Stop" = "Parar";
+"Confirm" = "Confirmar";
 "Scrolling..." = "A deslocar...";
 
 /* Effects Picker (Adjust popover) */

@@ -528,7 +528,7 @@
 
 /* Scroll Capture HUD */
 "Auto Scroll" = "Авто-превъртане";
-"Stop" = "Спиране";
+"Confirm" = "Потвърди";
 "Scrolling..." = "Превъртане...";
 
 /* Effects Picker (Adjust popover) */

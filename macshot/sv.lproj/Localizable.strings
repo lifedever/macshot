@@ -545,7 +545,7 @@
 
 /* Scroll Capture HUD */
 "Auto Scroll" = "Auto-rullning";
-"Stop" = "Stoppa";
+"Confirm" = "Bekräfta";
 "Scrolling..." = "Rullar...";
 
 /* Effects Picker (Adjust popover) */

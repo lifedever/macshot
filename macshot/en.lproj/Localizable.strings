@@ -463,7 +463,7 @@
 
 /* Scroll Capture HUD */
 "Auto Scroll" = "Auto Scroll";
-"Stop" = "Stop";
+"Confirm" = "Confirm";
 "Scrolling..." = "Scrolling...";
 
 /* Effects Picker (Adjust popover) */

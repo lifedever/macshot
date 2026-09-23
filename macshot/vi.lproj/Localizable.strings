@@ -536,7 +536,7 @@
 
 /* Scroll Capture HUD */
 "Auto Scroll" = "Tự động cuộn";
-"Stop" = "Dừng";
+"Confirm" = "Xác nhận";
 "Scrolling..." = "Đang cuộn...";
 
 /* Effects Picker (Adjust popover) */

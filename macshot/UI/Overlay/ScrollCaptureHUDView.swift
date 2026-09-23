@@ -38,7 +38,7 @@ class ScrollCaptureHUDView: NSView {
         autoScrollButton.action = #selector(autoScrollClicked)
         addSubview(autoScrollButton)
 
-        stopButton.title = L("Stop")
+        stopButton.title = L("Confirm")
         stopButton.bezelStyle = .recessed
         stopButton.isBordered = false
         stopButton.wantsLayer = true
@@ -84,7 +84,11 @@ class ScrollCaptureHUDView: NSView {
 
     func layoutSubviews() {
         let pad: CGFloat = 8
-        let stopBtnW: CGFloat = 56
+        // Sized to its title: "Confirm" runs longer than 56pt in several
+        // languages (Bestätigen, Подтвердить, Megerősítés).
+        let titleW = (stopButton.title as NSString)
+            .size(withAttributes: [.font: stopButton.font ?? .systemFont(ofSize: 12, weight: .semibold)]).width
+        let stopBtnW = max(56, ceil(titleW) + 24)
         let autoBtnW: CGFloat = isAutoScrolling ? 90 : 86
         let btnH: CGFloat = 24
         let barH: CGFloat = 36
@@ -151,7 +155,7 @@ class ScrollCaptureHUDPanel: NSPanel {
     /// on screen and clear of the camera housing. A full-height selection (the
     /// common case for scroll capture) leaves no room either side, and the
     /// fallback used to put the HUD at the very top of the display, where the
-    /// notch swallowed the Auto Scroll and Stop buttons.
+    /// notch swallowed the Auto Scroll and Confirm buttons.
     ///
     /// `topInset` is the display's `safeAreaInsets.top`: 0 on a display with no
     /// notch, the height of the camera housing otherwise.

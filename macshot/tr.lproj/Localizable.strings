@@ -540,7 +540,7 @@
 
 /* Scroll Capture HUD */
 "Auto Scroll" = "Otomatik Kaydır";
-"Stop" = "Durdur";
+"Confirm" = "Onayla";
 "Scrolling..." = "Kaydırılıyor...";
 
 /* Effects Picker (Adjust popover) */

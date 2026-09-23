@@ -536,7 +536,7 @@
 
 /* Scroll Capture HUD */
 "Auto Scroll" = "เลื่อนอัตโนมัติ";
-"Stop" = "หยุด";
+"Confirm" = "ยืนยัน";
 "Scrolling..." = "กำลังเลื่อน...";
 
 /* Effects Picker (Adjust popover) */

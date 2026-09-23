@@ -540,7 +540,7 @@
 
 /* Scroll Capture HUD */
 "Auto Scroll" = "تمرير تلقائي";
-"Stop" = "إيقاف";
+"Confirm" = "تأكيد";
 "Scrolling..." = "جارٍ التمرير...";
 
 /* Effects Picker (Adjust popover) */

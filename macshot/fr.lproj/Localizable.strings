@@ -539,7 +539,7 @@
 
 /* Scroll Capture HUD */
 "Auto Scroll" = "Défilement auto.";
-"Stop" = "Arrêter";
+"Confirm" = "Confirmer";
 "Scrolling..." = "Défilement...";
 
 /* Effects Picker (Adjust popover) */

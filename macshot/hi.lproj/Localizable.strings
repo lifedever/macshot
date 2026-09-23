@@ -550,7 +550,7 @@
 
 /* Scroll Capture HUD */
 "Auto Scroll" = "स्वतः स्क्रॉल";
-"Stop" = "रोकें";
+"Confirm" = "पुष्टि करें";
 "Scrolling..." = "स्क्रॉल हो रहा है...";
 
 /* Effects Picker (Adjust popover) */

@@ -545,7 +545,7 @@
 
 /* Scroll Capture HUD */
 "Auto Scroll" = "Automaattivieritys";
-"Stop" = "Pysäytä";
+"Confirm" = "Vahvista";
 "Scrolling..." = "Vieritetään...";
 
 /* Effects Picker (Adjust popover) */

@@ -550,7 +550,7 @@
 
 /* Scroll Capture HUD */
 "Auto Scroll" = "স্বয়ংক্রিয় স্ক্রল";
-"Stop" = "থামুন";
+"Confirm" = "নিশ্চিত করুন";
 "Scrolling..." = "স্ক্রল হচ্ছে...";
 
 /* Effects Picker (Adjust popover) */

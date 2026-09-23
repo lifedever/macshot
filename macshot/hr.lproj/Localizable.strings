@@ -528,7 +528,7 @@
 
 /* Scroll Capture HUD */
 "Auto Scroll" = "Automatsko pomicanje";
-"Stop" = "Zaustavi";
+"Confirm" = "Potvrdi";
 "Scrolling..." = "Pomicanje...";
 
 /* Effects Picker (Adjust popover) */

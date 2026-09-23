@@ -528,7 +528,7 @@
 
 /* Scroll Capture HUD */
 "Auto Scroll" = "Automatické posouvání";
-"Stop" = "Zastavit";
+"Confirm" = "Potvrdit";
 "Scrolling..." = "Posouvání...";
 
 /* Effects Picker (Adjust popover) */

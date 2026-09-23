@@ -523,7 +523,7 @@
 
 /* Scroll Capture HUD */
 "Auto Scroll" = "Auto-przewijanie";
-"Stop" = "Zatrzymaj";
+"Confirm" = "Potwierdź";
 "Scrolling..." = "Przewijanie...";
 
 /* Effects Picker (Adjust popover) */

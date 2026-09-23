@@ -550,7 +550,7 @@
 
 /* Scroll Capture HUD */
 "Auto Scroll" = "தானியங்கு உருள்தல்";
-"Stop" = "நிறுத்து";
+"Confirm" = "உறுதிசெய்";
 "Scrolling..." = "உருள்கிறது...";
 
 /* Effects Picker (Adjust popover) */

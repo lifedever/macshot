@@ -550,7 +550,7 @@
 
 /* Scroll Capture HUD */
 "Auto Scroll" = "Αυτόματη κύλιση";
-"Stop" = "Διακοπή";
+"Confirm" = "Επιβεβαίωση";
 "Scrolling..." = "Κύλιση...";
 
 /* Effects Picker (Adjust popover) */

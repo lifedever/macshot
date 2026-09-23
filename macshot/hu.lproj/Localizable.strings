@@ -550,7 +550,7 @@
 
 /* Scroll Capture HUD */
 "Auto Scroll" = "Automatikus görgetés";
-"Stop" = "Megállítás";
+"Confirm" = "Megerősítés";
 "Scrolling..." = "Görgetés...";
 
 /* Effects Picker (Adjust popover) */

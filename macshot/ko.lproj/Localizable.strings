@@ -525,7 +525,7 @@
 
 /* Scroll Capture HUD */
 "Auto Scroll" = "자동 스크롤";
-"Stop" = "중지";
+"Confirm" = "확인";
 "Scrolling..." = "스크롤 중...";
 
 /* Effects Picker (Adjust popover) */

@@ -444,7 +444,7 @@
 
 /* Scroll Capture HUD */
 "Auto Scroll" = "自动滚动";
-"Stop" = "停止";
+"Confirm" = "确认";
 "Scrolling..." = "滚动中...";
 
 /* Effects Picker (Adjust popover) */

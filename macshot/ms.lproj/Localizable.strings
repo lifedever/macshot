@@ -536,7 +536,7 @@
 
 /* Scroll Capture HUD */
 "Auto Scroll" = "Auto Tatal";
-"Stop" = "Berhenti";
+"Confirm" = "Sahkan";
 "Scrolling..." = "Menatal...";
 
 /* Effects Picker (Adjust popover) */

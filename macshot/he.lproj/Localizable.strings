@@ -540,7 +540,7 @@
 
 /* Scroll Capture HUD */
 "Auto Scroll" = "גלילה אוטומטית";
-"Stop" = "עצור";
+"Confirm" = "אישור";
 "Scrolling..." = "גולל...";
 
 /* Effects Picker (Adjust popover) */
