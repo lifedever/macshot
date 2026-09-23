@@ -275,11 +275,17 @@ class OverlayView: NSView {
     /// Last tool the user explicitly picked — persisted across app launches.
     private static var lastUsedTool: AnnotationTool = {
         if let raw = UserDefaults.standard.object(forKey: "lastUsedTool") as? Int,
-           let tool = AnnotationTool(rawValue: raw) {
+           let tool = AnnotationTool(rawValue: raw), isRememberable(tool) {
             return tool
         }
         return .rectangle
     }()
+    /// Crop is a mode of the editor, not a drawing tool, and the capture
+    /// overlay has no crop button. Remembered, it opened the next capture on
+    /// an invisible crop tool whose drag replaced the screenshot.
+    private static func isRememberable(_ tool: AnnotationTool) -> Bool {
+        tool != .select && tool != .loupe && tool != .crop
+    }
     private static var shouldRememberLastTool: Bool {
         UserDefaults.standard.object(forKey: "rememberLastTool") as? Bool ?? true
     }
@@ -295,7 +301,7 @@ class OverlayView: NSView {
     }() {
         didSet {
             // Persist drawing tool choices; skip transient/mode tools
-            if OverlayView.shouldRememberLastTool && currentTool != .select && currentTool != .loupe {
+            if OverlayView.shouldRememberLastTool && OverlayView.isRememberable(currentTool) {
                 OverlayView.lastUsedTool = currentTool
                 UserDefaults.standard.set(currentTool.rawValue, forKey: "lastUsedTool")
             }
@@ -5131,9 +5137,30 @@ class OverlayView: NSView {
         } else {
             resetZoom()
         }
-        currentTool = .arrow
+        endCropMode()
         rebuildToolbarLayout()
         needsDisplay = true
+    }
+
+    /// The drawing tool active before Crop, which leaving crop returns to.
+    private var toolBeforeCrop: AnnotationTool?
+
+    /// The editor's crop button: enter crop, or leave it for the previous tool.
+    func toggleCropMode() {
+        if currentTool == .crop {
+            endCropMode()
+        } else {
+            toolBeforeCrop = currentTool
+            currentTool = .crop
+        }
+        rebuildToolbarLayout()
+        needsDisplay = true
+    }
+
+    private func endCropMode() {
+        guard currentTool == .crop else { return }
+        currentTool = toolBeforeCrop ?? OverlayView.lastUsedTool
+        toolBeforeCrop = nil
     }
 
     // MARK: - Annotation Controls
@@ -11087,6 +11114,7 @@ class OverlayView: NSView {
         redoStack.removeAll()
         currentAnnotation = nil
         currentTool = OverlayView.initialTool
+        toolBeforeCrop = nil
         numberCounter = 0
         showToolbars = false
         dismissResolutionBox()
