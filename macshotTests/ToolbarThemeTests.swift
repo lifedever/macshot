@@ -50,13 +50,6 @@ final class ToolbarThemeTests: XCTestCase {
         }
     }
 
-    func testTheGuidesGapsAreDarkForLightContent() {
-        // A light tint alone washes out on light content; the gaps carry it there.
-        let gap = ToolbarLayout.snapGuideGapColor.usingColorSpace(.sRGB)!
-        XCTAssertLessThan(luma(gap), 0.1)
-        XCTAssertGreaterThan(gap.alphaComponent, 0.3)
-    }
-
     func testAPaleAccentIsDarkenedForHandleOutlines() {
         // A nearly white outline would vanish on light content.
         let pale = NSColor(srgbRed: 1.0, green: 0.97, blue: 0.8, alpha: 1)

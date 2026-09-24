@@ -4740,9 +4740,6 @@ class OverlayView: NSView {
         line.move(to: start)
         line.line(to: end)
         line.lineWidth = ToolbarLayout.snapGuideLineWidth
-        // Dark underneath, showing in the gaps; see `ToolbarLayout.snapGuideColor`.
-        ToolbarLayout.snapGuideGapColor.setStroke()
-        line.stroke()
         let pattern = ToolbarLayout.snapGuideDashPattern
         line.setLineDash(pattern, count: pattern.count, phase: 0)
         ToolbarLayout.snapGuideColor.setStroke()

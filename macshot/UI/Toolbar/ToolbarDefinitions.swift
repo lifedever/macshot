@@ -306,18 +306,15 @@ class ToolbarLayout {
         return accent.blended(withFraction: (luma - 0.7) / 0.3 * 0.55, of: .black) ?? accent
     }
 
-    // Alignment guides. Mostly they cross the overlay's dimmed scrim, which
-    // over light content is a mid grey — the one background no single colour
-    // stands out on: the default purple managed 1.4:1 against it. So a guide
-    // is two-tone at one width: dashes in a light tint of the theme's accent,
-    // which carry it on the scrim and on dark content, over a dark line that
-    // shows only in the gaps and carries it on light content, where the tint
-    // alone washes out. Same width underneath, not wider: an earlier halo that
-    // was wider read as a second, blurrier guide beside the first.
+    // Alignment guides: one dashed stroke with open gaps. They mostly cross the
+    // overlay's dimmed scrim, which over light content is a mid grey the accent
+    // itself hardly shows on — the default purple managed 1.4:1 against it —
+    // so the dashes are a light tint of the theme's accent. Filling the gaps
+    // with a dark line held them up on light content too, but a dashed guide
+    // should read as dashed, and it was taken back out.
     static var snapGuideColor: NSColor {
         accentColor.usingColorSpace(.sRGB)?.blended(withFraction: 0.45, of: .white) ?? accentColor
     }
-    static let snapGuideGapColor = NSColor.black.withAlphaComponent(0.45)
     static let snapGuideDashPattern: [CGFloat] = [8, 5]
     static let snapGuideLineWidth: CGFloat = 2
 
