@@ -294,46 +294,32 @@ class FloatingThumbnailController: NSObject, NSDraggingSource, QLPreviewPanelDat
         self.videoURL = videoURL
     }
 
-    /// Card size for a capture, following the capture's own aspect ratio.
-    ///
-    /// A fixed 240×160 card meant every shot that was not 3:2 sat inside it with
-    /// a margin of card showing, which reads as a frame around the image. Sizing
-    /// the card to the shot lets the shot fill it edge to edge.
-    ///
-    /// The short edge is floored so the hover controls still fit: two pills plus
-    /// their gap need ~130pt, and the corner discs need room beside them.
     /// Transparent margin around the card, so the drop shadow has somewhere to
     /// land. The window's own `hasShadow` is off: it is computed from the
     /// window's opaque region, which for a translucent rounded card produced a
     /// bright seam along the edge instead of a shadow under it.
     static let shadowMargin: CGFloat = 22
 
-    /// Window size for a capture: the card plus the shadow margin.
-    static func windowSize(for image: NSImage) -> NSSize {
-        let card = thumbnailSize(for: image)
+    /// Window size of a card: the card plus the shadow margin.
+    static var windowSize: NSSize {
+        let card = thumbnailSize
         return NSSize(width: card.width + shadowMargin * 2,
                       height: card.height + shadowMargin * 2)
     }
 
-    static func thumbnailSize(for image: NSImage) -> NSSize {
+    /// The card is square whatever the shot's shape, so every card in a stack
+    /// is the same size. The shot sits inside it — whole, on the card's own
+    /// fill, by default, or cropped to fill it when "Fit image in preview" is
+    /// off.
+    ///
+    /// The side is the 240pt long edge the card had when it followed the
+    /// shot's aspect ratio, so a shot still shows at the size it did; Settings
+    /// › "preview size" scales it. That also leaves the hover controls the
+    /// room they need (two pills and their gap, ~130pt at the same scale).
+    static var thumbnailSize: NSSize {
         let scale = CGFloat(UserDefaults.standard.object(forKey: "thumbnailScale") as? Double ?? 1.0)
-        // Long edge stays at upstream's 240 — Settings › "preview size" is the
-        // knob for this, and shrinking the base too would compound with it.
-        let maxEdge = round(240 * scale)
-        // Floor is what the hover controls need: two pills plus their gap, with
-        // room for the corner discs beside them.
-        let minEdge = round(126 * scale)
-        let w = image.size.width, h = image.size.height
-        guard w > 0, h > 0 else { return NSSize(width: maxEdge, height: round(160 * scale)) }
-
-        var size = w >= h
-            ? NSSize(width: maxEdge, height: round(maxEdge * h / w))
-            : NSSize(width: round(maxEdge * w / h), height: maxEdge)
-        // Panoramic or very tall shots would otherwise produce a card too thin to
-        // hold the controls; those fall back to a clamped card and a filled crop.
-        size.width = max(size.width, minEdge)
-        size.height = max(size.height, minEdge)
-        return size
+        let side = round(240 * scale)
+        return NSSize(width: side, height: side)
     }
 
     /// Where a card's window comes to rest: the requested origin, kept so the
@@ -361,13 +347,11 @@ class FloatingThumbnailController: NSObject, NSDraggingSource, QLPreviewPanelDat
         guard let screen = NSScreen.preferred else { return }
         let screenFrame = screen.visibleFrame
 
-        // Fit image within max bounds preserving aspect ratio, then enforce
-        // a minimum window size so hover buttons always fit (letterbox if needed).
         let padding: CGFloat = 16
         guard image.size.width > 0 && image.size.height > 0 else { return }
 
-        // Fixed thumbnail size scaled by user preference (default 1.0 = 240x160)
-        let thumbSize = Self.windowSize(for: image)
+        // A square card, scaled by the "preview size" setting.
+        let thumbSize = Self.windowSize
 
         // Clamp so the card always fits within the visible screen.
         let finalFrame = NSRect(
@@ -1145,9 +1129,13 @@ private class ThumbnailView: NSView {
     /// Card geometry. The shot sits inset on the card with its own corner radius and drop
     /// shadow, so it reads as a photo resting on a surface instead of a cropped fill.
     static let cardCornerRadius: CGFloat = 14
-    /// The shot is the card, so it takes the card's corner radius and no inset.
-    private var shotCornerRadius: CGFloat { Self.cardCornerRadius }
-    private var shotInset: CGFloat { 0 }
+    /// The card is square, so a whole shot rarely fills it: it sits inset with
+    /// a smaller radius of its own. Cropped to fill, the shot is the card and
+    /// takes the card's radius — an inset would only frame the crop.
+    private var shotCornerRadius: CGFloat {
+        fitsImageInPreview ? scaled(7, minimum: 4) : Self.cardCornerRadius
+    }
+    private var shotInset: CGFloat { fitsImageInPreview ? scaled(11, minimum: 6) : 0 }
 
     /// Rect the capture itself is drawn into, preserving aspect ratio.
     private var shotRect: NSRect {
@@ -1185,6 +1173,22 @@ private class ThumbnailView: NSView {
 
         let shot = shotRect
         let shotPath = NSBezierPath(roundedRect: shot, xRadius: shotCornerRadius, yRadius: shotCornerRadius)
+
+        if fitsImageInPreview {
+            // Lift the shot off the card, or a shot with light edges melts into
+            // a white card. Its own graphics state, so the shadow does not
+            // reach the hover chrome drawn afterwards; filled with the card's
+            // colour, so nothing shows through a shot with transparent pixels.
+            NSGraphicsContext.saveGraphicsState()
+            let shotShadow = NSShadow()
+            shotShadow.shadowColor = NSColor.black.withAlphaComponent(isDarkMode ? 0.5 : 0.2)
+            shotShadow.shadowBlurRadius = scaled(9, minimum: 4)
+            shotShadow.shadowOffset = NSSize(width: 0, height: -scaled(2, minimum: 1))
+            shotShadow.set()
+            (isDarkMode ? NSColor(white: 0.16, alpha: 1) : NSColor.white).setFill()
+            shotPath.fill()
+            NSGraphicsContext.restoreGraphicsState()
+        }
 
         NSGraphicsContext.saveGraphicsState()
         shotPath.addClip()

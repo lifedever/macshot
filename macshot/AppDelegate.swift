@@ -1844,12 +1844,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
     /// recordings share it so they stack in one column rather than landing on
     /// top of each other.
     ///
-    /// Cards follow their shot's aspect ratio, so the stacking maths uses the
-    /// real height. Padding and gap describe the *card*, but the window is
-    /// larger by the transparent shadow margin on every side — counting that
-    /// would push the card off the screen edge and space the stack too far
-    /// apart. Lay out in card terms, then expand to the window.
-    private func nextThumbnailSlot(for image: NSImage)
+    /// Padding and gap describe the *card*, but the window is larger by the
+    /// transparent shadow margin on every side — counting that would push the
+    /// card off the screen edge and space the stack too far apart. Lay out in
+    /// card terms, then expand to the window.
+    private func nextThumbnailSlot()
         -> (x: CGFloat, y: CGFloat, corner: FloatingThumbnailCorner)? {
         // Bring the existing column over first, so the new card stacks on it
         // instead of on cards left behind on another display.
@@ -1860,7 +1859,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
         let gap: CGFloat = 8
         let corner = thumbnailCorner()
         let margin = FloatingThumbnailController.shadowMargin
-        let cardSize = FloatingThumbnailController.thumbnailSize(for: image)
+        let cardSize = FloatingThumbnailController.thumbnailSize
         let xOrigin = thumbnailX(for: cardSize.width, in: screenFrame, corner: corner, padding: padding) - margin
 
         // Bottom corners stack upward, top corners stack downward.
@@ -1894,7 +1893,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
                 self.thumbnailControllers.forEach { $0.dismiss() }
                 self.thumbnailControllers.removeAll()
             }
-            guard let slot = self.nextThumbnailSlot(for: poster) else { return }
+            guard let slot = self.nextThumbnailSlot() else { return }
 
             let controller = FloatingThumbnailController(videoURL: url, poster: poster)
             controller.onDismiss = { [weak self] in
@@ -1957,7 +1956,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
             thumbnailControllers.removeAll()
         }
 
-        guard let slot = nextThumbnailSlot(for: image) else { return }
+        guard let slot = nextThumbnailSlot() else { return }
         let (xOrigin, yOrigin, corner) = slot
 
         let controller = FloatingThumbnailController(image: image)

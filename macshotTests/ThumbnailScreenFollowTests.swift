@@ -4,7 +4,8 @@ import XCTest
 /// The floating cards follow keyboard focus to whichever display the user is
 /// working on. These pin the decisions behind that: which display a card is
 /// on, when the stack may be moved, how far a card may slide in or out
-/// without crossing onto a neighbouring display, and where a new card rests.
+/// without crossing onto a neighbouring display, and the size and resting
+/// place of a new card.
 @MainActor
 final class ThumbnailScreenFollowTests: XCTestCase {
 
@@ -152,6 +153,24 @@ final class ThumbnailScreenFollowTests: XCTestCase {
         let path = exitPath(window, towardLeft: false, on: external, visibleFrame: visible, others: [builtIn])
         XCTAssertFalse(path.leavesScreen)
         XCTAssertEqual(path.x + window.width - margin, external.maxX, accuracy: 0.001)
+    }
+
+    // MARK: - The card's size
+
+    func testTheCardIsSquareAndFollowsThePreviewSize() {
+        // Every card is the same square, whatever the shot's shape, so a stack
+        // lines up; the "preview size" setting scales it.
+        withDefaults(["thumbnailScale": nil]) {
+            XCTAssertEqual(FloatingThumbnailController.thumbnailSize, NSSize(width: 240, height: 240))
+        }
+        withDefaults(["thumbnailScale": 0.5]) {
+            XCTAssertEqual(FloatingThumbnailController.thumbnailSize, NSSize(width: 120, height: 120))
+        }
+        withDefaults(["thumbnailScale": 1.5]) {
+            let window = FloatingThumbnailController.windowSize
+            XCTAssertEqual(window.width, 360 + margin * 2)
+            XCTAssertEqual(window.height, window.width)
+        }
     }
 
     // MARK: - Where a card comes to rest
