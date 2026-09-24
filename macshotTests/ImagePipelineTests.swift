@@ -233,24 +233,35 @@ final class BeautifyShadowCurveTests: XCTestCase {
     }
 }
 
-/// The screen's centre lines are snap targets beside the image's own edges.
+/// Centre lines — the screen's, and the foreground window's — are snap
+/// targets beside the image's own edges.
 @MainActor
 final class SnapTargetTests: XCTestCase {
 
-    func testTheCentreLineIsATargetWithNoEdgeNearby() {
-        XCTAssertEqual(OverlayView.nearerSnapTarget(nil, orCentre: 756, to: 753, radius: 4), 756)
+    private func target(_ edge: CGFloat?, _ lines: [CGFloat], _ position: CGFloat) -> CGFloat? {
+        OverlayView.nearestSnapTarget(edge, lines: lines, to: position, radius: 4)
     }
 
-    func testTheCentreLineIsIgnoredOutsideTheRadius() {
-        XCTAssertNil(OverlayView.nearerSnapTarget(nil, orCentre: 756, to: 750, radius: 4))
-        XCTAssertEqual(OverlayView.nearerSnapTarget(748, orCentre: 756, to: 750, radius: 4), 748,
-                       "an edge in range still wins when the centre is out of it")
+    func testACentreLineIsATargetWithNoEdgeNearby() {
+        XCTAssertEqual(target(nil, [756], 753), 756)
     }
 
-    func testTheNearerOfEdgeAndCentreWins() {
-        XCTAssertEqual(OverlayView.nearerSnapTarget(752, orCentre: 756, to: 755, radius: 4), 756)
-        XCTAssertEqual(OverlayView.nearerSnapTarget(754, orCentre: 756, to: 753, radius: 4), 754)
-        XCTAssertEqual(OverlayView.nearerSnapTarget(754, orCentre: 756, to: 755, radius: 4), 754,
-                       "a tie goes to the screenshot's own edge")
+    func testLinesOutsideTheRadiusAreIgnored() {
+        XCTAssertNil(target(nil, [756], 750))
+        XCTAssertEqual(target(748, [756], 750), 748, "an edge in range still wins when the line is out of it")
+    }
+
+    func testTheNearestOfEdgeAndLinesWins() {
+        XCTAssertEqual(target(752, [756], 755), 756)
+        XCTAssertEqual(target(754, [756], 753), 754)
+        // Screen centre at 756, window centre at 760: the pointer at 759 is
+        // nearer the window's.
+        XCTAssertEqual(target(nil, [756, 760], 759), 760)
+        XCTAssertEqual(target(nil, [756, 760], 757), 756)
+    }
+
+    func testTiesGoToTheEdgeThenTheEarlierLine() {
+        XCTAssertEqual(target(754, [756], 755), 754, "the screenshot's own edge first")
+        XCTAssertEqual(target(nil, [756, 758], 757), 756, "then the screen's centre before the window's")
     }
 }

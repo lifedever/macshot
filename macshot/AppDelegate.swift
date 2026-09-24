@@ -1019,6 +1019,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
     private var pendingQuickCaptureMode: Bool = false
     private var pendingScrollCaptureMode: Bool = false
     private var capturedWindowTitle: String?
+    /// The frontmost window of the app active when the capture started, in
+    /// AppKit screen coordinates; its centre lines are snap targets.
+    private var capturedWindowFrame: NSRect?
     /// The app that was active before the overlay appeared — re-activated on dismiss.
     /// The app that was active before macshot showed its overlay.
     private var previousApp: NSRunningApplication?
@@ -1266,8 +1269,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
         previousApp = NSWorkspace.shared.frontmostApplication
         trace?.mark("frontmost application captured")
         capturedWindowTitle = nil
+        capturedWindowFrame = nil
         let focusedWindowPID = previousApp?.processIdentifier
-        resolveFocusedWindowTitleAsync(for: focusedWindowPID, sessionID: sessionID)
+        resolveFocusedWindowAsync(for: focusedWindowPID, sessionID: sessionID)
 
         // When "remember last tool" is off, clear persisted effects/beautify
         // so new OverlayView instances start clean.
@@ -1424,6 +1428,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
                 controller.timingMark = { label in trace.mark(label) }
             }
             controller.capturedWindowTitle = capturedWindowTitle
+            controller.setForegroundWindowFrame(capturedWindowFrame)
             if pendingRecordMode { controller.setAutoRecordMode() }
             if pendingOCRMode { controller.setAutoOCRMode() }
             if pendingTranslateOverlayMode { controller.setAutoTranslateOverlayMode(targetLang: pendingTranslateOverlayLang) }
@@ -1601,26 +1606,48 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
     }
 
     /// Returns the title of the frontmost window via CGWindowList (requires Screen Recording permission).
-    nonisolated private static func focusedWindowTitle(forPID pid: pid_t) -> String? {
-        guard let windowList = CGWindowListCopyWindowInfo([.optionOnScreenOnly, .excludeDesktopElements], kCGNullWindowID) as? [[String: Any]] else { return nil }
+    /// The focused app's frontmost window, from one pass over the window list:
+    /// its title — the first titled window, which the filename template wants
+    /// — and its bounds in CoreGraphics coordinates — the first window of a
+    /// window's size, titled or not, since the frontmost one often has no
+    /// title to read.
+    nonisolated private static func focusedWindowInfo(forPID pid: pid_t) -> (title: String?, bounds: CGRect?) {
+        guard let windowList = CGWindowListCopyWindowInfo([.optionOnScreenOnly, .excludeDesktopElements], kCGNullWindowID) as? [[String: Any]] else { return (nil, nil) }
+        var title: String?
+        var bounds: CGRect?
         for info in windowList {
             guard let layer = info[kCGWindowLayer as String] as? Int, layer == 0,
-                  let ownerPID = info[kCGWindowOwnerPID as String] as? pid_t, ownerPID == pid,
-                  let name = info[kCGWindowName as String] as? String, !name.isEmpty else { continue }
-            return name
+                  let ownerPID = info[kCGWindowOwnerPID as String] as? pid_t, ownerPID == pid else { continue }
+            if bounds == nil,
+               let dict = info[kCGWindowBounds as String] as? NSDictionary,
+               let rect = CGRect(dictionaryRepresentation: dict),
+               rect.width >= 100, rect.height >= 100 {
+                bounds = rect
+            }
+            if title == nil, let name = info[kCGWindowName as String] as? String, !name.isEmpty {
+                title = name
+            }
+            if title != nil && bounds != nil { break }
         }
-        return nil
+        return (title, bounds)
     }
 
-    private func resolveFocusedWindowTitleAsync(for pid: pid_t?, sessionID: UInt) {
+    private func resolveFocusedWindowAsync(for pid: pid_t?, sessionID: UInt) {
         guard let pid = pid else { return }
+        // CoreGraphics measures from the top of the primary display, AppKit
+        // from its bottom.
+        let primaryHeight = NSScreen.screens.first?.frame.height ?? 0
         DispatchQueue.global(qos: .utility).async { [weak self] in
-            let title = Self.focusedWindowTitle(forPID: pid)
+            let info = Self.focusedWindowInfo(forPID: pid)
             DispatchQueue.main.async {
                 guard let self = self, self.isCapturing, self.captureSessionID == sessionID else { return }
-                self.capturedWindowTitle = title
+                self.capturedWindowTitle = info.title
+                self.capturedWindowFrame = info.bounds.map {
+                    NSRect(x: $0.minX, y: primaryHeight - $0.maxY, width: $0.width, height: $0.height)
+                }
                 for controller in self.overlayControllers {
-                    controller.capturedWindowTitle = title
+                    controller.capturedWindowTitle = info.title
+                    controller.setForegroundWindowFrame(self.capturedWindowFrame)
                 }
             }
         }

@@ -306,6 +306,13 @@ class OverlayWindowController {
         overlayView?.needsDisplay = true
     }
 
+    /// Hand the overlay the foreground window, given in screen coordinates.
+    func setForegroundWindowFrame(_ frame: NSRect?) {
+        overlayView?.foregroundWindowRect = frame.map {
+            $0.offsetBy(dx: -screen.frame.minX, dy: -screen.frame.minY)
+        }
+    }
+
     func setRemoteSelection(_ rect: NSRect, fullRect: NSRect = .zero, settled: Bool = true) {
         overlayView?.remoteSelectionRect = rect
         overlayView?.remoteSelectionFullRect = fullRect.width >= 1 ? fullRect : rect
