@@ -287,7 +287,7 @@ final class SnapGuideLabelPlacementTests: XCTestCase {
         XCTAssertEqual(OverlayView.labelOffset(preferred: above, other: below, length: 22, within: 4, 996), below)
     }
 
-    func testWhenNeitherSideFitsThePreferredOneIsKept() {
-        XCTAssertEqual(OverlayView.labelOffset(preferred: 30, other: -40, length: 22, within: 4, 40), 30)
+    func testWhenNeitherSideFitsThereIsNoLabel() {
+        XCTAssertNil(OverlayView.labelOffset(preferred: 30, other: -40, length: 22, within: 4, 40))
     }
 }

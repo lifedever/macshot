@@ -1083,6 +1083,9 @@ class OverlayView: NSView {
     /// The pointer when the start guides were last updated, to repaint the
     /// labels that follow it.
     private var lastStartSnapPointer: NSPoint?
+    /// The pointer of the latest drag event: what the labels sit beside while
+    /// a selection is drawn, resized or moved.
+    private var lastDragPointer: NSPoint?
     private var selectionPressPoint: NSPoint = .zero
     private var selectionPointerTravel: CGFloat = 0
     private var selectionStartWasSnapped = false
@@ -4820,52 +4823,61 @@ class OverlayView: NSView {
     /// cannot be told apart. Image edges go unlabelled — the edge is right
     /// there under the line, and edges come and go too often to carry text.
     ///
-    /// A label sits on its line beside the pointer, on the side away from the
-    /// magnifier: above or below it for a vertical line, left or right for a
-    /// horizontal one. It never covers the pointer: where that side runs off
+    /// A label sits on its line beside the pointer — above or below it for a
+    /// vertical line, left or right for a horizontal one — on the side away
+    /// from what it would hide: the magnifier before a press, the selection
+    /// while one is drawn, resized or moved. It never covers the pointer: where that side runs off
     /// the screen it goes to the other side rather than being pushed back
-    /// onto the pointer. Both lines centring on the same thing get one label.
+    /// onto the pointer. Each line has its own label, even when both centre
+    /// on the same thing: a line without one leaves its source to guesswork.
+    /// A label that fits on neither side of the pointer on screen is not drawn.
     private func drawSnapGuideLabels() {
         guard let window else { return }
-        // Before a press, the pointer the guides were found for.
-        let pointer = (state == .idle ? lastStartSnapPointer : nil)
+        // The pointer the guides were found for: before a press the last move,
+        // after it the last drag.
+        let pointer = (state == .idle ? lastStartSnapPointer : lastDragPointer)
             ?? convert(window.mouseLocationOutsideOfEventStream, from: nil)
         let offset: CGFloat = 24
-        let magnifier = colorPickerPanelRect
-        var labelled: SnapGuideSource?
+        let avoid: NSRect? = state == .idle
+            ? colorPickerPanelRect
+            : (selectionRect.width >= 1 && selectionRect.height >= 1 ? selectionRect : nil)
+        let area = bounds.insetBy(dx: 4, dy: 4)
         if let x = boundarySnapGuideX, let label = snapGuideLabel(for: boundarySnapGuideSourceX) {
             let size = snapGuideLabelSize(label)
             let above = pointer.y + offset, below = pointer.y - offset - size.height
-            let preferAbove = magnifier.map { $0.midY < pointer.y } ?? true
-            let y = Self.labelOffset(preferred: preferAbove ? above : below,
-                                     other: preferAbove ? below : above,
-                                     length: size.height, within: bounds.minY + 4, bounds.maxY - 4)
-            // Along the line it may slide to stay on screen: it is clear of the
-            // pointer vertically already.
-            let labelX = min(max(x - size.width / 2, bounds.minX + 4), bounds.maxX - 4 - size.width)
-            drawSnapGuideLabel(label, in: NSRect(x: labelX, y: y, width: size.width, height: size.height))
-            labelled = boundarySnapGuideSourceX
+            let preferAbove = avoid.map { $0.midY < pointer.y } ?? true
+            if size.width <= area.width,
+               let y = Self.labelOffset(preferred: preferAbove ? above : below,
+                                        other: preferAbove ? below : above,
+                                        length: size.height, within: area.minY, area.maxY) {
+                // Along the line it may slide to stay on screen: it is clear
+                // of the pointer vertically already.
+                let labelX = min(max(x - size.width / 2, area.minX), area.maxX - size.width)
+                drawSnapGuideLabel(label, in: NSRect(x: labelX, y: y, width: size.width, height: size.height))
+            }
         }
-        if let y = boundarySnapGuideY, boundarySnapGuideSourceY != labelled,
-           let label = snapGuideLabel(for: boundarySnapGuideSourceY) {
+        if let y = boundarySnapGuideY, let label = snapGuideLabel(for: boundarySnapGuideSourceY) {
             let size = snapGuideLabelSize(label)
             let left = pointer.x - offset - size.width, right = pointer.x + offset
-            let preferLeft = magnifier.map { $0.midX > pointer.x } ?? true
-            let x = Self.labelOffset(preferred: preferLeft ? left : right,
-                                     other: preferLeft ? right : left,
-                                     length: size.width, within: bounds.minX + 4, bounds.maxX - 4)
-            let labelY = min(max(y - size.height / 2, bounds.minY + 4), bounds.maxY - 4 - size.height)
-            drawSnapGuideLabel(label, in: NSRect(x: x, y: labelY, width: size.width, height: size.height))
+            let preferLeft = avoid.map { $0.midX > pointer.x } ?? true
+            if size.height <= area.height,
+               let x = Self.labelOffset(preferred: preferLeft ? left : right,
+                                        other: preferLeft ? right : left,
+                                        length: size.width, within: area.minX, area.maxX) {
+                let labelY = min(max(y - size.height / 2, area.minY), area.maxY - size.height)
+                drawSnapGuideLabel(label, in: NSRect(x: x, y: labelY, width: size.width, height: size.height))
+            }
         }
     }
 
     /// The preferred side's origin if a label of `length` fits there between
-    /// `low` and `high`, else the other side's. Never a point in between: that
-    /// is where the pointer is.
+    /// `low` and `high`, else the other side's, else nil — no label. Never a
+    /// point in between: that is where the pointer is.
     static func labelOffset(preferred: CGFloat, other: CGFloat, length: CGFloat,
-                            within low: CGFloat, _ high: CGFloat) -> CGFloat {
+                            within low: CGFloat, _ high: CGFloat) -> CGFloat? {
         let fits = { (origin: CGFloat) in origin >= low && origin + length <= high }
-        return fits(preferred) || !fits(other) ? preferred : other
+        if fits(preferred) { return preferred }
+        return fits(other) ? other : nil
     }
 
     private func snapGuideLabel(for source: SnapGuideSource) -> (icon: NSImage?, text: String)? {
@@ -6743,6 +6755,7 @@ class OverlayView: NSView {
 
     override func mouseDragged(with event: NSEvent) {
         let point = convert(event.locationInWindow, from: nil)
+        lastDragPointer = point
 
         // Cancel long-press timer if the user moved more than 3px (they're drawing, not selecting)
         if longPressTimer != nil {
