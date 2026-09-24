@@ -3464,7 +3464,7 @@ class OverlayView: NSView {
         // leaving one outline around the whole L. Building each piece half the
         // outline inside its mark keeps the white and the outer edge where a
         // single centred stroke put them.
-        handleOutlineColor.setStroke()
+        ToolbarLayout.accentMarkColor.setStroke()
         for path in pieces {
             path.lineWidth = outlineWidth * 2
             path.stroke()
@@ -3473,16 +3473,6 @@ class OverlayView: NSView {
         for path in pieces { path.fill() }
     }
 
-    /// The accent colour, darkened as it approaches white. A pale accent would
-    /// otherwise outline a white handle in something nearly white, which is the
-    /// same as having no outline at all.
-    private var handleOutlineColor: NSColor {
-        let accent = ToolbarLayout.accentColor
-        guard let rgb = accent.usingColorSpace(.sRGB) else { return accent }
-        let luma = 0.2126 * rgb.redComponent + 0.7152 * rgb.greenComponent + 0.0722 * rgb.blueComponent
-        guard luma > 0.7 else { return accent }
-        return accent.blended(withFraction: (luma - 0.7) / 0.3 * 0.55, of: .black) ?? accent
-    }
     /// Compare two colors by RGB components (ignoring minor floating point differences)    /// Convert NSColor to hex string like "FF3B30"
     private func colorToHexString(_ color: NSColor) -> String {
         guard let rgb = color.usingColorSpace(.deviceRGB) else { return "000000" }

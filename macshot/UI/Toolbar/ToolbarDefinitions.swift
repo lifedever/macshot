@@ -295,14 +295,26 @@ class ToolbarLayout {
     }
     static let cornerRadius: CGFloat = 6
 
-    // Alignment guides — the quiet dashed grey hairline design apps use, plus a
-    // faint light halo so it stays readable over dark screenshot content.
-    /// One dashed stroke, not two. The earlier version drew a wider translucent
-    /// halo underneath for legibility over dark screenshots, but at this weight
-    /// the halo reads as a second, blurrier guide running alongside the first.
-    /// A single heavier dash in a mid grey holds up on light and dark content
-    /// on its own.
-    static let snapGuideColor = NSColor(white: 0.52, alpha: 1)
+    /// The accent colour for marks drawn on the capture itself — selection
+    /// handles, snap guides — darkened as it approaches white. A pale accent
+    /// would otherwise draw them in something nearly white, which on light
+    /// content is the same as not drawing them.
+    static var accentMarkColor: NSColor {
+        let accent = accentColor
+        guard let rgb = accent.usingColorSpace(.sRGB) else { return accent }
+        let luma = 0.2126 * rgb.redComponent + 0.7152 * rgb.greenComponent + 0.0722 * rgb.blueComponent
+        guard luma > 0.7 else { return accent }
+        return accent.blended(withFraction: (luma - 0.7) / 0.3 * 0.55, of: .black) ?? accent
+    }
+
+    // Alignment guides: one dashed stroke, not two. An earlier version drew a
+    // wider translucent halo underneath for legibility over dark screenshots,
+    // but at this weight the halo reads as a second, blurrier guide running
+    // alongside the first.
+    /// The theme's accent, like the selection's border and handles. A grey
+    /// guide mostly crossed the overlay's dimmed scrim, where it barely showed,
+    /// and darkening it for light content only lost it further on the scrim.
+    static var snapGuideColor: NSColor { accentMarkColor }
     static let snapGuideDashPattern: [CGFloat] = [6, 5]
     static let snapGuideLineWidth: CGFloat = 2
 

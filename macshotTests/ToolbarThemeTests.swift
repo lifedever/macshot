@@ -24,6 +24,34 @@ final class ToolbarThemeTests: XCTestCase {
         try! NSKeyedArchiver.archivedData(withRootObject: color, requiringSecureCoding: false)
     }
 
+    // MARK: - Marks drawn on the capture
+
+    private func luma(_ color: NSColor) -> CGFloat {
+        let c = color.usingColorSpace(.sRGB)!
+        return 0.2126 * c.redComponent + 0.7152 * c.greenComponent + 0.0722 * c.blueComponent
+    }
+
+    func testSnapGuidesTakeTheThemesAccent() {
+        withDefaultTheme {
+            XCTAssertEqual(ToolbarLayout.snapGuideColor, ToolbarLayout.defaultAccentColor,
+                           "the guides match the selection's border and handles")
+        }
+        let green = NSColor(srgbRed: 0.2, green: 0.6, blue: 0.3, alpha: 1)
+        withDefaults(["toolbarAccentColor": archived(green)]) {
+            XCTAssertEqual(ToolbarLayout.snapGuideColor, ToolbarLayout.accentColor)
+        }
+    }
+
+    func testAPaleAccentIsDarkenedForMarksOnTheCapture() {
+        // Nearly white guides would vanish on light content.
+        let pale = NSColor(srgbRed: 1.0, green: 0.97, blue: 0.8, alpha: 1)
+        withDefaults(["toolbarAccentColor": archived(pale)]) {
+            XCTAssertLessThan(luma(ToolbarLayout.snapGuideColor), luma(pale) - 0.1)
+            XCTAssertEqual(ToolbarLayout.snapGuideColor, ToolbarLayout.accentMarkColor,
+                           "guides and handle outlines share the adjustment")
+        }
+    }
+
     func testTheDefaultThemeFollowsTheSystemAppearance() {
         withDefaultTheme {
             XCTAssertTrue(ToolbarLayout.usesDefaultTheme)
