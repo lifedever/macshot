@@ -604,13 +604,37 @@ class FloatingThumbnailController: NSObject, NSDraggingSource, QLPreviewPanelDat
         quickLookURL as NSURL?
     }
 
-    /// Animate this thumbnail to a new Y position (used when a lower thumbnail is dismissed).
+    /// Animate this thumbnail to a new position: up or down the stack when a
+    /// card below it is dismissed, or onto another display when the stack
+    /// follows the active screen.
     func moveTo(origin: NSPoint) {
         guard let window = window else { return }
         guard !isInteractiveDismissActive else { return }
         guard targetFrame.origin != origin else { return }
+        let oldFrame = targetFrame
         let newFrame = NSRect(x: origin.x, y: origin.y, width: targetFrame.width, height: targetFrame.height)
         targetFrame = newFrame
+
+        let screenFrames = NSScreen.screens.map(\.frame)
+        if Self.screenIndex(of: oldFrame, in: screenFrames) != Self.screenIndex(of: newFrame, in: screenFrames) {
+            // Another display: sliding there would carry the card across the
+            // seam, and with separate Spaces a window shows on one display at
+            // a time, so it would jump halfway. Put it down and fade it in.
+            // A zero-length animation, not a plain setFrame, so that a slide
+            // still running (the show, a reflow) cannot drag it back.
+            NSAnimationContext.runAnimationGroup { ctx in
+                ctx.duration = 0
+                window.animator().setFrame(newFrame, display: true)
+            }
+            window.alphaValue = 0
+            NSAnimationContext.runAnimationGroup { ctx in
+                ctx.duration = 0.2
+                ctx.timingFunction = CAMediaTimingFunction(name: .easeOut)
+                window.animator().alphaValue = 1
+            }
+            return
+        }
+
         NSAnimationContext.runAnimationGroup { ctx in
             ctx.duration = 0.25
             ctx.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
@@ -660,6 +684,29 @@ class FloatingThumbnailController: NSObject, NSDraggingSource, QLPreviewPanelDat
 
     private var dismissDirection: CGFloat {
         corner.isLeft ? -1 : 1
+    }
+
+    /// Whether a card's window belongs to the screen with this frame, judged by
+    /// the card's centre. The window's transparent shadow margin reaches a few
+    /// points past the screen edge, so "intersects" would also claim a
+    /// neighbouring display.
+    static func isCard(_ frame: NSRect, on screenFrame: NSRect) -> Bool {
+        screenFrame.contains(NSPoint(x: frame.midX, y: frame.midY))
+    }
+
+    static func screenIndex(of frame: NSRect, in screenFrames: [NSRect]) -> Int? {
+        screenFrames.firstIndex { isCard(frame, on: $0) }
+    }
+
+    /// Whether the card stack has to move to the active screen: some card sits
+    /// on another display, and the pointer is not over any of them. Pulling a
+    /// card out from under the pointer would take it away just as the user
+    /// reaches for it; once the pointer leaves, the next check moves it. Pass
+    /// a nil pointer to move regardless.
+    static func stackShouldFollow(cardFrames: [NSRect], activeScreen: NSRect, pointer: NSPoint?) -> Bool {
+        guard cardFrames.contains(where: { !isCard($0, on: activeScreen) }) else { return false }
+        guard let pointer else { return true }
+        return !cardFrames.contains { $0.insetBy(dx: shadowMargin, dy: shadowMargin).contains(pointer) }
     }
 
     private func visibleScreenFrame(for frame: NSRect) -> NSRect {

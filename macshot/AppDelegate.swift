@@ -191,7 +191,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
     private var settingsController: SettingsWindowController?
     private var onboardingController: PermissionOnboardingController?
     private var pinControllers: [PinWindowController] = []
-    private var thumbnailControllers: [FloatingThumbnailController] = []
+    private var thumbnailControllers: [FloatingThumbnailController] = [] {
+        didSet { updateThumbnailScreenTracking() }
+    }
+    /// Runs while any card is up; see `keepThumbnailsOnActiveScreen`.
+    private var thumbnailScreenTimer: Timer?
     private var ocrController: OCRResultController?
     private var historyMenu: NSMenu?
     private var historyOverlayController: HistoryOverlayController?
@@ -1847,6 +1851,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
     /// apart. Lay out in card terms, then expand to the window.
     private func nextThumbnailSlot(for image: NSImage)
         -> (x: CGFloat, y: CGFloat, corner: FloatingThumbnailCorner)? {
+        // Bring the existing column over first, so the new card stacks on it
+        // instead of on cards left behind on another display.
+        keepThumbnailsOnActiveScreen(ignoringPointer: true)
         guard let screen = NSScreen.preferred else { return nil }
         let screenFrame = screen.visibleFrame
         let padding: CGFloat = 16
@@ -1860,7 +1867,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
         var yOrigin = corner.isTop
             ? screenFrame.maxY - cardSize.height - padding - margin
             : screenFrame.minY + padding - margin
-        if let topController = thumbnailControllers.last {
+        // A card still sliding out keeps its old place, which may be on
+        // another display; only a card on this screen gives the next slot.
+        if let topController = thumbnailControllers.last(where: {
+            FloatingThumbnailController.isCard($0.windowFrame, on: screen.frame)
+        }) {
             let topCard = topController.windowFrame.insetBy(dx: margin, dy: margin)
             yOrigin = corner.isTop
                 ? topCard.minY - gap - cardSize.height - margin
@@ -2100,6 +2111,44 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
             }
             c.moveTo(origin: NSPoint(x: x, y: yOrigin))
         }
+    }
+
+    /// Start the active-screen check with the first card, stop it with the last.
+    private func updateThumbnailScreenTracking() {
+        if thumbnailControllers.isEmpty {
+            thumbnailScreenTimer?.invalidate()
+            thumbnailScreenTimer = nil
+        } else if thumbnailScreenTimer == nil {
+            // Default mode only: while a card's context menu is tracking, the
+            // card stays where it is.
+            let timer = Timer(timeInterval: 0.3, repeats: true) { [weak self] _ in
+                MainActor.assumeIsolated {
+                    guard let self, !self.isCapturing else { return }
+                    self.keepThumbnailsOnActiveScreen()
+                }
+            }
+            timer.tolerance = 0.1
+            RunLoop.main.add(timer, forMode: .default)
+            thumbnailScreenTimer = timer
+        }
+    }
+
+    /// Keep the cards on the display the user is working on.
+    ///
+    /// `NSScreen.main` follows keyboard focus across displays even while
+    /// macshot is in the background, but nothing announces the change:
+    /// activating an app on another display posts didActivateApplication
+    /// before `main` has caught up, and focusing another window of the same
+    /// app posts nothing at all. So the cards check while any of them is up.
+    private func keepThumbnailsOnActiveScreen(ignoringPointer: Bool = false) {
+        guard let screen = NSScreen.preferred else { return }
+        let cardFrames = thumbnailControllers.filter { !$0.isLeaving }.map(\.windowFrame)
+        guard FloatingThumbnailController.stackShouldFollow(
+            cardFrames: cardFrames,
+            activeScreen: screen.frame,
+            pointer: ignoringPointer ? nil : NSEvent.mouseLocation
+        ) else { return }
+        reflowThumbnails()
     }
 
     private func thumbnailCorner() -> FloatingThumbnailCorner {
