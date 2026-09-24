@@ -197,6 +197,9 @@ class OverlayView: NSView {
     var remoteSelectionRect: NSRect = .zero
     /// The full (unclipped) remote selection in this view's local coords — used for resize anchor calculation.
     var remoteSelectionFullRect: NSRect = .zero
+    /// False while the selection mirrored here is still being dragged out on
+    /// its own screen: like the selection itself, it gets handles once made.
+    var remoteSelectionIsSettled = true
     private var isResizingRemoteSelection: Bool = false
     private var remoteResizeHandle: ResizeHandle = .none
     private var remoteResizeAnchor: NSPoint = .zero  // the fixed corner during remote resize
@@ -2040,7 +2043,9 @@ class OverlayView: NSView {
             remoteBorder.lineWidth = 1
             ToolbarLayout.accentColor.withAlphaComponent(0.35).setStroke()
             remoteBorder.stroke()
-            drawResizeHandles(for: remoteSelectionFullRect)
+            if remoteSelectionIsSettled {
+                drawResizeHandles(for: remoteSelectionFullRect)
+            }
         }
 
         // Draw clear selection region
@@ -2394,10 +2399,8 @@ class OverlayView: NSView {
             // called from layout/selection changes — not drawn here.
 
             // Resize handles (drawn even in recording setup mode, but not during scroll capture).
-            // Also while the selection is being dragged out: the border has receded to a faint
-            // line, so without the brackets the rectangle being drawn was barely visible, and
-            // they popped in on release.
-            if (state == .selected || state == .selecting) && !isEditorMode && !isScrollCapturing {
+            // Not while the selection is being dragged out: there is nothing to grab yet.
+            if state == .selected && !isEditorMode && !isScrollCapturing {
                 drawResizeHandles(for: selectionRect)
             }
 
@@ -7528,6 +7531,9 @@ class OverlayView: NSView {
             // Real drag — use drawn rect as-is
             selectionIsFullScreen = false
             state = .selected
+            // The other screens have mirrored this drag; now it is made, their
+            // share of it gets its handles.
+            overlayDelegate?.overlayViewSelectionDidChange(selectionRect)
             applyPreSelectionLockAfterSelection()
             if !autoOCRMode && !autoQuickSaveMode && !autoScrollCaptureMode && !autoConfirmMode { showToolbars = true }
             overlayDelegate?.overlayViewDidFinishSelection(selectionRect)
@@ -7738,6 +7744,7 @@ class OverlayView: NSView {
         if selectionWasDragged {
             selectionIsFullScreen = false
             state = .selected
+            overlayDelegate?.overlayViewSelectionDidChange(selectionRect)
             applyPreSelectionLockAfterSelection()
             if !autoOCRMode && !autoQuickSaveMode && !autoScrollCaptureMode && !autoConfirmMode {
                 showToolbars = true
@@ -10947,6 +10954,7 @@ class OverlayView: NSView {
         selectionRect = .zero
         remoteSelectionRect = .zero
         remoteSelectionFullRect = .zero
+        remoteSelectionIsSettled = true
         showToolbars = false
         updateResolutionBox()  // remove the box (no selection)
         needsDisplay = true
@@ -11229,6 +11237,7 @@ class OverlayView: NSView {
         clearWindowSnapState()
         remoteSelectionRect = .zero
         remoteSelectionFullRect = .zero
+        remoteSelectionIsSettled = true
         annotations.removeAll()
         undoStack.removeAll()
         redoStack.removeAll()

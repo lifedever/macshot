@@ -3551,7 +3551,8 @@ extension AppDelegate: OverlayWindowControllerDelegate {
                                    y: globalRect.origin.y - otherOrigin.y,
                                    width: globalRect.width, height: globalRect.height)
             let clipped = localRect.intersection(NSRect(origin: .zero, size: other.screen.frame.size))
-            other.setRemoteSelection(clipped.isEmpty ? .zero : clipped, fullRect: localRect)
+            other.setRemoteSelection(clipped.isEmpty ? .zero : clipped, fullRect: localRect,
+                                     settled: controller.selectionIsSettled)
         }
     }
 

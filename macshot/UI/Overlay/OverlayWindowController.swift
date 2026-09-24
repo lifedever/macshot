@@ -127,6 +127,8 @@ class OverlayWindowController {
     private(set) var screen: NSScreen = NSScreen.main ?? NSScreen.screens.first ?? NSScreen()
     var screenshotImage: NSImage? { overlayView?.screenshotImage }
     var selectionRect: NSRect { overlayView?.selectionRect ?? .zero }
+    /// False while this screen's selection is still being dragged out.
+    var selectionIsSettled: Bool { overlayView?.state != .selecting }
     var remoteSelectionRect: NSRect { overlayView?.remoteSelectionRect ?? .zero }
 
     // Session recording overrides (from toolbar popover, nil = use UserDefaults default)
@@ -304,9 +306,10 @@ class OverlayWindowController {
         overlayView?.needsDisplay = true
     }
 
-    func setRemoteSelection(_ rect: NSRect, fullRect: NSRect = .zero) {
+    func setRemoteSelection(_ rect: NSRect, fullRect: NSRect = .zero, settled: Bool = true) {
         overlayView?.remoteSelectionRect = rect
         overlayView?.remoteSelectionFullRect = fullRect.width >= 1 ? fullRect : rect
+        overlayView?.remoteSelectionIsSettled = settled
         if rect.width >= 1 && rect.height >= 1 {
             overlayView?.hoveredSnapRect = nil
         }
