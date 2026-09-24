@@ -350,6 +350,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
             self, selector: #selector(screenParametersDidChange),
             name: NSApplication.didChangeScreenParametersNotification, object: nil
         )
+        NSWorkspace.shared.notificationCenter.addObserver(
+            self, selector: #selector(otherAppDidActivate(_:)),
+            name: NSWorkspace.didActivateApplicationNotification, object: nil
+        )
 
         // Pin from history panel
         NotificationCenter.default.addObserver(
@@ -1670,6 +1674,45 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
             self.rebuildStatusBarMenu()
             self.settingsController?.refreshShortcutDisplaysForKeyboardLayout()
         }
+    }
+
+    /// Keep the keyboard with a capture's overlays when another app is
+    /// activated under them.
+    ///
+    /// The overlay is a non-activating panel: it is the key window while
+    /// another app stays active. ⌘-Tab (or anything else) activating a third
+    /// app hands that app the keyboard, though the overlay still covers every
+    /// screen and nothing seems to change — and Esc then went to the hidden
+    /// app, leaving no way to cancel the capture. The overlay takes the key
+    /// back. Not at once: taken inside the notification, it was lost again as
+    /// the other app finished activating; a moment later it holds. Scroll
+    /// capture works in the app beneath and keeps its own Esc monitor, and a
+    /// recording has no overlay left, so both are left alone.
+    @objc private func otherAppDidActivate(_ note: Notification) {
+        guard let app = note.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication,
+              app.bundleIdentifier != Bundle.main.bundleIdentifier,
+              overlaysHoldTheKeyboard else { return }
+        let session = captureSessionID
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { [weak self] in
+            guard let self, self.captureSessionID == session, self.overlaysHoldTheKeyboard else { return }
+            self.keyboardOverlayController()?.makeKey()
+        }
+    }
+
+    private var overlaysHoldTheKeyboard: Bool {
+        isCapturing && !overlayControllers.isEmpty && recordingEngine == nil && scrollCaptureController == nil
+    }
+
+    /// The overlay that should have the keyboard: the one holding a selection,
+    /// else the one under the pointer.
+    private func keyboardOverlayController() -> OverlayWindowController? {
+        if let selected = overlayControllers.first(where: {
+            $0.selectionRect.width >= 1 && $0.selectionRect.height >= 1
+        }) {
+            return selected
+        }
+        let pointer = NSEvent.mouseLocation
+        return overlayControllers.first { $0.screen.frame.contains(pointer) } ?? overlayControllers.first
     }
 
     @objc private func spaceDidChange() {
