@@ -233,6 +233,7 @@
 "Snap selection edges to image boundaries" = "Bắt dính cạnh vùng chọn vào ranh giới ảnh";
 "Snap the starting corner before dragging" = "Bắt dính góc bắt đầu trước khi kéo";
 "Screen center" = "Giữa màn hình";
+"Window center" = "Giữa cửa sổ";
 "Snapping" = "Bắt dính";
 "Haptic feedback when snapping" = "Phản hồi rung khi bắt dính";
 "Enhance browser and Electron element snapping" = "Nâng cao bắt dính phần tử trình duyệt và Electron";

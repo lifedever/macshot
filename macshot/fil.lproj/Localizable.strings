@@ -234,6 +234,7 @@
 "Snap selection edges to image boundaries" = "I-snap ang mga gilid ng seleksiyon sa hangganan ng imahe";
 "Snap the starting corner before dragging" = "I-snap ang panimulang sulok bago mag-drag";
 "Screen center" = "Gitna ng screen";
+"Window center" = "Gitna ng window";
 "Snapping" = "Pag-snap";
 "Haptic feedback when snapping" = "Haptic feedback kapag nag-snap";
 "Enhance browser and Electron element snapping" = "Pahusayin ang element snapping ng browser at Electron";

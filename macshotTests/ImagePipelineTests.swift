@@ -291,3 +291,36 @@ final class SnapGuideLabelPlacementTests: XCTestCase {
         XCTAssertNil(OverlayView.labelOffset(preferred: 30, other: -40, length: 22, within: 4, 40))
     }
 }
+
+/// An edge guide is labelled with the app whose window it lies on.
+@MainActor
+final class EdgeGuideOwnerTests: XCTestCase {
+
+    private func window(_ name: String, _ frame: NSRect) -> OverlayView.AppWindow {
+        OverlayView.AppWindow(frame: frame, appName: name, appIcon: nil)
+    }
+
+    func testTheFrontmostWindowUnderTheEdgeOwnsIt() {
+        // Front to back: a small panel over a large browser window.
+        let windows = [window("Notes", NSRect(x: 100, y: 100, width: 200, height: 200)),
+                       window("Safari", NSRect(x: 0, y: 0, width: 800, height: 600))]
+        let inside = OverlayView.window(containingAnyOf: [NSPoint(x: 150, y: 150)], in: windows)
+        XCTAssertEqual(inside?.appName, "Notes")
+        let outside = OverlayView.window(containingAnyOf: [NSPoint(x: 500, y: 400)], in: windows)
+        XCTAssertEqual(outside?.appName, "Safari")
+    }
+
+    func testAWindowsRightBorderStillBelongsToIt() {
+        // An edge at x 300, the panel's right border: probed half a point
+        // either side, the inner side lands in the panel.
+        let windows = [window("Notes", NSRect(x: 100, y: 100, width: 200, height: 200))]
+        let owner = OverlayView.window(containingAnyOf: [NSPoint(x: 299.5, y: 150), NSPoint(x: 300.5, y: 150)],
+                                       in: windows)
+        XCTAssertEqual(owner?.appName, "Notes")
+    }
+
+    func testAnEdgeOnTheBareDesktopHasNoOwner() {
+        let windows = [window("Safari", NSRect(x: 0, y: 0, width: 800, height: 600))]
+        XCTAssertNil(OverlayView.window(containingAnyOf: [NSPoint(x: 1000, y: 700)], in: windows))
+    }
+}

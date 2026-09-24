@@ -216,6 +216,7 @@
 "Snap selection edges to image boundaries" = "הצמד את קצות הבחירה לגבולות התמונה";
 "Snap the starting corner before dragging" = "הצמד את פינת ההתחלה לפני הגרירה";
 "Screen center" = "מרכז המסך";
+"Window center" = "מרכז החלון";
 "Snapping" = "הצמדה";
 "Haptic feedback when snapping" = "משוב מישושי בעת הצמדה";
 "Capture mouse cursor in screenshot" = "לכוד סמן עכבר בצילום מסך";

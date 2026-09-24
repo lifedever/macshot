@@ -1056,16 +1056,20 @@ class OverlayView: NSView {
     /// Where the button went down for the selection being drawn, before its
     /// start snapped; the furthest the pointer has been from there; and
     /// whether the start snapped at all. See `selectionWasDragged`.
-    /// The frontmost window of the app that was active when the capture
-    /// started, in this overlay's coordinates, with the app it belongs to.
-    struct ForegroundWindow {
+    /// A window on screen when the capture started, in this overlay's
+    /// coordinates, with the app it belongs to.
+    struct AppWindow {
         var frame: NSRect
         var appName: String?
         var appIcon: NSImage?
     }
-    /// Its centre lines are snap targets while the pointer is over it; see
-    /// `snapCentreLines(near:)`. Nil when there is none.
-    var foregroundWindow: ForegroundWindow?
+    /// The frontmost window of the app that was active when the capture
+    /// started. Its centre lines are snap targets while the pointer is over
+    /// it; see `snapCentreLines(near:)`. Nil when there is none.
+    var foregroundWindow: AppWindow?
+    /// Every window that was on screen, front to back, for naming the app an
+    /// edge guide lies on.
+    var snapWindows: [AppWindow] = []
 
     /// What a snap guide lines up with, which its label names.
     enum SnapGuideSource: Equatable {
@@ -4817,11 +4821,11 @@ class OverlayView: NSView {
         }
     }
 
-    /// Labels on centre-line guides naming what the line centres on: the
-    /// display, or the foreground window's app. Every guide is drawn alike, so
-    /// without one a screen's centre and a window's, often a few points apart,
-    /// cannot be told apart. Image edges go unlabelled — the edge is right
-    /// there under the line, and edges come and go too often to carry text.
+    /// Labels naming where each guide comes from. Every guide is drawn alike,
+    /// so without one a screen's centre, a window's and an edge inside some
+    /// app cannot be told apart. A centre line names the display or the
+    /// window's app and says it is the window's centre; an edge names the app
+    /// whose window it lies on, and goes unlabelled on the bare desktop.
     ///
     /// A label sits on its line beside the pointer — above or below it for a
     /// vertical line, left or right for a horizontal one — on the side away
@@ -4842,7 +4846,9 @@ class OverlayView: NSView {
             ? colorPickerPanelRect
             : (selectionRect.width >= 1 && selectionRect.height >= 1 ? selectionRect : nil)
         let area = bounds.insetBy(dx: 4, dy: 4)
-        if let x = boundarySnapGuideX, let label = snapGuideLabel(for: boundarySnapGuideSourceX) {
+        if let x = boundarySnapGuideX,
+           let label = snapGuideLabel(for: boundarySnapGuideSourceX,
+                                      edgeAt: [NSPoint(x: x - 0.5, y: pointer.y), NSPoint(x: x + 0.5, y: pointer.y)]) {
             let size = snapGuideLabelSize(label)
             let above = pointer.y + offset, below = pointer.y - offset - size.height
             let preferAbove = avoid.map { $0.midY < pointer.y } ?? true
@@ -4856,7 +4862,9 @@ class OverlayView: NSView {
                 drawSnapGuideLabel(label, in: NSRect(x: labelX, y: y, width: size.width, height: size.height))
             }
         }
-        if let y = boundarySnapGuideY, let label = snapGuideLabel(for: boundarySnapGuideSourceY) {
+        if let y = boundarySnapGuideY,
+           let label = snapGuideLabel(for: boundarySnapGuideSourceY,
+                                      edgeAt: [NSPoint(x: pointer.x, y: y - 0.5), NSPoint(x: pointer.x, y: y + 0.5)]) {
             let size = snapGuideLabelSize(label)
             let left = pointer.x - offset - size.width, right = pointer.x + offset
             let preferLeft = avoid.map { $0.midX > pointer.x } ?? true
@@ -4880,19 +4888,32 @@ class OverlayView: NSView {
         return fits(other) ? other : nil
     }
 
-    private func snapGuideLabel(for source: SnapGuideSource) -> (icon: NSImage?, text: String)? {
+    /// The label for a guide from `source`. For an edge, `edgeAt` are points
+    /// either side of the line where it passes the pointer: the edge between
+    /// two windows, or on a window's right or top border, belongs to either.
+    private func snapGuideLabel(for source: SnapGuideSource,
+                                edgeAt points: [NSPoint]) -> (icon: NSImage?, text: String)? {
         switch source {
         case .edge:
-            return nil
+            guard let owner = Self.window(containingAnyOf: points, in: snapWindows),
+                  let name = owner.appName, !name.isEmpty else { return nil }
+            return (owner.appIcon, name)
         case .screenCentre:
             let symbol = NSImage(systemSymbolName: "display", accessibilityDescription: nil)?
                 .withSymbolConfiguration(NSImage.SymbolConfiguration(pointSize: 11, weight: .semibold)
                     .applying(NSImage.SymbolConfiguration(paletteColors: [.white])))
             return (symbol, L("Screen center"))
         case .windowCentre:
+            // Named as a centre, or it reads just like an edge in that app.
             guard let app = foregroundWindow, let name = app.appName, !name.isEmpty else { return nil }
-            return (app.appIcon, name)
+            return (app.appIcon, "\(name) · \(L("Window center"))")
         }
+    }
+
+    /// The frontmost of `windows` (listed front to back) containing any of
+    /// `points`.
+    static func window(containingAnyOf points: [NSPoint], in windows: [AppWindow]) -> AppWindow? {
+        windows.first { window in points.contains { window.frame.contains($0) } }
     }
 
     private static let snapGuideLabelFont = NSFont.systemFont(ofSize: 11, weight: .semibold)
@@ -8393,15 +8414,9 @@ class OverlayView: NSView {
     }
 
     private func showStartSnapGuides(x: SnapTarget?, y: SnapTarget?, pointer: NSPoint? = nil) {
-        // Labels ride along beside the pointer, so while one is up every move
-        // repaints around the old and new pointer.
-        let labelled = { (x: SnapTarget?, y: SnapTarget?) in
-            (x.map { $0.source != .edge } ?? false) || (y.map { $0.source != .edge } ?? false)
-        }
-        let wasLabelled = labelled(
-            boundarySnapGuideX.map { SnapTarget(position: $0, source: boundarySnapGuideSourceX) },
-            boundarySnapGuideY.map { SnapTarget(position: $0, source: boundarySnapGuideSourceY) })
-        if wasLabelled || labelled(x, y) {
+        // Labels ride along beside the pointer, so while a guide is up every
+        // move repaints around the old and new pointer.
+        if boundarySnapGuideX != nil || boundarySnapGuideY != nil || x != nil || y != nil {
             for p in [lastStartSnapPointer, pointer].compactMap({ $0 }) {
                 setNeedsDisplay(NSRect(x: p.x - 260, y: p.y - 120, width: 520, height: 240))
             }
@@ -11462,6 +11477,7 @@ class OverlayView: NSView {
 
     func reset() {
         foregroundWindow = nil
+        snapWindows = []
         // A pooled overlay dismissed mid-session must not keep the session's
         // event tap, key monitors or HUD alive into the next capture.
         if isScrollCapturing { stopScrollCaptureMode() }

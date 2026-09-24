@@ -230,6 +230,7 @@
 "Snap selection edges to image boundaries" = "Aliniază marginile selecției la limitele imaginii";
 "Snap the starting corner before dragging" = "Aliniază colțul de început înainte de tragere";
 "Screen center" = "Centrul ecranului";
+"Window center" = "Centrul ferestrei";
 "Capture mouse cursor in screenshot" = "Capturează cursorul mouse-ului în captura de ecran";
 "Double-click selection to copy" = "Dublu-clic pe selecție pentru a copia";
 "Hide capture instructions" = "Ascunde instrucțiunile de captură";

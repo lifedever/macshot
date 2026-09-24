@@ -216,6 +216,7 @@
 "Snap selection edges to image boundaries" = "چسباندن لبه‌های انتخاب به مرزهای تصویر";
 "Snap the starting corner before dragging" = "چسباندن گوشهٔ شروع پیش از کشیدن";
 "Screen center" = "مرکز صفحه";
+"Window center" = "مرکز پنجره";
 "Snapping" = "چسبش";
 "Haptic feedback when snapping" = "بازخورد لمسی هنگام چسبش";
 "Capture mouse cursor in screenshot" = "ضبط نشانگر موس در تصویر صفحه";

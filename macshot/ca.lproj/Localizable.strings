@@ -230,6 +230,7 @@
 "Snap selection edges to image boundaries" = "Ajustar les vores de la selecció als límits de la imatge";
 "Snap the starting corner before dragging" = "Ajustar la cantonada inicial abans d'arrossegar";
 "Screen center" = "Centre de la pantalla";
+"Window center" = "Centre de la finestra";
 "Capture mouse cursor in screenshot" = "Capturar el cursor del ratolí a la captura";
 "Double-click selection to copy" = "Doble clic a la selecció per copiar";
 "Hide capture instructions" = "Amagar les instruccions de captura";

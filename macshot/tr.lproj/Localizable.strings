@@ -216,6 +216,7 @@
 "Snap selection edges to image boundaries" = "Seçim kenarlarını görüntü sınırlarına yapıştır";
 "Snap the starting corner before dragging" = "Sürüklemeden önce başlangıç köşesini yapıştır";
 "Screen center" = "Ekran ortası";
+"Window center" = "Pencere ortası";
 "Snapping" = "Yapışma";
 "Haptic feedback when snapping" = "Yapışırken dokunsal geri bildirim";
 "Capture mouse cursor in screenshot" = "Ekran görüntüsünde fare imlecini yakala";

@@ -224,6 +224,7 @@
 "Snap selection edges to image boundaries" = "Snap selection edges to image boundaries";
 "Snap the starting corner before dragging" = "Snap the starting corner before dragging";
 "Screen center" = "Screen center";
+"Window center" = "Window center";
 "Haptic feedback when snapping" = "Haptic feedback when snapping";
 "Press C to copy" = "Press C to copy";
 "Use desktop wallpaper" = "Use desktop wallpaper";

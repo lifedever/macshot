@@ -1028,6 +1028,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
     /// snap targets, labelled with the app.
     private var capturedWindowFrame: NSRect?
     private var capturedWindowApp: NSRunningApplication?
+    /// Every window on screen when the capture started, front to back, in
+    /// AppKit screen coordinates: edge guides name the app they lie on.
+    private var capturedWindows: [(frame: NSRect, app: NSRunningApplication?)] = []
     /// The app that was active before the overlay appeared — re-activated on dismiss.
     /// The app that was active before macshot showed its overlay.
     private var previousApp: NSRunningApplication?
@@ -1277,6 +1280,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
         capturedWindowTitle = nil
         capturedWindowFrame = nil
         capturedWindowApp = previousApp
+        capturedWindows = []
         resolveFocusedWindowAsync(for: previousApp?.processIdentifier, sessionID: sessionID)
 
         // When "remember last tool" is off, clear persisted effects/beautify
@@ -1435,6 +1439,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
             }
             controller.capturedWindowTitle = capturedWindowTitle
             controller.setForegroundWindow(frame: capturedWindowFrame, app: capturedWindowApp)
+            controller.setSnapWindows(capturedWindows)
             if pendingRecordMode { controller.setAutoRecordMode() }
             if pendingOCRMode { controller.setAutoOCRMode() }
             if pendingTranslateOverlayMode { controller.setAutoTranslateOverlayMode(targetLang: pendingTranslateOverlayLang) }
@@ -1612,48 +1617,65 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
     }
 
     /// Returns the title of the frontmost window via CGWindowList (requires Screen Recording permission).
-    /// The focused app's frontmost window, from one pass over the window list:
-    /// its title — the first titled window, which the filename template wants
-    /// — and its bounds in CoreGraphics coordinates — the first window of a
+    /// One pass over the window list at capture start. For the focused app's
+    /// frontmost window: its title — the first titled window, which the
+    /// filename template wants — and its bounds — the first window of a
     /// window's size, titled or not, since the frontmost one often has no
-    /// title to read.
-    nonisolated private static func focusedWindowInfo(forPID pid: pid_t) -> (title: String?, bounds: CGRect?) {
-        guard let windowList = CGWindowListCopyWindowInfo([.optionOnScreenOnly, .excludeDesktopElements], kCGNullWindowID) as? [[String: Any]] else { return (nil, nil) }
+    /// title to read. And every window on screen, front to back, with its
+    /// owner, for naming the app an edge guide lies on. macshot's own windows
+    /// and the Window Server's (the menu bar backdrop, among others) are left
+    /// out, as are invisible and tiny ones. Bounds are in CoreGraphics
+    /// coordinates.
+    nonisolated private static func windowListInfo(focusedPID pid: pid_t?, ownPID: pid_t)
+        -> (title: String?, bounds: CGRect?, windows: [(bounds: CGRect, pid: pid_t)]) {
+        guard let windowList = CGWindowListCopyWindowInfo([.optionOnScreenOnly, .excludeDesktopElements], kCGNullWindowID) as? [[String: Any]] else { return (nil, nil, []) }
         var title: String?
         var bounds: CGRect?
+        var windows: [(bounds: CGRect, pid: pid_t)] = []
         for info in windowList {
-            guard let layer = info[kCGWindowLayer as String] as? Int, layer == 0,
-                  let ownerPID = info[kCGWindowOwnerPID as String] as? pid_t, ownerPID == pid else { continue }
-            if bounds == nil,
-               let dict = info[kCGWindowBounds as String] as? NSDictionary,
-               let rect = CGRect(dictionaryRepresentation: dict),
-               rect.width >= 100, rect.height >= 100 {
+            guard let ownerPID = info[kCGWindowOwnerPID as String] as? pid_t,
+                  let dict = info[kCGWindowBounds as String] as? NSDictionary,
+                  let rect = CGRect(dictionaryRepresentation: dict) else { continue }
+            let layer = info[kCGWindowLayer as String] as? Int ?? 0
+            if ownerPID != ownPID,
+               (info[kCGWindowOwnerName as String] as? String) != "Window Server",
+               (info[kCGWindowAlpha as String] as? Double ?? 1) > 0,
+               rect.width >= 20, rect.height >= 20 {
+                windows.append((rect, ownerPID))
+            }
+            guard layer == 0, ownerPID == pid else { continue }
+            if bounds == nil, rect.width >= 100, rect.height >= 100 {
                 bounds = rect
             }
             if title == nil, let name = info[kCGWindowName as String] as? String, !name.isEmpty {
                 title = name
             }
-            if title != nil && bounds != nil { break }
         }
-        return (title, bounds)
+        return (title, bounds, windows)
     }
 
     private func resolveFocusedWindowAsync(for pid: pid_t?, sessionID: UInt) {
-        guard let pid = pid else { return }
         // CoreGraphics measures from the top of the primary display, AppKit
         // from its bottom.
         let primaryHeight = NSScreen.screens.first?.frame.height ?? 0
+        let ownPID = ProcessInfo.processInfo.processIdentifier
+        let toAppKit = { (r: CGRect) in NSRect(x: r.minX, y: primaryHeight - r.maxY, width: r.width, height: r.height) }
         DispatchQueue.global(qos: .utility).async { [weak self] in
-            let info = Self.focusedWindowInfo(forPID: pid)
+            let info = Self.windowListInfo(focusedPID: pid, ownPID: ownPID)
             DispatchQueue.main.async {
                 guard let self = self, self.isCapturing, self.captureSessionID == sessionID else { return }
                 self.capturedWindowTitle = info.title
-                self.capturedWindowFrame = info.bounds.map {
-                    NSRect(x: $0.minX, y: primaryHeight - $0.maxY, width: $0.width, height: $0.height)
+                self.capturedWindowFrame = info.bounds.map(toAppKit)
+                var apps: [pid_t: NSRunningApplication?] = [:]
+                self.capturedWindows = info.windows.map { window in
+                    let app = apps[window.pid] ?? NSRunningApplication(processIdentifier: window.pid)
+                    apps[window.pid] = app
+                    return (toAppKit(window.bounds), app)
                 }
                 for controller in self.overlayControllers {
                     controller.capturedWindowTitle = info.title
                     controller.setForegroundWindow(frame: self.capturedWindowFrame, app: self.capturedWindowApp)
+                    controller.setSnapWindows(self.capturedWindows)
                 }
             }
         }

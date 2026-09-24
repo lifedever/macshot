@@ -216,6 +216,7 @@
 "Snap selection edges to image boundaries" = "Allinea i bordi della selezione ai contorni dell’immagine";
 "Snap the starting corner before dragging" = "Allinea l’angolo iniziale prima di trascinare";
 "Screen center" = "Centro dello schermo";
+"Window center" = "Centro della finestra";
 "Enhance browser and Electron element snapping" = "Migliora lo scatto degli elementi di browser ed Electron";
 "Builds the target app's accessibility tree in Element mode. Disable this if a browser or Electron app becomes slow or has input issues." = "Costruisce l’albero di accessibilità dell’app target in modalità Elemento. Disabilita se un browser o un’app Electron diventa lento o ha problemi di input.";
 "Capture mouse cursor in screenshot" = "Cattura il cursore del mouse nello screenshot";

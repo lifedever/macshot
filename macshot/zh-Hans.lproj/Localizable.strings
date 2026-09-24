@@ -215,6 +215,7 @@
 "Snap selection edges to image boundaries" = "将选区边缘吸附到图像边界";
 "Snap the starting corner before dragging" = "框选前吸附起点";
 "Screen center" = "屏幕中心";
+"Window center" = "窗口中心";
 "Haptic feedback when snapping" = "吸附时触感反馈";
 "Press C to copy" = "按 C 复制";
 "Use desktop wallpaper" = "用桌面壁纸";

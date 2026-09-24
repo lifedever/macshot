@@ -229,6 +229,7 @@
 "Snap selection edges to image boundaries" = "Fest markeringskanter til bildegrenser";
 "Snap the starting corner before dragging" = "Fest starthjørnet før du drar";
 "Screen center" = "Skjermens midtpunkt";
+"Window center" = "Vinduets midtpunkt";
 "Snapping" = "Snapping";
 "Haptic feedback when snapping" = "Haptisk tilbakemelding ved snapping";
 "Enhance browser and Electron element snapping" = "Forbedre elementfangst for nettleser og Electron";

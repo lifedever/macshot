@@ -250,6 +250,7 @@
 "Snap selection edges to image boundaries" = "Priveži rubove odabira uz granice slike";
 "Snap the starting corner before dragging" = "Priveži početni kut prije povlačenja";
 "Screen center" = "Središte zaslona";
+"Window center" = "Središte prozora";
 "Enhance browser and Electron element snapping" = "Poboljšaj hvatanje elemenata u pregledniku i Electron-u";
 "Builds the target app's accessibility tree in Element mode. Disable this if a browser or Electron app becomes slow or has input issues." = "Izgrađuje stablo pristupačnosti ciljne aplikacije u načinu elemenata. Onemogućite ako preglednik ili Electron aplikacija postane spora ili ima problema s unosom.";
 "Capture mouse cursor in screenshot" = "Snimi kursor miša na snimci zaslona";

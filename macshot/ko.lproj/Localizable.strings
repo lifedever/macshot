@@ -216,6 +216,7 @@
 "Snap selection edges to image boundaries" = "선택 영역 가장자리를 이미지 경계에 스냅";
 "Snap the starting corner before dragging" = "드래그 전에 시작 모서리를 스냅";
 "Screen center" = "화면 중앙";
+"Window center" = "윈도우 중앙";
 "Snapping" = "스냅";
 "Haptic feedback when snapping" = "스냅할 때 햅틱 피드백";
 "Enhance browser and Electron element snapping" = "브라우저 및 Electron 요소 스냅 향상";

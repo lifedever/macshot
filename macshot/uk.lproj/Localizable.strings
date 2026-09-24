@@ -250,6 +250,7 @@
 "Snap selection edges to image boundaries" = "Прив'язувати краї виділення до меж зображення";
 "Snap the starting corner before dragging" = "Прив'язувати початковий кут до перетягування";
 "Screen center" = "Центр екрана";
+"Window center" = "Центр вікна";
 "Enhance browser and Electron element snapping" = "Покращення прилипання елементів у браузері та Electron";
 "Builds the target app's accessibility tree in Element mode. Disable this if a browser or Electron app becomes slow or has input issues." = "Будує дерево доступності цільової програми в режимі елементів. Вимкніть, якщо браузер або Electron-програма працює повільно або має проблеми з введенням.";
 "Capture mouse cursor in screenshot" = "Захоплювати курсор миші на знімку екрана";

@@ -309,12 +309,20 @@ class OverlayWindowController {
     /// Hand the overlay the foreground window, its frame given in screen
     /// coordinates, and the app it belongs to for its guides' label.
     func setForegroundWindow(frame: NSRect?, app: NSRunningApplication?) {
-        overlayView?.foregroundWindow = frame.map {
-            OverlayView.ForegroundWindow(
-                frame: $0.offsetBy(dx: -screen.frame.minX, dy: -screen.frame.minY),
-                appName: app?.localizedName,
-                appIcon: app?.icon)
-        }
+        overlayView?.foregroundWindow = frame.map { appWindow(frame: $0, app: app) }
+    }
+
+    /// Hand the overlay every window that was on screen, front to back, given
+    /// in screen coordinates, for naming the app an edge guide lies on.
+    func setSnapWindows(_ windows: [(frame: NSRect, app: NSRunningApplication?)]) {
+        overlayView?.snapWindows = windows.map { appWindow(frame: $0.frame, app: $0.app) }
+    }
+
+    private func appWindow(frame: NSRect, app: NSRunningApplication?) -> OverlayView.AppWindow {
+        OverlayView.AppWindow(
+            frame: frame.offsetBy(dx: -screen.frame.minX, dy: -screen.frame.minY),
+            appName: app?.localizedName,
+            appIcon: app?.icon)
     }
 
     func setRemoteSelection(_ rect: NSRect, fullRect: NSRect = .zero, settled: Bool = true) {

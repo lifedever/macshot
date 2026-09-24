@@ -216,6 +216,7 @@
 "Snap selection edges to image boundaries" = "محاذاة حواف التحديد إلى حدود الصورة";
 "Snap the starting corner before dragging" = "محاذاة زاوية البداية قبل السحب";
 "Screen center" = "مركز الشاشة";
+"Window center" = "مركز النافذة";
 "Snapping" = "المحاذاة";
 "Haptic feedback when snapping" = "استجابة لمسية عند المحاذاة";
 "Capture mouse cursor in screenshot" = "التقاط مؤشر الفأرة في لقطة الشاشة";

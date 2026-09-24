@@ -220,6 +220,7 @@
 "Snap selection edges to image boundaries" = "Selectieranden uitlijnen op afbeeldingsgrenzen";
 "Snap the starting corner before dragging" = "Beginhoek uitlijnen voor het slepen";
 "Screen center" = "Midden van het scherm";
+"Window center" = "Midden van het venster";
 "Snapping" = "Uitlijnen";
 "Haptic feedback when snapping" = "Haptische feedback bij uitlijnen";
 "Enhance browser and Electron element snapping" = "Verbeter browser- en Electron-element-snap";
