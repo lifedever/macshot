@@ -1057,9 +1057,32 @@ class OverlayView: NSView {
     /// start snapped; the furthest the pointer has been from there; and
     /// whether the start snapped at all. See `selectionWasDragged`.
     /// The frontmost window of the app that was active when the capture
-    /// started, in this overlay's coordinates, or nil. Its centre lines are
-    /// snap targets while the pointer is over it; see `snapCentreLines(near:)`.
-    var foregroundWindowRect: NSRect?
+    /// started, in this overlay's coordinates, with the app it belongs to.
+    struct ForegroundWindow {
+        var frame: NSRect
+        var appName: String?
+        var appIcon: NSImage?
+    }
+    /// Its centre lines are snap targets while the pointer is over it; see
+    /// `snapCentreLines(near:)`. Nil when there is none.
+    var foregroundWindow: ForegroundWindow?
+
+    /// What a snap guide lines up with, which its label names.
+    enum SnapGuideSource: Equatable {
+        case edge, screenCentre, windowCentre
+    }
+    struct SnapTarget: Equatable {
+        var position: CGFloat
+        var source: SnapGuideSource
+    }
+    private var boundarySnapGuideSourceX: SnapGuideSource = .edge
+    private var boundarySnapGuideSourceY: SnapGuideSource = .edge
+    /// Where the magnifier panel was last drawn, so a guide's label can keep
+    /// clear of it. Nil when it was not drawn.
+    private var colorPickerPanelRect: NSRect?
+    /// The pointer when the start guides were last updated, to repaint the
+    /// labels that follow it.
+    private var lastStartSnapPointer: NSPoint?
     private var selectionPressPoint: NSPoint = .zero
     private var selectionPointerTravel: CGFloat = 0
     private var selectionStartWasSnapped = false
@@ -2022,8 +2045,13 @@ class OverlayView: NSView {
 
         // Colour picker for the idle overlay. Drawn after the helper text so the crosshair
         // and magnifier float above everything else on screen.
+        colorPickerPanelRect = nil
         if isPreSelectionSampling && colorSamplerPoint != .zero {
             drawPreSelectionColorPicker(at: colorSamplerPoint)
+        }
+        // The start guides' labels, over the magnifier they keep clear of.
+        if state == .idle {
+            drawSnapGuideLabels()
         }
 
         // Draw remote selection region (cross-screen drag from another overlay)
@@ -2412,6 +2440,7 @@ class OverlayView: NSView {
             // selection with an active snap.
             if isResizingSelection || state == .selecting {
                 drawBoundarySnapGuides()
+                drawSnapGuideLabels()
             }
 
             // Hide the text view when color picker is open for bg/outline (so picker isn't behind it)
@@ -4003,6 +4032,7 @@ class OverlayView: NSView {
         if panelX + panelW > bounds.maxX - 8 { panelX = canvasPoint.x - gap - panelW }
         if panelY < bounds.minY + 8 { panelY = canvasPoint.y + gap }
         let panel = NSRect(x: panelX, y: panelY, width: panelW, height: panelH)
+        colorPickerPanelRect = panel
 
         let panelPath = NSBezierPath(roundedRect: panel, xRadius: 8, yRadius: 8)
         NSColor.black.withAlphaComponent(0.88).setFill()
@@ -4782,6 +4812,99 @@ class OverlayView: NSView {
                 from: NSPoint(x: bounds.minX, y: gy),
                 to: NSPoint(x: bounds.maxX, y: gy))
         }
+    }
+
+    /// Labels on centre-line guides naming what the line centres on: the
+    /// display, or the foreground window's app. Every guide is drawn alike, so
+    /// without one a screen's centre and a window's, often a few points apart,
+    /// cannot be told apart. Image edges go unlabelled — the edge is right
+    /// there under the line, and edges come and go too often to carry text.
+    ///
+    /// A label sits on its line beside the pointer, on the side away from the
+    /// magnifier: above or below it for a vertical line, left or right for a
+    /// horizontal one. It never covers the pointer: where that side runs off
+    /// the screen it goes to the other side rather than being pushed back
+    /// onto the pointer. Both lines centring on the same thing get one label.
+    private func drawSnapGuideLabels() {
+        guard let window else { return }
+        // Before a press, the pointer the guides were found for.
+        let pointer = (state == .idle ? lastStartSnapPointer : nil)
+            ?? convert(window.mouseLocationOutsideOfEventStream, from: nil)
+        let offset: CGFloat = 24
+        let magnifier = colorPickerPanelRect
+        var labelled: SnapGuideSource?
+        if let x = boundarySnapGuideX, let label = snapGuideLabel(for: boundarySnapGuideSourceX) {
+            let size = snapGuideLabelSize(label)
+            let above = pointer.y + offset, below = pointer.y - offset - size.height
+            let preferAbove = magnifier.map { $0.midY < pointer.y } ?? true
+            let y = Self.labelOffset(preferred: preferAbove ? above : below,
+                                     other: preferAbove ? below : above,
+                                     length: size.height, within: bounds.minY + 4, bounds.maxY - 4)
+            // Along the line it may slide to stay on screen: it is clear of the
+            // pointer vertically already.
+            let labelX = min(max(x - size.width / 2, bounds.minX + 4), bounds.maxX - 4 - size.width)
+            drawSnapGuideLabel(label, in: NSRect(x: labelX, y: y, width: size.width, height: size.height))
+            labelled = boundarySnapGuideSourceX
+        }
+        if let y = boundarySnapGuideY, boundarySnapGuideSourceY != labelled,
+           let label = snapGuideLabel(for: boundarySnapGuideSourceY) {
+            let size = snapGuideLabelSize(label)
+            let left = pointer.x - offset - size.width, right = pointer.x + offset
+            let preferLeft = magnifier.map { $0.midX > pointer.x } ?? true
+            let x = Self.labelOffset(preferred: preferLeft ? left : right,
+                                     other: preferLeft ? right : left,
+                                     length: size.width, within: bounds.minX + 4, bounds.maxX - 4)
+            let labelY = min(max(y - size.height / 2, bounds.minY + 4), bounds.maxY - 4 - size.height)
+            drawSnapGuideLabel(label, in: NSRect(x: x, y: labelY, width: size.width, height: size.height))
+        }
+    }
+
+    /// The preferred side's origin if a label of `length` fits there between
+    /// `low` and `high`, else the other side's. Never a point in between: that
+    /// is where the pointer is.
+    static func labelOffset(preferred: CGFloat, other: CGFloat, length: CGFloat,
+                            within low: CGFloat, _ high: CGFloat) -> CGFloat {
+        let fits = { (origin: CGFloat) in origin >= low && origin + length <= high }
+        return fits(preferred) || !fits(other) ? preferred : other
+    }
+
+    private func snapGuideLabel(for source: SnapGuideSource) -> (icon: NSImage?, text: String)? {
+        switch source {
+        case .edge:
+            return nil
+        case .screenCentre:
+            let symbol = NSImage(systemSymbolName: "display", accessibilityDescription: nil)?
+                .withSymbolConfiguration(NSImage.SymbolConfiguration(pointSize: 11, weight: .semibold)
+                    .applying(NSImage.SymbolConfiguration(paletteColors: [.white])))
+            return (symbol, L("Screen center"))
+        case .windowCentre:
+            guard let app = foregroundWindow, let name = app.appName, !name.isEmpty else { return nil }
+            return (app.appIcon, name)
+        }
+    }
+
+    private static let snapGuideLabelFont = NSFont.systemFont(ofSize: 11, weight: .semibold)
+    private static let snapGuideLabelIconSide: CGFloat = 14
+
+    private func snapGuideLabelSize(_ label: (icon: NSImage?, text: String)) -> NSSize {
+        let text = (label.text as NSString).size(withAttributes: [.font: Self.snapGuideLabelFont])
+        let icon = label.icon == nil ? 0 : Self.snapGuideLabelIconSide + 5
+        return NSSize(width: ceil(7 + icon + text.width + 8), height: 22)
+    }
+
+    private func drawSnapGuideLabel(_ label: (icon: NSImage?, text: String), in rect: NSRect) {
+        NSColor.black.withAlphaComponent(0.72).setFill()
+        NSBezierPath(roundedRect: rect, xRadius: 6, yRadius: 6).fill()
+        var x = rect.minX + 7
+        if let icon = label.icon {
+            let side = Self.snapGuideLabelIconSide
+            icon.draw(in: NSRect(x: x, y: rect.midY - side / 2, width: side, height: side),
+                      from: .zero, operation: .sourceOver, fraction: 1)
+            x += side + 5
+        }
+        let attrs: [NSAttributedString.Key: Any] = [.font: Self.snapGuideLabelFont, .foregroundColor: NSColor.white]
+        let textSize = (label.text as NSString).size(withAttributes: attrs)
+        (label.text as NSString).draw(at: NSPoint(x: x, y: rect.midY - textSize.height / 2), withAttributes: attrs)
     }
 
     // MARK: - Auto Measure
@@ -8064,8 +8187,8 @@ class OverlayView: NSView {
     private func applyBoundarySnap(to rect: NSRect, handle: ResizeHandle, minSize: CGFloat,
                                    index: BoundarySnapIndex) -> NSRect {
         var minX = rect.minX, maxX = rect.maxX, minY = rect.minY, maxY = rect.maxY
-        var guideX: CGFloat?
-        var guideY: CGFloat?
+        var guideX: SnapTarget?
+        var guideY: SnapTarget?
 
         // Which edges does this handle move?
         let movesLeft = handle == .left || handle == .topLeft || handle == .bottomLeft
@@ -8076,24 +8199,23 @@ class OverlayView: NSView {
         let midX = (minX + maxX) / 2, midY = (minY + maxY) / 2
         if movesLeft, let x = verticalSnapTarget(near: minX, yMin: minY, yMax: maxY,
                                                  at: NSPoint(x: minX, y: midY), index: index) {
-            if x <= maxX - minSize { minX = x; guideX = x }
+            if x.position <= maxX - minSize { minX = x.position; guideX = x }
         }
         if movesRight, let x = verticalSnapTarget(near: maxX, yMin: minY, yMax: maxY,
                                                   at: NSPoint(x: maxX, y: midY), index: index) {
-            if x >= minX + minSize { maxX = x; guideX = x }
+            if x.position >= minX + minSize { maxX = x.position; guideX = x }
         }
         if movesBottom, let y = horizontalSnapTarget(near: minY, xMin: minX, xMax: maxX,
                                                      at: NSPoint(x: midX, y: minY), index: index) {
-            if y <= maxY - minSize { minY = y; guideY = y }
+            if y.position <= maxY - minSize { minY = y.position; guideY = y }
         }
         if movesTop, let y = horizontalSnapTarget(near: maxY, xMin: minX, xMax: maxX,
                                                   at: NSPoint(x: midX, y: maxY), index: index) {
-            if y >= minY + minSize { maxY = y; guideY = y }
+            if y.position >= minY + minSize { maxY = y.position; guideY = y }
         }
 
-        boundarySnapGuideX = guideX
-        boundarySnapGuideY = guideY
-        boundarySnapHaptics.report(guideX: guideX, guideY: guideY)
+        setBoundarySnapGuides(guideX, guideY)
+        boundarySnapHaptics.report(guideX: guideX?.position, guideY: guideY?.position)
         return NSRect(x: minX, y: minY, width: maxX - minX, height: maxY - minY)
     }
 
@@ -8116,47 +8238,48 @@ class OverlayView: NSView {
         let radius = boundarySnapRadiusPoints
         let centreLines = snapCentreLines(near: NSPoint(x: rect.midX, y: rect.midY))
         var dx: CGFloat = 0
-        var guideX: CGFloat?
+        var guideX: SnapTarget?
         // X axis: try snapping the left edge and the right edge; take the smaller
         // shift so the closer boundary wins. The rect's own centre also snaps to
         // the centre lines, to centre a selection on the screen or the window.
         var bestX: CGFloat = .greatestFiniteMagnitude
         if let x = verticalSnapTarget(near: rect.minX, yMin: rect.minY, yMax: rect.maxY,
                                       at: NSPoint(x: rect.minX, y: rect.midY), index: index) {
-            let shift = x - rect.minX
+            let shift = x.position - rect.minX
             if abs(shift) < abs(bestX) { bestX = shift; guideX = x }
         }
         if let x = verticalSnapTarget(near: rect.maxX, yMin: rect.minY, yMax: rect.maxY,
                                       at: NSPoint(x: rect.maxX, y: rect.midY), index: index) {
-            let shift = x - rect.maxX
+            let shift = x.position - rect.maxX
             if abs(shift) < abs(bestX) { bestX = shift; guideX = x }
         }
-        for line in centreLines.xs where abs(line - rect.midX) <= radius && abs(line - rect.midX) < abs(bestX) {
-            bestX = line - rect.midX; guideX = line
+        for line in centreLines.xs
+        where abs(line.position - rect.midX) <= radius && abs(line.position - rect.midX) < abs(bestX) {
+            bestX = line.position - rect.midX; guideX = line
         }
         if bestX != .greatestFiniteMagnitude { dx = bestX }
 
         var dy: CGFloat = 0
-        var guideY: CGFloat?
+        var guideY: SnapTarget?
         var bestY: CGFloat = .greatestFiniteMagnitude
         if let y = horizontalSnapTarget(near: rect.minY, xMin: rect.minX, xMax: rect.maxX,
                                         at: NSPoint(x: rect.midX, y: rect.minY), index: index) {
-            let shift = y - rect.minY
+            let shift = y.position - rect.minY
             if abs(shift) < abs(bestY) { bestY = shift; guideY = y }
         }
         if let y = horizontalSnapTarget(near: rect.maxY, xMin: rect.minX, xMax: rect.maxX,
                                         at: NSPoint(x: rect.midX, y: rect.maxY), index: index) {
-            let shift = y - rect.maxY
+            let shift = y.position - rect.maxY
             if abs(shift) < abs(bestY) { bestY = shift; guideY = y }
         }
-        for line in centreLines.ys where abs(line - rect.midY) <= radius && abs(line - rect.midY) < abs(bestY) {
-            bestY = line - rect.midY; guideY = line
+        for line in centreLines.ys
+        where abs(line.position - rect.midY) <= radius && abs(line.position - rect.midY) < abs(bestY) {
+            bestY = line.position - rect.midY; guideY = line
         }
         if bestY != .greatestFiniteMagnitude { dy = bestY }
 
-        boundarySnapGuideX = guideX
-        boundarySnapGuideY = guideY
-        boundarySnapHaptics.report(guideX: guideX, guideY: guideY)
+        setBoundarySnapGuides(guideX, guideY)
+        boundarySnapHaptics.report(guideX: guideX?.position, guideY: guideY?.position)
         return rect.offsetBy(dx: dx, dy: dy)
     }
 
@@ -8165,23 +8288,31 @@ class OverlayView: NSView {
     /// Centre lines are where a selection is lined up by eye, as in any layout
     /// tool, and the screenshot rarely has an edge on them to snap to. Outside
     /// the window its centre means nothing, so it does not pull there.
-    private func snapCentreLines(near point: NSPoint) -> (xs: [CGFloat], ys: [CGFloat]) {
-        var xs = [captureDrawRect.midX]
-        var ys = [captureDrawRect.midY]
+    private func snapCentreLines(near point: NSPoint) -> (xs: [SnapTarget], ys: [SnapTarget]) {
+        var xs = [SnapTarget(position: captureDrawRect.midX, source: .screenCentre)]
+        var ys = [SnapTarget(position: captureDrawRect.midY, source: .screenCentre)]
         let radius = boundarySnapRadiusPoints
-        if let window = foregroundWindowRect,
+        if let window = foregroundWindow?.frame,
            window.insetBy(dx: -radius, dy: -radius).contains(point) {
-            xs.append(window.midX)
-            ys.append(window.midY)
+            xs.append(SnapTarget(position: window.midX, source: .windowCentre))
+            ys.append(SnapTarget(position: window.midY, source: .windowCentre))
         }
         return (xs, ys)
+    }
+
+    /// Record the guides a snap produced, with what each lines up with.
+    private func setBoundarySnapGuides(_ x: SnapTarget?, _ y: SnapTarget?) {
+        boundarySnapGuideX = x?.position
+        boundarySnapGuideY = y?.position
+        boundarySnapGuideSourceX = x?.source ?? .edge
+        boundarySnapGuideSourceY = y?.source ?? .edge
     }
 
     /// Where a vertical selection edge near `x` snaps: an image edge scored
     /// along [yMin, yMax], or a centre line for `point`, whichever is nearer
     /// within the snap radius.
     private func verticalSnapTarget(near x: CGFloat, yMin: CGFloat, yMax: CGFloat,
-                                    at point: NSPoint, index: BoundarySnapIndex) -> CGFloat? {
+                                    at point: NSPoint, index: BoundarySnapIndex) -> SnapTarget? {
         let radius = boundarySnapRadiusPoints
         return Self.nearestSnapTarget(
             index.nearestVertical(toViewX: x, yMinView: yMin, yMaxView: yMax, radiusPoints: radius)?.viewPosition,
@@ -8190,7 +8321,7 @@ class OverlayView: NSView {
 
     /// The horizontal counterpart of `verticalSnapTarget`.
     private func horizontalSnapTarget(near y: CGFloat, xMin: CGFloat, xMax: CGFloat,
-                                      at point: NSPoint, index: BoundarySnapIndex) -> CGFloat? {
+                                      at point: NSPoint, index: BoundarySnapIndex) -> SnapTarget? {
         let radius = boundarySnapRadiusPoints
         return Self.nearestSnapTarget(
             index.nearestHorizontal(toViewY: y, xMinView: xMin, xMaxView: xMax, radiusPoints: radius)?.viewPosition,
@@ -8199,11 +8330,13 @@ class OverlayView: NSView {
 
     /// The nearest of `edge` and `lines` within `radius` of `position`. A tie
     /// goes to the screenshot's own edge, then to the earlier line.
-    static func nearestSnapTarget(_ edge: CGFloat?, lines: [CGFloat],
-                                  to position: CGFloat, radius: CGFloat) -> CGFloat? {
-        var best = edge
-        for line in lines where abs(line - position) <= radius {
-            if best.map({ abs(line - position) < abs($0 - position) }) ?? true { best = line }
+    static func nearestSnapTarget(_ edge: CGFloat?, lines: [SnapTarget],
+                                  to position: CGFloat, radius: CGFloat) -> SnapTarget? {
+        var best = edge.map { SnapTarget(position: $0, source: .edge) }
+        for line in lines where abs(line.position - position) <= radius {
+            if best.map({ abs(line.position - position) < abs($0.position - position) }) ?? true {
+                best = line
+            }
         }
         return best
     }
@@ -8214,7 +8347,7 @@ class OverlayView: NSView {
     /// its start snap, is off or bypassed with Option, when no selection can
     /// start here, and
     /// under a fixed-size preset, whose rect is centred on the pointer.
-    private func startSnap(at point: NSPoint, modifiers: NSEvent.ModifierFlags) -> (x: CGFloat?, y: CGFloat?) {
+    private func startSnap(at point: NSPoint, modifiers: NSEvent.ModifierFlags) -> (x: SnapTarget?, y: SnapTarget?) {
         if case .resolution = activePreSelectionPreset { return (nil, nil) }
         guard state == .idle, shouldAllowNewSelection(), !isScrollCapturing,
               boundarySnapEnabled, boundarySnapStartEnabled, !modifiers.contains(.option),
@@ -8243,20 +8376,36 @@ class OverlayView: NSView {
     /// would tap all the way.
     private func updateStartSnapGuides(at point: NSPoint, modifiers: NSEvent.ModifierFlags) {
         let snap = startSnap(at: point, modifiers: modifiers)
-        showStartSnapGuides(x: snap.x, y: snap.y)
+        showStartSnapGuides(x: snap.x, y: snap.y, pointer: point)
     }
 
-    private func showStartSnapGuides(x: CGFloat?, y: CGFloat?) {
-        guard x != boundarySnapGuideX || y != boundarySnapGuideY else { return }
+    private func showStartSnapGuides(x: SnapTarget?, y: SnapTarget?, pointer: NSPoint? = nil) {
+        // Labels ride along beside the pointer, so while one is up every move
+        // repaints around the old and new pointer.
+        let labelled = { (x: SnapTarget?, y: SnapTarget?) in
+            (x.map { $0.source != .edge } ?? false) || (y.map { $0.source != .edge } ?? false)
+        }
+        let wasLabelled = labelled(
+            boundarySnapGuideX.map { SnapTarget(position: $0, source: boundarySnapGuideSourceX) },
+            boundarySnapGuideY.map { SnapTarget(position: $0, source: boundarySnapGuideSourceY) })
+        if wasLabelled || labelled(x, y) {
+            for p in [lastStartSnapPointer, pointer].compactMap({ $0 }) {
+                setNeedsDisplay(NSRect(x: p.x - 260, y: p.y - 120, width: 520, height: 240))
+            }
+        }
+        lastStartSnapPointer = pointer
+        guard x?.position != boundarySnapGuideX || y?.position != boundarySnapGuideY
+                || x?.source != (boundarySnapGuideX == nil ? nil : boundarySnapGuideSourceX)
+                || y?.source != (boundarySnapGuideY == nil ? nil : boundarySnapGuideSourceY)
+        else { return }
         // Only the strips the lines cross change; the rest of the overlay stays.
-        for guideX in [boundarySnapGuideX, x].compactMap({ $0 }) {
+        for guideX in [boundarySnapGuideX, x?.position].compactMap({ $0 }) {
             setNeedsDisplay(NSRect(x: guideX - 4, y: bounds.minY, width: 8, height: bounds.height))
         }
-        for guideY in [boundarySnapGuideY, y].compactMap({ $0 }) {
+        for guideY in [boundarySnapGuideY, y?.position].compactMap({ $0 }) {
             setNeedsDisplay(NSRect(x: bounds.minX, y: guideY - 4, width: bounds.width, height: 8))
         }
-        boundarySnapGuideX = x
-        boundarySnapGuideY = y
+        setBoundarySnapGuides(x, y)
     }
 
     /// Start a new selection's rubber band at a press, its first corner on the
@@ -8266,7 +8415,7 @@ class OverlayView: NSView {
         selectionPressPoint = point
         selectionPointerTravel = 0
         selectionStartWasSnapped = snap.x != nil || snap.y != nil
-        selectionStart = NSPoint(x: snap.x ?? point.x, y: snap.y ?? point.y)
+        selectionStart = NSPoint(x: snap.x?.position ?? point.x, y: snap.y?.position ?? point.y)
         selectionRect = NSRect(origin: selectionStart, size: .zero)
         state = .selecting
     }
@@ -8288,21 +8437,20 @@ class OverlayView: NSView {
     private func snapMovingPoint(_ point: NSPoint, anchor: NSPoint,
                                  index: BoundarySnapIndex) -> NSPoint {
         var p = point
-        var guideX: CGFloat?
-        var guideY: CGFloat?
+        var guideX: SnapTarget?
+        var guideY: SnapTarget?
         let yMin = min(anchor.y, point.y), yMax = max(anchor.y, point.y)
         let xMin = min(anchor.x, point.x), xMax = max(anchor.x, point.x)
         if let x = verticalSnapTarget(near: point.x, yMin: yMin, yMax: yMax, at: point, index: index) {
-            p.x = x
+            p.x = x.position
             guideX = x
         }
         if let y = horizontalSnapTarget(near: point.y, xMin: xMin, xMax: xMax, at: point, index: index) {
-            p.y = y
+            p.y = y.position
             guideY = y
         }
-        boundarySnapGuideX = guideX
-        boundarySnapGuideY = guideY
-        boundarySnapHaptics.report(guideX: guideX, guideY: guideY)
+        setBoundarySnapGuides(guideX, guideY)
+        boundarySnapHaptics.report(guideX: guideX?.position, guideY: guideY?.position)
         return p
     }
 
@@ -11300,7 +11448,7 @@ class OverlayView: NSView {
     }
 
     func reset() {
-        foregroundWindowRect = nil
+        foregroundWindow = nil
         // A pooled overlay dismissed mid-session must not keep the session's
         // event tap, key monitors or HUD alive into the next capture.
         if isScrollCapturing { stopScrollCaptureMode() }

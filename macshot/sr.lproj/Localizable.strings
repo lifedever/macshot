@@ -249,6 +249,7 @@
 "Haptic feedback when snapping" = "Хаптички одзив при прилепљивању";
 "Snap selection edges to image boundaries" = "Привежи ивице избора уз границе слике";
 "Snap the starting corner before dragging" = "Привежи почетни угао пре превлачења";
+"Screen center" = "Центар екрана";
 "Enhance browser and Electron element snapping" = "Побољшај лепљење елемената у прегледачу и Electron-у";
 "Builds the target app's accessibility tree in Element mode. Disable this if a browser or Electron app becomes slow or has input issues." = "Гради стабло доступности циљне апликације у режиму елемената. Онемогућите ако прегледач или Electron апликација постане спора или има проблема са уносом.";
 "Capture mouse cursor in screenshot" = "Сними курсор миша на снимку екрана";

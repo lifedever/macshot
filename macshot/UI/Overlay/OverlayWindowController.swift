@@ -306,10 +306,14 @@ class OverlayWindowController {
         overlayView?.needsDisplay = true
     }
 
-    /// Hand the overlay the foreground window, given in screen coordinates.
-    func setForegroundWindowFrame(_ frame: NSRect?) {
-        overlayView?.foregroundWindowRect = frame.map {
-            $0.offsetBy(dx: -screen.frame.minX, dy: -screen.frame.minY)
+    /// Hand the overlay the foreground window, its frame given in screen
+    /// coordinates, and the app it belongs to for its guides' label.
+    func setForegroundWindow(frame: NSRect?, app: NSRunningApplication?) {
+        overlayView?.foregroundWindow = frame.map {
+            OverlayView.ForegroundWindow(
+                frame: $0.offsetBy(dx: -screen.frame.minX, dy: -screen.frame.minY),
+                appName: app?.localizedName,
+                appIcon: app?.icon)
         }
     }
 

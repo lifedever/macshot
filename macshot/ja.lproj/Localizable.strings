@@ -215,6 +215,7 @@
 "Show snap alignment guides" = "スナップ整列ガイドを表示";
 "Snap selection edges to image boundaries" = "選択範囲の端を画像の境界にスナップ";
 "Snap the starting corner before dragging" = "ドラッグ前に始点の角をスナップ";
+"Screen center" = "画面の中央";
 "Snapping" = "スナップ";
 "Haptic feedback when snapping" = "スナップ時に触覚フィードバック";
 "Enhance browser and Electron element snapping" = "ブラウザと Electron の要素スナップを強化";

@@ -228,6 +228,7 @@
 "Show snap alignment guides" = "Vis fastg\U00F8relses-hj\U00E6lpelinjer";
 "Snap selection edges to image boundaries" = "Fastg\U00F8r markeringskanter til billedgr\U00E6nser";
 "Snap the starting corner before dragging" = "Fastgør starthjørnet før træk";
+"Screen center" = "Skærmens midte";
 "Snapping" = "Fastgørelse";
 "Haptic feedback when snapping" = "Haptisk feedback ved fastgørelse";
 "Enhance browser and Electron element snapping" = "Forbedr browser- og Electron-elementfangst";

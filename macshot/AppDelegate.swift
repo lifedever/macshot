@@ -1020,8 +1020,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
     private var pendingScrollCaptureMode: Bool = false
     private var capturedWindowTitle: String?
     /// The frontmost window of the app active when the capture started, in
-    /// AppKit screen coordinates; its centre lines are snap targets.
+    /// AppKit screen coordinates, and that app; the window's centre lines are
+    /// snap targets, labelled with the app.
     private var capturedWindowFrame: NSRect?
+    private var capturedWindowApp: NSRunningApplication?
     /// The app that was active before the overlay appeared — re-activated on dismiss.
     /// The app that was active before macshot showed its overlay.
     private var previousApp: NSRunningApplication?
@@ -1270,8 +1272,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
         trace?.mark("frontmost application captured")
         capturedWindowTitle = nil
         capturedWindowFrame = nil
-        let focusedWindowPID = previousApp?.processIdentifier
-        resolveFocusedWindowAsync(for: focusedWindowPID, sessionID: sessionID)
+        capturedWindowApp = previousApp
+        resolveFocusedWindowAsync(for: previousApp?.processIdentifier, sessionID: sessionID)
 
         // When "remember last tool" is off, clear persisted effects/beautify
         // so new OverlayView instances start clean.
@@ -1428,7 +1430,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
                 controller.timingMark = { label in trace.mark(label) }
             }
             controller.capturedWindowTitle = capturedWindowTitle
-            controller.setForegroundWindowFrame(capturedWindowFrame)
+            controller.setForegroundWindow(frame: capturedWindowFrame, app: capturedWindowApp)
             if pendingRecordMode { controller.setAutoRecordMode() }
             if pendingOCRMode { controller.setAutoOCRMode() }
             if pendingTranslateOverlayMode { controller.setAutoTranslateOverlayMode(targetLang: pendingTranslateOverlayLang) }
@@ -1647,7 +1649,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
                 }
                 for controller in self.overlayControllers {
                     controller.capturedWindowTitle = info.title
-                    controller.setForegroundWindowFrame(self.capturedWindowFrame)
+                    controller.setForegroundWindow(frame: self.capturedWindowFrame, app: self.capturedWindowApp)
                 }
             }
         }

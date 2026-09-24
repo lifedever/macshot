@@ -232,6 +232,7 @@
 "Show snap alignment guides" = "স্ন্যাপ সারিবদ্ধকরণ গাইড দেখান";
 "Snap selection edges to image boundaries" = "নির্বাচনের প্রান্তগুলি ছবির সীমানায় স্ন্যাপ করুন";
 "Snap the starting corner before dragging" = "টেনে আনার আগে শুরুর কোণ স্ন্যাপ করুন";
+"Screen center" = "স্ক্রিনের কেন্দ্র";
 "Capture mouse cursor in screenshot" = "স্ক্রিনশটে মাউস কার্সর ক্যাপচার করুন";
 "Double-click selection to copy" = "কপি করতে নির্বাচনে ডাবল-ক্লিক করুন";
 "Hide capture instructions" = "ক্যাপচার নির্দেশাবলী লুকান";

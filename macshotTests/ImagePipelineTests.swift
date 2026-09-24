@@ -234,34 +234,60 @@ final class BeautifyShadowCurveTests: XCTestCase {
 }
 
 /// Centre lines — the screen's, and the foreground window's — are snap
-/// targets beside the image's own edges.
+/// targets beside the image's own edges, and each keeps its source for the
+/// guide's label.
 @MainActor
 final class SnapTargetTests: XCTestCase {
 
-    private func target(_ edge: CGFloat?, _ lines: [CGFloat], _ position: CGFloat) -> CGFloat? {
+    private let screen = { (p: CGFloat) in OverlayView.SnapTarget(position: p, source: .screenCentre) }
+    private let window = { (p: CGFloat) in OverlayView.SnapTarget(position: p, source: .windowCentre) }
+
+    private func target(_ edge: CGFloat?, _ lines: [OverlayView.SnapTarget], _ position: CGFloat) -> OverlayView.SnapTarget? {
         OverlayView.nearestSnapTarget(edge, lines: lines, to: position, radius: 4)
     }
 
     func testACentreLineIsATargetWithNoEdgeNearby() {
-        XCTAssertEqual(target(nil, [756], 753), 756)
+        XCTAssertEqual(target(nil, [screen(756)], 753), screen(756))
     }
 
     func testLinesOutsideTheRadiusAreIgnored() {
-        XCTAssertNil(target(nil, [756], 750))
-        XCTAssertEqual(target(748, [756], 750), 748, "an edge in range still wins when the line is out of it")
+        XCTAssertNil(target(nil, [screen(756)], 750))
+        XCTAssertEqual(target(748, [screen(756)], 750), .init(position: 748, source: .edge),
+                       "an edge in range still wins when the line is out of it")
     }
 
-    func testTheNearestOfEdgeAndLinesWins() {
-        XCTAssertEqual(target(752, [756], 755), 756)
-        XCTAssertEqual(target(754, [756], 753), 754)
+    func testTheNearestOfEdgeAndLinesWinsAndKeepsItsSource() {
+        XCTAssertEqual(target(752, [screen(756)], 755), screen(756))
+        XCTAssertEqual(target(754, [screen(756)], 753)?.source, .edge)
         // Screen centre at 756, window centre at 760: the pointer at 759 is
         // nearer the window's.
-        XCTAssertEqual(target(nil, [756, 760], 759), 760)
-        XCTAssertEqual(target(nil, [756, 760], 757), 756)
+        XCTAssertEqual(target(nil, [screen(756), window(760)], 759), window(760))
+        XCTAssertEqual(target(nil, [screen(756), window(760)], 757), screen(756))
     }
 
     func testTiesGoToTheEdgeThenTheEarlierLine() {
-        XCTAssertEqual(target(754, [756], 755), 754, "the screenshot's own edge first")
-        XCTAssertEqual(target(nil, [756, 758], 757), 756, "then the screen's centre before the window's")
+        XCTAssertEqual(target(754, [screen(756)], 755)?.source, .edge, "the screenshot's own edge first")
+        XCTAssertEqual(target(nil, [screen(756), window(758)], 757), screen(756),
+                       "then the screen's centre before the window's")
+    }
+}
+
+/// A guide's label sits beside the pointer and must never cover it.
+@MainActor
+final class SnapGuideLabelPlacementTests: XCTestCase {
+
+    func testTheLabelTakesThePreferredSideWhenItFits() {
+        XCTAssertEqual(OverlayView.labelOffset(preferred: 524, other: 454, length: 22, within: 4, 996), 524)
+    }
+
+    func testAtTheScreenEdgeTheLabelSwitchesSidesRatherThanCoverThePointer() {
+        // Pointer at y 980 on a 1000pt screen: above does not fit, so below —
+        // not clamped down to 974, which would sit on the pointer.
+        let above: CGFloat = 980 + 24, below: CGFloat = 980 - 24 - 22
+        XCTAssertEqual(OverlayView.labelOffset(preferred: above, other: below, length: 22, within: 4, 996), below)
+    }
+
+    func testWhenNeitherSideFitsThePreferredOneIsKept() {
+        XCTAssertEqual(OverlayView.labelOffset(preferred: 30, other: -40, length: 22, within: 4, 40), 30)
     }
 }

@@ -222,6 +222,7 @@
 "Haptic feedback when snapping" = "Respuesta háptica al ajustar";
 "Snap selection edges to image boundaries" = "Ajustar los bordes de la selección a los límites de la imagen";
 "Snap the starting corner before dragging" = "Ajustar la esquina inicial antes de arrastrar";
+"Screen center" = "Centro de la pantalla";
 "Enhance browser and Electron element snapping" = "Mejorar el ajuste de elementos de navegador y Electron";
 "Builds the target app's accessibility tree in Element mode. Disable this if a browser or Electron app becomes slow or has input issues." = "Construye el árbol de accesibilidad de la app objetivo en modo Elemento. Desactívalo si un navegador o app de Electron se vuelve lento o tiene problemas de entrada.";
 "Capture mouse cursor in screenshot" = "Capturar cursor del mouse en la captura";
