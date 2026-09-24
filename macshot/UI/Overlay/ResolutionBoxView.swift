@@ -20,6 +20,10 @@ final class ResolutionBoxView: NSView, NSTextFieldDelegate {
     var onFinishEditing: (() -> Void)?
     /// Called when the presets button is clicked; passes the button for anchoring.
     var onPresets: ((_ anchor: NSView) -> Void)?
+    /// Called as the pointer enters and leaves the presets button, so the
+    /// overlay can show the tooltip its toolbar buttons show. A system tooltip
+    /// never appears here: macshot is not the active app while capturing.
+    var onPresetsHover: ((_ hovered: Bool, _ anchor: NSView) -> Void)?
 
     private let widthField = ResolutionNumberField()
     private let heightField = ResolutionNumberField()
@@ -53,7 +57,9 @@ final class ResolutionBoxView: NSView, NSTextFieldDelegate {
         presetsButton.contentTintColor = ToolbarLayout.iconColor
         presetsButton.target = self
         presetsButton.action = #selector(presetsClicked)
-        presetsButton.toolTip = L("Aspect ratio & resolution presets")
+        presetsButton.addTrackingArea(NSTrackingArea(
+            rect: .zero, options: [.mouseEnteredAndExited, .activeAlways, .inVisibleRect],
+            owner: self, userInfo: nil))
         addSubview(presetsButton)
 
         layoutPieces()
@@ -163,7 +169,16 @@ final class ResolutionBoxView: NSView, NSTextFieldDelegate {
     }
 
     @objc private func presetsClicked() {
+        onPresetsHover?(false, presetsButton)
         onPresets?(presetsButton)
+    }
+
+    override func mouseEntered(with event: NSEvent) {
+        onPresetsHover?(true, presetsButton)
+    }
+
+    override func mouseExited(with event: NSEvent) {
+        onPresetsHover?(false, presetsButton)
     }
 
     private func editedDimension(for control: Any?) -> EditedDimension {

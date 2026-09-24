@@ -793,7 +793,9 @@ class OverlayView: NSView {
 
     // Instant tooltip for hovered toolbar button
     private var hoveredTooltip: String?
-    private var hoveredTooltipButtonView: ToolbarButtonView?
+    /// What the tooltip belongs to: a toolbar button, or the size box's
+    /// presets button.
+    private var hoveredTooltipButtonView: NSView?
     private var isToolbarMoveDragActive = false
     private var isKeyboardMoveSelectionActive = false
     private var keyboardMoveSelectionOffset: NSPoint = .zero
@@ -2909,6 +2911,17 @@ class OverlayView: NSView {
             return
         }
         // While a W/H field is being edited, leave the box exactly where it is.
+            box.onPresetsHover = { [weak self] hovered, anchor in
+                guard let self, !self.isToolbarMoveDragActive else { return }
+                if hovered {
+                    self.hoveredTooltip = L("Aspect ratio & resolution presets")
+                    self.hoveredTooltipButtonView = anchor
+                } else if self.hoveredTooltipButtonView === anchor {
+                    self.hoveredTooltip = nil
+                    self.hoveredTooltipButtonView = nil
+                }
+                self.needsDisplay = true
+            }
         // Re-laying-out mid-edit disturbs the field editor / first responder,
         // which makes typing beep. The selection isn't changing during editing,
         // so there's nothing to update.
@@ -8852,6 +8865,14 @@ class OverlayView: NSView {
 
         let tipSize = ToolbarLayout.tooltipSize(for: tooltip)
         let tipW = tipSize.width
+        } else {
+            // A control on the canvas, such as the size box: above the control
+            // it sits in, or below if no room — clear of it either way, since
+            // the control is a subview drawn over this.
+            let host = btn.superview.map { $0.convert($0.bounds, to: self) } ?? btnFrame
+            var tipY = host.maxY + 4
+            if tipY + tipH > bounds.maxY - 2 { tipY = host.minY - tipH - 4 }
+            tipRect = NSRect(x: btnFrame.midX - tipW / 2, y: tipY, width: tipW, height: tipH)
         let tipH = tipSize.height
 
         // Convert the button's rect to OverlayView coordinates. The button may
@@ -8864,7 +8885,7 @@ class OverlayView: NSView {
             let screenRect = btnWindow.convertToScreen(inBtnWindow)
             let inSelfWindow = selfWindow.convertFromScreen(screenRect)
             btnFrame = convert(inSelfWindow, from: nil)
-        } else {
+        } else if isButton(btn, inStrip: rightStripView) {
             btnFrame = btn.convert(btn.bounds, to: self)
         }
         // The button is hosted in a strip; find which strip via the panel chain.
