@@ -1427,6 +1427,7 @@ class OverlayView: NSView {
         updateCursorForPoint(point)
 
         if state == .idle {
+            raiseSnapGuideLabels()
             updateStartSnapGuides(at: point, modifiers: event.modifierFlags)
         }
 
@@ -2056,9 +2057,9 @@ class OverlayView: NSView {
         if isPreSelectionSampling && colorSamplerPoint != .zero {
             drawPreSelectionColorPicker(at: colorSamplerPoint)
         }
-        // The start guides' labels, over the magnifier they keep clear of.
+        // The start guides' labels, clear of the magnifier.
         if state == .idle {
-            drawSnapGuideLabels()
+            layoutSnapGuideLabels()
         }
 
         // Draw remote selection region (cross-screen drag from another overlay)
@@ -2443,11 +2444,14 @@ class OverlayView: NSView {
                 drawResizeHandles(for: selectionRect)
             }
 
-            // Boundary-snap guide line(s) — while resizing or drawing a new
-            // selection with an active snap.
-            if isResizingSelection || state == .selecting {
+            // Boundary-snap guide line(s) — while drawing a new selection,
+            // resizing it or moving it, with an active snap.
+            if isResizingSelection || state == .selecting || isDraggingSelection
+                || isKeyboardMoveSelectionActive || isToolbarMoveDragActive {
                 drawBoundarySnapGuides()
-                drawSnapGuideLabels()
+                layoutSnapGuideLabels()
+            } else {
+                snapGuideLabelsView?.labels = []
             }
 
             // Hide the text view when color picker is open for bg/outline (so picker isn't behind it)
@@ -4835,8 +4839,9 @@ class OverlayView: NSView {
     /// onto the pointer. Each line has its own label, even when both centre
     /// on the same thing: a line without one leaves its source to guesswork.
     /// A label that fits on neither side of the pointer on screen is not drawn.
-    private func drawSnapGuideLabels() {
+    private func layoutSnapGuideLabels() {
         guard let window else { return }
+        var labels: [SnapGuideLabelsView.Label] = []
         // The pointer the guides were found for: before a press the last move,
         // after it the last drag.
         let pointer = (state == .idle ? lastStartSnapPointer : lastDragPointer)
@@ -4849,7 +4854,7 @@ class OverlayView: NSView {
         if let x = boundarySnapGuideX,
            let label = snapGuideLabel(for: boundarySnapGuideSourceX,
                                       edgeAt: [NSPoint(x: x - 0.5, y: pointer.y), NSPoint(x: x + 0.5, y: pointer.y)]) {
-            let size = snapGuideLabelSize(label)
+            let size = SnapGuideLabelsView.size(icon: label.icon, text: label.text)
             let above = pointer.y + offset, below = pointer.y - offset - size.height
             let preferAbove = avoid.map { $0.midY < pointer.y } ?? true
             if size.width <= area.width,
@@ -4859,13 +4864,14 @@ class OverlayView: NSView {
                 // Along the line it may slide to stay on screen: it is clear
                 // of the pointer vertically already.
                 let labelX = min(max(x - size.width / 2, area.minX), area.maxX - size.width)
-                drawSnapGuideLabel(label, in: NSRect(x: labelX, y: y, width: size.width, height: size.height))
+                labels.append(.init(rect: NSRect(x: labelX, y: y, width: size.width, height: size.height),
+                                    icon: label.icon, text: label.text))
             }
         }
         if let y = boundarySnapGuideY,
            let label = snapGuideLabel(for: boundarySnapGuideSourceY,
                                       edgeAt: [NSPoint(x: pointer.x, y: y - 0.5), NSPoint(x: pointer.x, y: y + 0.5)]) {
-            let size = snapGuideLabelSize(label)
+            let size = SnapGuideLabelsView.size(icon: label.icon, text: label.text)
             let left = pointer.x - offset - size.width, right = pointer.x + offset
             let preferLeft = avoid.map { $0.midX > pointer.x } ?? true
             if size.height <= area.height,
@@ -4873,8 +4879,28 @@ class OverlayView: NSView {
                                         other: preferLeft ? right : left,
                                         length: size.width, within: area.minX, area.maxX) {
                 let labelY = min(max(y - size.height / 2, area.minY), area.maxY - size.height)
-                drawSnapGuideLabel(label, in: NSRect(x: x, y: labelY, width: size.width, height: size.height))
+                labels.append(.init(rect: NSRect(x: x, y: labelY, width: size.width, height: size.height),
+                                    icon: label.icon, text: label.text))
             }
+        }
+        snapGuideLabelsView?.labels = labels
+    }
+
+    /// The view the guide labels are drawn in, above the toolbars and size box
+    /// (see `SnapGuideLabelsView`). Created with the first guide.
+    private var snapGuideLabelsView: SnapGuideLabelsView?
+
+    /// Put the labels view on top of the overlay's subviews — the toolbars are
+    /// made, and remade, after it. Called between events, never while drawing.
+    private func raiseSnapGuideLabels() {
+        guard !isEditorMode else { return }
+        if let view = snapGuideLabelsView {
+            if subviews.last !== view { addSubview(view, positioned: .above, relativeTo: nil) }
+        } else {
+            let view = SnapGuideLabelsView(frame: bounds)
+            view.autoresizingMask = [.width, .height]
+            addSubview(view)
+            snapGuideLabelsView = view
         }
     }
 
@@ -4899,10 +4925,7 @@ class OverlayView: NSView {
                   let name = owner.appName, !name.isEmpty else { return nil }
             return (owner.appIcon, name)
         case .screenCentre:
-            let symbol = NSImage(systemSymbolName: "display", accessibilityDescription: nil)?
-                .withSymbolConfiguration(NSImage.SymbolConfiguration(pointSize: 11, weight: .semibold)
-                    .applying(NSImage.SymbolConfiguration(paletteColors: [.white])))
-            return (symbol, L("Screen center"))
+            return (Self.screenCentreSymbol, L("Screen center"))
         case .windowCentre:
             // Named as a centre, or it reads just like an edge in that app.
             guard let app = foregroundWindow, let name = app.appName, !name.isEmpty else { return nil }
@@ -4910,34 +4933,15 @@ class OverlayView: NSView {
         }
     }
 
+    /// One instance, so an unchanged label compares equal and is not redrawn.
+    private static let screenCentreSymbol = NSImage(systemSymbolName: "display", accessibilityDescription: nil)?
+        .withSymbolConfiguration(NSImage.SymbolConfiguration(pointSize: 11, weight: .semibold)
+            .applying(NSImage.SymbolConfiguration(paletteColors: [.white])))
+
     /// The frontmost of `windows` (listed front to back) containing any of
     /// `points`.
     static func window(containingAnyOf points: [NSPoint], in windows: [AppWindow]) -> AppWindow? {
         windows.first { window in points.contains { window.frame.contains($0) } }
-    }
-
-    private static let snapGuideLabelFont = NSFont.systemFont(ofSize: 11, weight: .semibold)
-    private static let snapGuideLabelIconSide: CGFloat = 14
-
-    private func snapGuideLabelSize(_ label: (icon: NSImage?, text: String)) -> NSSize {
-        let text = (label.text as NSString).size(withAttributes: [.font: Self.snapGuideLabelFont])
-        let icon = label.icon == nil ? 0 : Self.snapGuideLabelIconSide + 5
-        return NSSize(width: ceil(7 + icon + text.width + 8), height: 22)
-    }
-
-    private func drawSnapGuideLabel(_ label: (icon: NSImage?, text: String), in rect: NSRect) {
-        NSColor.black.withAlphaComponent(0.72).setFill()
-        NSBezierPath(roundedRect: rect, xRadius: 6, yRadius: 6).fill()
-        var x = rect.minX + 7
-        if let icon = label.icon {
-            let side = Self.snapGuideLabelIconSide
-            icon.draw(in: NSRect(x: x, y: rect.midY - side / 2, width: side, height: side),
-                      from: .zero, operation: .sourceOver, fraction: 1)
-            x += side + 5
-        }
-        let attrs: [NSAttributedString.Key: Any] = [.font: Self.snapGuideLabelFont, .foregroundColor: NSColor.white]
-        let textSize = (label.text as NSString).size(withAttributes: attrs)
-        (label.text as NSString).draw(at: NSPoint(x: x, y: rect.midY - textSize.height / 2), withAttributes: attrs)
     }
 
     // MARK: - Auto Measure
@@ -6777,6 +6781,7 @@ class OverlayView: NSView {
     override func mouseDragged(with event: NSEvent) {
         let point = convert(event.locationInWindow, from: nil)
         lastDragPointer = point
+        raiseSnapGuideLabels()
 
         // Cancel long-press timer if the user moved more than 3px (they're drawing, not selecting)
         if longPressTimer != nil {
@@ -7435,6 +7440,8 @@ class OverlayView: NSView {
         // Any drag that used boundary snap is ending — clear its guide lines.
         boundarySnapGuideX = nil
         boundarySnapGuideY = nil
+        snapGuideLabelsView?.labels = []
+        lastDragPointer = nil
 
         // Drop the haptic latch state with them. Without this, a drag that ends while
         // snapped to a guide would swallow the tap when the *next* drag snaps to that
@@ -8755,6 +8762,8 @@ class OverlayView: NSView {
 
         isKeyboardMoveSelectionActive = true
         isToolbarMoveDragActive = true
+        lastDragPointer = nil
+        raiseSnapGuideLabels()
         keyboardMoveSelectionShortcut = ToolShortcutManager.key(for: .moveSelection).lowercased()
         setToolbarHoverSuppressed(true)
         clearToolbarHoverState(suppressUntilMouseMoved: true, clearPressed: false)
@@ -8799,6 +8808,7 @@ class OverlayView: NSView {
         keyboardMoveSelectionShortcut = ""
         boundarySnapGuideX = nil
         boundarySnapGuideY = nil
+        snapGuideLabelsView?.labels = []
         let moveButton = moveSelectionButtonView()
         moveButton?.isPressed = false
         moveButton?.needsDisplay = true
@@ -9328,6 +9338,8 @@ class OverlayView: NSView {
             }
             let startPoint = overlayPoint(fromScreen: NSEvent.mouseLocation)
             let offset = NSPoint(x: startPoint.x - selectionRect.origin.x, y: startPoint.y - selectionRect.origin.y)
+            lastDragPointer = nil
+            raiseSnapGuideLabels()
             let hasWebcam = webcamSetupPreview != nil
             while true {
                 guard let event = NSApp.nextEvent(matching: [.leftMouseDragged, .leftMouseUp],
@@ -9348,6 +9360,7 @@ class OverlayView: NSView {
             // Clear any boundary-snap guide lines left from the move.
             boundarySnapGuideX = nil
             boundarySnapGuideY = nil
+            snapGuideLabelsView?.labels = []
             needsDisplay = true
             moveButton?.isPressed = false
             moveButton?.needsDisplay = true
