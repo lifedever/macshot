@@ -710,7 +710,10 @@ class FloatingThumbnailController: NSObject, NSDraggingSource, QLPreviewPanelDat
     }
 
     private func visibleScreenFrame(for frame: NSRect) -> NSRect {
-        if let screen = NSScreen.screens.first(where: { $0.visibleFrame.intersects(frame) || $0.frame.intersects(frame) }) {
+        // By the card's centre: a card on the right of a display whose right
+        // neighbour starts at the seam intersects that neighbour too, and
+        // slid out past the neighbour's far edge, across the whole of it.
+        if let screen = NSScreen.screens.first(where: { Self.isCard(frame, on: $0.frame) }) {
             return screen.visibleFrame
         }
         return NSScreen.preferredVisibleFrame
