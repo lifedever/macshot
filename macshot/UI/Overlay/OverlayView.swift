@@ -2361,7 +2361,7 @@ class OverlayView: NSView {
             // line, so without the brackets the rectangle being drawn was barely visible, and
             // they popped in on release.
             if (state == .selected || state == .selecting) && !isEditorMode && !isScrollCapturing {
-                drawResizeHandles()
+                drawResizeHandles(for: selectionRect)
             }
 
             // Boundary-snap guide line(s) — while resizing or drawing a new
@@ -3371,53 +3371,70 @@ class OverlayView: NSView {
     /// Everything shrinks with the selection, or a small crop ends up with its
     /// four brackets welded into one solid frame.
     var handleGeometry: (thickness: CGFloat, arm: CGFloat, pill: CGFloat) {
-        let shortSide = min(selectionRect.width, selectionRect.height)
+        handleGeometry(for: selectionRect)
+    }
+
+    /// `handleGeometry` for any selection rect — the other screens' share of a
+    /// selection that spans displays is sized from the whole selection too.
+    func handleGeometry(for rect: NSRect) -> (thickness: CGFloat, arm: CGFloat, pill: CGFloat) {
+        let shortSide = min(rect.width, rect.height)
         let thickness = max(2, min(Self.handleThickness, shortSide / 8))
         return (thickness,
                 max(thickness, min(Self.handleArmLength, shortSide / 3)),
                 max(thickness, min(Self.handleEdgePillLength, shortSide / 3)))
     }
 
-    private func drawResizeHandles() {
-        let r = selectionRect
+    private func drawResizeHandles(for r: NSRect) {
         guard r.width > 0, r.height > 0 else { return }
 
-        let (thickness, arm, pill) = handleGeometry
-        let radius = thickness / 2
+        let (thickness, arm, pill) = handleGeometry(for: r)
         let half = thickness / 2
 
-        // White body, accent outline. The outline is what gives the handle an
-        // edge of its own: filled flat white it dissolves into light content
-        // and into the border line it sits on. It is also where the theme
-        // colour lives now that the border itself has receded.
-        var handles: [NSBezierPath] = []
+        // Each piece is built half the outline's width inside its mark; see below.
+        let outlineWidth: CGFloat = 1
+        func piece(_ rect: NSRect) -> NSBezierPath {
+            let inner = rect.insetBy(dx: outlineWidth / 2, dy: outlineWidth / 2)
+            let radius = max(0, half - outlineWidth / 2)
+            return NSBezierPath(roundedRect: inner, xRadius: radius, yRadius: radius)
+        }
+        var pieces: [NSBezierPath] = []
         for (cx, cy) in [(r.minX, r.minY), (r.maxX, r.minY), (r.minX, r.maxY), (r.maxX, r.maxY)] {
             let left = cx == r.minX
             let bottom = cy == r.minY
-            handles.append(NSBezierPath(roundedRect: NSRect(x: left ? cx - half : cx + half - arm,
-                                                            y: cy - half, width: arm, height: thickness),
-                                        xRadius: radius, yRadius: radius))
-            handles.append(NSBezierPath(roundedRect: NSRect(x: cx - half,
-                                                            y: bottom ? cy - half : cy + half - arm,
-                                                            width: thickness, height: arm),
-                                        xRadius: radius, yRadius: radius))
+            pieces.append(piece(NSRect(x: left ? cx - half : cx + half - arm,
+                                       y: cy - half, width: arm, height: thickness)))
+            pieces.append(piece(NSRect(x: cx - half,
+                                       y: bottom ? cy - half : cy + half - arm,
+                                       width: thickness, height: arm)))
         }
         for edge in [NSRect(x: r.midX - pill / 2, y: r.maxY - half, width: pill, height: thickness),
                      NSRect(x: r.midX - pill / 2, y: r.minY - half, width: pill, height: thickness),
                      NSRect(x: r.minX - half, y: r.midY - pill / 2, width: thickness, height: pill),
                      NSRect(x: r.maxX - half, y: r.midY - pill / 2, width: thickness, height: pill)] {
-            handles.append(NSBezierPath(roundedRect: edge, xRadius: radius, yRadius: radius))
+            pieces.append(piece(edge))
         }
 
-        let outline = handleOutlineColor
-        for path in handles {
-            NSColor.white.setFill()
-            path.fill()
-            outline.setStroke()
-            path.lineWidth = 1
+        // White body, accent outline. The outline is what gives the handle an
+        // edge of its own: filled flat white it dissolves into light content
+        // and into the border line it sits on. It is also where the theme
+        // colour lives now that the border itself has receded.
+        //
+        // A corner is two overlapping arms. Outlined one by one, each arm's
+        // outline crossed the other, so the L read as two pills laid on each
+        // other. Instead every outline goes down first, twice as wide, and the
+        // white goes over all of them: the fill covers the inner half of each
+        // outline, and with it wherever an outline runs through another arm,
+        // leaving one outline around the whole L. Building each piece half the
+        // outline inside its mark keeps the white and the outer edge where a
+        // single centred stroke put them.
+        handleOutlineColor.setStroke()
+        for path in pieces {
+            path.lineWidth = outlineWidth * 2
             path.stroke()
         }
     }
+        NSColor.white.setFill()
+        for path in pieces { path.fill() }
 
     /// The accent colour, darkened as it approaches white. A pale accent would
     /// otherwise outline a white handle in something nearly white, which is the
