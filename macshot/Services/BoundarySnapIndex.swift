@@ -163,6 +163,41 @@ struct BoundarySnapIndex {
         return best
     }
 
+    /// The VERTICAL boundary a new selection's first corner should snap to.
+    ///
+    /// Before a drag there is no selection to score an edge along, so the edge
+    /// is scored along `reachPoints` from `viewY`, up and down separately: at an
+    /// element's corner its side runs one way only, and a span centred on the
+    /// corner would find it along half its length at best. The nearer of the
+    /// two hits wins.
+    func nearestStartVertical(toViewX viewX: CGFloat, atViewY viewY: CGFloat,
+                              reachPoints: CGFloat, radiusPoints: CGFloat) -> Hit? {
+        nearer(
+            nearestVertical(toViewX: viewX, yMinView: viewY, yMaxView: viewY + reachPoints,
+                            radiusPoints: radiusPoints),
+            nearestVertical(toViewX: viewX, yMinView: viewY - reachPoints, yMaxView: viewY,
+                            radiusPoints: radiusPoints),
+            to: viewX)
+    }
+
+    /// The HORIZONTAL counterpart of `nearestStartVertical`, scored left and
+    /// right of `viewX`.
+    func nearestStartHorizontal(toViewY viewY: CGFloat, atViewX viewX: CGFloat,
+                                reachPoints: CGFloat, radiusPoints: CGFloat) -> Hit? {
+        nearer(
+            nearestHorizontal(toViewY: viewY, xMinView: viewX, xMaxView: viewX + reachPoints,
+                              radiusPoints: radiusPoints),
+            nearestHorizontal(toViewY: viewY, xMinView: viewX - reachPoints, xMaxView: viewX,
+                              radiusPoints: radiusPoints),
+            to: viewY)
+    }
+
+    private func nearer(_ a: Hit?, _ b: Hit?, to position: CGFloat) -> Hit? {
+        guard let a else { return b }
+        guard let b else { return a }
+        return abs(b.viewPosition - position) < abs(a.viewPosition - position) ? b : a
+    }
+
     /// Find the nearest strong HORIZONTAL image boundary to `viewY`, scoring edge
     /// strength along the selection's [xMinView, xMaxView] span.
     func nearestHorizontal(toViewY viewY: CGFloat, xMinView: CGFloat, xMaxView: CGFloat,

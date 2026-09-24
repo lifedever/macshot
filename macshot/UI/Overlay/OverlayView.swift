@@ -1038,6 +1038,16 @@ class OverlayView: NSView {
     private var pendingAutoAdjustSelection = false
     /// Snap radius in overlay points.
     private let boundarySnapRadiusPoints: CGFloat = 4
+    /// How far along an edge a new selection's first corner scores it, there
+    /// being no selection yet to score along: long enough that the strokes of
+    /// ordinary text (10–12pt) do not qualify, short enough for a button's side.
+    private let boundarySnapStartReachPoints: CGFloat = 24
+    /// Where the button went down for the selection being drawn, before its
+    /// start snapped; the furthest the pointer has been from there; and
+    /// whether the start snapped at all. See `selectionWasDragged`.
+    private var selectionPressPoint: NSPoint = .zero
+    private var selectionPointerTravel: CGFloat = 0
+    private var selectionStartWasSnapped = false
     /// Overlay-space coordinates of the active snapped edge(s), for the guide
     /// line feedback. nil when not snapping that axis.
     private var boundarySnapGuideX: CGFloat?
@@ -1224,7 +1234,7 @@ class OverlayView: NSView {
         window?.makeFirstResponder(self)
         window?.acceptsMouseMovedEvents = true
         let area = NSTrackingArea(
-            rect: .zero, options: [.mouseMoved, .activeAlways, .inVisibleRect],
+            rect: .zero, options: [.mouseMoved, .mouseEnteredAndExited, .activeAlways, .inVisibleRect],
             owner: self, userInfo: nil)
         addTrackingArea(area)
 
@@ -1301,6 +1311,15 @@ class OverlayView: NSView {
         setNeedsDisplay(NSRect(x: newView.x - r, y: newView.y - r, width: r * 2, height: r * 2))
     }
 
+    override func mouseExited(with event: NSEvent) {
+        super.mouseExited(with: event)
+        // Off to another display: its overlay shows the guides there, and these
+        // would be left standing where the pointer no longer is.
+        if state == .idle {
+            showStartSnapGuides(x: nil, y: nil)
+        }
+    }
+
     override func mouseMoved(with event: NSEvent) {
         let point = convert(event.locationInWindow, from: nil)
 
@@ -1361,6 +1380,10 @@ class OverlayView: NSView {
 
         // Update cursor on every mouse move
         updateCursorForPoint(point)
+
+        if state == .idle {
+            updateStartSnapGuides(at: point, modifiers: event.modifierFlags)
+        }
 
         // Auto-measure: update preview as cursor moves while key is held
         if autoMeasureKeyHeld {
@@ -1957,6 +1980,11 @@ class OverlayView: NSView {
         // capture flow. The magnifier samples the screenshot data rather than the composited
         // screen, so the highlight tint never leaks into the reading.
         drawSnapHighlight()
+
+        // Before a selection starts: the edges a press would snap its first corner to.
+        if state == .idle {
+            drawBoundarySnapGuides()
+        }
 
         // Helper text (capture instructions). Suppressed when the user has
         // enabled "Hide capture instructions" in Settings (issue #226).
@@ -6513,9 +6541,7 @@ class OverlayView: NSView {
                 return
             }
             // Always start a drag — snap is resolved in mouseUp if no real drag occurred
-            selectionStart = point
-            selectionRect = NSRect(origin: point, size: .zero)
-            state = .selecting
+            beginSelection(at: point, modifiers: event.modifierFlags)
             overlayDelegate?.overlayViewDidBeginSelection()
             needsDisplay = true
 
@@ -7500,7 +7526,7 @@ class OverlayView: NSView {
     }
 
     private func finishSelection() {
-        if selectionRect.width > 5 || selectionRect.height > 5 {
+        if selectionWasDragged {
             // Real drag — use drawn rect as-is
             selectionIsFullScreen = false
             state = .selected
@@ -7616,6 +7642,9 @@ class OverlayView: NSView {
         // once here instead of at each call site. Identity at 1×, which is why the overlay
         // worked before the beautify fit zoom introduced a second scale.
         var point = viewToCanvas(viewPoint)
+        selectionPointerTravel = max(selectionPointerTravel,
+                                     abs(viewPoint.x - selectionPressPoint.x),
+                                     abs(viewPoint.y - selectionPressPoint.y))
         if spaceRepositioning {
             let dx = point.x - spaceRepositionLast.x
             let dy = point.y - spaceRepositionLast.y
@@ -7708,7 +7737,7 @@ class OverlayView: NSView {
     /// tiny (no-move) rectangle.
     private func commitAnchoredSelection() {
         isAnchoredSelecting = false
-        if selectionRect.width > 5 || selectionRect.height > 5 {
+        if selectionWasDragged {
             selectionIsFullScreen = false
             state = .selected
             applyPreSelectionLockAfterSelection()
@@ -7783,9 +7812,7 @@ class OverlayView: NSView {
             return
         }
         if state == .idle && shouldAllowNewSelection() {
-            selectionStart = point
-            selectionRect = NSRect(origin: point, size: .zero)
-            state = .selecting
+            beginSelection(at: point, modifiers: event.modifierFlags)
             isAnchoredSelecting = true
             overlayDelegate?.overlayViewDidBeginSelection()
             needsDisplay = true
@@ -8105,6 +8132,75 @@ class OverlayView: NSView {
         boundarySnapGuideY = guideY
         boundarySnapHaptics.report(guideX: guideX, guideY: guideY)
         return rect.offsetBy(dx: dx, dy: dy)
+    }
+
+    /// Where a press at `point` would put a new selection's first corner, per
+    /// axis: on an image edge within the snap radius — the edges a drag's
+    /// moving corner snaps to — or nil. Nil throughout when boundary snap is
+    /// off or bypassed with Option, when no selection can start here, and
+    /// under a fixed-size preset, whose rect is centred on the pointer.
+    private func startSnap(at point: NSPoint, modifiers: NSEvent.ModifierFlags) -> (x: CGFloat?, y: CGFloat?) {
+        if case .resolution = activePreSelectionPreset { return (nil, nil) }
+        guard state == .idle, shouldAllowNewSelection(), !isScrollCapturing,
+              boundarySnapEnabled, !modifiers.contains(.option),
+              let index = boundarySnapIndex, bounds.contains(point),
+              // A selection mirrored from another screen takes this screen's
+              // presses for its own handles; none can start here.
+              !(remoteSelectionRect.width >= 1 && remoteSelectionRect.height >= 1)
+        else { return (nil, nil) }
+        let reach = boundarySnapStartReachPoints
+        let radius = boundarySnapRadiusPoints
+        return (
+            index.nearestStartVertical(toViewX: point.x, atViewY: point.y,
+                                       reachPoints: reach, radiusPoints: radius)?.viewPosition,
+            index.nearestStartHorizontal(toViewY: point.y, atViewX: point.x,
+                                         reachPoints: reach, radiusPoints: radius)?.viewPosition
+        )
+    }
+
+    /// Before a selection starts, show the edges a press would snap its first
+    /// corner to, so it can be lined up before the button goes down. No haptic
+    /// here, unlike during a drag: moving the pointer across a screen of edges
+    /// would tap all the way.
+    private func updateStartSnapGuides(at point: NSPoint, modifiers: NSEvent.ModifierFlags) {
+        let snap = startSnap(at: point, modifiers: modifiers)
+        showStartSnapGuides(x: snap.x, y: snap.y)
+    }
+
+    private func showStartSnapGuides(x: CGFloat?, y: CGFloat?) {
+        guard x != boundarySnapGuideX || y != boundarySnapGuideY else { return }
+        // Only the strips the lines cross change; the rest of the overlay stays.
+        for guideX in [boundarySnapGuideX, x].compactMap({ $0 }) {
+            setNeedsDisplay(NSRect(x: guideX - 4, y: bounds.minY, width: 8, height: bounds.height))
+        }
+        for guideY in [boundarySnapGuideY, y].compactMap({ $0 }) {
+            setNeedsDisplay(NSRect(x: bounds.minX, y: guideY - 4, width: bounds.width, height: 8))
+        }
+        boundarySnapGuideX = x
+        boundarySnapGuideY = y
+    }
+
+    /// Start a new selection's rubber band at a press, its first corner on the
+    /// edges the guides showed.
+    private func beginSelection(at point: NSPoint, modifiers: NSEvent.ModifierFlags) {
+        let snap = startSnap(at: point, modifiers: modifiers)
+        selectionPressPoint = point
+        selectionPointerTravel = 0
+        selectionStartWasSnapped = snap.x != nil || snap.y != nil
+        selectionStart = NSPoint(x: snap.x ?? point.x, y: snap.y ?? point.y)
+        selectionRect = NSRect(origin: selectionStart, size: .zero)
+        state = .selecting
+    }
+
+    /// Whether the selection being drawn came from a drag rather than a click.
+    /// Judged on the rect, as it always was — a fixed-size preset makes a
+    /// selection even from a click — except after a snapped start: that sits
+    /// up to the snap radius from where the button went down, so a click with
+    /// a point or two of wobble could leave a rect past the threshold. Then the
+    /// pointer itself must have moved.
+    private var selectionWasDragged: Bool {
+        guard selectionRect.width > 5 || selectionRect.height > 5 else { return false }
+        return !selectionStartWasSnapped || selectionPointerTravel > 5
     }
 
     /// Snap the moving corner of an in-progress rubber-band selection to nearby
@@ -9862,6 +9958,11 @@ class OverlayView: NSView {
             let shiftHeld = event.modifierFlags.contains(.shift)
             updateAnnotation(at: lastPoint, shiftHeld: shiftHeld)
             needsDisplay = true
+        }
+        // Option bypasses boundary snap: drop the start guides while it is held.
+        if state == .idle, let window {
+            updateStartSnapGuides(at: convert(window.mouseLocationOutsideOfEventStream, from: nil),
+                                  modifiers: event.modifierFlags)
         }
     }
 

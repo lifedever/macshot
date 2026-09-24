@@ -87,6 +87,54 @@ final class BoundarySnapIndexTests: XCTestCase {
         let hit = try XCTUnwrap(index.nearestVertical(toViewX: 76, yMinView: 20, yMaxView: 140, radiusPoints: 12))
         XCTAssertEqual(hit.viewPosition, 80, accuracy: 1.5, "pixel 160 of a 2x capture is point 80")
     }
+
+    // MARK: - A new selection's first corner
+
+    /// A light screen with dark rectangles on it, `rects` in view points (y up).
+    private func screen(with rects: [CGRect], size: CGSize = CGSize(width: 240, height: 200)) throws -> BoundarySnapIndex {
+        let image = ImageProbe.makeImage(width: Int(size.width), height: Int(size.height)) { context in
+            context.setFillColor(CGColor(gray: 0.95, alpha: 1))
+            context.fill(CGRect(origin: .zero, size: size))
+            context.setFillColor(CGColor(gray: 0.1, alpha: 1))
+            rects.forEach { context.fill($0) }
+        }.cgImage(forProposedRect: nil, context: nil, hints: nil)!
+        return try XCTUnwrap(BoundarySnapIndex.build(from: image, drawRect: NSRect(origin: .zero, size: size)))
+    }
+
+    func testAnElementsCornerIsFoundBeforeASelectionStarts() throws {
+        // An element from (80, 40) to (160, 120); the pointer rests just outside
+        // its top-left corner. Each side runs from the corner one way only.
+        let index = try screen(with: [CGRect(x: 80, y: 40, width: 80, height: 80)])
+        let pointer = NSPoint(x: 77, y: 123)
+        let left = try XCTUnwrap(index.nearestStartVertical(
+            toViewX: pointer.x, atViewY: pointer.y, reachPoints: 24, radiusPoints: 4))
+        let top = try XCTUnwrap(index.nearestStartHorizontal(
+            toViewY: pointer.y, atViewX: pointer.x, reachPoints: 24, radiusPoints: 4))
+        XCTAssertEqual(left.viewPosition, 80, accuracy: 1)
+        XCTAssertEqual(top.viewPosition, 120, accuracy: 1)
+
+        // The reason for scoring each way separately: a span centred on the
+        // corner covers the side along less than half its length.
+        XCTAssertNil(index.nearestVertical(toViewX: pointer.x, yMinView: pointer.y - 24,
+                                           yMaxView: pointer.y + 24, radiusPoints: 4))
+    }
+
+    func testAShortStrokeLikeTextDoesNotOfferAStart() throws {
+        // A 10pt stroke, about a letter's height: too short for the 24pt reach.
+        let index = try screen(with: [CGRect(x: 100, y: 90, width: 2, height: 10)])
+        XCTAssertNil(index.nearestStartVertical(toViewX: 99, atViewY: 95, reachPoints: 24, radiusPoints: 4))
+        XCTAssertNil(index.nearestStartVertical(toViewX: 99, atViewY: 100, reachPoints: 24, radiusPoints: 4))
+    }
+
+    func testTheNearerOfTwoEdgesWins() throws {
+        // Two stacked elements whose left sides are 3pt apart; the pointer sits
+        // where they meet, 1pt from the lower one's side.
+        let index = try screen(with: [CGRect(x: 80, y: 100, width: 60, height: 60),
+                                      CGRect(x: 83, y: 40, width: 60, height: 60)])
+        let hit = try XCTUnwrap(index.nearestStartVertical(
+            toViewX: 82, atViewY: 100, reachPoints: 24, radiusPoints: 4))
+        XCTAssertEqual(hit.viewPosition, 83, accuracy: 0.5)
+    }
 }
 
 /// The preview image behind the overlay is a downscale of the capture. It has
