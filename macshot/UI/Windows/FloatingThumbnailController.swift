@@ -336,6 +336,24 @@ class FloatingThumbnailController: NSObject, NSDraggingSource, QLPreviewPanelDat
         return size
     }
 
+    /// Where a card's window comes to rest: the requested origin, kept so the
+    /// card stays `padding` inside the visible frame. The limits are the
+    /// card's, not the window's — the window is larger by the shadow margin,
+    /// and clamping the window held every new card 22pt further in than the
+    /// stack lays cards out, out of line with the cards reflowed beside it.
+    static func restingOrigin(
+        for origin: NSPoint,
+        windowSize: NSSize,
+        visibleFrame: NSRect,
+        padding: CGFloat
+    ) -> NSPoint {
+        let bounds = visibleFrame.insetBy(dx: padding - shadowMargin, dy: padding - shadowMargin)
+        return NSPoint(
+            x: max(bounds.minX, min(origin.x, bounds.maxX - windowSize.width)),
+            y: max(bounds.minY, min(origin.y, bounds.maxY - windowSize.height))
+        )
+    }
+
     // MARK: - Show
 
     func show(at origin: NSPoint, corner: FloatingThumbnailCorner) {
@@ -351,13 +369,10 @@ class FloatingThumbnailController: NSObject, NSDraggingSource, QLPreviewPanelDat
         // Fixed thumbnail size scaled by user preference (default 1.0 = 240x160)
         let thumbSize = Self.windowSize(for: image)
 
-        // Clamp so the thumbnail always fits within the visible screen.
-        let clampedX = min(origin.x, screenFrame.maxX - thumbSize.width - padding)
-        let finalX = max(screenFrame.minX + padding, clampedX)
-        let clampedY = min(origin.y, screenFrame.maxY - thumbSize.height - padding)
-        let finalY   = max(screenFrame.minY + padding, clampedY)
-
-        let finalFrame = NSRect(x: finalX, y: finalY, width: thumbSize.width, height: thumbSize.height)
+        // Clamp so the card always fits within the visible screen.
+        let finalFrame = NSRect(
+            origin: Self.restingOrigin(for: origin, windowSize: thumbSize, visibleFrame: screenFrame, padding: padding),
+            size: thumbSize)
         // Slide in along the path it will leave by. Where another display sits
         // past the edge, that path stops at the seam, so the card fades in too.
         let entry = Self.exitPath(
@@ -369,7 +384,7 @@ class FloatingThumbnailController: NSObject, NSDraggingSource, QLPreviewPanelDat
         )
 
         let panel = NSPanel(
-            contentRect: NSRect(x: entry.x, y: finalY, width: thumbSize.width, height: thumbSize.height),
+            contentRect: NSRect(x: entry.x, y: finalFrame.minY, width: thumbSize.width, height: thumbSize.height),
             styleMask: [.borderless, .nonactivatingPanel],
             backing: .buffered,
             defer: false

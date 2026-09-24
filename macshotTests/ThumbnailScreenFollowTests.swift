@@ -3,8 +3,8 @@ import XCTest
 
 /// The floating cards follow keyboard focus to whichever display the user is
 /// working on. These pin the decisions behind that: which display a card is
-/// on, when the stack may be moved, and how far a card may slide in or out
-/// without crossing onto a neighbouring display.
+/// on, when the stack may be moved, how far a card may slide in or out
+/// without crossing onto a neighbouring display, and where a new card rests.
 @MainActor
 final class ThumbnailScreenFollowTests: XCTestCase {
 
@@ -152,6 +152,41 @@ final class ThumbnailScreenFollowTests: XCTestCase {
         let path = exitPath(window, towardLeft: false, on: external, visibleFrame: visible, others: [builtIn])
         XCTAssertFalse(path.leavesScreen)
         XCTAssertEqual(path.x + window.width - margin, external.maxX, accuracy: 0.001)
+    }
+
+    // MARK: - Where a card comes to rest
+
+    private func restingOrigin(_ window: NSRect, in visible: NSRect) -> NSPoint {
+        FloatingThumbnailController.restingOrigin(
+            for: window.origin, windowSize: window.size, visibleFrame: visible, padding: 16)
+    }
+
+    func testASlotTheStackLaysOutIsKeptInEveryCorner() {
+        // The stack places cards 16pt in from the edges in card terms. Clamping
+        // the window instead of the card held a new card 22pt further in, so
+        // it sat out of line with the cards reflowed beside it.
+        let bottomRight = cardWindow(bottomRightOf: builtIn)
+        let bottomLeft = cardWindow(bottomLeftOf: builtIn)
+        let lift = builtIn.height - 32 - (bottomRight.height - margin * 2)
+        let topRight = cardWindow(bottomRightOf: builtIn, raisedBy: lift)
+        var topLeft = topRight
+        topLeft.origin.x = bottomLeft.minX
+        for window in [bottomRight, bottomLeft, topRight, topLeft] {
+            XCTAssertEqual(restingOrigin(window, in: builtIn), window.origin, "moved \(window)")
+        }
+        XCTAssertEqual(topRight.maxY - margin, builtIn.maxY - 16, "fixture: the top card sits 16pt below the top")
+    }
+
+    func testAStackTallerThanTheScreenStopsWithTheCardInside() {
+        let tooHigh = cardWindow(bottomRightOf: builtIn, raisedBy: builtIn.height)
+        let origin = restingOrigin(tooHigh, in: builtIn)
+        XCTAssertEqual(origin.y + tooHigh.height - margin, builtIn.maxY - 16, accuracy: 0.001)
+    }
+
+    func testAnOriginOffTheLeftIsPulledInToTheCardsPadding() {
+        var window = cardWindow(bottomLeftOf: builtIn)
+        window.origin.x = builtIn.minX - 300
+        XCTAssertEqual(restingOrigin(window, in: builtIn).x + margin, builtIn.minX + 16, accuracy: 0.001)
     }
 
     func testACardDraggedPastTheSeamPointDoesNotSlideBack() {
