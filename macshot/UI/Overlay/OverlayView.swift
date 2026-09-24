@@ -1996,14 +1996,15 @@ class OverlayView: NSView {
                 }
                 context.restoreGraphicsState()
             }
-            // Purple border for remote selection
-            let remoteBorder = NSBezierPath(rect: remoteSelectionRect)
-            remoteBorder.lineWidth = 2.0
-            ToolbarLayout.accentColor.setStroke()
+            // Border and handles as the main selection draws them, for the whole
+            // selection: the parts on other displays fall outside this view. Drawn
+            // for the part on this screen alone, the seam got an edge line and two
+            // corner brackets of its own, as if the selection ended there.
+            let remoteBorder = NSBezierPath(rect: remoteSelectionFullRect)
+            remoteBorder.lineWidth = 1
+            ToolbarLayout.accentColor.withAlphaComponent(0.35).setStroke()
             remoteBorder.stroke()
-
-            // Resize handles for remote selection
-            drawRemoteResizeHandles()
+            drawResizeHandles(for: remoteSelectionFullRect)
         }
 
         // Draw clear selection region
@@ -3357,7 +3358,7 @@ class OverlayView: NSView {
     /// handle visible over a white document — drawn wholly inside, they
     /// disappear against light content.
     ///
-    /// Hit testing still goes through `allHandleRects()`, which is centred on
+    /// Hit testing still goes through `allHandleRects(for:)`, which is centred on
     /// the same points; the grab area is deliberately a little larger than the
     /// mark it belongs to.
     private static let handleThickness: CGFloat = 5
@@ -3389,7 +3390,6 @@ class OverlayView: NSView {
 
         let (thickness, arm, pill) = handleGeometry(for: r)
         let half = thickness / 2
-
         // Each piece is built half the outline's width inside its mark; see below.
         let outlineWidth: CGFloat = 1
         func piece(_ rect: NSRect) -> NSBezierPath {
@@ -3397,6 +3397,7 @@ class OverlayView: NSView {
             let radius = max(0, half - outlineWidth / 2)
             return NSBezierPath(roundedRect: inner, xRadius: radius, yRadius: radius)
         }
+
         var pieces: [NSBezierPath] = []
         for (cx, cy) in [(r.minX, r.minY), (r.maxX, r.minY), (r.minX, r.maxY), (r.maxX, r.maxY)] {
             let left = cx == r.minX
@@ -3432,9 +3433,9 @@ class OverlayView: NSView {
             path.lineWidth = outlineWidth * 2
             path.stroke()
         }
-    }
         NSColor.white.setFill()
         for path in pieces { path.fill() }
+    }
 
     /// The accent colour, darkened as it approaches white. A pale accent would
     /// otherwise outline a white handle in something nearly white, which is the
@@ -6229,14 +6230,13 @@ class OverlayView: NSView {
 
     // MARK: - Handle hit testing
 
-    private func allHandleRects() -> [(ResizeHandle, NSRect)] {
-        let r = selectionRect
+    private func allHandleRects(for r: NSRect) -> [(ResizeHandle, NSRect)] {
         let s = handleSize
         // A corner's grab area is the whole drawn bracket, not its tip: the
         // mark is L-shaped and the pointer is aimed at any part of it. Capped
         // at a third of the short side, so the two corners of a narrow
         // selection can never meet and squeeze out its edge handles.
-        let (thickness, arm, _) = handleGeometry
+        let (thickness, arm, _) = handleGeometry(for: r)
         let half = thickness / 2
         return [
             (.topLeft, NSRect(x: r.minX - half, y: r.maxY + half - arm, width: arm, height: arm)),
@@ -6260,7 +6260,7 @@ class OverlayView: NSView {
         // Use the same hit area as resizeHandleCursor so cursor and click zones match
         let hitPad: CGFloat = 2 * zoomCompensation  // handle rect is already handleSize; expand by 2 to match cursor zone
         // Check corner handles first (they take priority over edges)
-        for (handle, rect) in allHandleRects() {
+        for (handle, rect) in allHandleRects(for: selectionRect) {
             switch handle {
             case .topLeft, .topRight, .bottomLeft, .bottomRight:
                 if rect.insetBy(dx: -hitPad, dy: -hitPad).contains(point) {
@@ -6302,25 +6302,13 @@ class OverlayView: NSView {
         return .none
     }
 
-    private func handleRectsForRect(_ r: NSRect) -> [(ResizeHandle, NSRect)] {
-        let s = handleSize
-        return [
-            (.topLeft, NSRect(x: r.minX - s / 2, y: r.maxY - s / 2, width: s, height: s)),
-            (.topRight, NSRect(x: r.maxX - s / 2, y: r.maxY - s / 2, width: s, height: s)),
-            (.bottomLeft, NSRect(x: r.minX - s / 2, y: r.minY - s / 2, width: s, height: s)),
-            (.bottomRight, NSRect(x: r.maxX - s / 2, y: r.minY - s / 2, width: s, height: s)),
-            (.top, NSRect(x: r.midX - s / 2, y: r.maxY - s / 2, width: s, height: s)),
-            (.bottom, NSRect(x: r.midX - s / 2, y: r.minY - s / 2, width: s, height: s)),
-            (.left, NSRect(x: r.minX - s / 2, y: r.midY - s / 2, width: s, height: s)),
-            (.right, NSRect(x: r.maxX - s / 2, y: r.midY - s / 2, width: s, height: s)),
-        ]
-    }
-
     private func hitTestRemoteHandle(at point: NSPoint) -> ResizeHandle {
-        let r = remoteSelectionRect
-        guard r.width >= 1, r.height >= 1 else { return .none }
+        // The whole selection, as drawn: the seam where it leaves this screen
+        // is not an edge, and has no handles to grab.
+        guard remoteSelectionRect.width >= 1, remoteSelectionRect.height >= 1 else { return .none }
+        let r = remoteSelectionFullRect
         let hitPad: CGFloat = 2
-        for (handle, rect) in handleRectsForRect(r) {
+        for (handle, rect) in allHandleRects(for: r) {
             switch handle {
             case .topLeft, .topRight, .bottomLeft, .bottomRight:
                 if rect.insetBy(dx: -hitPad, dy: -hitPad).contains(point) { return handle }
@@ -6333,13 +6321,6 @@ class OverlayView: NSView {
         if NSRect(x: r.minX - edgeThickness / 2, y: r.minY, width: edgeThickness, height: r.height).contains(point) { return .left }
         if NSRect(x: r.maxX - edgeThickness / 2, y: r.minY, width: edgeThickness, height: r.height).contains(point) { return .right }
         return .none
-    }
-
-    private func drawRemoteResizeHandles() {
-        for (_, rect) in handleRectsForRect(remoteSelectionRect) {
-            ToolbarLayout.handleColor.setFill()
-            NSBezierPath(ovalIn: rect).fill()
-        }
     }
 
     /// Returns the anchor point (fixed corner) for a given resize handle on a rect.

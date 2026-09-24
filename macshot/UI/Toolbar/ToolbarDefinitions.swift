@@ -293,7 +293,6 @@ class ToolbarLayout {
         }
         return defaultBgColor
     }
-    static var handleColor: NSColor { accentColor }
     static let cornerRadius: CGFloat = 6
 
     // Alignment guides — the quiet dashed grey hairline design apps use, plus a
