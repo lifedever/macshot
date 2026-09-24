@@ -31,24 +31,37 @@ final class ToolbarThemeTests: XCTestCase {
         return 0.2126 * c.redComponent + 0.7152 * c.greenComponent + 0.0722 * c.blueComponent
     }
 
-    func testSnapGuidesTakeTheThemesAccent() {
-        withDefaultTheme {
-            XCTAssertEqual(ToolbarLayout.snapGuideColor, ToolbarLayout.defaultAccentColor,
-                           "the guides match the selection's border and handles")
-        }
+    func testSnapGuidesAreALightTintOfTheThemesAccent() {
+        // The guides mostly cross the dimmed scrim, where the accent itself
+        // hardly shows; a lighter tint of it does, and keeps the theme's hue.
         let green = NSColor(srgbRed: 0.2, green: 0.6, blue: 0.3, alpha: 1)
-        withDefaults(["toolbarAccentColor": archived(green)]) {
-            XCTAssertEqual(ToolbarLayout.snapGuideColor, ToolbarLayout.accentColor)
+        for accent in [ToolbarLayout.defaultAccentColor, green] {
+            withDefaults(["toolbarAccentColor": archived(accent)]) {
+                let guide = ToolbarLayout.snapGuideColor.usingColorSpace(.sRGB)!
+                let base = accent.usingColorSpace(.sRGB)!
+                XCTAssertGreaterThan(luma(guide), luma(base) + 0.15, "lighter than the accent")
+                XCTAssertEqual(guide.hueComponent, base.hueComponent, accuracy: 0.02, "same hue")
+            }
+        }
+        withDefaultTheme {
+            XCTAssertEqual(ToolbarLayout.snapGuideColor.usingColorSpace(.sRGB)?.hueComponent ?? -1,
+                           ToolbarLayout.defaultAccentColor.usingColorSpace(.sRGB)!.hueComponent,
+                           accuracy: 0.02, "the default theme's guides are its purple, lightened")
         }
     }
 
-    func testAPaleAccentIsDarkenedForMarksOnTheCapture() {
-        // Nearly white guides would vanish on light content.
+    func testTheGuidesGapsAreDarkForLightContent() {
+        // A light tint alone washes out on light content; the gaps carry it there.
+        let gap = ToolbarLayout.snapGuideGapColor.usingColorSpace(.sRGB)!
+        XCTAssertLessThan(luma(gap), 0.1)
+        XCTAssertGreaterThan(gap.alphaComponent, 0.3)
+    }
+
+    func testAPaleAccentIsDarkenedForHandleOutlines() {
+        // A nearly white outline would vanish on light content.
         let pale = NSColor(srgbRed: 1.0, green: 0.97, blue: 0.8, alpha: 1)
         withDefaults(["toolbarAccentColor": archived(pale)]) {
-            XCTAssertLessThan(luma(ToolbarLayout.snapGuideColor), luma(pale) - 0.1)
-            XCTAssertEqual(ToolbarLayout.snapGuideColor, ToolbarLayout.accentMarkColor,
-                           "guides and handle outlines share the adjustment")
+            XCTAssertLessThan(luma(ToolbarLayout.accentMarkColor), luma(pale) - 0.1)
         }
     }
 

@@ -295,10 +295,9 @@ class ToolbarLayout {
     }
     static let cornerRadius: CGFloat = 6
 
-    /// The accent colour for marks drawn on the capture itself — selection
-    /// handles, snap guides — darkened as it approaches white. A pale accent
-    /// would otherwise draw them in something nearly white, which on light
-    /// content is the same as not drawing them.
+    /// The accent colour for the selection handles' outline, darkened as it
+    /// approaches white. A pale accent would otherwise outline a white handle
+    /// in something nearly white, which is the same as having no outline.
     static var accentMarkColor: NSColor {
         let accent = accentColor
         guard let rgb = accent.usingColorSpace(.sRGB) else { return accent }
@@ -307,15 +306,19 @@ class ToolbarLayout {
         return accent.blended(withFraction: (luma - 0.7) / 0.3 * 0.55, of: .black) ?? accent
     }
 
-    // Alignment guides: one dashed stroke, not two. An earlier version drew a
-    // wider translucent halo underneath for legibility over dark screenshots,
-    // but at this weight the halo reads as a second, blurrier guide running
-    // alongside the first.
-    /// The theme's accent, like the selection's border and handles. A grey
-    /// guide mostly crossed the overlay's dimmed scrim, where it barely showed,
-    /// and darkening it for light content only lost it further on the scrim.
-    static var snapGuideColor: NSColor { accentMarkColor }
-    static let snapGuideDashPattern: [CGFloat] = [6, 5]
+    // Alignment guides. Mostly they cross the overlay's dimmed scrim, which
+    // over light content is a mid grey — the one background no single colour
+    // stands out on: the default purple managed 1.4:1 against it. So a guide
+    // is two-tone at one width: dashes in a light tint of the theme's accent,
+    // which carry it on the scrim and on dark content, over a dark line that
+    // shows only in the gaps and carries it on light content, where the tint
+    // alone washes out. Same width underneath, not wider: an earlier halo that
+    // was wider read as a second, blurrier guide beside the first.
+    static var snapGuideColor: NSColor {
+        accentColor.usingColorSpace(.sRGB)?.blended(withFraction: 0.45, of: .white) ?? accentColor
+    }
+    static let snapGuideGapColor = NSColor.black.withAlphaComponent(0.45)
+    static let snapGuideDashPattern: [CGFloat] = [8, 5]
     static let snapGuideLineWidth: CGFloat = 2
 
     /// Save accent color to UserDefaults.
