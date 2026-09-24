@@ -1033,6 +1033,14 @@ class OverlayView: NSView {
     var boundarySnapEnabled: Bool {
         UserDefaults.standard.object(forKey: "boundarySnapEnabled") as? Bool ?? true
     }
+    /// Whether boundary snap also places a new selection's first corner, with
+    /// guides before the press. Has no effect with boundary snap itself off.
+    static let boundarySnapStartEnabledKey = "boundarySnapStartEnabled"
+    static let boundarySnapStartEnabledByDefault = true
+    var boundarySnapStartEnabled: Bool {
+        UserDefaults.standard.object(forKey: Self.boundarySnapStartEnabledKey) as? Bool
+            ?? Self.boundarySnapStartEnabledByDefault
+    }
     private var boundarySnapIndex: BoundarySnapIndex?
     private var boundarySnapBuildGeneration = 0
     private var pendingAutoAdjustSelection = false
@@ -8136,13 +8144,14 @@ class OverlayView: NSView {
 
     /// Where a press at `point` would put a new selection's first corner, per
     /// axis: on an image edge within the snap radius — the edges a drag's
-    /// moving corner snaps to — or nil. Nil throughout when boundary snap is
-    /// off or bypassed with Option, when no selection can start here, and
+    /// moving corner snaps to — or nil. Nil throughout when boundary snap, or
+    /// its start snap, is off or bypassed with Option, when no selection can
+    /// start here, and
     /// under a fixed-size preset, whose rect is centred on the pointer.
     private func startSnap(at point: NSPoint, modifiers: NSEvent.ModifierFlags) -> (x: CGFloat?, y: CGFloat?) {
         if case .resolution = activePreSelectionPreset { return (nil, nil) }
         guard state == .idle, shouldAllowNewSelection(), !isScrollCapturing,
-              boundarySnapEnabled, !modifiers.contains(.option),
+              boundarySnapEnabled, boundarySnapStartEnabled, !modifiers.contains(.option),
               let index = boundarySnapIndex, bounds.contains(point),
               // A selection mirrored from another screen takes this screen's
               // presses for its own handles; none can start here.

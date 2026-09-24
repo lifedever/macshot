@@ -46,6 +46,7 @@ struct CaptureSettingsView: View {
                 checkboxGrid([
                     (L("Show snap alignment guides"), $model.snapGuides),
                     (L("Snap selection edges to image boundaries"), $model.boundarySnap),
+                    (L("Snap the starting corner before dragging"), $model.boundarySnapStart),
                     (L("Haptic feedback when snapping"), $model.snapHaptics),
                     (L("Enhance browser and Electron element snapping"), $model.browserElementSnap),
                 ])

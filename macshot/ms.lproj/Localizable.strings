@@ -232,6 +232,7 @@
 "Launch at login" = "Lancar semasa log masuk";
 "Show snap alignment guides" = "Tunjuk panduan penjajaran lekat";
 "Snap selection edges to image boundaries" = "Lekatkan tepi pilihan pada sempadan imej";
+"Snap the starting corner before dragging" = "Lekatkan sudut permulaan sebelum menyeret";
 "Snapping" = "Pelekatan";
 "Haptic feedback when snapping" = "Maklum balas haptik semasa melekat";
 "Enhance browser and Electron element snapping" = "Tingkatkan penjerapan elemen penyegerak dan Electron";

@@ -52,6 +52,9 @@ final class CaptureSettingsModel: ObservableObject {
     @Published var boundarySnap: Bool {
         didSet { store(boundarySnap, "boundarySnapEnabled", oldValue) }
     }
+    @Published var boundarySnapStart: Bool {
+        didSet { store(boundarySnapStart, OverlayView.boundarySnapStartEnabledKey, oldValue) }
+    }
     @Published var snapHaptics: Bool {
         didSet { store(snapHaptics, SnapHapticFeedback.enabledKey, oldValue) }
     }
@@ -256,6 +259,8 @@ final class CaptureSettingsModel: ObservableObject {
         disableOutsideShadow = ud.bool(forKey: "disableSelectionOutsideShadow")
         snapGuides = ud.object(forKey: "snapGuidesEnabled") as? Bool ?? true
         boundarySnap = ud.object(forKey: "boundarySnapEnabled") as? Bool ?? true
+        boundarySnapStart = ud.object(forKey: OverlayView.boundarySnapStartEnabledKey) as? Bool
+            ?? OverlayView.boundarySnapStartEnabledByDefault
         snapHaptics = ud.object(forKey: SnapHapticFeedback.enabledKey) as? Bool ?? true
         browserElementSnap = ud.object(forKey: OverlayView.browserElementSnapEnabledKey) as? Bool ?? true
         showThumbnail = ud.object(forKey: "showFloatingThumbnail") as? Bool ?? true

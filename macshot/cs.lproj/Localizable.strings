@@ -248,6 +248,7 @@
 "Snapping" = "Přichytávání";
 "Haptic feedback when snapping" = "Hmatová odezva při přichycení";
 "Snap selection edges to image boundaries" = "Přichytit okraje výběru k hranicím obrázku";
+"Snap the starting corner before dragging" = "Přichytit počáteční roh před tažením";
 "Enhance browser and Electron element snapping" = "Zlepšit přichycování prvků v prohlížeči a Electron";
 "Builds the target app's accessibility tree in Element mode. Disable this if a browser or Electron app becomes slow or has input issues." = "Sestavuje strom usnadnění cílové aplikace v režimu prvků. Zakažte, pokud se prohlížeč nebo Electron aplikace stane pomalým nebo má problémy s vstupem.";
 "Capture mouse cursor in screenshot" = "Zachytit kurzor myši na snímku";

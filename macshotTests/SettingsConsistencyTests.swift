@@ -17,6 +17,7 @@ final class SettingsConsistencyTests: XCTestCase {
         "historySize", "historyOrderByLastEdit", "scrollAutoScrollEnabled",
         "scrollAutoScrollSpeed", "scrollMaxHeight", "beautifyShadowRadius",
         "thumbnailCorner", "thumbnailStacking", "historyUnlimited",
+        OverlayView.boundarySnapStartEnabledKey,
     ]
 
     private func withFreshInstall(_ body: () throws -> Void) rethrows {
@@ -40,6 +41,8 @@ final class SettingsConsistencyTests: XCTestCase {
             XCTAssertEqual(model.beautifyShadowRadius, 20, "OverlayView falls back to a 20pt shadow")
             XCTAssertEqual(model.thumbnailStacking, 0, "cards stack by default")
             XCTAssertEqual(model.thumbnailCorner, 0, "cards start in the bottom-right corner")
+            XCTAssertEqual(model.boundarySnapStart, OverlayView().boundarySnapStartEnabled,
+                           "the pane shows whether a new selection's start snaps")
         }
     }
 

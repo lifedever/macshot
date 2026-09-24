@@ -234,6 +234,7 @@
 "Use desktop wallpaper" = "用桌面桌布";
 "Choose image…" = "選擇圖片…";
 "Snap selection edges to image boundaries" = "將選取範圍邊緣貼齊影像邊界";
+"Snap the starting corner before dragging" = "框選前貼齊起點";
 "Enhance browser and Electron element snapping" = "增強瀏覽器與 Electron 元素吸附";
 "Builds the target app's accessibility tree in Element mode. Disable this if a browser or Electron app becomes slow or has input issues." = "在元素模式下建立目標應用程式的輔助使用樹狀結構。如果瀏覽器或 Electron 應用程式變慢或出現輸入問題，請關閉此選項。";
 "Capture mouse cursor in screenshot" = "在螢幕截圖中擷取滑鼠游標";

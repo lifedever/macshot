@@ -248,6 +248,7 @@
 "Snapping" = "Прилепване";
 "Haptic feedback when snapping" = "Тактилна обратна връзка при прилепване";
 "Snap selection edges to image boundaries" = "Прилепване на ръбовете на селекцията към границите на изображението";
+"Snap the starting corner before dragging" = "Прилепване на началния ъгъл преди плъзгане";
 "Enhance browser and Electron element snapping" = "Подобряване на прилепването на елементи в браузър и Electron";
 "Builds the target app's accessibility tree in Element mode. Disable this if a browser or Electron app becomes slow or has input issues." = "Изгражда дървото на достъпност на целевото приложение в режим на елементи. Деактивирайте, ако браузър или Electron приложение се забави или има проблеми с въвеждането.";
 "Capture mouse cursor in screenshot" = "Заснемане на курсора в екранната снимка";

@@ -228,6 +228,7 @@
 "Launch at login" = "लॉगिन पर लॉन्च करें";
 "Show snap alignment guides" = "स्नैप संरेखण गाइड दिखाएँ";
 "Snap selection edges to image boundaries" = "चयन के किनारों को छवि की सीमाओं पर स्नैप करें";
+"Snap the starting corner before dragging" = "खींचने से पहले शुरुआती कोने को स्नैप करें";
 "Capture mouse cursor in screenshot" = "स्क्रीनशॉट में माउस कर्सर कैप्चर करें";
 "Double-click selection to copy" = "कॉपी करने के लिए चयन पर डबल-क्लिक करें";
 "Hide capture instructions" = "कैप्चर निर्देश छिपाएँ";

@@ -214,6 +214,7 @@
 "Launch at login" = "التشغيل عند تسجيل الدخول";
 "Show snap alignment guides" = "عرض خطوط المحاذاة";
 "Snap selection edges to image boundaries" = "محاذاة حواف التحديد إلى حدود الصورة";
+"Snap the starting corner before dragging" = "محاذاة زاوية البداية قبل السحب";
 "Snapping" = "المحاذاة";
 "Haptic feedback when snapping" = "استجابة لمسية عند المحاذاة";
 "Capture mouse cursor in screenshot" = "التقاط مؤشر الفأرة في لقطة الشاشة";

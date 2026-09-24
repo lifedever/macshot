@@ -214,6 +214,7 @@
 "Launch at login" = "اجرا هنگام ورود";
 "Show snap alignment guides" = "نمایش خطوط راهنمای تراز";
 "Snap selection edges to image boundaries" = "چسباندن لبه‌های انتخاب به مرزهای تصویر";
+"Snap the starting corner before dragging" = "چسباندن گوشهٔ شروع پیش از کشیدن";
 "Snapping" = "چسبش";
 "Haptic feedback when snapping" = "بازخورد لمسی هنگام چسبش";
 "Capture mouse cursor in screenshot" = "ضبط نشانگر موس در تصویر صفحه";

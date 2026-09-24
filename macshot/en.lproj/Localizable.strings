@@ -222,6 +222,7 @@
 "Launch at login" = "Launch at login";
 "Show snap alignment guides" = "Show snap alignment guides";
 "Snap selection edges to image boundaries" = "Snap selection edges to image boundaries";
+"Snap the starting corner before dragging" = "Snap the starting corner before dragging";
 "Haptic feedback when snapping" = "Haptic feedback when snapping";
 "Press C to copy" = "Press C to copy";
 "Use desktop wallpaper" = "Use desktop wallpaper";

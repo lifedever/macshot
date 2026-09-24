@@ -232,6 +232,7 @@
 "Launch at login" = "Jalankan saat masuk";
 "Show snap alignment guides" = "Tampilkan panduan perataan jepret";
 "Snap selection edges to image boundaries" = "Jepretkan tepi pilihan ke batas gambar";
+"Snap the starting corner before dragging" = "Jepretkan sudut awal sebelum menyeret";
 "Snapping" = "Penjepretan";
 "Haptic feedback when snapping" = "Umpan balik haptik saat menjepret";
 "Enhance browser and Electron element snapping" = "Tingkatkan penjepretan elemen browser dan Electron";
