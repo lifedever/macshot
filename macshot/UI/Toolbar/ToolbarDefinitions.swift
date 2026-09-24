@@ -302,7 +302,7 @@ class ToolbarLayout {
     /// the halo reads as a second, blurrier guide running alongside the first.
     /// A single heavier dash in a mid grey holds up on light and dark content
     /// on its own.
-    static let snapGuideColor = NSColor(white: 0.62, alpha: 1)
+    static let snapGuideColor = NSColor(white: 0.52, alpha: 1)
     static let snapGuideDashPattern: [CGFloat] = [6, 5]
     static let snapGuideLineWidth: CGFloat = 2
 
