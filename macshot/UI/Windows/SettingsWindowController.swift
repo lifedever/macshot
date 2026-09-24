@@ -868,11 +868,10 @@ class SettingsWindowController: NSWindowController, NSToolbarDelegate, NSWindowD
                 let result = lines.joined(separator: "\n")
                 NSPasteboard.general.clearContents()
                 NSPasteboard.general.setString(result, forType: .string)
-                // Flash the button title to confirm
-                if let btn = self.window?.contentView?.viewWithTag(9999) as? NSButton {
-                    btn.title = L("Copied!")
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { btn.title = L("Copy Screen Info") }
-                }
+                // Confirm through the app-wide toast. This used to retitle the
+                // AppKit button tagged 9999, which the SwiftUI pane does not
+                // have, so the copy went unconfirmed.
+                ToastCenter.shared.show(L("Copied to clipboard!"))
             }
         }
     }

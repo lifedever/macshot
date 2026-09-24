@@ -789,7 +789,6 @@ class OverlayView: NSView {
     private var multiSelectDeleteButtonRect: NSRect = .zero  // consolidated delete for multi-selection
 
     // Overlay error message
-    private var overlayErrorMessage: String? = nil
 
     // Instant tooltip for hovered toolbar button
     private var hoveredTooltip: String?
@@ -806,7 +805,6 @@ class OverlayView: NSView {
         return viewToCanvas(convert(windowPoint, from: nil))
     }
     private var editorTooltipView: NSView?
-    private var overlayErrorTimer: Timer? = nil
 
     // Recording state
     var hasRecordingInputMonitoringPermission: Bool {
@@ -2588,27 +2586,6 @@ class OverlayView: NSView {
             }
         }
 
-        // Overlay error message
-        if let errorMsg = overlayErrorMessage {
-            let attrs: [NSAttributedString.Key: Any] = [
-                .font: NSFont.systemFont(ofSize: 13, weight: .medium),
-                .foregroundColor: NSColor.white,
-            ]
-            let str = errorMsg as NSString
-            let strSize = str.size(withAttributes: attrs)
-            let padding: CGFloat = 12
-            let msgW = strSize.width + padding * 2
-            let msgH = strSize.height + padding
-            let msgX = bounds.midX - msgW / 2
-            let msgY = bounds.maxY - msgH - 40
-            let msgRect = NSRect(x: msgX, y: msgY, width: msgW, height: msgH)
-            NSColor(red: 0.8, green: 0.2, blue: 0.2, alpha: 0.9).setFill()
-            NSBezierPath(roundedRect: msgRect, xRadius: 8, yRadius: 8).fill()
-            str.draw(
-                at: NSPoint(x: msgRect.minX + padding, y: msgRect.minY + padding / 2),
-                withAttributes: attrs)
-        }
-
         // Instant tooltip for hovered toolbar button
         drawHoveredTooltip()
 
@@ -2911,17 +2888,6 @@ class OverlayView: NSView {
             return
         }
         // While a W/H field is being edited, leave the box exactly where it is.
-            box.onPresetsHover = { [weak self] hovered, anchor in
-                guard let self, !self.isToolbarMoveDragActive else { return }
-                if hovered {
-                    self.hoveredTooltip = L("Aspect ratio & resolution presets")
-                    self.hoveredTooltipButtonView = anchor
-                } else if self.hoveredTooltipButtonView === anchor {
-                    self.hoveredTooltip = nil
-                    self.hoveredTooltipButtonView = nil
-                }
-                self.needsDisplay = true
-            }
         // Re-laying-out mid-edit disturbs the field editor / first responder,
         // which makes typing beep. The selection isn't changing during editing,
         // so there's nothing to update.
@@ -2945,6 +2911,17 @@ class OverlayView: NSView {
                 self.updateResolutionBox()
             }
             box.onPresets = { [weak self] anchor in self?.showResolutionPresets(from: anchor) }
+            box.onPresetsHover = { [weak self] hovered, anchor in
+                guard let self, !self.isToolbarMoveDragActive else { return }
+                if hovered {
+                    self.hoveredTooltip = L("Aspect ratio & resolution presets")
+                    self.hoveredTooltipButtonView = anchor
+                } else if self.hoveredTooltipButtonView === anchor {
+                    self.hoveredTooltip = nil
+                    self.hoveredTooltipButtonView = nil
+                }
+                self.needsDisplay = true
+            }
             resolutionBox = box
         }
         let frame = resolutionBoxFrame(size: box.preferredSize, dimsCenterX: box.dimensionsCenterX)
@@ -6064,15 +6041,11 @@ class OverlayView: NSView {
     /// The red banner inside the overlay. Errors only — confirmations and
     /// progress go to `ToastCenter`, which is styled for them and survives the
     /// overlay closing.
+    /// Report a problem through the app-wide toast. This used to draw a red
+    /// box at the top of the overlay — a message style found nowhere else —
+    /// because the toast sat below the overlay; it now sits above it.
     func showOverlayError(_ message: String) {
-        overlayErrorTimer?.invalidate()
-        overlayErrorMessage = message
-        needsDisplay = true
-        overlayErrorTimer = Timer.scheduledTimer(withTimeInterval: 4.0, repeats: false) {
-            [weak self] _ in
-            self?.overlayErrorMessage = nil
-            self?.needsDisplay = true
-        }
+        ToastCenter.shared.show(message, icon: .info, duration: 4)
     }
 
     // MARK: - Toolbar Layout
@@ -8865,14 +8838,6 @@ class OverlayView: NSView {
 
         let tipSize = ToolbarLayout.tooltipSize(for: tooltip)
         let tipW = tipSize.width
-        } else {
-            // A control on the canvas, such as the size box: above the control
-            // it sits in, or below if no room — clear of it either way, since
-            // the control is a subview drawn over this.
-            let host = btn.superview.map { $0.convert($0.bounds, to: self) } ?? btnFrame
-            var tipY = host.maxY + 4
-            if tipY + tipH > bounds.maxY - 2 { tipY = host.minY - tipH - 4 }
-            tipRect = NSRect(x: btnFrame.midX - tipW / 2, y: tipY, width: tipW, height: tipH)
         let tipH = tipSize.height
 
         // Convert the button's rect to OverlayView coordinates. The button may
@@ -8885,7 +8850,7 @@ class OverlayView: NSView {
             let screenRect = btnWindow.convertToScreen(inBtnWindow)
             let inSelfWindow = selfWindow.convertFromScreen(screenRect)
             btnFrame = convert(inSelfWindow, from: nil)
-        } else if isButton(btn, inStrip: rightStripView) {
+        } else {
             btnFrame = btn.convert(btn.bounds, to: self)
         }
         // The button is hosted in a strip; find which strip via the panel chain.
@@ -8897,9 +8862,17 @@ class OverlayView: NSView {
             var tipY = bottomBarRect.maxY + 4
             if tipY + tipH > bounds.maxY - 2 { tipY = bottomBarRect.minY - tipH - 4 }
             tipRect = NSRect(x: btnFrame.midX - tipW / 2, y: tipY, width: tipW, height: tipH)
-        } else {
+        } else if isButton(btn, inStrip: rightStripView) {
             // Left of right bar
             tipRect = NSRect(x: btnFrame.minX - tipW - 6, y: btnFrame.midY - tipH / 2, width: tipW, height: tipH)
+        } else {
+            // A control on the canvas, such as the size box: above the control
+            // it sits in, or below if no room — clear of it either way, since
+            // the control is a subview drawn over this.
+            let host = btn.superview.map { $0.convert($0.bounds, to: self) } ?? btnFrame
+            var tipY = host.maxY + 4
+            if tipY + tipH > bounds.maxY - 2 { tipY = host.minY - tipH - 4 }
+            tipRect = NSRect(x: btnFrame.midX - tipW / 2, y: tipY, width: tipW, height: tipH)
         }
 
         // Clamp to bounds
@@ -11562,9 +11535,6 @@ class OverlayView: NSView {
         loupeCursorPoint = .zero
         colorSamplerPoint = .zero
         colorSamplerBitmap = nil
-        overlayErrorTimer?.invalidate()
-        overlayErrorTimer = nil
-        overlayErrorMessage = nil
         hoveredSnapRect = nil
         pendingSnapQueryPoint = nil
         for workItem in browserAccessibilityRetryWorkItems {

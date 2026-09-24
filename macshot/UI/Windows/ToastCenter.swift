@@ -148,7 +148,10 @@ final class ToastCenter {
             defer: false
         )
         newPanel.isFloatingPanel = true
-        newPanel.level = .statusBar
+        // Above the capture overlay (257) and its HUDs (258). At the status-bar
+        // level a toast raised during a capture was hidden behind the overlay,
+        // which is why the overlay once drew its own messages.
+        newPanel.level = NSWindow.Level(259)
         newPanel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .transient]
         newPanel.isExcludedFromWindowsMenu = true
         // Must survive deactivation: the toast usually appears exactly as the capture overlay
