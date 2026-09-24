@@ -4763,8 +4763,8 @@ class OverlayView: NSView {
         }
     }
 
-    /// Guide line(s) on the image edge the selection just snapped to (boundary
-    /// snap). Spans the full overlay so the snapped image line is obvious.
+    /// Guide line(s) on the image edge or screen centre line the selection just
+    /// snapped to (boundary snap). Spans the full overlay so the line is obvious.
     /// Drawn only while resizing with an active snap.
     private func drawBoundarySnapGuides() {
         guard boundarySnapGuideX != nil || boundarySnapGuideY != nil else { return }
@@ -8062,7 +8062,6 @@ class OverlayView: NSView {
         var minX = rect.minX, maxX = rect.maxX, minY = rect.minY, maxY = rect.maxY
         var guideX: CGFloat?
         var guideY: CGFloat?
-        let radius = boundarySnapRadiusPoints
 
         // Which edges does this handle move?
         let movesLeft = handle == .left || handle == .topLeft || handle == .bottomLeft
@@ -8070,17 +8069,17 @@ class OverlayView: NSView {
         let movesTop = handle == .top || handle == .topLeft || handle == .topRight
         let movesBottom = handle == .bottom || handle == .bottomLeft || handle == .bottomRight
 
-        if movesLeft, let hit = index.nearestVertical(toViewX: minX, yMinView: minY, yMaxView: maxY, radiusPoints: radius) {
-            if hit.viewPosition <= maxX - minSize { minX = hit.viewPosition; guideX = hit.viewPosition }
+        if movesLeft, let x = verticalSnapTarget(near: minX, yMin: minY, yMax: maxY, index: index) {
+            if x <= maxX - minSize { minX = x; guideX = x }
         }
-        if movesRight, let hit = index.nearestVertical(toViewX: maxX, yMinView: minY, yMaxView: maxY, radiusPoints: radius) {
-            if hit.viewPosition >= minX + minSize { maxX = hit.viewPosition; guideX = hit.viewPosition }
+        if movesRight, let x = verticalSnapTarget(near: maxX, yMin: minY, yMax: maxY, index: index) {
+            if x >= minX + minSize { maxX = x; guideX = x }
         }
-        if movesBottom, let hit = index.nearestHorizontal(toViewY: minY, xMinView: minX, xMaxView: maxX, radiusPoints: radius) {
-            if hit.viewPosition <= maxY - minSize { minY = hit.viewPosition; guideY = hit.viewPosition }
+        if movesBottom, let y = horizontalSnapTarget(near: minY, xMin: minX, xMax: maxX, index: index) {
+            if y <= maxY - minSize { minY = y; guideY = y }
         }
-        if movesTop, let hit = index.nearestHorizontal(toViewY: maxY, xMinView: minX, xMaxView: maxX, radiusPoints: radius) {
-            if hit.viewPosition >= minY + minSize { maxY = hit.viewPosition; guideY = hit.viewPosition }
+        if movesTop, let y = horizontalSnapTarget(near: maxY, xMin: minX, xMax: maxX, index: index) {
+            if y >= minY + minSize { maxY = y; guideY = y }
         }
 
         boundarySnapGuideX = guideX
@@ -8089,7 +8088,8 @@ class OverlayView: NSView {
         return NSRect(x: minX, y: minY, width: maxX - minX, height: maxY - minY)
     }
 
-    /// Snap a whole rect being MOVED (not resized) to nearby image edges. Unlike
+    /// Snap a whole rect being MOVED (not resized) to nearby image edges and the
+    /// screen's centre lines. Unlike
     /// resize snapping, the rect size is fixed: we translate it so an edge lands
     /// on a boundary. Both left/right edges are candidates on X (and top/bottom on
     /// Y); the nearer snap wins per axis. Returns the translated rect and updates
@@ -8105,31 +8105,39 @@ class OverlayView: NSView {
             return rect
         }
         let radius = boundarySnapRadiusPoints
+        let centre = NSPoint(x: captureDrawRect.midX, y: captureDrawRect.midY)
         var dx: CGFloat = 0
         var guideX: CGFloat?
         // X axis: try snapping the left edge and the right edge; take the smaller
-        // shift so the closer boundary wins.
+        // shift so the closer boundary wins. The rect's own centre also snaps to
+        // the screen's, to centre a selection.
         var bestX: CGFloat = .greatestFiniteMagnitude
-        if let hit = index.nearestVertical(toViewX: rect.minX, yMinView: rect.minY, yMaxView: rect.maxY, radiusPoints: radius) {
-            let shift = hit.viewPosition - rect.minX
-            if abs(shift) < abs(bestX) { bestX = shift; guideX = hit.viewPosition }
+        if let x = verticalSnapTarget(near: rect.minX, yMin: rect.minY, yMax: rect.maxY, index: index) {
+            let shift = x - rect.minX
+            if abs(shift) < abs(bestX) { bestX = shift; guideX = x }
         }
-        if let hit = index.nearestVertical(toViewX: rect.maxX, yMinView: rect.minY, yMaxView: rect.maxY, radiusPoints: radius) {
-            let shift = hit.viewPosition - rect.maxX
-            if abs(shift) < abs(bestX) { bestX = shift; guideX = hit.viewPosition }
+        if let x = verticalSnapTarget(near: rect.maxX, yMin: rect.minY, yMax: rect.maxY, index: index) {
+            let shift = x - rect.maxX
+            if abs(shift) < abs(bestX) { bestX = shift; guideX = x }
+        }
+        if abs(centre.x - rect.midX) <= radius, abs(centre.x - rect.midX) < abs(bestX) {
+            bestX = centre.x - rect.midX; guideX = centre.x
         }
         if bestX != .greatestFiniteMagnitude { dx = bestX }
 
         var dy: CGFloat = 0
         var guideY: CGFloat?
         var bestY: CGFloat = .greatestFiniteMagnitude
-        if let hit = index.nearestHorizontal(toViewY: rect.minY, xMinView: rect.minX, xMaxView: rect.maxX, radiusPoints: radius) {
-            let shift = hit.viewPosition - rect.minY
-            if abs(shift) < abs(bestY) { bestY = shift; guideY = hit.viewPosition }
+        if let y = horizontalSnapTarget(near: rect.minY, xMin: rect.minX, xMax: rect.maxX, index: index) {
+            let shift = y - rect.minY
+            if abs(shift) < abs(bestY) { bestY = shift; guideY = y }
         }
-        if let hit = index.nearestHorizontal(toViewY: rect.maxY, xMinView: rect.minX, xMaxView: rect.maxX, radiusPoints: radius) {
-            let shift = hit.viewPosition - rect.maxY
-            if abs(shift) < abs(bestY) { bestY = shift; guideY = hit.viewPosition }
+        if let y = horizontalSnapTarget(near: rect.maxY, xMin: rect.minX, xMax: rect.maxX, index: index) {
+            let shift = y - rect.maxY
+            if abs(shift) < abs(bestY) { bestY = shift; guideY = y }
+        }
+        if abs(centre.y - rect.midY) <= radius, abs(centre.y - rect.midY) < abs(bestY) {
+            bestY = centre.y - rect.midY; guideY = centre.y
         }
         if bestY != .greatestFiniteMagnitude { dy = bestY }
 
@@ -8139,9 +8147,40 @@ class OverlayView: NSView {
         return rect.offsetBy(dx: dx, dy: dy)
     }
 
+    /// Where a vertical selection edge near `x` snaps: an image edge scored
+    /// along [yMin, yMax], or the screen's vertical centre line, whichever is
+    /// nearer within the snap radius.
+    private func verticalSnapTarget(near x: CGFloat, yMin: CGFloat, yMax: CGFloat,
+                                    index: BoundarySnapIndex) -> CGFloat? {
+        let radius = boundarySnapRadiusPoints
+        return Self.nearerSnapTarget(
+            index.nearestVertical(toViewX: x, yMinView: yMin, yMaxView: yMax, radiusPoints: radius)?.viewPosition,
+            orCentre: captureDrawRect.midX, to: x, radius: radius)
+    }
+
+    /// The horizontal counterpart of `verticalSnapTarget`.
+    private func horizontalSnapTarget(near y: CGFloat, xMin: CGFloat, xMax: CGFloat,
+                                      index: BoundarySnapIndex) -> CGFloat? {
+        let radius = boundarySnapRadiusPoints
+        return Self.nearerSnapTarget(
+            index.nearestHorizontal(toViewY: y, xMinView: xMin, xMaxView: xMax, radiusPoints: radius)?.viewPosition,
+            orCentre: captureDrawRect.midY, to: y, radius: radius)
+    }
+
+    /// `edge`, or the screen's centre line when that is within `radius` of
+    /// `position` and nearer. The centre lines are snap targets of their own,
+    /// as in any layout tool: they are where a selection is lined up by eye,
+    /// and the screenshot rarely has an edge on them to snap to.
+    static func nearerSnapTarget(_ edge: CGFloat?, orCentre centre: CGFloat,
+                                 to position: CGFloat, radius: CGFloat) -> CGFloat? {
+        guard abs(centre - position) <= radius else { return edge }
+        guard let edge else { return centre }
+        return abs(centre - position) < abs(edge - position) ? centre : edge
+    }
+
     /// Where a press at `point` would put a new selection's first corner, per
-    /// axis: on an image edge within the snap radius — the edges a drag's
-    /// moving corner snaps to — or nil. Nil throughout when boundary snap, or
+    /// axis: on an image edge or the screen's centre line within the snap
+    /// radius — what a drag's moving corner snaps to — or nil. Nil throughout when boundary snap, or
     /// its start snap, is off or bypassed with Option, when no selection can
     /// start here, and
     /// under a fixed-size preset, whose rect is centred on the pointer.
@@ -8157,10 +8196,14 @@ class OverlayView: NSView {
         let reach = boundarySnapStartReachPoints
         let radius = boundarySnapRadiusPoints
         return (
-            index.nearestStartVertical(toViewX: point.x, atViewY: point.y,
-                                       reachPoints: reach, radiusPoints: radius)?.viewPosition,
-            index.nearestStartHorizontal(toViewY: point.y, atViewX: point.x,
-                                         reachPoints: reach, radiusPoints: radius)?.viewPosition
+            Self.nearerSnapTarget(
+                index.nearestStartVertical(toViewX: point.x, atViewY: point.y,
+                                           reachPoints: reach, radiusPoints: radius)?.viewPosition,
+                orCentre: captureDrawRect.midX, to: point.x, radius: radius),
+            Self.nearerSnapTarget(
+                index.nearestStartHorizontal(toViewY: point.y, atViewX: point.x,
+                                             reachPoints: reach, radiusPoints: radius)?.viewPosition,
+                orCentre: captureDrawRect.midY, to: point.y, radius: radius)
         )
     }
 
@@ -8217,16 +8260,15 @@ class OverlayView: NSView {
         var p = point
         var guideX: CGFloat?
         var guideY: CGFloat?
-        let radius = boundarySnapRadiusPoints
         let yMin = min(anchor.y, point.y), yMax = max(anchor.y, point.y)
         let xMin = min(anchor.x, point.x), xMax = max(anchor.x, point.x)
-        if let hit = index.nearestVertical(toViewX: point.x, yMinView: yMin, yMaxView: yMax, radiusPoints: radius) {
-            p.x = hit.viewPosition
-            guideX = hit.viewPosition
+        if let x = verticalSnapTarget(near: point.x, yMin: yMin, yMax: yMax, index: index) {
+            p.x = x
+            guideX = x
         }
-        if let hit = index.nearestHorizontal(toViewY: point.y, xMinView: xMin, xMaxView: xMax, radiusPoints: radius) {
-            p.y = hit.viewPosition
-            guideY = hit.viewPosition
+        if let y = horizontalSnapTarget(near: point.y, xMin: xMin, xMax: xMax, index: index) {
+            p.y = y
+            guideY = y
         }
         boundarySnapGuideX = guideX
         boundarySnapGuideY = guideY

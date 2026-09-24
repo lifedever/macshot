@@ -232,3 +232,25 @@ final class BeautifyShadowCurveTests: XCTestCase {
         }
     }
 }
+
+/// The screen's centre lines are snap targets beside the image's own edges.
+@MainActor
+final class SnapTargetTests: XCTestCase {
+
+    func testTheCentreLineIsATargetWithNoEdgeNearby() {
+        XCTAssertEqual(OverlayView.nearerSnapTarget(nil, orCentre: 756, to: 753, radius: 4), 756)
+    }
+
+    func testTheCentreLineIsIgnoredOutsideTheRadius() {
+        XCTAssertNil(OverlayView.nearerSnapTarget(nil, orCentre: 756, to: 750, radius: 4))
+        XCTAssertEqual(OverlayView.nearerSnapTarget(748, orCentre: 756, to: 750, radius: 4), 748,
+                       "an edge in range still wins when the centre is out of it")
+    }
+
+    func testTheNearerOfEdgeAndCentreWins() {
+        XCTAssertEqual(OverlayView.nearerSnapTarget(752, orCentre: 756, to: 755, radius: 4), 756)
+        XCTAssertEqual(OverlayView.nearerSnapTarget(754, orCentre: 756, to: 753, radius: 4), 754)
+        XCTAssertEqual(OverlayView.nearerSnapTarget(754, orCentre: 756, to: 755, radius: 4), 754,
+                       "a tie goes to the screenshot's own edge")
+    }
+}
