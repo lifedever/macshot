@@ -2356,8 +2356,11 @@ class OverlayView: NSView {
             // Resolution box (real NSView) is managed in updateResolutionBox(),
             // called from layout/selection changes — not drawn here.
 
-            // Resize handles (drawn even in recording setup mode, but not during scroll capture)
-            if state == .selected && !isEditorMode && !isScrollCapturing {
+            // Resize handles (drawn even in recording setup mode, but not during scroll capture).
+            // Also while the selection is being dragged out: the border has receded to a faint
+            // line, so without the brackets the rectangle being drawn was barely visible, and
+            // they popped in on release.
+            if (state == .selected || state == .selecting) && !isEditorMode && !isScrollCapturing {
                 drawResizeHandles()
             }
 
