@@ -255,6 +255,9 @@ class FloatingThumbnailController: NSObject, NSDraggingSource, QLPreviewPanelDat
     /// intermediate positions during slide-in or reflow animations.
     private var targetFrame: NSRect = .zero
     private var dismissDragStartFrame: NSRect?
+    /// How far a dismiss drag may carry the card: to the seam when another
+    /// display lies past the edge, so the card is never dragged onto it.
+    private var dismissDragLimit: CGFloat = .greatestFiniteMagnitude
     private var isInteractiveDismissActive = false
     private var isScrollDismissHostActive = false
     private var quickLookURL: URL?
@@ -354,10 +357,19 @@ class FloatingThumbnailController: NSObject, NSDraggingSource, QLPreviewPanelDat
         let clampedY = min(origin.y, screenFrame.maxY - thumbSize.height - padding)
         let finalY   = max(screenFrame.minY + padding, clampedY)
 
-        let startX = corner.isLeft ? screenFrame.minX - thumbSize.width - 10 : screenFrame.maxX + 10
+        let finalFrame = NSRect(x: finalX, y: finalY, width: thumbSize.width, height: thumbSize.height)
+        // Slide in along the path it will leave by. Where another display sits
+        // past the edge, that path stops at the seam, so the card fades in too.
+        let entry = Self.exitPath(
+            for: finalFrame,
+            towardLeft: corner.isLeft,
+            screenFrame: screen.frame,
+            visibleFrame: screenFrame,
+            otherScreens: NSScreen.screens.filter { $0 != screen }.map(\.frame)
+        )
 
         let panel = NSPanel(
-            contentRect: NSRect(x: startX, y: finalY, width: thumbSize.width, height: thumbSize.height),
+            contentRect: NSRect(x: entry.x, y: finalY, width: thumbSize.width, height: thumbSize.height),
             styleMask: [.borderless, .nonactivatingPanel],
             backing: .buffered,
             defer: false
@@ -404,15 +416,16 @@ class FloatingThumbnailController: NSObject, NSDraggingSource, QLPreviewPanelDat
         self.window = panel
         self.thumbnailView = view
 
-        let finalFrame = NSRect(x: finalX, y: finalY, width: thumbSize.width, height: thumbSize.height)
         targetFrame = finalFrame
 
+        if !entry.leavesScreen { panel.alphaValue = 0 }
         panel.orderFrontRegardless()
 
         NSAnimationContext.runAnimationGroup({ ctx in
             ctx.duration = 0.3
             ctx.timingFunction = CAMediaTimingFunction(name: .easeOut)
             panel.animator().setFrame(finalFrame, display: true)
+            if !entry.leavesScreen { panel.animator().alphaValue = 1 }
         })
 
         scheduleAutoDismiss()
@@ -664,13 +677,13 @@ class FloatingThumbnailController: NSObject, NSDraggingSource, QLPreviewPanelDat
         }
 
         let frame = window.frame
-        let offscreenX = offscreenX(for: frame)
+        let exitX = exitPath(for: frame).x
 
         NSAnimationContext.runAnimationGroup({ ctx in
             ctx.duration = 0.4
             ctx.timingFunction = CAMediaTimingFunction(name: .easeIn)
             window.animator().setFrame(
-                NSRect(x: offscreenX, y: frame.minY, width: frame.width, height: frame.height),
+                NSRect(x: exitX, y: frame.minY, width: frame.width, height: frame.height),
                 display: true
             )
             window.animator().alphaValue = 0
@@ -709,19 +722,56 @@ class FloatingThumbnailController: NSObject, NSDraggingSource, QLPreviewPanelDat
         return !cardFrames.contains { $0.insetBy(dx: shadowMargin, dy: shadowMargin).contains(pointer) }
     }
 
-    private func visibleScreenFrame(for frame: NSRect) -> NSRect {
-        // By the card's centre: a card on the right of a display whose right
-        // neighbour starts at the seam intersects that neighbour too, and
-        // slid out past the neighbour's far edge, across the whole of it.
-        if let screen = NSScreen.screens.first(where: { Self.isCard(frame, on: $0.frame) }) {
-            return screen.visibleFrame
-        }
-        return NSScreen.preferredVisibleFrame
+    /// Where a card slides to when it leaves, and slides in from when it
+    /// arrives: `x` is the window's origin there, `leavesScreen` whether the
+    /// card is then off the screen or only at its edge.
+    struct ExitPath: Equatable {
+        var x: CGFloat
+        var leavesScreen: Bool
     }
 
-    private func offscreenX(for frame: NSRect) -> CGFloat {
-        let screenFrame = visibleScreenFrame(for: frame)
-        return corner.isLeft ? screenFrame.minX - frame.width - 10 : screenFrame.maxX + 10
+    /// The card leaves past the screen edge beside it — unless another display
+    /// continues past that edge, where the card would slide onto it, or start
+    /// out on it when arriving. Then it goes only as far as the seam, and the
+    /// caller fades it. `x` never lies behind `frame`, so a card a drag has
+    /// already carried toward the edge does not slide back.
+    static func exitPath(
+        for frame: NSRect,
+        towardLeft: Bool,
+        screenFrame: NSRect,
+        visibleFrame: NSRect,
+        otherScreens: [NSRect]
+    ) -> ExitPath {
+        let offscreenX = towardLeft ? visibleFrame.minX - frame.width - 10 : visibleFrame.maxX + 10
+        let card = frame.insetBy(dx: shadowMargin, dy: shadowMargin)
+        let travel = card.union(card.offsetBy(dx: offscreenX - frame.minX, dy: 0))
+        guard otherScreens.contains(where: { $0.intersects(travel) }) else {
+            return ExitPath(x: offscreenX, leavesScreen: true)
+        }
+        // The window origin that puts the card's outer edge on the seam; the
+        // shadow margin may still cross, as it does at rest.
+        let seamX = towardLeft
+            ? screenFrame.minX - shadowMargin
+            : screenFrame.maxX - frame.width + shadowMargin
+        return ExitPath(x: towardLeft ? min(frame.minX, seamX) : max(frame.minX, seamX),
+                        leavesScreen: false)
+    }
+
+    /// `exitPath` for this card, on the screen holding its centre. Judging by
+    /// the centre matters: the window's shadow margin reaches past the screen
+    /// edge, so "first screen it intersects" could pick the neighbour, and the
+    /// card slid out past the neighbour's far edge, across the whole of it.
+    private func exitPath(for frame: NSRect) -> ExitPath {
+        let screens = NSScreen.screens
+        let screen = screens.first { Self.isCard(frame, on: $0.frame) } ?? NSScreen.preferred
+        let visibleFrame = screen?.visibleFrame ?? NSScreen.preferredVisibleFrame
+        return Self.exitPath(
+            for: frame,
+            towardLeft: corner.isLeft,
+            screenFrame: screen?.frame ?? visibleFrame,
+            visibleFrame: visibleFrame,
+            otherScreens: screens.filter { $0 != screen }.map(\.frame)
+        )
     }
 
     private func dismissCompletionThreshold(for frame: NSRect) -> CGFloat {
@@ -741,6 +791,8 @@ class FloatingThumbnailController: NSObject, NSDraggingSource, QLPreviewPanelDat
         if dismissDragStartFrame == nil {
             let currentFrame = window.frame
             dismissDragStartFrame = currentFrame
+            let exit = exitPath(for: currentFrame)
+            dismissDragLimit = exit.leavesScreen ? .greatestFiniteMagnitude : abs(exit.x - currentFrame.minX)
             window.setFrame(currentFrame, display: true, animate: false)
         }
 
@@ -755,7 +807,7 @@ class FloatingThumbnailController: NSObject, NSDraggingSource, QLPreviewPanelDat
             beginDismissDrag(kind: .mouseDrag)
         }
         let startFrame = dismissDragStartFrame ?? window.frame
-        let clampedOffset = max(0, offset)
+        let clampedOffset = min(max(0, offset), dismissDragLimit)
         let progress = min(1, clampedOffset / dismissProgressDistance(for: startFrame))
 
         if isScrollDismissHostActive {
@@ -815,9 +867,9 @@ class FloatingThumbnailController: NSObject, NSDraggingSource, QLPreviewPanelDat
     private func prepareScrollDismissHost() {
         guard let window = window, !isScrollDismissHostActive else { return }
         let startFrame = dismissDragStartFrame ?? window.frame
-        let offscreenX = offscreenX(for: startFrame)
-        let hostX = min(startFrame.minX, offscreenX)
-        let hostMaxX = max(startFrame.maxX, offscreenX + startFrame.width)
+        let exitX = exitPath(for: startFrame).x
+        let hostX = min(startFrame.minX, exitX)
+        let hostMaxX = max(startFrame.maxX, exitX + startFrame.width)
         let hostFrame = NSRect(
             x: hostX,
             y: startFrame.minY,
@@ -834,7 +886,7 @@ class FloatingThumbnailController: NSObject, NSDraggingSource, QLPreviewPanelDat
     private func animateScrollDismissHostOut() {
         guard let window = window else { return }
         let startFrame = dismissDragStartFrame ?? targetFrame
-        let finalOffset = offscreenX(for: startFrame) - startFrame.minX
+        let finalOffset = exitPath(for: startFrame).x - startFrame.minX
 
         NSAnimationContext.runAnimationGroup({ ctx in
             ctx.duration = 0.22

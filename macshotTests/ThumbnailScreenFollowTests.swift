@@ -2,8 +2,9 @@ import Cocoa
 import XCTest
 
 /// The floating cards follow keyboard focus to whichever display the user is
-/// working on. These pin the two decisions behind that: which display a card
-/// is on, and when the stack may be moved.
+/// working on. These pin the decisions behind that: which display a card is
+/// on, when the stack may be moved, and how far a card may slide in or out
+/// without crossing onto a neighbouring display.
 @MainActor
 final class ThumbnailScreenFollowTests: XCTestCase {
 
@@ -90,5 +91,73 @@ final class ThumbnailScreenFollowTests: XCTestCase {
     func testNoCardsNeverMove() {
         XCTAssertFalse(FloatingThumbnailController.stackShouldFollow(
             cardFrames: [], activeScreen: builtIn, pointer: nil))
+    }
+
+    // MARK: - Sliding in and out beside another display
+
+    private func cardWindow(bottomLeftOf screen: NSRect) -> NSRect {
+        var window = cardWindow(bottomRightOf: screen)
+        window.origin.x = screen.minX + 16 - margin
+        return window
+    }
+
+    private func exitPath(
+        _ window: NSRect, towardLeft: Bool, on screen: NSRect,
+        visibleFrame: NSRect? = nil, others: [NSRect]
+    ) -> FloatingThumbnailController.ExitPath {
+        FloatingThumbnailController.exitPath(
+            for: window, towardLeft: towardLeft, screenFrame: screen,
+            visibleFrame: visibleFrame ?? screen, otherScreens: others)
+    }
+
+    func testWithNothingPastTheEdgeTheCardLeavesTheScreen() {
+        let right = exitPath(cardWindow(bottomRightOf: builtIn), towardLeft: false, on: builtIn, others: [external])
+        XCTAssertEqual(right, .init(x: builtIn.maxX + 10, leavesScreen: true), "unchanged from before")
+
+        let window = cardWindow(bottomLeftOf: external)
+        let left = exitPath(window, towardLeft: true, on: external, others: [builtIn])
+        XCTAssertEqual(left, .init(x: external.minX - window.width - 10, leavesScreen: true))
+    }
+
+    func testTheCardStopsAtTheSeamWhenADisplayContinuesPastIt() {
+        // The reported case: a card in the external display's bottom-right
+        // corner started out on the laptop's left edge and slid across onto it.
+        let window = cardWindow(bottomRightOf: external)
+        let path = exitPath(window, towardLeft: false, on: external, others: [builtIn])
+        XCTAssertFalse(path.leavesScreen)
+        let cardAtExit = window.offsetBy(dx: path.x - window.minX, dy: 0).insetBy(dx: margin, dy: margin)
+        XCTAssertEqual(cardAtExit.maxX, external.maxX, accuracy: 0.001, "the card's edge rests on the seam")
+        XCTAssertGreaterThan(path.x, window.minX, "and it still moves toward the edge")
+    }
+
+    func testTheLeftEdgeStopsAtTheSeamToo() {
+        let window = cardWindow(bottomLeftOf: builtIn)
+        let path = exitPath(window, towardLeft: true, on: builtIn, others: [external])
+        XCTAssertFalse(path.leavesScreen)
+        XCTAssertEqual(path.x + margin, builtIn.minX, accuracy: 0.001)
+    }
+
+    func testADisplayBesideButClearOfTheCardsRowDoesNotStopIt() {
+        // A display to the right that only starts above the card's row.
+        let high = NSRect(x: builtIn.maxX, y: 600, width: 1920, height: 1080)
+        let path = exitPath(cardWindow(bottomRightOf: builtIn), towardLeft: false, on: builtIn, others: [high])
+        XCTAssertTrue(path.leavesScreen)
+    }
+
+    func testTheSeamIsTheScreensEdgeNotTheDocks() {
+        // Dock on the right: the visible frame ends 70pt short of the seam, and
+        // the card may pass under the Dock up to the seam itself.
+        let visible = NSRect(x: external.minX, y: external.minY, width: external.width - 70, height: external.height)
+        let window = cardWindow(bottomRightOf: visible)
+        let path = exitPath(window, towardLeft: false, on: external, visibleFrame: visible, others: [builtIn])
+        XCTAssertFalse(path.leavesScreen)
+        XCTAssertEqual(path.x + window.width - margin, external.maxX, accuracy: 0.001)
+    }
+
+    func testACardDraggedPastTheSeamPointDoesNotSlideBack() {
+        var window = cardWindow(bottomRightOf: external)
+        window.origin.x = external.maxX - window.width + margin + 5
+        let path = exitPath(window, towardLeft: false, on: external, others: [builtIn])
+        XCTAssertEqual(path.x, window.minX)
     }
 }
