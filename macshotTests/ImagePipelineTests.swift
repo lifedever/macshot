@@ -323,4 +323,52 @@ final class EdgeGuideOwnerTests: XCTestCase {
         let windows = [window("Safari", NSRect(x: 0, y: 0, width: 800, height: 600))]
         XCTAssertNil(OverlayView.window(containingAnyOf: [NSPoint(x: 1000, y: 700)], in: windows))
     }
+
+    // Window-list entries as CGWindowListCopyWindowInfo reports them.
+    private let ownPID: pid_t = 100
+    private func entry(pid: pid_t, owner: String, layer: Int, alpha: Double = 1) -> [String: Any] {
+        [kCGWindowOwnerPID as String: pid, kCGWindowOwnerName as String: owner,
+         kCGWindowLayer as String: layer, kCGWindowAlpha as String: alpha]
+    }
+    private let screen = CGRect(x: 0, y: 0, width: 1512, height: 982)
+    private let chatWindow = CGRect(x: 124, y: 66, width: 1270, height: 859)
+
+    func testAppWindowsNameEdges() {
+        XCTAssertTrue(AppDelegate.namesEdgeGuides(entry(pid: 1, owner: "WeChat", layer: 0),
+                                                   bounds: chatWindow, ownPID: ownPID))
+        // A floating panel or utility window is still the app's own.
+        XCTAssertTrue(AppDelegate.namesEdgeGuides(entry(pid: 1, owner: "WeChat", layer: 3),
+                                                   bounds: chatWindow, ownPID: ownPID))
+        XCTAssertTrue(AppDelegate.namesEdgeGuides(entry(pid: 1, owner: "WeChat", layer: 19),
+                                                   bounds: chatWindow, ownPID: ownPID))
+    }
+
+    func testTheScreenshotToolsOverlayDoesNotClaimEdges() {
+        // With ⌘⇧5 open, screencaptureui lays a clear window over the whole
+        // display at the menu bar's level; every edge was named after it.
+        XCTAssertFalse(AppDelegate.namesEdgeGuides(entry(pid: 2, owner: "screencaptureui", layer: 24),
+                                                    bounds: screen, ownPID: ownPID))
+        XCTAssertFalse(AppDelegate.namesEdgeGuides(entry(pid: 2, owner: "screencaptureui", layer: 1499),
+                                                    bounds: CGRect(x: 756, y: 904, width: 800, height: 90),
+                                                    ownPID: ownPID))
+    }
+
+    func testSystemChromeDoesNotClaimEdges() {
+        // A status item in the menu bar, and the Dock.
+        XCTAssertFalse(AppDelegate.namesEdgeGuides(entry(pid: 1, owner: "WeChat", layer: 25),
+                                                    bounds: CGRect(x: 900, y: 0, width: 36, height: 33),
+                                                    ownPID: ownPID))
+        XCTAssertFalse(AppDelegate.namesEdgeGuides(entry(pid: 3, owner: "Dock", layer: 20),
+                                                    bounds: screen, ownPID: ownPID))
+    }
+
+    func testOwnInvisibleAndTinyWindowsDoNotClaimEdges() {
+        XCTAssertFalse(AppDelegate.namesEdgeGuides(entry(pid: ownPID, owner: "macshot", layer: 0),
+                                                    bounds: chatWindow, ownPID: ownPID))
+        XCTAssertFalse(AppDelegate.namesEdgeGuides(entry(pid: 1, owner: "WeChat", layer: 0, alpha: 0),
+                                                    bounds: chatWindow, ownPID: ownPID))
+        XCTAssertFalse(AppDelegate.namesEdgeGuides(entry(pid: 1, owner: "WeChat", layer: 0),
+                                                    bounds: CGRect(x: 0, y: 0, width: 19, height: 400),
+                                                    ownPID: ownPID))
+    }
 }

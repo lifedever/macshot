@@ -1621,11 +1621,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
     /// frontmost window: its title — the first titled window, which the
     /// filename template wants — and its bounds — the first window of a
     /// window's size, titled or not, since the frontmost one often has no
-    /// title to read. And every window on screen, front to back, with its
-    /// owner, for naming the app an edge guide lies on. macshot's own windows
-    /// and the Window Server's (the menu bar backdrop, among others) are left
-    /// out, as are invisible and tiny ones. Bounds are in CoreGraphics
-    /// coordinates.
+    /// title to read. And every app window on screen, front to back, with
+    /// its owner, for naming the app an edge guide lies on; see
+    /// `namesEdgeGuides`. Bounds are in CoreGraphics coordinates.
     nonisolated private static func windowListInfo(focusedPID pid: pid_t?, ownPID: pid_t)
         -> (title: String?, bounds: CGRect?, windows: [(bounds: CGRect, pid: pid_t)]) {
         guard let windowList = CGWindowListCopyWindowInfo([.optionOnScreenOnly, .excludeDesktopElements], kCGNullWindowID) as? [[String: Any]] else { return (nil, nil, []) }
@@ -1637,10 +1635,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
                   let dict = info[kCGWindowBounds as String] as? NSDictionary,
                   let rect = CGRect(dictionaryRepresentation: dict) else { continue }
             let layer = info[kCGWindowLayer as String] as? Int ?? 0
-            if ownerPID != ownPID,
-               (info[kCGWindowOwnerName as String] as? String) != "Window Server",
-               (info[kCGWindowAlpha as String] as? Double ?? 1) > 0,
-               rect.width >= 20, rect.height >= 20 {
+            if namesEdgeGuides(info, bounds: rect, ownPID: ownPID) {
                 windows.append((rect, ownerPID))
             }
             guard layer == 0, ownerPID == pid else { continue }
@@ -1652,6 +1647,22 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
             }
         }
         return (title, bounds, windows)
+    }
+
+    /// Whether a window-list entry is an app's window, which can name the
+    /// app an edge guide lies on. App windows sit below the Dock's level;
+    /// from there up are the Dock, the menu bar and its status items, pop-up
+    /// menus and system overlays — among them the screenshot tool's clear
+    /// full-screen window while ⌘⇧5 is open, which would otherwise claim
+    /// every edge on the display. macshot's own windows and the Window
+    /// Server's are left out too, as are invisible and tiny ones.
+    nonisolated static func namesEdgeGuides(_ info: [String: Any], bounds: CGRect, ownPID: pid_t) -> Bool {
+        guard let ownerPID = info[kCGWindowOwnerPID as String] as? pid_t, ownerPID != ownPID else { return false }
+        let layer = info[kCGWindowLayer as String] as? Int ?? 0
+        return layer < Int(CGWindowLevelForKey(.dockWindow))
+            && (info[kCGWindowOwnerName as String] as? String) != "Window Server"
+            && (info[kCGWindowAlpha as String] as? Double ?? 1) > 0
+            && bounds.width >= 20 && bounds.height >= 20
     }
 
     private func resolveFocusedWindowAsync(for pid: pid_t?, sessionID: UInt) {
