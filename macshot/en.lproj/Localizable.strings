@@ -721,7 +721,7 @@
 "Branch" = "Branch";
 "Bucket" = "Bucket";
 "Checking…" = "Checking…";
-"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own.";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels, ⌫ clears. Function keys work on their own." = "Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels, ⌫ clears. Function keys work on their own.";
 "Connected — the token can write to this repository." = "Connected — the token can write to this repository.";
 "Connected, but the token cannot write to this repository." = "Connected, but the token cannot write to this repository.";
 "Connection" = "Connection";

@@ -323,7 +323,7 @@
 "Press keys..." = "Druk op toetsen...";
 "Waiting..." = "Wachten...";
 "Press a shortcut…" = "Druk op een sneltoets…";
-"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "Klik op een sneltoets en druk op een toetscombinatie met ten minste één modifier (⌘, ⌥, ⌃, ⇧). Esc annuleert. Functietoetsen werken op zichzelf.";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels, ⌫ clears. Function keys work on their own." = "Klik op een sneltoets en druk op een toetscombinatie met ten minste één modifier (⌘, ⌥, ⌃, ⇧). Esc annuleert, ⌫ wist. Functietoetsen werken op zichzelf.";
 "These apply inside the capture overlay and the editor window." = "Deze gelden binnen de opname-overlay en het editorvenster.";
 
 /* Preferences - Tools */

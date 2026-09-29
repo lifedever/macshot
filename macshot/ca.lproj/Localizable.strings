@@ -344,7 +344,7 @@
 "Press keys..." = "Premeu les tecles...";
 "Waiting..." = "Esperant...";
 "Press a shortcut…" = "Premeu una drecera…";
-"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "Feu clic a una drecera i premeu una combinació de tecles amb almenys un modificador (⌘, ⌥, ⌃, ⇧). Esc cancel·la. Les tecles de funció funcionen soles.";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels, ⌫ clears. Function keys work on their own." = "Feu clic a una drecera i premeu una combinació de tecles amb almenys un modificador (⌘, ⌥, ⌃, ⇧). Esc cancel·la, ⌫ l'esborra. Les tecles de funció funcionen soles.";
 "These apply inside the capture overlay and the editor window." = "Aquestes s'apliquen dins de la superposició de captura i la finestra de l'editor.";
 
 /* Preferences - Tools */

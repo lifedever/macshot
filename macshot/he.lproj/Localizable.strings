@@ -326,7 +326,7 @@
 "Press keys..." = "לחץ על מקשים...";
 "Waiting..." = "ממתין...";
 "Press a shortcut…" = "הקש קיצור…";
-"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "לחץ על קיצור והקש צירוף מקשים עם לפחות מקש שינוי אחד (⌘, ⌥, ⌃, ⇧). Esc מבטל. מקשי פונקציה פועלים בפני עצמם.";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels, ⌫ clears. Function keys work on their own." = "לחץ על קיצור והקש צירוף מקשים עם לפחות מקש שינוי אחד (⌘, ⌥, ⌃, ⇧). Esc מבטל, ⌫ מוחק. מקשי פונקציה פועלים בפני עצמם.";
 "These apply inside the capture overlay and the editor window." = "אלה פועלים בתוך שכבת הלכידה וחלון העורך.";
 
 /* Preferences - Tools */

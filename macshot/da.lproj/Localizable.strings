@@ -327,7 +327,7 @@
 "Press keys..." = "Tryk p\U00E5 taster...";
 "Waiting..." = "Venter...";
 "Press a shortcut…" = "Tryk på en genvej…";
-"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "Klik på en genvej, og tryk på en tastekombination med mindst én modifikator (⌘, ⌥, ⌃, ⇧). Esc annullerer. Funktionstaster virker alene.";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels, ⌫ clears. Function keys work on their own." = "Klik på en genvej, og tryk på en tastekombination med mindst én modifikator (⌘, ⌥, ⌃, ⇧). Esc annullerer, ⌫ rydder. Funktionstaster virker alene.";
 "These apply inside the capture overlay and the editor window." = "Disse gælder i optagelsesoverlayet og i redigeringsvinduet.";
 
 /* Preferences - Tools */

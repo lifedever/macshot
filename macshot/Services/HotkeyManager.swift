@@ -101,6 +101,11 @@ class HotkeyManager {
             default: return UInt32(cmdKey | shiftKey)
             }
         }
+
+        /// Whether the slot ships with a shortcut of its own.
+        var hasDefault: Bool {
+            defaultKeyCode != 0 || defaultModifiers != 0
+        }
     }
 
     private var hotKeyRefs: [HotkeySlot: EventHotKeyRef] = [:]

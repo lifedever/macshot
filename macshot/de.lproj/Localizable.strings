@@ -322,7 +322,7 @@
 "Press keys..." = "Tasten drücken ...";
 "Waiting..." = "Warten ...";
 "Press a shortcut…" = "Kurzbefehl drücken …";
-"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "Klicke auf einen Kurzbefehl und drücke eine Tastenkombination mit mindestens einem Modifikator (⌘, ⌥, ⌃, ⇧). Esc bricht ab. Funktionstasten funktionieren allein.";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels, ⌫ clears. Function keys work on their own." = "Klicke auf einen Kurzbefehl und drücke eine Tastenkombination mit mindestens einem Modifikator (⌘, ⌥, ⌃, ⇧). Esc bricht ab, ⌫ löscht. Funktionstasten funktionieren allein.";
 "These apply inside the capture overlay and the editor window." = "Diese gelten im Aufnahme-Overlay und im Editor-Fenster.";
 
 /* Preferences - Tools */

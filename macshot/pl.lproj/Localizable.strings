@@ -665,7 +665,7 @@
 "Clear History?" = "Wyczyścić historię?";
 "This will permanently delete all screenshots from history." = "Spowoduje to trwałe usunięcie wszystkich zrzutów ekranu z historii.";
 "Click \"Set\" and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧) to set a shortcut." = "Kliknij \"Ustaw\" i naciśnij kombinację klawiszy z co najmniej jednym modyfikatorem (⌘, ⌥, ⌃, ⇧), aby ustawić skrót.";
-"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "Kliknij skrót i naciśnij kombinację klawiszy z co najmniej jednym modyfikatorem (⌘, ⌥, ⌃, ⇧). Esc anuluje. Klawisze funkcyjne działają samodzielnie.";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels, ⌫ clears. Function keys work on their own." = "Kliknij skrót i naciśnij kombinację klawiszy z co najmniej jednym modyfikatorem (⌘, ⌥, ⌃, ⇧). Esc anuluje, ⌫ usuwa. Klawisze funkcyjne działają samodzielnie.";
 "Files are uploaded to this folder in your Google Drive. Leave empty to use \"macshot\". macshot can only use folders it created itself, so a folder you made in Drive with the same name won't be reused — a new one is created instead. Everything stays private — nothing is shared publicly." = "Pliki są przesyłane do tego folderu na Dysku Google. Pozostaw puste, aby użyć \"macshot\". macshot może korzystać tylko z folderów, które sam utworzył, więc folder o tej samej nazwie utworzony przez Ciebie na Dysku nie zostanie użyty ponownie — zamiast tego zostanie utworzony nowy. Pliki pozostają prywatne — nic nie jest udostępniane publicznie.";
 
 "Pressure" = "Nacisk";

@@ -351,7 +351,7 @@
 "Press keys..." = "Πατήστε πλήκτρα...";
 "Waiting..." = "Αναμονή...";
 "Press a shortcut…" = "Πατήστε μια συντόμευση…";
-"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "Κάντε κλικ σε μια συντόμευση και πατήστε έναν συνδυασμό πλήκτρων με τουλάχιστον έναν τροποποιητή (⌘, ⌥, ⌃, ⇧). Το Esc ακυρώνει. Τα πλήκτρα λειτουργιών λειτουργούν από μόνα τους.";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels, ⌫ clears. Function keys work on their own." = "Κάντε κλικ σε μια συντόμευση και πατήστε έναν συνδυασμό πλήκτρων με τουλάχιστον έναν τροποποιητή (⌘, ⌥, ⌃, ⇧). Το Esc ακυρώνει, το ⌫ διαγράφει. Τα πλήκτρα λειτουργιών λειτουργούν από μόνα τους.";
 "These apply inside the capture overlay and the editor window." = "Αυτές ισχύουν μέσα στην επικάλυψη λήψης και στο παράθυρο επεξεργασίας.";
 
 /* Preferences - Tools */

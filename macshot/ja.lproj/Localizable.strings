@@ -307,7 +307,7 @@
 "Press keys..." = "キーを押してください...";
 "Waiting..." = "入力待ち...";
 "Press a shortcut…" = "ショートカットを押す…";
-"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "ショートカットをクリックし、修飾キー (⌘, ⌥, ⌃, ⇧) を1つ以上含むキーの組み合わせを押します。Esc でキャンセルします。ファンクションキーは単独で使用できます。";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels, ⌫ clears. Function keys work on their own." = "ショートカットをクリックし、修飾キー (⌘, ⌥, ⌃, ⇧) を1つ以上含むキーの組み合わせを押します。Esc でキャンセル、⌫ で消去します。ファンクションキーは単独で使用できます。";
 "These apply inside the capture overlay and the editor window." = "これらはキャプチャオーバーレイとエディタウインドウ内で有効です。";
 
 /* Preferences - Tools */

@@ -329,7 +329,7 @@
 "Press keys..." = "Appuyez sur les touches...";
 "Waiting..." = "En attente...";
 "Press a shortcut…" = "Appuyez sur un raccourci…";
-"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "Cliquez sur un raccourci et appuyez sur une combinaison de touches avec au moins un modificateur (⌘, ⌥, ⌃, ⇧). Esc annule. Les touches de fonction fonctionnent seules.";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels, ⌫ clears. Function keys work on their own." = "Cliquez sur un raccourci et appuyez sur une combinaison de touches avec au moins un modificateur (⌘, ⌥, ⌃, ⇧). Esc annule, ⌫ efface. Les touches de fonction fonctionnent seules.";
 "These apply inside the capture overlay and the editor window." = "Ces raccourcis s'appliquent dans l'overlay de capture et la fenêtre d'édition.";
 
 /* Preferences - Tools */

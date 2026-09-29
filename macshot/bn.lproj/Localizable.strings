@@ -348,7 +348,7 @@
 "Press keys..." = "কী চাপুন...";
 "Waiting..." = "অপেক্ষা করুন...";
 "Press a shortcut…" = "একটি শর্টকাট চাপুন…";
-"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "একটি শর্টকাটে ক্লিক করুন এবং কমপক্ষে একটি মডিফায়ার (⌘, ⌥, ⌃, ⇧) সহ একটি কী সমন্বয় চাপুন। Esc বাতিল করে। ফাংশন কী একাই কাজ করে।";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels, ⌫ clears. Function keys work on their own." = "একটি শর্টকাটে ক্লিক করুন এবং কমপক্ষে একটি মডিফায়ার (⌘, ⌥, ⌃, ⇧) সহ একটি কী সমন্বয় চাপুন। Esc বাতিল করে, ⌫ মুছে দেয়। ফাংশন কী একাই কাজ করে।";
 "These apply inside the capture overlay and the editor window." = "এগুলো ক্যাপচার ওভারলে এবং এডিটর উইন্ডোর ভেতরে প্রযোজ্য।";
 
 /* Preferences - Tools */

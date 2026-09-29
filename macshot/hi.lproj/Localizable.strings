@@ -349,7 +349,7 @@
 "Press keys..." = "कुंजियाँ दबाएँ...";
 "Waiting..." = "प्रतीक्षा कर रहे हैं...";
 "Press a shortcut…" = "कोई शॉर्टकट दबाएँ…";
-"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "किसी शॉर्टकट पर क्लिक करें और कम से कम एक मॉडिफ़ायर (⌘, ⌥, ⌃, ⇧) के साथ कुंजी संयोजन दबाएँ। Esc रद्द करता है। फ़ंक्शन कुंजियाँ अकेले भी काम करती हैं।";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels, ⌫ clears. Function keys work on their own." = "किसी शॉर्टकट पर क्लिक करें और कम से कम एक मॉडिफ़ायर (⌘, ⌥, ⌃, ⇧) के साथ कुंजी संयोजन दबाएँ। Esc रद्द करता है, ⌫ हटा देता है। फ़ंक्शन कुंजियाँ अकेले भी काम करती हैं।";
 "These apply inside the capture overlay and the editor window." = "ये कैप्चर ओवरले और संपादक विंडो के भीतर लागू होते हैं।";
 
 /* Preferences - Tools */

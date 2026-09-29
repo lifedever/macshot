@@ -324,7 +324,7 @@
 "Press keys..." = "Nhấn phím...";
 "Waiting..." = "Đang chờ...";
 "Press a shortcut…" = "Nhấn một phím tắt…";
-"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "Nhấp vào một phím tắt rồi nhấn tổ hợp phím có ít nhất một phím bổ trợ (⌘, ⌥, ⌃, ⇧). Esc để hủy. Các phím chức năng dùng được một mình.";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels, ⌫ clears. Function keys work on their own." = "Nhấp vào một phím tắt rồi nhấn tổ hợp phím có ít nhất một phím bổ trợ (⌘, ⌥, ⌃, ⇧). Esc để hủy, ⌫ để xóa. Các phím chức năng dùng được một mình.";
 "These apply inside the capture overlay and the editor window." = "Các phím tắt này có hiệu lực trong lớp phủ chụp và cửa sổ chỉnh sửa.";
 
 /* Preferences - Tools */

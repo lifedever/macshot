@@ -373,3 +373,42 @@ final class HotkeyManagerTests: XCTestCase {
         }
     }
 }
+
+/// Clearing a global hotkey from the Shortcuts pane: Delete while recording.
+@MainActor
+final class ShortcutSettingsClearTests: XCTestCase {
+
+    private func isolated(_ slot: HotkeyManager.HotkeySlot, _ body: () -> Void) {
+        withDefaults([slot.keyCodeKey: nil, slot.modifiersKey: nil, slot.disabledKey: nil], body)
+    }
+
+    func testClearingADefaultedSlotLeavesItUnboundAndRestorable() {
+        let slot = HotkeyManager.HotkeySlot.captureArea
+        XCTAssertTrue(slot.hasDefault)
+        isolated(slot) {
+            let model = ShortcutSettingsModel()
+            model.clear(slot)
+            XCTAssertFalse(model.isAssigned(slot))
+            XCTAssertEqual(HotkeyManager.readHotkey(for: slot).modifiers, 0,
+                           "a cleared slot must not register its default again")
+            XCTAssertTrue(model.isCustomised(slot), "the restore button brings the default back")
+            model.reset(slot)
+            XCTAssertEqual(HotkeyManager.readHotkey(for: slot).keyCode, slot.defaultKeyCode)
+            XCTAssertFalse(model.isCustomised(slot))
+        }
+    }
+
+    func testClearingASlotWithoutADefaultShowsNoRestoreButton() {
+        let slot = HotkeyManager.HotkeySlot.recordScreen
+        XCTAssertFalse(slot.hasDefault)
+        isolated(slot) {
+            let model = ShortcutSettingsModel()
+            model.assign(slot, keyCode: UInt32(kVK_ANSI_R), modifiers: UInt32(cmdKey | optionKey))
+            XCTAssertTrue(model.isAssigned(slot))
+            model.clear(slot)
+            XCTAssertFalse(model.isAssigned(slot))
+            XCTAssertFalse(model.isCustomised(slot),
+                           "restoring would only restore the same None, so the button must not show")
+        }
+    }
+}

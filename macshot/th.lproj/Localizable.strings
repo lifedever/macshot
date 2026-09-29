@@ -324,7 +324,7 @@
 "Press keys..." = "กดปุ่ม...";
 "Waiting..." = "กำลังรอ...";
 "Press a shortcut…" = "กดปุ่มลัด…";
-"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "คลิกที่ปุ่มลัด แล้วกดคีย์ผสมที่มีปุ่มตัวดัดแปลงอย่างน้อยหนึ่งปุ่ม (⌘, ⌥, ⌃, ⇧) กด Esc เพื่อยกเลิก ปุ่มฟังก์ชันใช้เดี่ยว ๆ ได้";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels, ⌫ clears. Function keys work on their own." = "คลิกที่ปุ่มลัด แล้วกดคีย์ผสมที่มีปุ่มตัวดัดแปลงอย่างน้อยหนึ่งปุ่ม (⌘, ⌥, ⌃, ⇧) กด Esc เพื่อยกเลิก กด ⌫ เพื่อลบ ปุ่มฟังก์ชันใช้เดี่ยว ๆ ได้";
 "These apply inside the capture overlay and the editor window." = "ใช้ได้ภายในโอเวอร์เลย์การจับภาพและหน้าต่างตัวแก้ไข";
 
 /* Preferences - Tools */

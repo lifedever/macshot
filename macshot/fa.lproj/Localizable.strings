@@ -326,7 +326,7 @@
 "Press keys..." = "کلیدها را فشار دهید...";
 "Waiting..." = "در انتظار...";
 "Press a shortcut…" = "یک میانبر فشار دهید…";
-"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "روی یک میانبر کلیک کنید و ترکیب کلیدی با حداقل یک کلید تغییردهنده (⌘، ⌥، ⌃، ⇧) فشار دهید. Esc لغو می‌کند. کلیدهای تابعی به‌تنهایی کار می‌کنند.";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels, ⌫ clears. Function keys work on their own." = "روی یک میانبر کلیک کنید و ترکیب کلیدی با حداقل یک کلید تغییردهنده (⌘، ⌥، ⌃، ⇧) فشار دهید. Esc لغو می‌کند و ⌫ پاک می‌کند. کلیدهای تابعی به‌تنهایی کار می‌کنند.";
 "These apply inside the capture overlay and the editor window." = "این‌ها در همپوشانی ضبط و پنجره ویرایشگر اعمال می‌شوند.";
 
 /* Preferences - Tools */

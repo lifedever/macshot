@@ -327,7 +327,7 @@
 "Press keys..." = "Tryck p\U00E5 tangenter...";
 "Waiting..." = "V\U00E4ntar...";
 "Press a shortcut…" = "Tryck på en genväg…";
-"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "Klicka på en genväg och tryck på en tangentkombination med minst en modifierare (⌘, ⌥, ⌃, ⇧). Esc avbryter. Funktionstangenter fungerar på egen hand.";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels, ⌫ clears. Function keys work on their own." = "Klicka på en genväg och tryck på en tangentkombination med minst en modifierare (⌘, ⌥, ⌃, ⇧). Esc avbryter, ⌫ tar bort. Funktionstangenter fungerar på egen hand.";
 "These apply inside the capture overlay and the editor window." = "Dessa gäller i fångstöverlagringen och redigeringsfönstret.";
 
 /* Preferences - Tools */

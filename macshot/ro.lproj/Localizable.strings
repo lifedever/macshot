@@ -344,7 +344,7 @@
 "Press keys..." = "Apasă tastele...";
 "Waiting..." = "Se așteaptă...";
 "Press a shortcut…" = "Apasă o scurtătură…";
-"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "Dă clic pe o scurtătură și apasă o combinație de taste cu cel puțin un modificator (⌘, ⌥, ⌃, ⇧). Esc anulează. Tastele funcționale funcționează singure.";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels, ⌫ clears. Function keys work on their own." = "Dă clic pe o scurtătură și apasă o combinație de taste cu cel puțin un modificator (⌘, ⌥, ⌃, ⇧). Esc anulează, ⌫ șterge. Tastele funcționale funcționează singure.";
 "These apply inside the capture overlay and the editor window." = "Acestea se aplică în suprapunerea de captură și în fereastra editorului.";
 
 /* Preferences - Tools */

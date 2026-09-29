@@ -327,7 +327,7 @@
 "Press keys..." = "Paina näppäimiä...";
 "Waiting..." = "Odotetaan...";
 "Press a shortcut…" = "Paina pikanäppäintä…";
-"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "Napsauta pikanäppäintä ja paina näppäinyhdistelmää, jossa on vähintään yksi muokkausnäppäin (⌘, ⌥, ⌃, ⇧). Esc peruuttaa. Funktionäppäimet toimivat yksinään.";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels, ⌫ clears. Function keys work on their own." = "Napsauta pikanäppäintä ja paina näppäinyhdistelmää, jossa on vähintään yksi muokkausnäppäin (⌘, ⌥, ⌃, ⇧). Esc peruuttaa, ⌫ poistaa. Funktionäppäimet toimivat yksinään.";
 "These apply inside the capture overlay and the editor window." = "Nämä toimivat kaappauksen peittokuvassa ja editori-ikkunassa.";
 
 /* Preferences - Tools */

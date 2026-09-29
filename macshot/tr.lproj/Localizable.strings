@@ -326,7 +326,7 @@
 "Press keys..." = "Tuşlara basın...";
 "Waiting..." = "Bekleniyor...";
 "Press a shortcut…" = "Bir kısayola basın…";
-"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "Bir kısayola tıklayın ve en az bir değiştirici tuş (⌘, ⌥, ⌃, ⇧) içeren bir tuş kombinasyonuna basın. Esc iptal eder. İşlev tuşları tek başına çalışır.";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels, ⌫ clears. Function keys work on their own." = "Bir kısayola tıklayın ve en az bir değiştirici tuş (⌘, ⌥, ⌃, ⇧) içeren bir tuş kombinasyonuna basın. Esc iptal eder, ⌫ siler. İşlev tuşları tek başına çalışır.";
 "These apply inside the capture overlay and the editor window." = "Bunlar yakalama kaplaması ve düzenleyici penceresi içinde geçerlidir.";
 
 /* Preferences - Tools */

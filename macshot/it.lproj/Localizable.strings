@@ -315,7 +315,7 @@
 "Press keys..." = "Premi i tasti...";
 "Waiting..." = "In attesa...";
 "Press a shortcut…" = "Premi una scorciatoia…";
-"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "Fai clic su una scorciatoia e premi una combinazione di tasti con almeno un modificatore (⌘, ⌥, ⌃, ⇧). Esc annulla. I tasti funzione funzionano da soli.";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels, ⌫ clears. Function keys work on their own." = "Fai clic su una scorciatoia e premi una combinazione di tasti con almeno un modificatore (⌘, ⌥, ⌃, ⇧). Esc annulla, ⌫ cancella. I tasti funzione funzionano da soli.";
 "These apply inside the capture overlay and the editor window." = "Valgono nell'overlay di cattura e nella finestra dell'editor.";
 
 /* Preferences - Tools */

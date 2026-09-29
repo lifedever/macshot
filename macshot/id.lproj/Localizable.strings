@@ -325,7 +325,7 @@
 "Press keys..." = "Tekan tombol...";
 "Waiting..." = "Menunggu...";
 "Press a shortcut…" = "Tekan pintasan…";
-"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "Klik sebuah pintasan lalu tekan kombinasi tombol dengan setidaknya satu modifier (⌘, ⌥, ⌃, ⇧). Esc membatalkan. Tombol fungsi bisa dipakai sendiri.";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels, ⌫ clears. Function keys work on their own." = "Klik sebuah pintasan lalu tekan kombinasi tombol dengan setidaknya satu modifier (⌘, ⌥, ⌃, ⇧). Esc membatalkan, ⌫ menghapus. Tombol fungsi bisa dipakai sendiri.";
 "These apply inside the capture overlay and the editor window." = "Berlaku di dalam hamparan tangkapan dan jendela editor.";
 
 /* Preferences - Tools */

@@ -327,7 +327,7 @@
 "Press keys..." = "Trykk taster\U2026";
 "Waiting..." = "Venter\U2026";
 "Press a shortcut…" = "Trykk en snarvei…";
-"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "Klikk på en snarvei og trykk en tastekombinasjon med minst én modifikatortast (⌘, ⌥, ⌃, ⇧). Esc avbryter. Funksjonstaster fungerer alene.";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels, ⌫ clears. Function keys work on their own." = "Klikk på en snarvei og trykk en tastekombinasjon med minst én modifikatortast (⌘, ⌥, ⌃, ⇧). Esc avbryter, ⌫ fjerner. Funksjonstaster fungerer alene.";
 "These apply inside the capture overlay and the editor window." = "Disse gjelder i opptaksoverlegget og i redigeringsvinduet.";
 
 /* Preferences - Tools */

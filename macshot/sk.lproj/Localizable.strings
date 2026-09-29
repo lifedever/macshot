@@ -668,7 +668,7 @@
 "Clear History?" = "Vymazať históriu?";
 "This will permanently delete all screenshots from history." = "Týmto sa natrvalo odstránia všetky snímky obrazovky z histórie.";
 "Click \"Set\" and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧) to set a shortcut." = "Kliknite na \"Nastaviť\" a stlačte kombináciu klávesov s aspoň jedným modifikátorom (⌘, ⌥, ⌃, ⇧) na nastavenie skratky.";
-"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "Kliknite na skratku a stlačte kombináciu klávesov s aspoň jedným modifikátorom (⌘, ⌥, ⌃, ⇧). Esc zruší zadávanie. Funkčné klávesy fungujú samostatne.";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels, ⌫ clears. Function keys work on their own." = "Kliknite na skratku a stlačte kombináciu klávesov s aspoň jedným modifikátorom (⌘, ⌥, ⌃, ⇧). Esc zruší zadávanie, ⌫ skratku vymaže. Funkčné klávesy fungujú samostatne.";
 "Files are uploaded to this folder in your Google Drive. Leave empty to use \"macshot\". macshot can only use folders it created itself, so a folder you made in Drive with the same name won't be reused — a new one is created instead. Everything stays private — nothing is shared publicly." = "Súbory sa nahrajú do tohto priečinka na vašom Google Drive. Ak pole necháte prázdne, použije sa \"macshot\". macshot môže používať iba priečinky, ktoré sám vytvoril, takže priečinok s rovnakým názvom, ktorý ste vytvorili na Disku, sa nepoužije — namiesto neho sa vytvorí nový. Všetko zostáva súkromné — nič nie je verejne zdieľané.";
 
 "Pressure" = "Tlak";

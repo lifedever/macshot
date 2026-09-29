@@ -326,7 +326,7 @@
 "Press keys..." = "اضغط المفاتيح...";
 "Waiting..." = "بانتظار...";
 "Press a shortcut…" = "اضغط اختصارًا…";
-"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "انقر على اختصار واضغط مجموعة مفاتيح تحتوي على معدّل واحد على الأقل (⌘، ⌥، ⌃، ⇧). Esc للإلغاء. مفاتيح الوظائف تعمل بمفردها.";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels, ⌫ clears. Function keys work on their own." = "انقر على اختصار واضغط مجموعة مفاتيح تحتوي على معدّل واحد على الأقل (⌘، ⌥، ⌃، ⇧). Esc للإلغاء، و⌫ للحذف. مفاتيح الوظائف تعمل بمفردها.";
 "These apply inside the capture overlay and the editor window." = "تنطبق هذه داخل طبقة الالتقاط ونافذة المحرر.";
 
 /* Preferences - Tools */

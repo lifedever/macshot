@@ -726,7 +726,7 @@
 "Branch" = "分支";
 "Bucket" = "Bucket";
 "Checking…" = "正在檢查…";
-"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "點一下快捷鍵，按下帶至少一個修飾鍵（⌘、⌥、⌃、⇧）的組合。Esc 取消。功能鍵可以單獨使用。";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels, ⌫ clears. Function keys work on their own." = "點一下快捷鍵，按下帶至少一個修飾鍵（⌘、⌥、⌃、⇧）的組合。Esc 取消，⌫ 清除。功能鍵可以單獨使用。";
 "Connected — the token can write to this repository." = "已連線，權杖可以寫入這個倉庫。";
 "Connected, but the token cannot write to this repository." = "已連線，但權杖沒有這個倉庫的寫入權限。";
 "Connection" = "連線";

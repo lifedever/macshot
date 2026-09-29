@@ -50,6 +50,18 @@ final class ShortcutSettingsModel: ObservableObject {
         revision += 1
     }
 
+    /// Leaves the slot with no shortcut. A slot that ships without one simply
+    /// goes back to that default: marking it disabled would count as
+    /// customised and show a restore button that restores the same "None".
+    func clear(_ slot: HotkeyManager.HotkeySlot) {
+        if slot.hasDefault {
+            HotkeyManager.disableHotkey(for: slot)
+            revision += 1
+        } else {
+            reset(slot)
+        }
+    }
+
     /// AppKit modifier flags → the Carbon bitfield `RegisterEventHotKey` wants.
     static func carbonModifiers(from flags: NSEvent.ModifierFlags) -> UInt32 {
         var carbon: UInt32 = 0

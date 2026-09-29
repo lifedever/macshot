@@ -7,7 +7,8 @@ import SwiftUI
 /// Each row follows the project's shortcut-recorder convention: label on the
 /// left, a key-cap pill on the right that starts recording when clicked, and a
 /// round restore button that only appears once the shortcut differs from its
-/// default. No fixed-width "Set" button, no ✕ to clear.
+/// default. No fixed-width "Set" button, no ✕ to clear: Delete, pressed while
+/// recording, clears the shortcut, and the footer says so.
 struct ShortcutSettingsView: View {
     @StateObject private var model = ShortcutSettingsModel()
     var onHotkeyChanged: () -> Void
@@ -35,7 +36,7 @@ struct ShortcutSettingsView: View {
             } header: {
                 Text(L("Keyboard Shortcuts"))
             } footer: {
-                Text(L("Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own."))
+                Text(L("Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels, ⌫ clears. Function keys work on their own."))
             }
 
             Section {
@@ -110,7 +111,9 @@ private struct HotkeyRow: View {
                         .background(Circle().fill(Color.primary.opacity(0.08)))
                 }
                 .buttonStyle(.plain)
-                .help(L("Reset to default"))
+                // A slot that ships without a shortcut has nothing to restore:
+                // the button takes it back to none.
+                .help(slot.hasDefault ? L("Reset to default") : L("Clear"))
             }
         }
         // The monitor must not outlive the window, or it keeps swallowing keys
@@ -124,6 +127,15 @@ private struct HotkeyRow: View {
         monitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
             if event.keyCode == 53 { stop(); return nil }   // Esc cancels
             let mods = event.modifierFlags.intersection([.command, .control, .option, .shift])
+            // Delete on its own clears the shortcut, as it does for tool keys.
+            // With a modifier it is an ordinary key, so ⌘⌫ can still be bound.
+            if event.keyCode == 51 || event.keyCode == 117,
+               mods.intersection([.command, .control, .option]).isEmpty {
+                model.clear(slot)
+                onChange()
+                stop()
+                return nil
+            }
             let carbon = ShortcutSettingsModel.carbonModifiers(from: mods)
             // A bare key would fire while typing anywhere; function keys are the
             // documented exception because they carry no text.

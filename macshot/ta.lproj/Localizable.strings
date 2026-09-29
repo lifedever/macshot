@@ -349,7 +349,7 @@
 "Press keys..." = "விசைகளை அழுத்து...";
 "Waiting..." = "காத்திருக்கிறது...";
 "Press a shortcut…" = "ஒரு குறுக்குவழியை அழுத்தவும்…";
-"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "ஒரு குறுக்குவழியைக் கிளிக் செய்து, குறைந்தது ஒரு மாற்றி (⌘, ⌥, ⌃, ⇧) கொண்ட விசை சேர்க்கையை அழுத்தவும். Esc ரத்துசெய்யும். செயல்பாட்டு விசைகள் தனியாகவே வேலை செய்யும்.";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels, ⌫ clears. Function keys work on their own." = "ஒரு குறுக்குவழியைக் கிளிக் செய்து, குறைந்தது ஒரு மாற்றி (⌘, ⌥, ⌃, ⇧) கொண்ட விசை சேர்க்கையை அழுத்தவும். Esc ரத்துசெய்யும், ⌫ நீக்கும். செயல்பாட்டு விசைகள் தனியாகவே வேலை செய்யும்.";
 "These apply inside the capture overlay and the editor window." = "இவை பிடிப்பு மேலடுக்கிலும் எடிட்டர் சாளரத்திலும் பொருந்தும்.";
 
 /* Preferences - Tools */

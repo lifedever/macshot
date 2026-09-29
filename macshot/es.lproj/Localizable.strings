@@ -322,7 +322,7 @@
 "Press keys..." = "Presiona teclas...";
 "Waiting..." = "Esperando...";
 "Press a shortcut…" = "Presiona un atajo…";
-"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "Haz clic en un atajo y pulsa una combinación de teclas con al menos un modificador (⌘, ⌥, ⌃, ⇧). Esc cancela. Las teclas de función funcionan solas.";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels, ⌫ clears. Function keys work on their own." = "Haz clic en un atajo y pulsa una combinación de teclas con al menos un modificador (⌘, ⌥, ⌃, ⇧). Esc cancela, ⌫ borra. Las teclas de función funcionan solas.";
 "These apply inside the capture overlay and the editor window." = "Se aplican dentro del overlay de captura y la ventana del editor.";
 
 /* Preferences - Tools */

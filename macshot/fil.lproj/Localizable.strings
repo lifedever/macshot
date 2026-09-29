@@ -325,7 +325,7 @@
 "Press keys..." = "Pindutin ang mga key...";
 "Waiting..." = "Naghihintay...";
 "Press a shortcut…" = "Pindutin ang isang shortcut…";
-"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "I-click ang isang shortcut at pindutin ang kombinasyon ng key na may kahit isang modifier (⌘, ⌥, ⌃, ⇧). Kanselahin gamit ang Esc. Gumagana nang mag-isa ang mga function key.";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels, ⌫ clears. Function keys work on their own." = "I-click ang isang shortcut at pindutin ang kombinasyon ng key na may kahit isang modifier (⌘, ⌥, ⌃, ⇧). Kanselahin gamit ang Esc, burahin gamit ang ⌫. Gumagana nang mag-isa ang mga function key.";
 "These apply inside the capture overlay and the editor window." = "Gumagana ang mga ito sa loob ng capture overlay at ng editor window.";
 
 /* Preferences - Tools */

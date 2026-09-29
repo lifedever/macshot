@@ -670,7 +670,7 @@
 "Clear History?" = "Obrisati istoriju?";
 "This will permanently delete all screenshots from history." = "Ovo će trajno obrisati sve snimke ekrana iz istorije.";
 "Click \"Set\" and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧) to set a shortcut." = "Kliknite \"Postavi\" i pritisnite kombinaciju tastera sa barem jednim modifikatorom (⌘, ⌥, ⌃, ⇧) da biste postavili prečicu.";
-"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "Кликните на пречицу и притисните комбинацију тастера са најмање једним модификатором (⌘, ⌥, ⌃, ⇧). Esc отказује. Функцијски тастери раде самостално.";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels, ⌫ clears. Function keys work on their own." = "Кликните на пречицу и притисните комбинацију тастера са најмање једним модификатором (⌘, ⌥, ⌃, ⇧). Esc отказује, ⌫ брише. Функцијски тастери раде самостално.";
 "Files are uploaded to this folder in your Google Drive. Leave empty to use \"macshot\". macshot can only use folders it created itself, so a folder you made in Drive with the same name won't be reused — a new one is created instead. Everything stays private — nothing is shared publicly." = "Фајлови се отпремају у ову фасциклу на вашем Google диску. Оставите празно да бисте користили \"macshot\". macshot може да користи само фасцикле које је сам направио, па фасцикла са истим именом коју сте ви направили на Диску неће бити поново искоришћена — уместо ње биће направљена нова. Све остаје приватно — ништа се не дели јавно.";
 
 "Pressure" = "Pritisak";

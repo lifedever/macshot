@@ -668,7 +668,7 @@
 "Clear History?" = "Очистить историю?";
 "This will permanently delete all screenshots from history." = "Это безвозвратно удалит все скриншоты из истории.";
 "Click \"Set\" and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧) to set a shortcut." = "Нажмите \"Задать\" и введите комбинацию клавиш с хотя бы одним модификатором (⌘, ⌥, ⌃, ⇧), чтобы установить сочетание.";
-"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "Нажмите на сочетание и введите комбинацию клавиш с хотя бы одним модификатором (⌘, ⌥, ⌃, ⇧). Esc отменяет. Функциональные клавиши работают сами по себе.";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels, ⌫ clears. Function keys work on their own." = "Нажмите на сочетание и введите комбинацию клавиш с хотя бы одним модификатором (⌘, ⌥, ⌃, ⇧). Esc отменяет, ⌫ удаляет. Функциональные клавиши работают сами по себе.";
 "Files are uploaded to this folder in your Google Drive. Leave empty to use \"macshot\". macshot can only use folders it created itself, so a folder you made in Drive with the same name won't be reused — a new one is created instead. Everything stays private — nothing is shared publicly." = "Файлы загружаются в эту папку на вашем Google Drive. Оставьте поле пустым, чтобы использовать \"macshot\". macshot может использовать только созданные им самим папки, поэтому папка с таким же именем, созданная вами в Drive, не будет использована — вместо неё будет создана новая. Всё остаётся приватным — ничего не публикуется в открытый доступ.";
 
 "Pressure" = "Нажим";

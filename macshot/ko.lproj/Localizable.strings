@@ -307,7 +307,7 @@
 "Press keys..." = "키를 누르세요...";
 "Waiting..." = "대기 중...";
 "Press a shortcut…" = "단축키를 누르세요…";
-"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "단축키를 클릭한 다음 보조 키(⌘, ⌥, ⌃, ⇧)를 하나 이상 포함한 키 조합을 누르세요. Esc를 누르면 취소됩니다. 기능 키는 단독으로 사용할 수 있습니다.";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels, ⌫ clears. Function keys work on their own." = "단축키를 클릭한 다음 보조 키(⌘, ⌥, ⌃, ⇧)를 하나 이상 포함한 키 조합을 누르세요. Esc를 누르면 취소되고, ⌫를 누르면 지워집니다. 기능 키는 단독으로 사용할 수 있습니다.";
 "These apply inside the capture overlay and the editor window." = "캡처 오버레이와 편집기 윈도우에서 적용됩니다.";
 
 /* Preferences - Tools */

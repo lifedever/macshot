@@ -350,7 +350,7 @@
 "Press keys..." = "Nyomj billentyűket...";
 "Waiting..." = "Várakozás...";
 "Press a shortcut…" = "Nyomj egy gyorsbillentyűt…";
-"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels. Function keys work on their own." = "Kattints egy gyorsbillentyűre, és nyomj meg egy billentyűkombinációt legalább egy módosítóval (⌘, ⌥, ⌃, ⇧). Az Esc megszakítja. A funkcióbillentyűk önmagukban is működnek.";
+"Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels, ⌫ clears. Function keys work on their own." = "Kattints egy gyorsbillentyűre, és nyomj meg egy billentyűkombinációt legalább egy módosítóval (⌘, ⌥, ⌃, ⇧). Az Esc megszakítja, a ⌫ törli. A funkcióbillentyűk önmagukban is működnek.";
 "These apply inside the capture overlay and the editor window." = "Ezek a rögzítési átfedésben és a szerkesztőablakban érvényesek.";
 
 /* Preferences - Tools */
