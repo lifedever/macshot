@@ -157,19 +157,19 @@ final class ThumbnailScreenFollowTests: XCTestCase {
 
     // MARK: - The card's size
 
-    func testTheCardIsSquareAndFollowsThePreviewSize() {
-        // Every card is the same square, whatever the shot's shape, so a stack
+    func testTheCardIsThreeByTwoAndFollowsThePreviewSize() {
+        // Every card is the same 3:2, whatever the shot's shape, so a stack
         // lines up; the "preview size" setting scales it.
         withDefaults(["thumbnailScale": nil]) {
-            XCTAssertEqual(FloatingThumbnailController.thumbnailSize, NSSize(width: 240, height: 240))
+            XCTAssertEqual(FloatingThumbnailController.thumbnailSize, NSSize(width: 240, height: 160))
         }
         withDefaults(["thumbnailScale": 0.5]) {
-            XCTAssertEqual(FloatingThumbnailController.thumbnailSize, NSSize(width: 120, height: 120))
+            XCTAssertEqual(FloatingThumbnailController.thumbnailSize, NSSize(width: 120, height: 80))
         }
         withDefaults(["thumbnailScale": 1.5]) {
             let window = FloatingThumbnailController.windowSize
             XCTAssertEqual(window.width, 360 + margin * 2)
-            XCTAssertEqual(window.height, window.width)
+            XCTAssertEqual(window.height, 240 + margin * 2)
         }
     }
 

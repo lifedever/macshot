@@ -307,19 +307,21 @@ class FloatingThumbnailController: NSObject, NSDraggingSource, QLPreviewPanelDat
                       height: card.height + shadowMargin * 2)
     }
 
-    /// The card is square whatever the shot's shape, so every card in a stack
-    /// is the same size. The shot sits inside it — whole, on the card's own
-    /// fill, by default, or cropped to fill it when "Fit image in preview" is
-    /// off.
+    /// The card is a fixed 3:2 whatever the shot's shape, so every card in a
+    /// stack is the same size. The shot sits inside it — whole, on the card's
+    /// own fill, by default, or cropped to fill it when "Fit image in preview"
+    /// is off.
     ///
-    /// The side is the 240pt long edge the card had when it followed the
-    /// shot's aspect ratio, so a shot still shows at the size it did; Settings
-    /// › "preview size" scales it. That also leaves the hover controls the
-    /// room they need (two pills and their gap, ~130pt at the same scale).
+    /// 240×160 at the default preview size; Settings › "preview size" scales
+    /// it. A Mac's full-screen shot is 16:10, and 3:2 is the lowest card that
+    /// still holds one at full width inside the shot inset, so the commonest
+    /// shot shows as large as it did on a square card without a band of empty
+    /// card above and below it. It is also the base the hover controls are
+    /// laid out against. A tall shot pays for it: a phone screenshot is about
+    /// 60pt wide, against about 100pt on the square.
     static var thumbnailSize: NSSize {
         let scale = CGFloat(UserDefaults.standard.object(forKey: "thumbnailScale") as? Double ?? 1.0)
-        let side = round(240 * scale)
-        return NSSize(width: side, height: side)
+        return NSSize(width: round(240 * scale), height: round(160 * scale))
     }
 
     /// Where a card's window comes to rest: the requested origin, kept so the
@@ -350,7 +352,7 @@ class FloatingThumbnailController: NSObject, NSDraggingSource, QLPreviewPanelDat
         let padding: CGFloat = 16
         guard image.size.width > 0 && image.size.height > 0 else { return }
 
-        // A square card, scaled by the "preview size" setting.
+        // A 3:2 card, scaled by the "preview size" setting.
         let thumbSize = Self.windowSize
 
         // Clamp so the card always fits within the visible screen.
@@ -1129,7 +1131,7 @@ private class ThumbnailView: NSView {
     /// Card geometry. The shot sits inset on the card with its own corner radius and drop
     /// shadow, so it reads as a photo resting on a surface instead of a cropped fill.
     static let cardCornerRadius: CGFloat = 14
-    /// The card is square, so a whole shot rarely fills it: it sits inset with
+    /// The card's shape is fixed, so a whole shot rarely fills it: it sits inset with
     /// a smaller radius of its own. Cropped to fill, the shot is the card and
     /// takes the card's radius — an inset would only frame the crop.
     private var shotCornerRadius: CGFloat {
