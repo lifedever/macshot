@@ -1965,6 +1965,19 @@ class OverlayView: NSView {
 
     // MARK: - Drawing
 
+    /// The scrim over everything outside the selection, for the modes that
+    /// show the live screen: recording setup and scroll capture.
+    private func fillScrimOutsideSelection() {
+        guard !selectionOutsideShadowDisabled, selectionRect.width > 0, selectionRect.height > 0 else { return }
+        let outside = NSBezierPath(rect: bounds)
+        outside.append(NSBezierPath(rect: selectionRect))
+        // Even-odd leaves the region untouched; a full-screen region
+        // therefore dims nothing, which is what it should do.
+        outside.windingRule = .evenOdd
+        NSColor.black.withAlphaComponent(Self.selectionScrimAlpha).setFill()
+        outside.fill()
+    }
+
     override func draw(_ dirtyRect: NSRect) {
         timingMark?("OverlayView.draw begin state=\(state) screenshot=\(screenshotImage != nil) dirty=\(Int(dirtyRect.width))x\(Int(dirtyRect.height)) opaque=\(isOpaque)")
         defer {
@@ -1985,9 +1998,12 @@ class OverlayView: NSView {
         if isEditorMode {
             drawEditorBackground(context: context)
         } else if isScrollCapturing {
-            // During scroll capture: make the entire window transparent so the user sees
-            // live screen content everywhere (not just inside the selection).
+            // During scroll capture the user watches the live screen, and the
+            // region being captured is picked out the way recording does it:
+            // everything outside it dimmed. The frames are grabbed from below
+            // this window, so neither the scrim nor the outline reaches them.
             context.cgContext.clear(bounds)
+            fillScrimOutsideSelection()
         } else if !isRecording {
             if let image = screenshotImage {
                 // Screenshot ready — draw it with dark overlay
@@ -2013,15 +2029,7 @@ class OverlayView: NSView {
             // `SelectionBorderOverlay` draws the same scrim, so the dimming is
             // continuous across the whole flow.
             context.cgContext.clear(bounds)
-            if !selectionOutsideShadowDisabled, selectionRect.width > 0, selectionRect.height > 0 {
-                let outside = NSBezierPath(rect: bounds)
-                outside.append(NSBezierPath(rect: selectionRect))
-                // Even-odd leaves the region untouched; a full-screen recording
-                // therefore dims nothing, which is what it should do.
-                outside.windingRule = .evenOdd
-                NSColor.black.withAlphaComponent(Self.selectionScrimAlpha).setFill()
-                outside.fill()
-            }
+            fillScrimOutsideSelection()
         }
 
         // Snap-target highlight (drawn before helper text so text appears on top).
@@ -2419,15 +2427,19 @@ class OverlayView: NSView {
                 }
             }
 
-            // Selection border — hidden in editor mode and when beautify/effects preview is active,
-            // red during scroll capture, purple otherwise
+            // Selection border — hidden in editor mode and when beautify/effects preview is active
             if shouldDrawSelectionBorder()
                 && !showBeautifyPreview && !showEffectsPreview
             {
                 let borderPath = NSBezierPath(rect: selectionRect)
                 if isScrollCapturing {
-                    borderPath.lineWidth = 2.5
-                    NSColor.systemRed.setStroke()
+                    // The recording outline (`SelectionBorderOverlay`): accent
+                    // colour, drawn entirely outside the captured region.
+                    let lineWidth: CGFloat = 1.5
+                    borderPath.removeAllPoints()
+                    borderPath.appendRect(selectionRect.insetBy(dx: -lineWidth, dy: -lineWidth))
+                    borderPath.lineWidth = lineWidth
+                    ToolbarLayout.accentColor.withAlphaComponent(0.8).setStroke()
                 } else {
                     // The corner brackets carry the affordance now. This line
                     // only has to keep the edge findable when the user has
