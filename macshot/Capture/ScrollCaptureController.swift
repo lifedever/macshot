@@ -76,7 +76,13 @@ final class ScrollCaptureController {
     private let captureQueue = DispatchQueue(label: "macshot.scrollcapture", qos: .userInitiated)
 
     // Frame state
-    private var shotA: CGImage?          // previous frame
+    /// The last frame stitched into `mergedImage`. Every new frame is matched
+    /// against it, not against the last frame grabbed: a frame that could not
+    /// be matched — scrolled back up, or carried past the overlap by a fast
+    /// flick — must not become the reference, or the next strip is measured
+    /// from content that was never stitched and lands in the wrong place.
+    /// Scrolling back to where stitching stopped picks it up again.
+    private var shotA: CGImage?
     private var shotB: CGImage?          // current frame
     private var lastComparedTIFF: Data?  // TIFF of last settled frame for byte comparison
     private var mergedImage: CGImage?    // accumulated stitched result
@@ -107,6 +113,14 @@ final class ScrollCaptureController {
     // Manual scroll throttle
     private let manualCaptureInterval: TimeInterval = 0.15
     private var lastCaptureTime: TimeInterval = 0
+    /// Scroll distance (points) reported since the last grab. A fast flick
+    /// moves the page further in one interval than a frame overlaps, so a
+    /// grab is also due once this reaches a share of the region's height.
+    private var scrolledSinceGrab: CGFloat = 0
+    private let grabDistanceFraction: CGFloat = 0.35
+    /// Bumped by every scroll event, so a settled capture can tell that the
+    /// user has resumed scrolling and give way.
+    private var scrollEventSerial = 0
     private var pendingCaptureTask: Task<Void, Never>?
     private var settlementTimer: Timer?
     private let settlementInterval: TimeInterval = 0.25
@@ -161,7 +175,7 @@ final class ScrollCaptureController {
         guard !isCancelled else { return }
 
         isActive = true
-        shotA = nil
+        shotA = firstFrame
         shotB = nil
         lastComparedTIFF = nil
         mergedImage = firstFrame
@@ -450,7 +464,13 @@ final class ScrollCaptureController {
     /// Waits for pixel-perfect settlement via TIFF comparison, then computes the scroll
     /// offset via Vision and merges new content into the accumulated image.
     /// Returns true if a match was found, false if no shift detected.
-    private func captureAndCompare() async -> Bool {
+    ///
+    /// With `abortOnScroll`, gives up as soon as a new scroll event arrives:
+    /// a settled capture holds `isCapturing`, and while it waited for a still
+    /// frame that never came every grab of the resumed scroll was skipped.
+    private func captureAndCompare(abortOnScroll: Bool = false) async -> Bool {
+        let serial = scrollEventSerial
+        let superseded = { [unowned self] in abortOnScroll && self.scrollEventSerial != serial }
         // Initial delay for scroll animation to begin
         try? await Task.sleep(nanoseconds: 50_000_000)  // 50ms
 
@@ -460,7 +480,7 @@ final class ScrollCaptureController {
         var waitNs: UInt64 = 12_000_000
 
         for _ in 0..<30 {
-            guard isActive else { return false }
+            guard isActive, !superseded() else { return false }
 
             guard let cg = captureFrame() else {
                 try? await Task.sleep(nanoseconds: 30_000_000)
@@ -473,6 +493,7 @@ final class ScrollCaptureController {
                     cont.resume(returning: bitmapRep.tiffRepresentation)
                 }
             }
+            guard !superseded() else { return false }
             guard let currentTIFF = tiffData else {
                 try? await Task.sleep(nanoseconds: waitNs)
                 waitNs = min(waitNs * 3 / 2, 80_000_000)
@@ -505,19 +526,17 @@ final class ScrollCaptureController {
 
         // Compute offset via Vision
         guard let offset = visionShift(current: currentFrame, previous: previousFrame) else {
-            shotA = currentFrame
             consecutiveZeroShifts += 1
-            if hasScrolledOnce && consecutiveZeroShifts >= maxZeroShiftsBeforeStop {
+            // Only auto-scroll ends itself. A manual session sees unmatched
+            // frames whenever the user scrolls back up, and must keep going.
+            if autoScrollActive && hasScrolledOnce && consecutiveZeroShifts >= maxZeroShiftsBeforeStop {
                 stopSession()
             }
             return false
         }
 
         let offsetPx = Int(round(offset))
-        guard offsetPx > 0 else {
-            shotA = currentFrame
-            return false
-        }
+        guard offsetPx > 0 else { return false }
 
         // Need minimum shift to avoid noise
         let minShift = currentFrame.height / 10
@@ -615,17 +634,18 @@ final class ScrollCaptureController {
     // MARK: - Manual scroll
 
     private func startManualScrollMonitors() {
-        scrollMonitorGlobal = NSEvent.addGlobalMonitorForEvents(matching: .scrollWheel) { [weak self] _ in
-            self?.onManualScrollEvent()
+        scrollMonitorGlobal = NSEvent.addGlobalMonitorForEvents(matching: .scrollWheel) { [weak self] event in
+            self?.onManualScrollEvent(event)
         }
         scrollMonitorLocal = NSEvent.addLocalMonitorForEvents(matching: .scrollWheel) { [weak self] event in
-            self?.onManualScrollEvent()
+            self?.onManualScrollEvent(event)
             return event
         }
     }
 
-    private func onManualScrollEvent() {
+    private func onManualScrollEvent(_ event: NSEvent) {
         guard isActive else { return }
+        scrollEventSerial &+= 1
 
         // After scrolling stops, do a final settled capture (TIFF comparison)
         settlementTimer?.invalidate()
@@ -638,43 +658,47 @@ final class ScrollCaptureController {
         // no TIFF settlement. This ensures we capture content continuously even with
         // small selection areas where a single scroll gesture can move past the entire
         // viewport.
+        // Wheel mice report lines rather than points; ten points a line is
+        // close enough to judge when a grab is due.
+        scrolledSinceGrab += abs(event.scrollingDeltaY) * (event.hasPreciseScrollingDeltas ? 1 : 10)
         let now = ProcessInfo.processInfo.systemUptime
-        guard now - lastCaptureTime >= manualCaptureInterval else { return }
-        lastCaptureTime = now
-
-        grabAndProcess()
+        let dueByTime = now - lastCaptureTime >= manualCaptureInterval
+        let dueByDistance = scrolledSinceGrab >= captureRect.height * grabDistanceFraction
+        guard dueByTime || dueByDistance else { return }
+        // A grab skipped because a capture is still running doesn't count:
+        // the next event tries again instead of waiting out the interval.
+        if grabAndProcess() {
+            lastCaptureTime = now
+            scrolledSinceGrab = 0
+        }
     }
 
     /// Immediate frame grab + process during active scrolling. No TIFF settlement —
     /// just captures whatever is on screen right now and tries to stitch it.
-    private func grabAndProcess() {
-        guard isActive, !isCapturing else { return }
+    /// Returns false when no frame was grabbed.
+    @discardableResult
+    private func grabAndProcess() -> Bool {
+        guard isActive, !isCapturing else { return false }
         isCapturing = true
         defer { isCapturing = false }
 
-        guard let currentFrame = captureFrame() else { return }
+        guard let currentFrame = captureFrame() else { return false }
         guard let previousFrame = shotA else {
             shotA = currentFrame
-            return
+            return true
         }
 
         if !rightMarginDetected {
             detectRightMargin(current: currentFrame, previous: previousFrame)
         }
 
-        guard let offset = visionShift(current: currentFrame, previous: previousFrame) else {
-            shotA = currentFrame
-            return
-        }
+        guard let offset = visionShift(current: currentFrame, previous: previousFrame) else { return true }
 
         let offsetPx = Int(round(offset))
-        guard offsetPx > 0 else {
-            shotA = currentFrame
-            return
-        }
+        guard offsetPx > 0 else { return true }
 
         let minShift = currentFrame.height / 10
-        if offsetPx < minShift { return }
+        if offsetPx < minShift { return true }
 
         hasScrolledOnce = true
         consecutiveZeroShifts = 0
@@ -692,15 +716,17 @@ final class ScrollCaptureController {
 
         emitPreview()
         onStripAdded?(stripCount)
+        return true
     }
 
-    /// Final settled capture after scrolling stops — uses full TIFF settlement.
+    /// Final settled capture after scrolling stops — uses full TIFF settlement,
+    /// and gives way the moment scrolling resumes.
     private func settledCapture() async {
         guard isActive, !isCapturing else { return }
         isCapturing = true
         defer { isCapturing = false }
 
-        let _ = await captureAndCompare()
+        let _ = await captureAndCompare(abortOnScroll: true)
     }
 
     // MARK: - Vision shift detection
@@ -714,7 +740,8 @@ final class ScrollCaptureController {
             rightMarginPx: rightMarginPx)
     }
 
-    /// Vertical scroll offset of `current` against `previous`, in pixels.
+    /// Vertical scroll offset of `current` against `previous`, in pixels, or
+    /// nil when no offset is borne out by the pixels.
     ///
     /// A pinned header is cropped away before registration even before one has
     /// been confirmed: until then this pair's own unchanged top rows stand in
@@ -723,18 +750,43 @@ final class ScrollCaptureController {
     /// whatever the scroll, it never reaches the minimum a strip needs, and the
     /// header, which is only confirmed after a strip, never gets confirmed.
     /// Shadowrocket's settings pages captured nothing past the first screen.
+    ///
+    /// Unchanged rows stop at the first change, which can be inside the header:
+    /// Shadowrocket cross-fades its title into an icon as the page scrolls, and
+    /// the static half of the bar below it pinned the offset to 0 again. So the
+    /// top fifth is tried as well, and an offset is only returned once the two
+    /// frames actually agree at it — registration produces an offset even for
+    /// frames that share no content.
     nonisolated static func verticalShift(
         current: CGImage, previous: CGImage, confirmedHeaderRows: Int?, rightMarginPx: Int
     ) -> CGFloat? {
-        var curImg = current
-        var prevImg = previous
         let maxCropY = current.height / 5
         let headerRows = confirmedHeaderRows
             ?? ScrollFrameAnalyzer.frozenTopRows(
                 current: current, previous: previous, rightMarginPx: rightMarginPx
             ).flatMap { $0 < current.height ? $0 : nil }
             ?? 0
-        let cropY = min(headerRows, maxCropY)
+        var tops = [min(headerRows, maxCropY)]
+        if tops[0] != maxCropY { tops.append(maxCropY) }
+        for top in tops {
+            guard let shift = registeredShift(
+                    current: current, previous: previous, cropY: top, rightMarginPx: rightMarginPx),
+                  ScrollFrameAnalyzer.overlapAgrees(
+                    current: current, previous: previous, shift: Int(shift.rounded()),
+                    top: top, rightMarginPx: rightMarginPx)
+            else { continue }
+            return shift
+        }
+        return nil
+    }
+
+    /// Vision's translational registration of the two frames below `cropY`
+    /// and left of the scrollbar margin.
+    nonisolated private static func registeredShift(
+        current: CGImage, previous: CGImage, cropY: Int, rightMarginPx: Int
+    ) -> CGFloat? {
+        var curImg = current
+        var prevImg = previous
         let cropW = current.width - rightMarginPx
         let cropH = current.height - cropY
         if cropY > 0 || rightMarginPx > 0 {

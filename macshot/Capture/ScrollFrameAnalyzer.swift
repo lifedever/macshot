@@ -122,6 +122,69 @@ enum ScrollFrameAnalyzer {
         return width
     }
 
+    /// Whether `current` agrees with `previous` scrolled up by `shift` rows:
+    /// `current` row `y` against `previous` row `y + shift`, sampled over the
+    /// rows from `top` that both frames cover, left of the scrollbar margin.
+    ///
+    /// Registration always returns some offset, even for two frames that share
+    /// no content at all — a fast flick can carry the page past a whole frame
+    /// between grabs. This is what tells a real match from that guess.
+    ///
+    /// Only rows with content are counted: blank background matches at any
+    /// offset. At least half of them have to match, not all — an image that
+    /// loads in place as it scrolls into view changes some rows without the
+    /// offset being wrong. On recorded Shadowrocket frames true offsets matched
+    /// 73–100% of content rows and offsets between unrelated frames 7–20%.
+    /// When too few rows have content to judge, the offset is given the
+    /// benefit of the doubt, as it was before this check existed.
+    ///
+    /// False when the frames can't be compared, the shift is upward, or the
+    /// frames overlap by too few rows to judge.
+    static func overlapAgrees(current: CGImage, previous: CGImage, shift: Int,
+                              top: Int, rightMarginPx: Int) -> Bool {
+        guard current.width == previous.width, current.height == previous.height,
+              let a = frame(for: current), let b = frame(for: previous) else { return false }
+        let firstRow = max(0, top)
+        let endRow = a.height - max(0, shift)
+        let minimumRows = max(24, a.height / 12)
+        guard shift >= 0, endRow - firstRow >= minimumRows else { return false }
+        let lastColumn = max(1, a.width - max(0, rightMarginPx))
+        let rowStep = max(1, (endRow - firstRow) / 80)
+        var contentRows = 0
+        var matchingRows = 0
+        for row in stride(from: firstRow, to: endRow, by: rowStep) {
+            var difference: UInt64 = 0
+            var samples: UInt64 = 0
+            var lowest = Int.max, highest = Int.min
+            for column in stride(from: 0, to: lastColumn, by: 4) {
+                guard let aOffset = a.offset(x: column, y: row),
+                      let bOffset = b.offset(x: column, y: row + shift) else { continue }
+                let (ar, ag, ab) = (Int(a.bytes[aOffset + a.redOffset]), Int(a.bytes[aOffset + a.greenOffset]),
+                                    Int(a.bytes[aOffset + a.blueOffset]))
+                let (br, bg, bb) = (Int(b.bytes[bOffset + b.redOffset]), Int(b.bytes[bOffset + b.greenOffset]),
+                                    Int(b.bytes[bOffset + b.blueOffset]))
+                difference += UInt64(abs(ar - br) + abs(ag - bg) + abs(ab - bb))
+                samples += 1
+                for level in [ar + ag + ab, br + bg + bb] {
+                    lowest = min(lowest, level)
+                    highest = max(highest, level)
+                }
+            }
+            guard samples > 0, highest - lowest > contentRowContrast else { continue }
+            contentRows += 1
+            if difference / samples <= rowMatchLimit { matchingRows += 1 }
+        }
+        guard contentRows >= minimumContentRows else { return true }
+        return matchingRows * 2 >= contentRows
+    }
+
+    /// Mean channel difference at or below which two rows match.
+    static let rowMatchLimit: UInt64 = 10
+    /// Spread of summed channel values along a row above which it has content.
+    static let contentRowContrast = 60
+    /// Fewer content rows than this and an overlap can't be judged.
+    static let minimumContentRows = 6
+
     /// How many rows at the top of the frame are unchanged — a pinned header
     /// that must not be stitched in again with every strip.
     ///

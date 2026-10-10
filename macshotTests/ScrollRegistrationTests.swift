@@ -41,7 +41,10 @@ final class ScrollRegistrationTests: XCTestCase {
     }()
 
     /// The window scrolled down by `offset`: the page under a pinned blue bar.
-    private func frame(scrolledBy offset: Int) throws -> CGImage {
+    /// Once scrolled, `fadingTitle` swaps the bar's title for a narrower mark,
+    /// as Shadowrocket's does, so part of the bar changes while the rest of it
+    /// — including the buttons below the title — stays put.
+    private func frame(scrolledBy offset: Int, fadingTitle: Bool = false) throws -> CGImage {
         let image = ImageProbe.makeImage(width: width, height: height) { [self] cg in
             cg.translateBy(x: 0, y: CGFloat(height)); cg.scaleBy(x: 1, y: -1)
             cg.saveGState()
@@ -52,9 +55,14 @@ final class ScrollRegistrationTests: XCTestCase {
             cg.setFillColor(CGColor(srgbRed: 0.24, green: 0.43, blue: 0.72, alpha: 1))
             cg.fill(CGRect(x: 0, y: 0, width: width, height: header))
             cg.setFillColor(CGColor(srgbRed: 1, green: 1, blue: 1, alpha: 1))
-            cg.fill(CGRect(x: 14, y: 26, width: 6, height: 24))
-            cg.fill(CGRect(x: width / 2 - 24, y: 30, width: 48, height: 14))
+            cg.fill(CGRect(x: 14, y: 26, width: 6, height: 40))
+            if fadingTitle && offset > 0 {
+                cg.fill(CGRect(x: width / 2 - 6, y: 22, width: 12, height: 26))
+            } else {
+                cg.fill(CGRect(x: width / 2 - 24, y: 30, width: 48, height: 14))
+            }
             cg.fill(CGRect(x: width - 40, y: 28, width: 22, height: 6))
+            cg.fill(CGRect(x: width - 34, y: 40, width: 10, height: 24))
         }
         return try XCTUnwrap(image.cgImage(forProposedRect: nil, context: nil, hints: nil))
     }
@@ -74,6 +82,24 @@ final class ScrollRegistrationTests: XCTestCase {
             current: try frame(scrolledBy: 150), previous: try frame(scrolledBy: 0),
             confirmedHeaderRows: header, rightMarginPx: 0))
         XCTAssertEqual(shift, 150, accuracy: 1)
+    }
+
+    func testATitleChangingInsideThePinnedBarDoesNotHideTheScroll() throws {
+        let top = try frame(scrolledBy: 0, fadingTitle: true)
+        for offset in [60, 150, 240] {
+            let shift = try XCTUnwrap(ScrollCaptureController.verticalShift(
+                current: try frame(scrolledBy: offset, fadingTitle: true), previous: top,
+                confirmedHeaderRows: nil, rightMarginPx: 0), "offset \(offset)")
+            XCTAssertEqual(shift, CGFloat(offset), accuracy: 1, "offset \(offset)")
+        }
+    }
+
+    func testFramesSharingNoContentHaveNoShift() throws {
+        // A flick carried the page past a whole frame between two grabs.
+        // Registration still produces some offset; it must not be returned.
+        XCTAssertNil(ScrollCaptureController.verticalShift(
+            current: try frame(scrolledBy: 1500), previous: try frame(scrolledBy: 0),
+            confirmedHeaderRows: header, rightMarginPx: 0))
     }
 
     func testAnUnscrolledFrameShowsNoShift() throws {

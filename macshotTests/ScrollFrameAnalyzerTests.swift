@@ -270,4 +270,52 @@ final class ScrollFrameAnalyzerTests: XCTestCase {
         }
         XCTAssertEqual(ScrollFrameAnalyzer.frozenTopRows(current: after, previous: before, rightMarginPx: 0), 25)
     }
+
+    // MARK: - Overlap verification
+
+    private func agrees(_ current: CGImage, _ previous: CGImage, shift: Int, margin: Int = 0) -> Bool {
+        ScrollFrameAnalyzer.overlapAgrees(current: current, previous: previous, shift: shift,
+                                          top: 10, rightMarginPx: margin)
+    }
+
+    func testTheTrueOffsetAgreesAndOthersDoNot() throws {
+        let before = try makePage(headerRows: 10, scrollOffset: 0, rowPadding: 12)
+        let after = try makePage(headerRows: 10, scrollOffset: 9, rowPadding: 12)
+        XCTAssertTrue(agrees(after, before, shift: 9))
+        for wrong in [0, 4, 15] {
+            XCTAssertFalse(agrees(after, before, shift: wrong), "shift \(wrong)")
+        }
+    }
+
+    func testTheScrollbarIsLeftOutOfTheOverlap() throws {
+        let before = try makePage(headerRows: 10, scrollOffset: 0, scrollbarWidth: 6)
+        let after = try makePage(headerRows: 10, scrollOffset: 9, scrollbarWidth: 6)
+        XCTAssertTrue(agrees(after, before, shift: 9, margin: 6))
+    }
+
+    func testContentChangingInPlaceDoesNotOverruleTheOffset() throws {
+        // An image loading as it scrolls into view: a third of the rows differ.
+        let before = try makePage(headerRows: 10, scrollOffset: 0)
+        let page = try makePage(headerRows: 10, scrollOffset: 9)
+        let after = try makeFrame(width: 80, height: 60) { x, y in
+            if (20..<32).contains(y) { return (UInt8(x * 3), 200, UInt8(y * 4)) }
+            let contentRow = y + 9
+            return y < 10 ? (10, 20, 30)
+                : (UInt8((contentRow * 37) % 256), UInt8((contentRow * 11) % 256), UInt8((x * 5) % 256))
+        }
+        XCTAssertTrue(agrees(page, before, shift: 9))
+        XCTAssertTrue(agrees(after, before, shift: 9))
+    }
+
+    func testABlankOverlapCannotOverruleTheOffset() throws {
+        let blank = try makeFrame(width: 80, height: 60) { _, _ in (240, 240, 240) }
+        XCTAssertTrue(agrees(blank, blank, shift: 7))
+    }
+
+    func testTooLittleOverlapOrAnUpwardShiftCannotAgree() throws {
+        let before = try makePage(headerRows: 10, scrollOffset: 0)
+        let after = try makePage(headerRows: 10, scrollOffset: 9)
+        XCTAssertFalse(agrees(after, before, shift: 45))
+        XCTAssertFalse(agrees(after, before, shift: -3))
+    }
 }
