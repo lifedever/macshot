@@ -708,10 +708,33 @@ final class ScrollCaptureController {
     /// Vision framework translational image registration.
     /// Crops out frozen header and/or scrollbar for more accurate results.
     private func visionShift(current: CGImage, previous: CGImage) -> CGFloat? {
+        Self.verticalShift(
+            current: current, previous: previous,
+            confirmedHeaderRows: headerDetectionDone ? headerHeight : nil,
+            rightMarginPx: rightMarginPx)
+    }
+
+    /// Vertical scroll offset of `current` against `previous`, in pixels.
+    ///
+    /// A pinned header is cropped away before registration even before one has
+    /// been confirmed: until then this pair's own unchanged top rows stand in
+    /// for it. A high-contrast toolbar over sparse content otherwise outweighs
+    /// the content that moved — Vision then reports a small near-constant shift
+    /// whatever the scroll, it never reaches the minimum a strip needs, and the
+    /// header, which is only confirmed after a strip, never gets confirmed.
+    /// Shadowrocket's settings pages captured nothing past the first screen.
+    nonisolated static func verticalShift(
+        current: CGImage, previous: CGImage, confirmedHeaderRows: Int?, rightMarginPx: Int
+    ) -> CGFloat? {
         var curImg = current
         var prevImg = previous
         let maxCropY = current.height / 5
-        let cropY = headerDetectionDone ? min(headerHeight, maxCropY) : 0
+        let headerRows = confirmedHeaderRows
+            ?? ScrollFrameAnalyzer.frozenTopRows(
+                current: current, previous: previous, rightMarginPx: rightMarginPx
+            ).flatMap { $0 < current.height ? $0 : nil }
+            ?? 0
+        let cropY = min(headerRows, maxCropY)
         let cropW = current.width - rightMarginPx
         let cropH = current.height - cropY
         if cropY > 0 || rightMarginPx > 0 {
