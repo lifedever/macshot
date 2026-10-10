@@ -10993,6 +10993,15 @@ class OverlayView: NSView {
         return renderSelectedRegion(includeAnnotations: false)
     }
 
+    /// The snapped window by itself at the selection's size — its own shape,
+    /// no drop shadow — with the same pixels the delivered image uses, so
+    /// nothing that covered the window comes along. Nil unless the selection
+    /// is a window snap whose own capture has landed.
+    func windowSnapImage() -> NSImage? {
+        guard selectionIsWindowSnap, snappedWindowImage != nil else { return nil }
+        return renderSelectedRegion(includeAnnotations: false, windowShadow: false)
+    }
+
     /// Room left around a window snap for its drop shadow.
     static let windowShadowPadding: CGFloat = 28
     static let windowShadowBlur: CGFloat = 26
@@ -11008,7 +11017,7 @@ class OverlayView: NSView {
         selectionIsWindowSnap && snappedWindowImage != nil && !beautifyEnabled
     }
 
-    private func renderSelectedRegion(includeAnnotations: Bool) -> NSImage? {
+    private func renderSelectedRegion(includeAnnotations: Bool, windowShadow: Bool = true) -> NSImage? {
         guard selectionRect.width > 0, selectionRect.height > 0 else { return nil }
 
         // Determine the source image's actual pixel scale so we render at
@@ -11038,7 +11047,8 @@ class OverlayView: NSView {
         // A window snap renders with the window's own drop shadow, which needs
         // room outside the window rect. Beautify draws its own shadow onto its
         // background, so this only applies when beautify is off.
-        let shadowPad = shouldDrawWindowShadow ? Self.windowShadowPadding : 0
+        let drawsWindowShadow = windowShadow && shouldDrawWindowShadow
+        let shadowPad = drawsWindowShadow ? Self.windowShadowPadding : 0
         let outputRect = snappedRect.insetBy(dx: -shadowPad, dy: -shadowPad)
 
         let pixelW = Int(outputRect.width * scale)
@@ -11077,7 +11087,7 @@ class OverlayView: NSView {
         NSGraphicsContext.saveGraphicsState()
         NSGraphicsContext.current = nsContext
 
-        if shouldDrawWindowShadow, let windowImg = snappedWindowImage {
+        if drawsWindowShadow, let windowImg = snappedWindowImage {
             // Cast the shadow from the window's own alpha, so it follows the
             // rounded corners instead of boxing the window in a rectangle.
             cgCtx.saveGState()

@@ -875,9 +875,12 @@ extension OverlayWindowController: OverlayViewDelegate {
         guard let view = overlayView else { return }
         let sel = view.selectionRect
 
-        // Use stitched cross-screen image if available, otherwise crop from single screen.
+        // A window snap opens as the window alone, as it would be delivered —
+        // a plain crop would carry in whatever covered it. Otherwise use the
+        // stitched cross-screen image if available, or crop from this screen.
         let croppedImage: NSImage? =
-            overlayDelegate?.overlayCrossScreenImage(self)
+            view.windowSnapImage()
+            ?? overlayDelegate?.overlayCrossScreenImage(self)
             ?? {
                 guard let src = view.screenshotImage else { return nil }
                 // Render the crop into a concrete 8-bit bitmap now, so the editor

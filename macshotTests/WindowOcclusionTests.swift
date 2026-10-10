@@ -73,3 +73,65 @@ final class WindowOcclusionTests: XCTestCase {
             windowID: id, stackAtCapture: [recordedTarget, menu]))
     }
 }
+
+/// "Open in Editor" used to crop the full-screen shot as a plain rectangle,
+/// carrying in whatever covered a snapped window. It now opens the window as
+/// it would be delivered, without the drop shadow.
+@MainActor
+final class WindowSnapEditorImageTests: XCTestCase {
+
+    private let screenRed = CGColor(srgbRed: 0.9, green: 0.1, blue: 0.1, alpha: 1)
+
+    /// A window snap of a 100×80 window whose bottom-left 10×10 corner is
+    /// transparent, over a red screen shot.
+    private func makeSnappedOverlay(occluded: Bool) -> OverlayView {
+        let view = OverlayView()
+        view.frame = NSRect(x: 0, y: 0, width: 200, height: 160)
+        view.screenshotImage = ImageProbe.solidImage(width: 200, height: 160, color: screenRed)
+        view.applySelection(NSRect(x: 20, y: 20, width: 100, height: 80))
+        view.selectionIsWindowSnap = true
+        view.snappedWindowWasOccluded = occluded
+        view.snappedWindowImage = ImageProbe.makeImage(width: 100, height: 80) { cg in
+            cg.setFillColor(CGColor(srgbRed: 0.1, green: 0.2, blue: 0.9, alpha: 1))
+            cg.fill(CGRect(x: 0, y: 0, width: 100, height: 80))
+            cg.clear(CGRect(x: 0, y: 0, width: 10, height: 10))
+        }
+        return view
+    }
+
+    func testACoveredWindowOpensAsItsOwnCapture() throws {
+        let image = try XCTUnwrap(makeSnappedOverlay(occluded: true).windowSnapImage())
+        let centre = try XCTUnwrap(ImageProbe.pixelColor(image, x: 50, y: 40))
+        XCTAssertGreaterThan(centre.blueComponent, 0.8, "the covering UI must not come along")
+        XCTAssertLessThan(centre.redComponent, 0.2)
+    }
+
+    func testAnUncoveredWindowKeepsTheOnScreenPixels() throws {
+        let image = try XCTUnwrap(makeSnappedOverlay(occluded: false).windowSnapImage())
+        let centre = try XCTUnwrap(ImageProbe.pixelColor(image, x: 50, y: 40))
+        XCTAssertGreaterThan(centre.redComponent, 0.8)
+    }
+
+    func testTheWindowKeepsItsShapeButNotItsShadow() throws {
+        for occluded in [true, false] {
+            let view = makeSnappedOverlay(occluded: occluded)
+            let image = try XCTUnwrap(view.windowSnapImage())
+            XCTAssertEqual(image.size, NSSize(width: 100, height: 80), "occluded \(occluded)")
+            // y counts from the top, so the bottom-left corner is at y = 75.
+            let corner = try XCTUnwrap(ImageProbe.pixelColor(image, x: 5, y: 75))
+            XCTAssertEqual(corner.alphaComponent, 0, accuracy: 0.01, "occluded \(occluded)")
+            // The delivered image does carry the shadow, in padding around it.
+            XCTAssertGreaterThan(try XCTUnwrap(view.captureSelectedRegion()).size.width, 100)
+        }
+    }
+
+    func testOnlyAWindowSnapWithItsCaptureHasOne() {
+        let notSnapped = makeSnappedOverlay(occluded: false)
+        notSnapped.selectionIsWindowSnap = false
+        XCTAssertNil(notSnapped.windowSnapImage())
+
+        let notLanded = makeSnappedOverlay(occluded: true)
+        notLanded.snappedWindowImage = nil
+        XCTAssertNil(notLanded.windowSnapImage())
+    }
+}
