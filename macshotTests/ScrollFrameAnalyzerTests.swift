@@ -231,6 +231,15 @@ final class ScrollFrameAnalyzerTests: XCTestCase {
         XCTAssertEqual(width, 8, accuracy: 2)
     }
 
+    func testAlignedByTheScrollOnlyTheScrollbarStandsOut() throws {
+        // Content runs right up to the scrollbar, as cards and chevrons do.
+        let before = try makePage(width: 400, headerRows: 0, scrollOffset: 0, scrollbarWidth: 6)
+        let after = try makePage(width: 400, headerRows: 0, scrollOffset: 14, scrollbarWidth: 6)
+        XCTAssertGreaterThan(try XCTUnwrap(ScrollFrameAnalyzer.scrollbarWidth(current: after, previous: before)), 40,
+                             "unaligned, the content beside the scrollbar reads as moving too")
+        XCTAssertEqual(ScrollFrameAnalyzer.scrollbarWidth(current: after, previous: before, shift: 14), 6)
+    }
+
     func testNoScrollbarMeansZeroWidth() throws {
         // Content changes, but the right edge is part of that content and
         // changes too — so there is no *separate* static-then-moving strip.

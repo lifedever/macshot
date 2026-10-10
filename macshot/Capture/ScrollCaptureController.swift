@@ -519,11 +519,6 @@ final class ScrollCaptureController {
             return false
         }
 
-        // Scrollbar detection (once)
-        if !rightMarginDetected {
-            detectRightMargin(current: currentFrame, previous: previousFrame)
-        }
-
         // Compute offset via Vision
         guard let offset = visionShift(current: currentFrame, previous: previousFrame) else {
             consecutiveZeroShifts += 1
@@ -548,6 +543,10 @@ final class ScrollCaptureController {
         consecutiveZeroShifts = 0
         hasScrolledOnce = true
 
+        // Scrollbar first: header detection leaves it out.
+        if !rightMarginDetected {
+            detectRightMargin(current: currentFrame, previous: previousFrame, shiftPx: offsetPx)
+        }
         // Header detection (first few frames)
         if frozenDetectionEnabled && !headerDetectionDone {
             detectHeader(current: currentFrame, previous: previousFrame, shiftPx: offsetPx)
@@ -594,24 +593,50 @@ final class ScrollCaptureController {
                                   space: cs, bitmapInfo: bitmapInfo) else { return }
 
         // Draw existing image at the top (CGContext: bottom-left origin, so top = highest y)
-        ctx.draw(existing, in: CGRect(x: 0, y: newRows, width: w, height: existingH))
+        let existingRect = CGRect(x: 0, y: newRows, width: w, height: existingH)
+        ctx.draw(existing, in: existingRect)
+        // The scrollbar sits somewhere else in every strip; stitched as
+        // captured it leaves a dash per strip down the right edge. Covering the
+        // whole image again each time also clears the first frame, which was
+        // stitched before the scrollbar was found.
+        Self.coverRightMargin(of: existing, at: existingRect, marginPx: rightMarginPx, in: ctx)
 
         if headerDetectionDone && headerHeight > 0 {
             // Sticky header detected: only append the bottom newRows pixels.
             let stripY = currentFrame.height - newRows
             if let strip = currentFrame.cropping(to: CGRect(
                 x: 0, y: stripY, width: w, height: newRows)) {
-                ctx.draw(strip, in: CGRect(x: 0, y: 0, width: w, height: newRows))
+                let stripRect = CGRect(x: 0, y: 0, width: w, height: newRows)
+                ctx.draw(strip, in: stripRect)
+                Self.coverRightMargin(of: strip, at: stripRect, marginPx: rightMarginPx, in: ctx)
             }
         } else {
             // No header: draw full current frame with natural overlap.
-            ctx.draw(currentFrame, in: CGRect(x: 0, y: 0, width: w, height: currentFrame.height))
+            let frameRect = CGRect(x: 0, y: 0, width: w, height: currentFrame.height)
+            ctx.draw(currentFrame, in: frameRect)
+            Self.coverRightMargin(of: currentFrame, at: frameRect, marginPx: rightMarginPx, in: ctx)
         }
 
         guard let merged = ctx.makeImage() else { return }
         mergedImage = merged
         stitchedImage = merged
         stitchedPixelSize = CGSize(width: CGFloat(w), height: CGFloat(totalH))
+    }
+
+    /// Paints the `marginPx` columns at the right of `image`, drawn in
+    /// `context` at `rect`, with the column just inside them, row by row —
+    /// background and card edges carry on to the edge, the scrollbar is gone.
+    nonisolated static func coverRightMargin(of image: CGImage, at rect: CGRect, marginPx: Int,
+                                             in context: CGContext) {
+        guard marginPx > 0, marginPx < image.width / 4,
+              let column = image.cropping(to: CGRect(
+                x: image.width - marginPx - 1, y: 0, width: 1, height: image.height))
+        else { return }
+        context.saveGState()
+        context.interpolationQuality = .none
+        context.draw(column, in: CGRect(x: rect.maxX - CGFloat(marginPx), y: rect.minY,
+                                        width: CGFloat(marginPx), height: rect.height))
+        context.restoreGState()
     }
 
     private func stopAutoScroll() {
@@ -688,10 +713,6 @@ final class ScrollCaptureController {
             return true
         }
 
-        if !rightMarginDetected {
-            detectRightMargin(current: currentFrame, previous: previousFrame)
-        }
-
         guard let offset = visionShift(current: currentFrame, previous: previousFrame) else { return true }
 
         let offsetPx = Int(round(offset))
@@ -703,6 +724,10 @@ final class ScrollCaptureController {
         hasScrolledOnce = true
         consecutiveZeroShifts = 0
 
+        // Scrollbar first: header detection leaves it out.
+        if !rightMarginDetected {
+            detectRightMargin(current: currentFrame, previous: previousFrame, shiftPx: offsetPx)
+        }
         if frozenDetectionEnabled && !headerDetectionDone {
             detectHeader(current: currentFrame, previous: previousFrame, shiftPx: offsetPx)
         }
@@ -811,16 +836,17 @@ final class ScrollCaptureController {
 
     // MARK: - Scrollbar detection
 
-    private func detectRightMargin(current: CGImage, previous: CGImage) {
-        // Only mark detection as done once a comparable pair actually arrived.
-        // Setting it up front let one odd pair (a resize mid-session, say)
-        // disable scrollbar exclusion for the rest of the capture.
-        guard let scrollbarWidth = ScrollFrameAnalyzer.scrollbarWidth(current: current, previous: previous) else { return }
+    /// Looks for the scrollbar in a pair about to be stitched, aligned by its
+    /// content shift. Until one is found it is retried on every stitch: it
+    /// was settled on the first pair compared, which is often the first frame
+    /// against one barely scrolled — before an overlay scrollbar even shows —
+    /// and so concluded there was none for the rest of the capture.
+    private func detectRightMargin(current: CGImage, previous: CGImage, shiftPx: Int) {
+        guard let scrollbarWidth = ScrollFrameAnalyzer.scrollbarWidth(
+                current: current, previous: previous, shift: shiftPx),
+              scrollbarWidth >= 3, scrollbarWidth <= 40 else { return }
         rightMarginDetected = true
-
-        if scrollbarWidth >= 3 && scrollbarWidth <= 40 {
-            rightMarginPx = scrollbarWidth + 4
-        }
+        rightMarginPx = scrollbarWidth + 4
     }
 
     // MARK: - Header (frozen region) detection

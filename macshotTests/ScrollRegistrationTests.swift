@@ -109,3 +109,46 @@ final class ScrollRegistrationTests: XCTestCase {
         XCTAssertEqual(shift ?? 0, 0, accuracy: 0.5)
     }
 }
+
+/// Stitched as captured, a scrollbar left a dash down the right edge of the
+/// long image for every strip.
+final class ScrollbarCoverTests: XCTestCase {
+
+    private let background = CGColor(srgbRed: 0.95, green: 0.95, blue: 0.95, alpha: 1)
+
+    /// 100×40: a white card up to column 80 on a light page, and a dark
+    /// scrollbar thumb in columns 92–97, rows 10–20 from the top.
+    private func strip() throws -> CGImage {
+        let image = ImageProbe.makeImage(width: 100, height: 40) { [self] cg in
+            cg.setFillColor(background)
+            cg.fill(CGRect(x: 0, y: 0, width: 100, height: 40))
+            cg.setFillColor(CGColor(srgbRed: 1, green: 1, blue: 1, alpha: 1))
+            cg.fill(CGRect(x: 0, y: 5, width: 80, height: 30))
+            cg.setFillColor(CGColor(srgbRed: 0.3, green: 0.3, blue: 0.3, alpha: 1))
+            cg.fill(CGRect(x: 92, y: 20, width: 6, height: 10))
+        }
+        return try XCTUnwrap(image.cgImage(forProposedRect: nil, context: nil, hints: nil))
+    }
+
+    private func covered(margin: Int) throws -> NSImage {
+        let source = try strip()
+        return ImageProbe.makeImage(width: 100, height: 40) { cg in
+            let rect = CGRect(x: 0, y: 0, width: 100, height: 40)
+            cg.draw(source, in: rect)
+            ScrollCaptureController.coverRightMargin(of: source, at: rect, marginPx: margin, in: cg)
+        }
+    }
+
+    func testTheThumbIsReplacedByThePageBesideIt() throws {
+        let image = try covered(margin: 10)
+        let thumb = try XCTUnwrap(ImageProbe.pixelColor(image, x: 95, y: 15))
+        XCTAssertEqual(thumb.redComponent, 0.95, accuracy: 0.02)
+        // Everything left of the margin is untouched.
+        XCTAssertEqual(try XCTUnwrap(ImageProbe.pixelColor(image, x: 40, y: 20)).redComponent, 1, accuracy: 0.01)
+    }
+
+    func testWithoutAScrollbarNothingIsCovered() throws {
+        let thumb = try XCTUnwrap(ImageProbe.pixelColor(try covered(margin: 0), x: 95, y: 15))
+        XCTAssertEqual(thumb.redComponent, 0.3, accuracy: 0.02)
+    }
+}

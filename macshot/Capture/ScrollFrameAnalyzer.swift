@@ -77,9 +77,10 @@ enum ScrollFrameAnalyzer {
                      redOffset: rgb.0, greenOffset: rgb.1, blueOffset: rgb.2)
     }
 
-    /// Absolute difference of the three colour channels at one pixel.
-    private static func pixelDifference(_ a: Frame, _ b: Frame, x: Int, y: Int) -> UInt64? {
-        guard let aOffset = a.offset(x: x, y: y), let bOffset = b.offset(x: x, y: y) else { return nil }
+    /// Absolute difference of the three colour channels between `a` at (x, y)
+    /// and `b` at (x, `bY`, defaulting to `y`).
+    private static func pixelDifference(_ a: Frame, _ b: Frame, x: Int, y: Int, bY: Int? = nil) -> UInt64? {
+        guard let aOffset = a.offset(x: x, y: y), let bOffset = b.offset(x: x, y: bY ?? y) else { return nil }
         let diff = abs(Int(a.bytes[aOffset + a.redOffset]) - Int(b.bytes[bOffset + b.redOffset]))
             + abs(Int(a.bytes[aOffset + a.greenOffset]) - Int(b.bytes[bOffset + b.greenOffset]))
             + abs(Int(a.bytes[aOffset + a.blueOffset]) - Int(b.bytes[bOffset + b.blueOffset]))
@@ -89,14 +90,21 @@ enum ScrollFrameAnalyzer {
     /// Width in pixels of the changing strip at the right edge — the scrollbar,
     /// which must be excluded from matching or it drags the alignment with it.
     ///
+    /// With a known content `shift`, `current` row `y` is compared with
+    /// `previous` row `y + shift`: content then lines up and only what moves
+    /// differently from it — the scrollbar — still differs. Comparing the
+    /// frames unaligned also flags any content near the right edge, so on a
+    /// page of cards with chevrons beside the scrollbar the "scrollbar" came
+    /// out as wide as the scan and was discarded.
+    ///
     /// Returns 0 when the right edge is static, or nil when the two frames
     /// can't be compared at all (different sizes, unsupported pixel format).
-    static func scrollbarWidth(current: CGImage, previous: CGImage) -> Int? {
-        guard current.width == previous.width, current.height == previous.height,
+    static func scrollbarWidth(current: CGImage, previous: CGImage, shift: Int = 0) -> Int? {
+        guard current.width == previous.width, current.height == previous.height, shift >= 0,
               let a = frame(for: current), let b = frame(for: previous) else { return nil }
 
         let rowStart = a.height * 2 / 10
-        let rowEnd = a.height * 8 / 10
+        let rowEnd = min(a.height * 8 / 10, a.height - shift)
         guard rowEnd > rowStart else { return 0 }
         let rowStep = max(1, (rowEnd - rowStart) / 40)
 
@@ -107,7 +115,7 @@ enum ScrollFrameAnalyzer {
             var sad: UInt64 = 0
             var samples = 0
             for row in stride(from: rowStart, to: rowEnd, by: rowStep) {
-                guard let difference = pixelDifference(a, b, x: column, y: row) else { continue }
+                guard let difference = pixelDifference(a, b, x: column, y: row, bY: row + shift) else { continue }
                 sad += difference
                 samples += 1
             }
