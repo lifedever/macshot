@@ -1477,6 +1477,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
         // path (which manually composites the cursor from the prebuilt context).
         Task { [weak self] in
             trace?.mark("background screenshot begin")
+            // What was stacked over each window when the shot was taken decides
+            // whether a window snap may use the shot's pixels. Read it alongside
+            // the shot: transient UI over a window is often gone by the click.
+            let windowStackTask = Task.detached(priority: .userInitiated) {
+                ScreenCaptureManager.onScreenWindowStack()
+            }
             var captures: [ScreenCapture]? = nil
             if #available(macOS 14.0, *) {
                 captures = await ScreenCaptureManager.captureAllScreensImmediatelySCK(
@@ -1486,11 +1492,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
                 context: captureContext,
                 timing: { label in trace?.mark(label) })
             trace?.mark("background screenshot end count=\(finalCaptures.count)")
+            let windowStack = await windowStackTask.value
             await MainActor.run {
                 guard let self = self, self.isCapturing,
                       self.captureSessionID == sessionID else { return }
                 self.installAndShowOverlays(
                     captures: finalCaptures,
+                    windowStack: windowStack,
                     controllers: controllers,
                     mouseScreen: mouseScreen,
                     applyFullScreen: didApplyFullScreen,
@@ -1504,6 +1512,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
     /// them front. This is the single moment the overlay becomes visible.
     private func installAndShowOverlays(
         captures: [ScreenCapture],
+        windowStack: [ScreenCaptureManager.StackedWindow],
         controllers: [OverlayWindowController],
         mouseScreen: NSScreen?,
         applyFullScreen: Bool,
@@ -1530,6 +1539,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
                     controller.setScreenshot(image)
                 }
             }
+            controller.setWindowStackAtCapture(windowStack)
             measureCaptureTiming("show overlay") {
                 controller.showOverlay()
             }

@@ -318,6 +318,13 @@ class OverlayWindowController {
         overlayView?.snapWindows = windows.map { appWindow(frame: $0.frame, app: $0.app) }
     }
 
+    /// Hand the overlay every window that was on screen when its screenshot
+    /// was taken, front to back, so a window snap can tell whether anything
+    /// covering the window is baked into that screenshot.
+    func setWindowStackAtCapture(_ stack: [ScreenCaptureManager.StackedWindow]) {
+        overlayView?.windowStackAtCapture = stack
+    }
+
     private func appWindow(frame: NSRect, app: NSRunningApplication?) -> OverlayView.AppWindow {
         OverlayView.AppWindow(
             frame: frame.offsetBy(dx: -screen.frame.minX, dy: -screen.frame.minY),

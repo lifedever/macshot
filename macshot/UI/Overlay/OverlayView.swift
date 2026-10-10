@@ -1070,6 +1070,9 @@ class OverlayView: NSView {
     /// Every window that was on screen, front to back, for naming the app an
     /// edge guide lies on.
     var snapWindows: [AppWindow] = []
+    /// Every window on screen when the screenshot was taken, front to back.
+    /// See `ScreenCaptureManager.windowIsOccluded(windowID:stackAtCapture:)`.
+    var windowStackAtCapture: [ScreenCaptureManager.StackedWindow] = []
 
     /// What a snap guide lines up with, which its label names.
     enum SnapGuideSource: Equatable {
@@ -7706,9 +7709,10 @@ class OverlayView: NSView {
                 // user has to reach for a toolbar button, by which time the image is here.
                 let deferredQuickSave = autoQuickSaveMode
                 if deferredQuickSave { autoQuickSaveMode = false }
-                // Read the stacking order now, while the window is still where the
-                // user saw it — the overlay is above everything but is filtered out.
-                snappedWindowWasOccluded = ScreenCaptureManager.windowIsOccluded(windowID: wid)
+                // Judge by the stacking order recorded with the screenshot — that
+                // is what its pixels show; a menu over the window may be gone by now.
+                snappedWindowWasOccluded = ScreenCaptureManager.windowIsOccluded(
+                    windowID: wid, stackAtCapture: windowStackAtCapture)
                 Task { @MainActor in
                     if let cgImage = await ScreenCaptureManager.captureWindow(windowID: wid, screen: screen) {
                         self.snappedWindowImage = NSImage(cgImage: cgImage,
@@ -7909,7 +7913,8 @@ class OverlayView: NSView {
             selectionIsWindowSnap = snapMode == .window && !hoveredSnapWindowRunsOffDisplay
             snappedWindowID = selectionIsWindowSnap ? hoveredSnapWindowID : nil
             if selectionIsWindowSnap, let wid = hoveredSnapWindowID, let screen = window?.screen {
-                snappedWindowWasOccluded = ScreenCaptureManager.windowIsOccluded(windowID: wid)
+                snappedWindowWasOccluded = ScreenCaptureManager.windowIsOccluded(
+                    windowID: wid, stackAtCapture: windowStackAtCapture)
                 Task {
                     if let cgImage = await ScreenCaptureManager.captureWindow(windowID: wid, screen: screen) {
                         self.snappedWindowImage = NSImage(
@@ -11485,6 +11490,7 @@ class OverlayView: NSView {
     func reset() {
         foregroundWindow = nil
         snapWindows = []
+        windowStackAtCapture = []
         // A pooled overlay dismissed mid-session must not keep the session's
         // event tap, key monitors or HUD alive into the next capture.
         if isScrollCapturing { stopScrollCaptureMode() }

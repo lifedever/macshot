@@ -494,7 +494,41 @@ class ScreenCaptureManager {
 
     // MARK: - Single window capture (with transparency)
 
-    /// Whether an ordinary app window sits above `windowID` and covers part of it.
+    /// One on-screen window as the Window Server listed it. Bounds are in
+    /// CoreGraphics coordinates.
+    struct StackedWindow: Sendable, Equatable {
+        let windowID: CGWindowID
+        let ownerPID: pid_t
+        let alpha: Double
+        let bounds: CGRect
+    }
+
+    /// Every on-screen window, front to back, at every level — menus, the
+    /// Dock, Control Center and status-item panels included.
+    ///
+    /// Take this alongside the full-screen shot: whether a window snap can use
+    /// that shot's pixels depends on what was stacked over the window *when it
+    /// was taken*, and transient UI is often gone by the time the user clicks.
+    static func onScreenWindowStack() -> [StackedWindow] {
+        guard let list = CGWindowListCopyWindowInfo([.optionOnScreenOnly], kCGNullWindowID)
+                as? [[String: Any]]
+        else { return [] }
+        return list.compactMap { info in
+            guard let number = info[kCGWindowNumber as String] as? Int,
+                  let pid = info[kCGWindowOwnerPID as String] as? pid_t,
+                  let dict = info[kCGWindowBounds as String] as? NSDictionary,
+                  let bounds = CGRect(dictionaryRepresentation: dict)
+            else { return nil }
+            return StackedWindow(
+                windowID: CGWindowID(number),
+                ownerPID: pid,
+                alpha: info[kCGWindowAlpha as String] as? Double ?? 1,
+                bounds: bounds)
+        }
+    }
+
+    /// Whether anything in `stack` sits above `windowID` and covers part of it,
+    /// or nil when the window isn't in `stack` at all.
     ///
     /// A window snap normally takes its pixels from the full-screen shot so
     /// translucent chrome keeps the blend the user actually saw. That is only
@@ -502,40 +536,32 @@ class ScreenCaptureManager {
     /// baked into the crop. When this returns true the caller must fall back to
     /// the window's own capture instead.
     ///
+    /// Every level counts. A menu-bar app's menu, Control Center or the Dock
+    /// over the window is exactly the kind of intruder this exists to keep out;
+    /// a false alarm only costs the desktop blend behind translucent chrome.
     /// macshot's own windows are skipped: the capture overlay is always on top
     /// and is never part of what is being captured.
-    static func windowIsOccluded(windowID: CGWindowID) -> Bool {
-        func bounds(of info: [String: Any]) -> CGRect? {
-            guard let b = info[kCGWindowBounds as String] as? [String: CGFloat] else { return nil }
-            let rect = CGRect(x: b["X"] ?? 0, y: b["Y"] ?? 0,
-                              width: b["Width"] ?? 0, height: b["Height"] ?? 0)
-            return rect.isEmpty ? nil : rect
-        }
-
-        guard let target = CGWindowListCopyWindowInfo(
-                [.optionIncludingWindow], windowID) as? [[String: Any]],
-              let targetRect = target.first.flatMap(bounds)
-        else { return false }
-
-        guard let above = CGWindowListCopyWindowInfo(
-                [.optionOnScreenAboveWindow, .excludeDesktopElements], windowID) as? [[String: Any]]
-        else { return false }
-
-        let ownPID = Int(ProcessInfo.processInfo.processIdentifier)
-        for info in above {
-            // Layer 0 only: menus, tooltips and other transient chrome float
-            // above everything and would otherwise report a permanent occlusion.
-            guard (info[kCGWindowLayer as String] as? Int) == 0,
-                  (info[kCGWindowOwnerPID as String] as? Int) != ownPID,
-                  (info[kCGWindowAlpha as String] as? CGFloat ?? 1) > 0.05,
-                  let rect = bounds(of: info)
-            else { continue }
+    static func windowIsCovered(
+        _ windowID: CGWindowID, in stack: [StackedWindow], ownPID: pid_t
+    ) -> Bool? {
+        guard let index = stack.firstIndex(where: { $0.windowID == windowID }) else { return nil }
+        let target = stack[index].bounds
+        return stack[..<index].contains { above in
+            guard above.ownerPID != ownPID, above.alpha > 0.05 else { return false }
             // Ignore a hairline overlap along an edge — it costs nothing visually
             // and isn't worth giving up the on-screen blend for.
-            let overlap = rect.intersection(targetRect)
-            if !overlap.isNull && overlap.width * overlap.height > 100 { return true }
+            let overlap = above.bounds.intersection(target)
+            return !overlap.isNull && overlap.width * overlap.height > 100
         }
-        return false
+    }
+
+    /// `windowIsCovered` against the stack recorded with the screen shot,
+    /// falling back to the live stack when the window wasn't recorded.
+    static func windowIsOccluded(windowID: CGWindowID, stackAtCapture: [StackedWindow]) -> Bool {
+        let ownPID = ProcessInfo.processInfo.processIdentifier
+        return windowIsCovered(windowID, in: stackAtCapture, ownPID: ownPID)
+            ?? windowIsCovered(windowID, in: onScreenWindowStack(), ownPID: ownPID)
+            ?? false
     }
 
     /// Captures a single window by its CGWindowID, returning an image with transparent corners.
