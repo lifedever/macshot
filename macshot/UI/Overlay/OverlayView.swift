@@ -919,6 +919,20 @@ class OverlayView: NSView {
         }
     }
 
+    /// The wheel scrolls whatever is under the pointer, and the pointer is
+    /// still on the toolbar button that started the capture, outside the
+    /// region. Scrolled straight away, as the button invites, the events
+    /// landed beside the window being captured and nothing moved; clicking
+    /// into the window only helped because it took the pointer there. The
+    /// pointer is put in the middle of the region, as auto-scroll does.
+    private func movePointerIntoSelection() {
+        guard selectionRect.width > 0, let win = window else { return }
+        let region = win.convertToScreen(selectionRect)
+        guard !region.contains(NSEvent.mouseLocation) else { return }
+        let primaryHeight = NSScreen.screens.first?.frame.height ?? 0
+        CGWarpMouseCursorPosition(CGPoint(x: region.midX, y: primaryHeight - region.midY))
+    }
+
     /// Makes the window of `pid` with these bounds (CG coordinates) the app's
     /// front window, and the app frontmost.
     private static func raiseWindow(ownedBy pid: pid_t, at bounds: CGRect) {
@@ -963,6 +977,7 @@ class OverlayView: NSView {
 
         window?.ignoresMouseEvents = true
         handKeyboardToWindowUnderSelection()
+        movePointerIntoSelection()
 
         // Suppress mouse-moved events via CGEvent tap so hover effects in the
         // target app don't break stitch detection. Requires Accessibility permission
