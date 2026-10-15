@@ -52,7 +52,11 @@ class ScrollCapturePreviewPanel: NSPanel {
         isOpaque = false
         backgroundColor = .clear
         hasShadow = true
-        level = NSWindow.Level(rawValue: overlayLevel - 1)  // below overlay so HUD/stop button stays clickable
+        // Above the overlay: it dims everything outside the capture region,
+        // and a preview beneath it came out grey. Frames are grabbed from
+        // below the overlay, so the preview never reaches the stitched image,
+        // and it takes no clicks, so it can't cover the HUD's buttons.
+        level = NSWindow.Level(rawValue: overlayLevel + 1)
         ignoresMouseEvents = true
         isReleasedWhenClosed = false
 

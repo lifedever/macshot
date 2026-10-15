@@ -3513,15 +3513,17 @@ extension AppDelegate: OverlayWindowControllerDelegate {
         // Read max height for the overlay HUD progress bar
         let maxH = UserDefaults.standard.object(forKey: "scrollMaxHeight") as? Int ?? ScrollCaptureController.defaultMaxScrollHeight
 
-        // Tell the triggering overlay to enter scroll capture mode
-        controller.setScrollCaptureState(isActive: true, maxHeight: maxH)
-
-        // Create live preview panel if there's space beside the capture region
+        // Create live preview panel if there's space beside the capture region.
+        // Ordered in before the HUD, which shares its level: where the two
+        // meet, the HUD stays on top.
         let overlayLevel = 257  // matches overlay window level
         if let previewPanel = ScrollCapturePreviewPanel(captureRect: rect, screen: screen, overlayLevel: overlayLevel) {
             previewPanel.orderFront(nil)
             scrollCapturePreviewPanel = previewPanel
         }
+
+        // Tell the triggering overlay to enter scroll capture mode
+        controller.setScrollCaptureState(isActive: true, maxHeight: maxH)
 
         scc.onStripAdded = { [weak self, weak controller] count in
             guard let self = self, let scc = self.scrollCaptureController else { return }
