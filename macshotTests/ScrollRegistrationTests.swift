@@ -108,6 +108,20 @@ final class ScrollRegistrationTests: XCTestCase {
             current: top, previous: top, confirmedHeaderRows: nil, rightMarginPx: 0)
         XCTAssertEqual(shift ?? 0, 0, accuracy: 0.5)
     }
+
+    /// At the end of a page the last scroll is usually short — 56px of a
+    /// 1122px region in a recorded WeChat session. Mid-scroll a shift that
+    /// short waits to accumulate; once the page has settled there is nothing
+    /// left to accumulate, and it was dropped, ending the capture early.
+    func testASettledFrameStitchesTheShortLastScroll() {
+        XCTAssertTrue(ScrollCaptureController.isStitchable(offsetPx: 56, frameHeight: 1122, settled: true))
+        XCTAssertFalse(ScrollCaptureController.isStitchable(offsetPx: 56, frameHeight: 1122, settled: false))
+        XCTAssertTrue(ScrollCaptureController.isStitchable(offsetPx: 140, frameHeight: 1122, settled: false))
+        for settled in [true, false] {
+            XCTAssertFalse(ScrollCaptureController.isStitchable(offsetPx: 0, frameHeight: 1122, settled: settled))
+            XCTAssertFalse(ScrollCaptureController.isStitchable(offsetPx: -40, frameHeight: 1122, settled: settled))
+        }
+    }
 }
 
 /// Stitched as captured, a scrollbar left a dash down the right edge of the

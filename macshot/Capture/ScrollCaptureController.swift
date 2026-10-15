@@ -531,14 +531,8 @@ final class ScrollCaptureController {
         }
 
         let offsetPx = Int(round(offset))
-        guard offsetPx > 0 else { return false }
-
-        // Need minimum shift to avoid noise
-        let minShift = currentFrame.height / 10
-        if offsetPx < minShift {
-            // Don't update shotA — let shifts accumulate
-            return false
-        }
+        guard Self.isStitchable(offsetPx: offsetPx, frameHeight: currentFrame.height, settled: true)
+        else { return false }
 
         consecutiveZeroShifts = 0
         hasScrolledOnce = true
@@ -569,6 +563,18 @@ final class ScrollCaptureController {
         onStripAdded?(stripCount)
 
         return true
+    }
+
+    /// Whether a verified downward shift of `offsetPx` gets a strip.
+    ///
+    /// A frame grabbed mid-scroll needs a tenth of its height; shorter shifts
+    /// are left to accumulate. A settled frame, its offset verified, has no
+    /// minimum: the page has come to rest there. At the end of a page the
+    /// last scroll is usually shorter than any minimum, and that remainder
+    /// was never stitched: the capture stopped a few lines short of the end.
+    nonisolated static func isStitchable(offsetPx: Int, frameHeight: Int, settled: Bool) -> Bool {
+        guard offsetPx > 0 else { return false }
+        return settled || offsetPx >= frameHeight / 10
     }
 
     /// Merges the newly-scrolled content from `currentFrame` into `mergedImage`.
@@ -716,10 +722,10 @@ final class ScrollCaptureController {
         guard let offset = visionShift(current: currentFrame, previous: previousFrame) else { return true }
 
         let offsetPx = Int(round(offset))
-        guard offsetPx > 0 else { return true }
-
-        let minShift = currentFrame.height / 10
-        if offsetPx < minShift { return true }
+        // A short shift is left to accumulate: shotA stays put until the
+        // page has moved far enough, or a settled capture takes the rest.
+        guard Self.isStitchable(offsetPx: offsetPx, frameHeight: currentFrame.height, settled: false)
+        else { return true }
 
         hasScrolledOnce = true
         consecutiveZeroShifts = 0
