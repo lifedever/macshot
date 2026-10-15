@@ -867,12 +867,36 @@ class OverlayView: NSView {
     private var scrollCaptureMouseTapSource: CFRunLoopSource?
     private var scrollCaptureKeyMonitor: Any?
     private var scrollCaptureLocalKeyMonitor: Any?
-    /// Activate the app visible under the selection rect so the user doesn't need a warmup click.
-    private func activateAppUnderSelection() {
+    /// Give the keyboard to the window under the selection, as a click on it
+    /// would.
+    ///
+    /// The overlay is a non-activating panel and has been the key window since
+    /// the capture began. The app beneath stays frontmost, but its window is
+    /// not key: it looks unfocused, and Page Down or the arrow keys went to the
+    /// overlay instead of scrolling it. Activating that app changes nothing
+    /// when it is already frontmost, which it usually is — it was what the user
+    /// was looking at. So the overlay refuses the key for the rest of the
+    /// session, and is ordered out and straight back in, which hands the
+    /// keyboard back to the frontmost app. Refusing it also means nothing can
+    /// make the overlay key again while the user scrolls. Esc still cancels:
+    /// scroll capture watches for it globally.
+    ///
+    /// A window that belongs to another app, or isn't that app's front window,
+    /// is brought forward through Accessibility, which scroll capture already
+    /// requires: `NSRunningApplication.activate` is ignored from an app that
+    /// isn't active itself.
+    private func handKeyboardToWindowUnderSelection() {
         guard selectionRect.width > 0, let win = window else { return }
-        // Convert selection center to global screen coords
+        (win as? OverlayWindow)?.refusesKey = true
+        if win.isVisible {
+            win.orderOut(nil)
+            win.orderFrontRegardless()
+        }
+
         let centerLocal = NSPoint(x: selectionRect.midX, y: selectionRect.midY)
         let centerScreen = win.convertToScreen(NSRect(origin: centerLocal, size: .zero)).origin
+        let primaryHeight = NSScreen.screens.first?.frame.height ?? 0
+        let centerCG = CGPoint(x: centerScreen.x, y: primaryHeight - centerScreen.y)
 
         guard
             let windowList = CGWindowListCopyWindowInfo(
@@ -880,27 +904,51 @@ class OverlayView: NSView {
             ) as? [[String: Any]]
         else { return }
 
-        let overlayWindowNumber = win.windowNumber
-        let screenH = NSScreen.screens.first?.frame.height ?? 0
-
         for info in windowList {
             guard let layer = info[kCGWindowLayer as String] as? Int, layer == 0,
-                let boundsDict = info[kCGWindowBounds as String] as? [String: CGFloat],
-                let winNum = info[kCGWindowNumber as String] as? Int,
-                let pid = info[kCGWindowOwnerPID as String] as? pid_t,
-                winNum != overlayWindowNumber
+                  let boundsDict = info[kCGWindowBounds as String] as? [String: CGFloat],
+                  let winNum = info[kCGWindowNumber as String] as? Int,
+                  let pid = info[kCGWindowOwnerPID as String] as? pid_t,
+                  winNum != win.windowNumber
             else { continue }
+            let bounds = CGRect(x: boundsDict["X"] ?? 0, y: boundsDict["Y"] ?? 0,
+                                width: boundsDict["Width"] ?? 0, height: boundsDict["Height"] ?? 0)
+            guard bounds.contains(centerCG) else { continue }
+            Self.raiseWindow(ownedBy: pid, at: bounds)
+            return
+        }
+    }
 
-            let cgX = boundsDict["X"] ?? 0
-            let cgY = boundsDict["Y"] ?? 0
-            let cgW = boundsDict["Width"] ?? 0
-            let cgH = boundsDict["Height"] ?? 0
-            let appKitRect = NSRect(x: cgX, y: screenH - cgY - cgH, width: cgW, height: cgH)
-
-            if appKitRect.contains(centerScreen) {
-                NSRunningApplication(processIdentifier: pid)?.activate(options: [])
-                return
+    /// Makes the window of `pid` with these bounds (CG coordinates) the app's
+    /// front window, and the app frontmost.
+    private static func raiseWindow(ownedBy pid: pid_t, at bounds: CGRect) {
+        let app = AXUIElementCreateApplication(pid)
+        // A hung app would otherwise hold the main thread for the default
+        // six seconds per call.
+        AXUIElementSetMessagingTimeout(app, 0.5)
+        func value<T>(_ element: AXUIElement, _ attribute: String, _ type: AXValueType, _ empty: T) -> T? {
+            var raw: CFTypeRef?
+            guard AXUIElementCopyAttributeValue(element, attribute as CFString, &raw) == .success,
+                  let raw, CFGetTypeID(raw) == AXValueGetTypeID() else { return nil }
+            var result = empty
+            return AXValueGetValue(raw as! AXValue, type, &result) ? result : nil
+        }
+        var windowsValue: CFTypeRef?
+        if AXUIElementCopyAttributeValue(app, kAXWindowsAttribute as CFString, &windowsValue) == .success,
+           let windows = windowsValue as? [AXUIElement] {
+            for window in windows {
+                guard let position = value(window, kAXPositionAttribute, .cgPoint, CGPoint.zero),
+                      let size = value(window, kAXSizeAttribute, .cgSize, CGSize.zero),
+                      abs(position.x - bounds.minX) <= 1, abs(position.y - bounds.minY) <= 1,
+                      abs(size.width - bounds.width) <= 1, abs(size.height - bounds.height) <= 1
+                else { continue }
+                AXUIElementPerformAction(window, kAXRaiseAction as CFString)
+                AXUIElementSetAttributeValue(window, kAXMainAttribute as CFString, kCFBooleanTrue)
+                break
             }
+        }
+        if NSWorkspace.shared.frontmostApplication?.processIdentifier != pid {
+            AXUIElementSetAttributeValue(app, kAXFrontmostAttribute as CFString, kCFBooleanTrue)
         }
     }
 
@@ -913,8 +961,8 @@ class OverlayView: NSView {
         scrollCapturePixelSize = .zero
         scrollCaptureAutoScrolling = false
 
-        activateAppUnderSelection()
         window?.ignoresMouseEvents = true
+        handKeyboardToWindowUnderSelection()
 
         // Suppress mouse-moved events via CGEvent tap so hover effects in the
         // target app don't break stitch detection. Requires Accessibility permission
@@ -995,6 +1043,7 @@ class OverlayView: NSView {
         }
         scrollCaptureHUDPanel?.close()
         scrollCaptureHUDPanel = nil
+        (window as? OverlayWindow)?.refusesKey = false
         window?.ignoresMouseEvents = false
 
         needsDisplay = true

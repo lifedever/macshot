@@ -232,6 +232,9 @@ class OverlayWindowController {
         // A real capture is being presented — enable mouse interaction.
         // (Idle/warmed panels are click-through; see setupWindow.)
         window.ignoresMouseEvents = false
+        // A pooled window must never carry a scroll capture's refusal into
+        // the next capture: it would get no keys, Esc included.
+        window.refusesKey = false
         rootView?.layoutSubtreeIfNeeded()
         timingMark?("after layoutSubtreeIfNeeded")
         overlayView?.displayIfNeeded()
@@ -1154,7 +1157,10 @@ extension OverlayWindowController: OverlayViewDelegate {
 // MARK: - Custom Window subclass
 
 class OverlayWindow: NSPanel {
-    override var canBecomeKey: Bool { true }
+    /// Set while a scroll capture runs: the keyboard belongs to the app being
+    /// scrolled (see `OverlayView.handKeyboardToWindowUnderSelection`).
+    var refusesKey = false
+    override var canBecomeKey: Bool { !refusesKey }
     override var canBecomeMain: Bool { true }
 }
 

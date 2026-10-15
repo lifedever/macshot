@@ -42,4 +42,20 @@ final class ScrollCaptureOverlayTests: XCTestCase {
         let corner = try XCTUnwrap(ImageProbe.pixelColor(try render(scrim: false), x: 5, y: 5))
         XCTAssertEqual(corner.alphaComponent, 0, accuracy: 0.01)
     }
+
+    /// During a scroll capture the overlay refuses the keyboard so the app
+    /// being scrolled keeps it. The window is pooled: if the refusal outlived
+    /// the capture, the next capture would get no keys, Esc included.
+    func testTheOverlayTakesKeysAgainOnceScrollCaptureEnds() {
+        let window = OverlayWindow(contentRect: NSRect(x: 0, y: 0, width: 200, height: 160),
+                                   styleMask: [.borderless, .nonactivatingPanel],
+                                   backing: .buffered, defer: true)
+        window.isReleasedWhenClosed = false
+        let overlay = OverlayView(frame: NSRect(x: 0, y: 0, width: 200, height: 160))
+        window.contentView = overlay
+        window.refusesKey = true
+        XCTAssertFalse(window.canBecomeKey)
+        overlay.stopScrollCaptureMode()
+        XCTAssertTrue(window.canBecomeKey)
+    }
 }
