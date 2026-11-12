@@ -863,8 +863,10 @@ class OverlayView: NSView {
     var scrollCaptureMaxHeight: Int = 0
     var scrollCaptureAutoScrolling: Bool = false
     private var scrollCaptureHUDPanel: ScrollCaptureHUDPanel?
-    private var scrollCaptureMouseTap: CFMachPort?
-    private var scrollCaptureMouseTapSource: CFRunLoopSource?
+    private var scrollCaptureEventTap: ScrollCaptureEventTap?
+    /// Whether this session's scrolling is sent into the region wherever the
+    /// pointer is. See `ScrollCaptureEventTap`.
+    var scrollCaptureRedirectsScrolls: Bool { scrollCaptureEventTap != nil }
     private var scrollCaptureKeyMonitor: Any?
     private var scrollCaptureLocalKeyMonitor: Any?
     /// Give the keyboard to the window under the selection, as a click on it
@@ -919,12 +921,44 @@ class OverlayView: NSView {
         }
     }
 
+    /// Sends this session's scrolling into the region and takes the pointer
+    /// off the page, onto the HUD, where the app being captured has nothing
+    /// under it to light up. See `ScrollCaptureEventTap`.
+    ///
+    /// The tap takes Accessibility access. A session doesn't start without
+    /// it, but should the tap fail all the same, scrolling goes to whatever
+    /// is under the pointer, and the pointer is put in the region instead.
+    private func startScrollCaptureEventTap(hud: ScrollCaptureHUDPanel) {
+        guard selectionRect.width > 0, selectionRect.height > 0, let win = window else { return }
+        let primaryHeight = NSScreen.screens.first?.frame.height ?? 0
+        guard AXIsProcessTrusted(),
+              let tap = ScrollCaptureEventTap(
+                region: Self.globalDisplayRect(win.convertToScreen(selectionRect), primaryHeight: primaryHeight),
+                covered: [Self.globalDisplayRect(hud.frame, primaryHeight: primaryHeight)])
+        else {
+            movePointerIntoSelection()
+            return
+        }
+        scrollCaptureEventTap = tap
+        let rest = hud.pointerRestingPoint
+        CGWarpMouseCursorPosition(CGPoint(x: rest.x, y: primaryHeight - rest.y))
+    }
+
+    /// A screen rect in the global display coordinates events carry: y down
+    /// from the top of the primary display.
+    private static func globalDisplayRect(_ rect: NSRect, primaryHeight: CGFloat) -> CGRect {
+        CGRect(x: rect.minX, y: primaryHeight - rect.maxY, width: rect.width, height: rect.height)
+    }
+
     /// The wheel scrolls whatever is under the pointer, and the pointer is
     /// still on the toolbar button that started the capture, outside the
     /// region. Scrolled straight away, as the button invites, the events
     /// landed beside the window being captured and nothing moved; clicking
     /// into the window only helped because it took the pointer there. The
     /// pointer is put in the middle of the region, as auto-scroll does.
+    ///
+    /// Only when scrolling can't be sent into the region instead: what is
+    /// under the pointer lights up as the page moves, and is captured.
     private func movePointerIntoSelection() {
         guard selectionRect.width > 0, let win = window else { return }
         let region = win.convertToScreen(selectionRect)
@@ -977,27 +1011,6 @@ class OverlayView: NSView {
 
         window?.ignoresMouseEvents = true
         handKeyboardToWindowUnderSelection()
-        movePointerIntoSelection()
-
-        // Suppress mouse-moved events via CGEvent tap so hover effects in the
-        // target app don't break stitch detection. Requires Accessibility permission
-        // (checked before entering scroll capture mode).
-        if AXIsProcessTrusted() {
-            let tap = CGEvent.tapCreate(
-                tap: .cgSessionEventTap,
-                place: .headInsertEventTap,
-                options: .defaultTap,
-                eventsOfInterest: CGEventMask(1 << CGEventType.mouseMoved.rawValue),
-                callback: { _, _, _, _ in nil },
-                userInfo: nil)
-            if let tap = tap {
-                let source = CFMachPortCreateRunLoopSource(nil, tap, 0)
-                CFRunLoopAddSource(CFRunLoopGetMain(), source, .commonModes)
-                CGEvent.tapEnable(tap: tap, enable: true)
-                scrollCaptureMouseTap = tap
-                scrollCaptureMouseTapSource = source
-            }
-        }
 
         // Escape key monitor — global catches when another app has focus; local when macshot has focus.
         let handleScrollKey: (NSEvent) -> Void = { [weak self] event in
@@ -1037,6 +1050,10 @@ class OverlayView: NSView {
         panel.orderFront(nil)
         scrollCaptureHUDPanel = panel
 
+        // After the HUD: the pointer waits on it, and scrolls over it are
+        // sent on to the page.
+        startScrollCaptureEventTap(hud: panel)
+
         needsDisplay = true
     }
 
@@ -1048,14 +1065,8 @@ class OverlayView: NSView {
 
         if let m = scrollCaptureKeyMonitor { NSEvent.removeMonitor(m); scrollCaptureKeyMonitor = nil }
         if let m = scrollCaptureLocalKeyMonitor { NSEvent.removeMonitor(m); scrollCaptureLocalKeyMonitor = nil }
-        if let tap = scrollCaptureMouseTap {
-            CGEvent.tapEnable(tap: tap, enable: false)
-            if let source = scrollCaptureMouseTapSource {
-                CFRunLoopRemoveSource(CFRunLoopGetMain(), source, .commonModes)
-            }
-            scrollCaptureMouseTap = nil
-            scrollCaptureMouseTapSource = nil
-        }
+        scrollCaptureEventTap?.stop()
+        scrollCaptureEventTap = nil
         scrollCaptureHUDPanel?.close()
         scrollCaptureHUDPanel = nil
         (window as? OverlayWindow)?.refusesKey = false
@@ -1072,8 +1083,11 @@ class OverlayView: NSView {
             backingScale: window?.backingScaleFactor ?? 2,
             maxScrollHeight: scrollCaptureMaxHeight,
             autoScrolling: scrollCaptureAutoScrolling)
-        if let win = window {
-            scrollCaptureHUDPanel?.position(relativeTo: selectionRect, in: win)
+        if let win = window, let panel = scrollCaptureHUDPanel {
+            panel.position(relativeTo: selectionRect, in: win)
+            // The HUD grows with its label and is centred again.
+            scrollCaptureEventTap?.covered = [Self.globalDisplayRect(
+                panel.frame, primaryHeight: NSScreen.screens.first?.frame.height ?? 0)]
         }
     }
 

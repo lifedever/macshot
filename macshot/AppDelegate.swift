@@ -3524,6 +3524,7 @@ extension AppDelegate: OverlayWindowControllerDelegate {
 
         // Tell the triggering overlay to enter scroll capture mode
         controller.setScrollCaptureState(isActive: true, maxHeight: maxH)
+        scc.scrollsAreRedirected = controller.scrollCaptureRedirectsScrolls
 
         scc.onStripAdded = { [weak self, weak controller] count in
             guard let self = self, let scc = self.scrollCaptureController else { return }

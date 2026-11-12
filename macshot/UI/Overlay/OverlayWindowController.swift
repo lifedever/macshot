@@ -403,6 +403,10 @@ class OverlayWindowController {
             rect: overlayView?.selectionRect ?? .zero)
     }
 
+    /// Whether the running scroll capture sends scrolling into the region
+    /// wherever the pointer is.
+    var scrollCaptureRedirectsScrolls: Bool { overlayView?.scrollCaptureRedirectsScrolls ?? false }
+
     func setScrollCaptureState(isActive: Bool, stripCount: Int = 0, pixelSize: CGSize = .zero,
                                maxHeight: Int = 0) {
         overlayView?.scrollCaptureMaxHeight = maxHeight

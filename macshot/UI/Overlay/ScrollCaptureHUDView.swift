@@ -108,6 +108,10 @@ class ScrollCaptureHUDView: NSView {
             x: totalW - pad - stopBtnW, y: (barH - btnH) / 2, width: stopBtnW, height: btnH)
     }
 
+    /// Where the pointer can wait on the HUD without being on a button: over
+    /// the label.
+    var pointerRestingPoint: NSPoint { NSPoint(x: infoLabel.frame.midX, y: bounds.midY) }
+
     @objc private func autoScrollClicked() {
         onToggleAutoScroll?()
     }
@@ -184,6 +188,11 @@ class ScrollCaptureHUDPanel: NSPanel {
         x = max(visibleFrame.minX + margin, min(x, visibleFrame.maxX - size.width - margin))
 
         return NSRect(x: x, y: y, width: size.width, height: size.height)
+    }
+
+    /// `ScrollCaptureHUDView.pointerRestingPoint`, in screen coordinates.
+    var pointerRestingPoint: NSPoint {
+        convertPoint(toScreen: hudView.convert(hudView.pointerRestingPoint, to: nil))
     }
 
     func position(relativeTo selectionRect: NSRect, in overlayWindow: NSWindow) {

@@ -51,6 +51,38 @@ final class ScrollCaptureController {
     // MARK: - Config
 
     var excludedWindowIDs: [CGWindowID] = []
+    /// Scrolling is sent into the region wherever the pointer is
+    /// (`ScrollCaptureEventTap`), so auto-scroll has no need to bring the
+    /// pointer there — and every reason not to: what is under the pointer
+    /// lights up as the page moves, and is captured.
+    ///
+    /// Should the page not move for it — an app that only scrolls under the
+    /// pointer itself — the pointer is put in the region after all, before
+    /// the first strip: a capture that does nothing is worse than one with a
+    /// highlighted row in it.
+    var scrollsAreRedirected = false
+    private var scrolledBeforeFirstStrip: CGFloat = 0
+
+    /// How far the user may scroll without a first strip before the pointer
+    /// is brought into the region, as a share of the region's height. A
+    /// working capture stitches one well within the first third.
+    nonisolated static let ignoredScrollFraction: CGFloat = 1
+
+    /// Whether scrolling sent into the region is being ignored: the user has
+    /// scrolled `scrolled` points, or auto-scroll has failed `failures` times
+    /// running, and nothing has been stitched yet.
+    nonisolated static func redirectedScrollsAreIgnored(scrolled: CGFloat, failures: Int,
+                                                        regionHeight: CGFloat) -> Bool {
+        failures >= 3 || (regionHeight > 0 && scrolled >= regionHeight * ignoredScrollFraction)
+    }
+
+    /// Puts the pointer in the middle of the region, for the wheel to scroll
+    /// what is there.
+    private func bringPointerIntoRegion() {
+        scrollsAreRedirected = false
+        let primaryScreenH = NSScreen.screens.first?.frame.height ?? screen.frame.height
+        CGWarpMouseCursorPosition(CGPoint(x: captureRect.midX, y: primaryScreenH - captureRect.midY))
+    }
 
     // MARK: - Settings
 
@@ -186,6 +218,7 @@ final class ScrollCaptureController {
         matchNotFoundCount = 0
         didReportFirstMatch = false
         hasScrolledOnce = false
+        scrolledBeforeFirstStrip = 0
         consecutiveZeroShifts = 0
         frozenTopHeight = 0
         stripCount = 1
@@ -383,10 +416,7 @@ final class ScrollCaptureController {
         autoScrollActive = true
         onAutoScrollStarted?()
 
-        let primaryScreenH = NSScreen.screens.first?.frame.height ?? screen.frame.height
-        let cursorX = captureRect.midX
-        let cursorY = primaryScreenH - captureRect.midY
-        CGWarpMouseCursorPosition(CGPoint(x: cursorX, y: cursorY))
+        if !scrollsAreRedirected { bringPointerIntoRegion() }
 
         activateTargetApp()
 
@@ -438,6 +468,11 @@ final class ScrollCaptureController {
 
             if !success {
                 matchNotFoundCount += 1
+                if scrollsAreRedirected, !hasScrolledOnce,
+                   Self.redirectedScrollsAreIgnored(scrolled: 0, failures: matchNotFoundCount,
+                                                    regionHeight: captureRect.height) {
+                    bringPointerIntoRegion()
+                }
                 if matchNotFoundCount >= maxMatchNotFound {
                     stopSession()
                     return
@@ -694,7 +729,15 @@ final class ScrollCaptureController {
         // viewport.
         // Wheel mice report lines rather than points; ten points a line is
         // close enough to judge when a grab is due.
-        scrolledSinceGrab += abs(event.scrollingDeltaY) * (event.hasPreciseScrollingDeltas ? 1 : 10)
+        let scrolled = abs(event.scrollingDeltaY) * (event.hasPreciseScrollingDeltas ? 1 : 10)
+        scrolledSinceGrab += scrolled
+        if scrollsAreRedirected, !hasScrolledOnce {
+            scrolledBeforeFirstStrip += scrolled
+            if Self.redirectedScrollsAreIgnored(scrolled: scrolledBeforeFirstStrip, failures: 0,
+                                                regionHeight: captureRect.height) {
+                bringPointerIntoRegion()
+            }
+        }
         let now = ProcessInfo.processInfo.systemUptime
         let dueByTime = now - lastCaptureTime >= manualCaptureInterval
         let dueByDistance = scrolledSinceGrab >= captureRect.height * grabDistanceFraction
