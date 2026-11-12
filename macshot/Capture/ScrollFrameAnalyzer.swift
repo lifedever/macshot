@@ -204,17 +204,21 @@ enum ScrollFrameAnalyzer {
     /// scroll, so no header was found, and every frame was stitched in with
     /// that band across its top, over the text that belonged there.
     ///
-    /// Blank rows are the same under either reading and decide nothing. The
-    /// count runs to the last row that differs, and the scan ends once
-    /// `rowsThatSettle` rows running have content and follow the scroll:
-    /// below that is the page, and what changes there — an image loading in
-    /// place, a bar pinned to the bottom — is not a header.
-    ///
     /// A row differs on its mean, as in `overlapAgrees`, or on a few pixels
     /// that are clearly something else: a short word seen through the strip
-    /// barely moves the mean of a wide row. The right edge is left out as far
-    /// as a scrollbar reaches, measured or not — on the first scroll its
-    /// thumb sits at the top, where a header would be.
+    /// barely moves the mean of a wide row. A row follows the scroll when it
+    /// has content in both frames and no pixel of it is clearly something
+    /// else. Every other row decides nothing — blank rows, which are the same
+    /// under either reading, and rows where only a pixel or two differ: the
+    /// bar beside a quoted message, faded by the strip, is content and nearly
+    /// matches, and eight rows of it are not the page.
+    ///
+    /// The count runs to the last row that differs, and the scan ends once
+    /// `rowsThatSettle` rows running follow the scroll: below that is the
+    /// page, and what changes there — an image loading in place, a bar pinned
+    /// to the bottom — is not a header. The right edge is left out as far as
+    /// a scrollbar reaches, measured or not — on the first scroll its thumb
+    /// sits at the top, where a header would be.
     ///
     /// Nil when the frames can't be compared or `shift` is not a scroll down.
     static func pinnedTopRows(current: CGImage, previous: CGImage, shift: Int, rightMarginPx: Int) -> Int? {
@@ -226,30 +230,33 @@ enum ScrollFrameAnalyzer {
         var pinnedRows = 0
         var followingRows = 0
         for row in 0..<max(0, a.height - shift) {
-            var difference: UInt64 = 0
-            var samples: UInt64 = 0
+            // Both ends of the row are inside both buffers, so is the rest.
+            guard let aRow = a.offset(x: 0, y: row), a.offset(x: lastColumn - 1, y: row) != nil,
+                  let bRow = b.offset(x: 0, y: row + shift), b.offset(x: lastColumn - 1, y: row + shift) != nil
+            else { continue }
+            var difference = 0
+            var samples = 0
             var differingPixels = 0
             var lowestA = Int.max, highestA = Int.min
             var lowestB = Int.max, highestB = Int.min
-            for column in stride(from: 0, to: lastColumn, by: 4) {
-                guard let aOffset = a.offset(x: column, y: row),
-                      let bOffset = b.offset(x: column, y: row + shift) else { continue }
-                let (ar, ag, ab) = (Int(a.bytes[aOffset + a.redOffset]), Int(a.bytes[aOffset + a.greenOffset]),
-                                    Int(a.bytes[aOffset + a.blueOffset]))
-                let (br, bg, bb) = (Int(b.bytes[bOffset + b.redOffset]), Int(b.bytes[bOffset + b.greenOffset]),
-                                    Int(b.bytes[bOffset + b.blueOffset]))
+            for column in stride(from: 0, to: lastColumn, by: 2) {
+                let aPixel = aRow + column * 4, bPixel = bRow + column * 4
+                let (ar, ag, ab) = (Int(a.bytes[aPixel + a.redOffset]), Int(a.bytes[aPixel + a.greenOffset]),
+                                    Int(a.bytes[aPixel + a.blueOffset]))
+                let (br, bg, bb) = (Int(b.bytes[bPixel + b.redOffset]), Int(b.bytes[bPixel + b.greenOffset]),
+                                    Int(b.bytes[bPixel + b.blueOffset]))
                 let pixelDifference = abs(ar - br) + abs(ag - bg) + abs(ab - bb)
-                difference += UInt64(pixelDifference)
+                difference += pixelDifference
                 samples += 1
                 if pixelDifference > clearPixelDifference { differingPixels += 1 }
                 lowestA = min(lowestA, ar + ag + ab); highestA = max(highestA, ar + ag + ab)
                 lowestB = min(lowestB, br + bg + bb); highestB = max(highestB, br + bg + bb)
             }
-            guard samples > 0 else { continue }
-            if difference / samples > rowMatchLimit || differingPixels > strayPixels {
+            if difference / samples > Int(rowMatchLimit) || differingPixels > strayPixels {
                 pinnedRows = row + 1
                 followingRows = 0
-            } else if highestA - lowestA > contentRowContrast, highestB - lowestB > contentRowContrast {
+            } else if differingPixels == 0,
+                      highestA - lowestA > contentRowContrast, highestB - lowestB > contentRowContrast {
                 followingRows += 1
                 if followingRows >= rowsThatSettle { break }
             }
@@ -259,10 +266,10 @@ enum ScrollFrameAnalyzer {
 
     /// Summed channel difference above which a pixel is clearly something else.
     static let clearPixelDifference = 48
-    /// Clearly different pixels a row can have and still follow the scroll.
+    /// Clearly different pixels in a row that are too few to say it differs.
     static let strayPixels = 2
-    /// Rows of content following the scroll, one after another, that put the
-    /// scan past anything pinned.
+    /// Rows following the scroll, one after another, that put the scan past
+    /// anything pinned.
     static let rowsThatSettle = 8
     /// Columns at the right edge a scrollbar can take up.
     static let scrollbarReach = 48

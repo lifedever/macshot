@@ -223,7 +223,8 @@ final class ScrollFrameAnalyzerTests: XCTestCase {
     /// top; once scrolled, white material the page shows through faintly,
     /// closed by a two-row hairline. `thumb` adds a scrollbar that wide.
     private func makeStripPage(strip: Int = 16, scrolledBy offset: Int, rowPadding: Int = 0,
-                               thumb: Int = 0, loadingRows: Range<Int> = 0..<0) throws -> CGImage {
+                               thumb: Int = 0, loadingRows: Range<Int> = 0..<0,
+                               quoteBar: Bool = false) throws -> CGImage {
         let width = 240
         return try makeFrame(width: width, height: 300, rowPadding: rowPadding) { x, y in
             let grey = { (level: Int) in (UInt8(level), UInt8(level), UInt8(level)) }
@@ -237,6 +238,8 @@ final class ScrollFrameAnalyzerTests: XCTestCase {
             var level = 255
             if x < 12 || x >= width - 12 {
                 level = 247
+            } else if quoteBar, (16..<20).contains(x) {
+                level = 60  // the bar down the side of a quoted message
             } else if row % 30 < 11, x >= 24, x < 84 + line * 37 % 120, (x / 2 + line) % 3 != 0 {
                 level = 30
             }
@@ -264,6 +267,16 @@ final class ScrollFrameAnalyzerTests: XCTestCase {
     func testTheHairlineAloneGivesAStripAway() throws {
         // Rows 162–179 of the page are blank: nothing shows through the strip.
         XCTAssertEqual(pinnedRows(try makeStripPage(scrolledBy: 162), try makeStripPage(scrolledBy: 0), shift: 162), 16)
+    }
+
+    func testANarrowBarSeenThroughTheStripIsNotThePageFollowing() throws {
+        // Faded by the strip it is still content and all but matches itself.
+        // Counted as rows that follow the scroll, the scan ended inside the
+        // strip, short of the hairline, and found nothing pinned.
+        let top = try makeStripPage(scrolledBy: 0, quoteBar: true)
+        XCTAssertEqual(pinnedRows(try makeStripPage(scrolledBy: 162, quoteBar: true), top, shift: 162), 16)
+        XCTAssertEqual(pinnedRows(try makeStripPage(strip: 0, scrolledBy: 162, quoteBar: true),
+                                  try makeStripPage(strip: 0, scrolledBy: 0, quoteBar: true), shift: 162), 0)
     }
 
     func testPinnedRowsAreUnaffectedByRowPadding() throws {
