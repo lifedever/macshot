@@ -545,14 +545,11 @@ final class ScrollCaptureController {
             detectHeader(current: currentFrame, previous: previousFrame, shiftPx: offsetPx)
         }
 
-        // Use Vision's offset directly — pixel refinement can worsen it on
-        // low-contrast / dark-themed content. Bias by -1px so strips overlap by
-        // 1 extra row: the newer frame overwrites that row, hiding any sub-pixel
-        // rendering differences at the seam boundary.
-        let safeOffset = max(1, offsetPx - 1)
-
-        // Incremental stitch: merge new content into mergedImage
-        mergeNewContent(currentFrame: currentFrame, offsetPx: safeOffset)
+        // Vision's offset is used as measured — pixel refinement can worsen
+        // it on low-contrast / dark-themed content. It used to be stitched one
+        // row short, so that strips would overlap by a row; what that did was
+        // leave a row of the page out at every seam.
+        mergeNewContent(currentFrame: currentFrame, offsetPx: offsetPx)
 
         shotA = currentFrame
         stripCount += 1
@@ -744,8 +741,7 @@ final class ScrollCaptureController {
             detectHeader(current: currentFrame, previous: previousFrame, shiftPx: offsetPx)
         }
 
-        let safeOffset = max(1, offsetPx - 1)
-        mergeNewContent(currentFrame: currentFrame, offsetPx: safeOffset)
+        mergeNewContent(currentFrame: currentFrame, offsetPx: offsetPx)
 
         shotA = currentFrame
         stripCount += 1
