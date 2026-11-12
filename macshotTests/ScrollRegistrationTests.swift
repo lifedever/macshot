@@ -1,6 +1,37 @@
 import Cocoa
 import XCTest
 
+/// Light-grey page of sparse white cards, each with a few short dark text
+/// bars, drawn top-down.
+private func sparsePage(width: Int, height pageHeight: Int) -> CGImage {
+    let image = ImageProbe.makeImage(width: width, height: pageHeight) { cg in
+        cg.translateBy(x: 0, y: CGFloat(pageHeight)); cg.scaleBy(x: 1, y: -1)
+        cg.setFillColor(CGColor(srgbRed: 0.96, green: 0.96, blue: 0.96, alpha: 1))
+        cg.fill(CGRect(x: 0, y: 0, width: width, height: pageHeight))
+        var y = 20, card = 0
+        while y < pageHeight - 200 {
+            let rows = 1 + card % 3
+            let cardHeight = rows * 40
+            cg.setFillColor(CGColor(srgbRed: 1, green: 1, blue: 1, alpha: 1))
+            cg.addPath(CGPath(roundedRect: CGRect(x: 16, y: y, width: width - 32, height: cardHeight),
+                              cornerWidth: 14, cornerHeight: 14, transform: nil))
+            cg.fillPath()
+            for row in 0..<rows {
+                cg.setFillColor(CGColor(srgbRed: 0.1, green: 0.1, blue: 0.1, alpha: 1))
+                cg.fill(CGRect(x: 32, y: y + row * 40 + 14,
+                               width: 60 + (card * 37 + row * 53) % 140, height: 12))
+                cg.setFillColor(CGColor(srgbRed: 0.75, green: 0.75, blue: 0.75, alpha: 1))
+                cg.fill(CGRect(x: width - 90, y: y + row * 40 + 10, width: 50, height: 20))
+            }
+            cg.setFillColor(CGColor(srgbRed: 0.5, green: 0.5, blue: 0.5, alpha: 1))
+            cg.fill(CGRect(x: 32, y: y + cardHeight + 10, width: 150 + card * 29 % 160, height: 9))
+            y += cardHeight + 70
+            card += 1
+        }
+    }
+    return image.cgImage(forProposedRect: nil, context: nil, hints: nil)!
+}
+
 /// Scroll capture measures each scroll by registering a frame against the one
 /// before. A pinned, high-contrast toolbar over sparse content (Shadowrocket's
 /// settings pages) dragged that measurement to a small near-constant value, so
@@ -9,36 +40,7 @@ final class ScrollRegistrationTests: XCTestCase {
 
     private let width = 480, height = 720, header = 72, pageHeight = 3000
 
-    /// Light-grey page of sparse white cards, each with a few short dark text
-    /// bars, drawn top-down.
-    private lazy var page: CGImage = {
-        let image = ImageProbe.makeImage(width: width, height: pageHeight) { [self] cg in
-            cg.translateBy(x: 0, y: CGFloat(pageHeight)); cg.scaleBy(x: 1, y: -1)
-            cg.setFillColor(CGColor(srgbRed: 0.96, green: 0.96, blue: 0.96, alpha: 1))
-            cg.fill(CGRect(x: 0, y: 0, width: width, height: pageHeight))
-            var y = 20, card = 0
-            while y < pageHeight - 200 {
-                let rows = 1 + card % 3
-                let cardHeight = rows * 40
-                cg.setFillColor(CGColor(srgbRed: 1, green: 1, blue: 1, alpha: 1))
-                cg.addPath(CGPath(roundedRect: CGRect(x: 16, y: y, width: width - 32, height: cardHeight),
-                                  cornerWidth: 14, cornerHeight: 14, transform: nil))
-                cg.fillPath()
-                for row in 0..<rows {
-                    cg.setFillColor(CGColor(srgbRed: 0.1, green: 0.1, blue: 0.1, alpha: 1))
-                    cg.fill(CGRect(x: 32, y: y + row * 40 + 14,
-                                   width: 60 + (card * 37 + row * 53) % 140, height: 12))
-                    cg.setFillColor(CGColor(srgbRed: 0.75, green: 0.75, blue: 0.75, alpha: 1))
-                    cg.fill(CGRect(x: width - 90, y: y + row * 40 + 10, width: 50, height: 20))
-                }
-                cg.setFillColor(CGColor(srgbRed: 0.5, green: 0.5, blue: 0.5, alpha: 1))
-                cg.fill(CGRect(x: 32, y: y + cardHeight + 10, width: 150 + card * 29 % 160, height: 9))
-                y += cardHeight + 70
-                card += 1
-            }
-        }
-        return image.cgImage(forProposedRect: nil, context: nil, hints: nil)!
-    }()
+    private lazy var page = sparsePage(width: width, height: pageHeight)
 
     /// The window scrolled down by `offset`: the page under a pinned blue bar.
     /// Once scrolled, `fadingTitle` swaps the bar's title for a narrower mark,
@@ -164,5 +166,82 @@ final class ScrollbarCoverTests: XCTestCase {
     func testWithoutAScrollbarNothingIsCovered() throws {
         let thumb = try XCTUnwrap(ImageProbe.pixelColor(try covered(margin: 0), x: 95, y: 15))
         XCTAssertEqual(thumb.redComponent, 0.3, accuracy: 0.02)
+    }
+}
+
+/// A strip pinned over the top of the region need not look the same in two
+/// frames. Mail's toolbar ends in one: plain while the page is at its top,
+/// and once scrolled, white material the page shows through above a hairline.
+/// Its rows change with every scroll, so they were never taken for a header,
+/// and every frame was stitched in whole — a band across the long image at
+/// each seam, over the text that belonged there.
+final class ScrollPinnedStripTests: XCTestCase {
+
+    private let width = 480, height = 720, strip = 20, pageHeight = 3000
+    private lazy var page = sparsePage(width: width, height: pageHeight)
+
+    /// The window scrolled down by `offset`, the strip over its top rows.
+    private func frame(scrolledBy offset: Int) throws -> CGImage {
+        let image = ImageProbe.makeImage(width: width, height: height) { [self] cg in
+            cg.translateBy(x: 0, y: CGFloat(height)); cg.scaleBy(x: 1, y: -1)
+            cg.saveGState()
+            cg.translateBy(x: 0, y: CGFloat(pageHeight - offset)); cg.scaleBy(x: 1, y: -1)
+            cg.draw(page, in: CGRect(x: 0, y: 0, width: width, height: pageHeight))
+            cg.restoreGState()
+            guard offset > 0 else { return }
+            cg.setFillColor(CGColor(srgbRed: 1, green: 1, blue: 1, alpha: 0.85))
+            cg.fill(CGRect(x: 0, y: 0, width: width, height: strip - 2))
+            cg.setFillColor(CGColor(srgbRed: 0.9, green: 0.9, blue: 0.9, alpha: 1))
+            cg.fill(CGRect(x: 0, y: strip - 2, width: width, height: 2))
+        }
+        return try XCTUnwrap(image.cgImage(forProposedRect: nil, context: nil, hints: nil))
+    }
+
+    /// Stitches the frames as a capture does: measure the scroll, look for a
+    /// header until one is found, add the new rows.
+    private func stitch(_ offsets: [Int]) throws -> (image: CGImage, headerRows: Int) {
+        var previous = try frame(scrolledBy: offsets[0])
+        var merged = previous
+        var headerRows = 0
+        for offset in offsets.dropFirst() {
+            let current = try frame(scrolledBy: offset)
+            let shift = Int(try XCTUnwrap(ScrollCaptureController.verticalShift(
+                current: current, previous: previous,
+                confirmedHeaderRows: headerRows > 0 ? headerRows : nil, rightMarginPx: 0),
+                "offset \(offset)").rounded())
+            if headerRows == 0 {
+                headerRows = ScrollCaptureController.pinnedHeaderRows(
+                    current: current, previous: previous, shiftPx: shift, rightMarginPx: 0) ?? 0
+            }
+            merged = try XCTUnwrap(ScrollCaptureController.stitched(
+                onto: merged, frame: current, newRows: max(1, shift - 1),
+                underPinnedHeader: headerRows > 0, rightMarginPx: 0))
+            previous = current
+        }
+        return (merged, headerRows)
+    }
+
+    func testAStripThatChangesWithTheScrollIsStitchedOnlyOnce() throws {
+        let offsets = [0, 150, 310, 440, 600]
+        let (image, headerRows) = try stitch(offsets)
+        XCTAssertEqual(image.height, height + 600 - (offsets.count - 1), accuracy: offsets.count)
+        XCTAssertEqual(headerRows, strip, accuracy: 2)
+
+        // The page's grey margin runs unbroken down the left edge. A strip
+        // stitched in again crosses it: near-white material, then the hairline.
+        let pixels = try XCTUnwrap(ScrollFrameAnalyzer.frame(for: image))
+        let crossed = (strip..<image.height).filter { row in
+            guard let offset = pixels.offset(x: 4, y: row) else { return true }
+            return abs(Int(pixels.bytes[offset + pixels.redOffset]) - 245) > 2
+        }
+        XCTAssertEqual(crossed, [], "strip rows stitched into the page")
+    }
+
+    func testAPageWithNothingPinnedHasNoHeader() throws {
+        // Without the strip every row follows the scroll.
+        let top = try XCTUnwrap(page.cropping(to: CGRect(x: 0, y: 300, width: width, height: height)))
+        let scrolled = try XCTUnwrap(page.cropping(to: CGRect(x: 0, y: 450, width: width, height: height)))
+        XCTAssertNil(ScrollCaptureController.pinnedHeaderRows(
+            current: scrolled, previous: top, shiftPx: 150, rightMarginPx: 0))
     }
 }

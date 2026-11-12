@@ -215,6 +215,97 @@ final class ScrollFrameAnalyzerTests: XCTestCase {
         XCTAssertNotNil(rows, "an absurd margin must not divide the scan down to nothing")
     }
 
+    // MARK: - Pinned strip
+
+    /// A white page of text lines between grey margins, scrolled by `offset`
+    /// under a strip pinned to its top `strip` rows. The strip is the lower
+    /// edge of a toolbar as Mail draws it: page grey while the page is at its
+    /// top; once scrolled, white material the page shows through faintly,
+    /// closed by a two-row hairline. `thumb` adds a scrollbar that wide.
+    private func makeStripPage(strip: Int = 16, scrolledBy offset: Int, rowPadding: Int = 0,
+                               thumb: Int = 0, loadingRows: Range<Int> = 0..<0) throws -> CGImage {
+        let width = 240
+        return try makeFrame(width: width, height: 300, rowPadding: rowPadding) { x, y in
+            let grey = { (level: Int) in (UInt8(level), UInt8(level), UInt8(level)) }
+            if x >= width - thumb {
+                // Short, and at the top of its track: the page has only just begun to scroll.
+                return grey((offset / 60..<offset / 60 + 40).contains(y) ? 120 : 250)
+            }
+            if loadingRows.contains(y) { return (UInt8(x), 180, UInt8(y)) }
+            let row = y + offset
+            let line = row / 30
+            var level = 255
+            if x < 12 || x >= width - 12 {
+                level = 247
+            } else if row % 30 < 11, x >= 24, x < 84 + line * 37 % 120, (x / 2 + line) % 3 != 0 {
+                level = 30
+            }
+            guard y < strip else { return grey(level) }
+            if offset == 0 { return grey(247) }
+            if y >= strip - 2 { return grey(228) }
+            return grey(255 - (255 - level) * 3 / 20)
+        }
+    }
+
+    private func pinnedRows(_ current: CGImage, _ previous: CGImage, shift: Int) -> Int? {
+        ScrollFrameAnalyzer.pinnedTopRows(current: current, previous: previous, shift: shift, rightMarginPx: 0)
+    }
+
+    func testAStripThatChangesWithTheScrollIsPinnedThoughNotFrozen() throws {
+        let top = try makeStripPage(scrolledBy: 0)
+        let scrolled = try makeStripPage(scrolledBy: 120)
+        XCTAssertEqual(ScrollFrameAnalyzer.frozenTopRows(current: scrolled, previous: top, rightMarginPx: 0), 0,
+                       "the strip looks different once the page has scrolled")
+        XCTAssertEqual(pinnedRows(scrolled, top, shift: 120), 16)
+        // Between two scrolled frames the text seen through it has moved on.
+        XCTAssertEqual(pinnedRows(try makeStripPage(scrolledBy: 250), scrolled, shift: 130), 16)
+    }
+
+    func testTheHairlineAloneGivesAStripAway() throws {
+        // Rows 162–179 of the page are blank: nothing shows through the strip.
+        XCTAssertEqual(pinnedRows(try makeStripPage(scrolledBy: 162), try makeStripPage(scrolledBy: 0), shift: 162), 16)
+    }
+
+    func testPinnedRowsAreUnaffectedByRowPadding() throws {
+        let top = try makeStripPage(scrolledBy: 0, rowPadding: 28)
+        XCTAssertEqual(pinnedRows(try makeStripPage(scrolledBy: 120, rowPadding: 28), top, shift: 120), 16)
+    }
+
+    func testAnOpaqueHeaderIsPinnedToo() throws {
+        let before = try makePage(headerRows: 18, scrollOffset: 0)
+        let after = try makePage(headerRows: 18, scrollOffset: 12)
+        XCTAssertEqual(pinnedRows(after, before, shift: 12), 18)
+    }
+
+    func testAPageThatScrollsWholeHasNothingPinned() throws {
+        let top = try makeStripPage(strip: 0, scrolledBy: 0)
+        XCTAssertEqual(pinnedRows(try makeStripPage(strip: 0, scrolledBy: 120), top, shift: 120), 0)
+    }
+
+    func testAScrollbarThumbAtTheTopIsNotAHeader() throws {
+        // Unmeasured, as on the first scroll, when the thumb has only just appeared.
+        let top = try makeStripPage(strip: 0, scrolledBy: 0, thumb: 12)
+        XCTAssertEqual(pinnedRows(try makeStripPage(strip: 0, scrolledBy: 120, thumb: 12), top, shift: 120), 0)
+    }
+
+    func testContentChangingBelowThePageTopIsNotAHeader() throws {
+        // An image loading in place, further down than the first lines that scrolled.
+        let top = try makeStripPage(scrolledBy: 0)
+        let loading = try makeStripPage(scrolledBy: 120, loadingRows: 100..<140)
+        XCTAssertEqual(pinnedRows(loading, top, shift: 120), 16)
+    }
+
+    func testPinnedRowsNeedComparableFramesAndAScrollDown() throws {
+        let top = try makeStripPage(scrolledBy: 0)
+        let scrolled = try makeStripPage(scrolledBy: 120)
+        XCTAssertNil(pinnedRows(scrolled, top, shift: 0))
+        XCTAssertNil(pinnedRows(scrolled, top, shift: -120))
+        XCTAssertNil(pinnedRows(scrolled, try makePage(headerRows: 0, scrollOffset: 0), shift: 120))
+        XCTAssertEqual(pinnedRows(scrolled, top, shift: 300), 0, "no row left to compare")
+        XCTAssertNotNil(ScrollFrameAnalyzer.pinnedTopRows(current: scrolled, previous: top, shift: 120,
+                                                           rightMarginPx: 9999))
+    }
+
     // MARK: - Scrollbar
 
     func testScrollbarWidthMatchesTheMovingStrip() throws {

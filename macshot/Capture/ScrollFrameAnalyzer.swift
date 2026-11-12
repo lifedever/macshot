@@ -193,6 +193,80 @@ enum ScrollFrameAnalyzer {
     /// Fewer content rows than this and an overlap can't be judged.
     static let minimumContentRows = 6
 
+    /// How many rows at the top of `current` are not the page: rows that are
+    /// not what `previous` showed `shift` rows further down, where the same
+    /// piece of page was before it scrolled.
+    ///
+    /// `frozenTopRows` knows a header by its rows being unchanged, and a
+    /// pinned strip need not be. The lower edge of Mail's toolbar is plain
+    /// while the page is at its top; once scrolled it is white material the
+    /// page shows through, above a hairline. Its rows change with every
+    /// scroll, so no header was found, and every frame was stitched in with
+    /// that band across its top, over the text that belonged there.
+    ///
+    /// Blank rows are the same under either reading and decide nothing. The
+    /// count runs to the last row that differs, and the scan ends once
+    /// `rowsThatSettle` rows running have content and follow the scroll:
+    /// below that is the page, and what changes there — an image loading in
+    /// place, a bar pinned to the bottom — is not a header.
+    ///
+    /// A row differs on its mean, as in `overlapAgrees`, or on a few pixels
+    /// that are clearly something else: a short word seen through the strip
+    /// barely moves the mean of a wide row. The right edge is left out as far
+    /// as a scrollbar reaches, measured or not — on the first scroll its
+    /// thumb sits at the top, where a header would be.
+    ///
+    /// Nil when the frames can't be compared or `shift` is not a scroll down.
+    static func pinnedTopRows(current: CGImage, previous: CGImage, shift: Int, rightMarginPx: Int) -> Int? {
+        guard current.width == previous.width, current.height == previous.height, shift > 0,
+              let a = frame(for: current), let b = frame(for: previous) else { return nil }
+
+        let margin = max(rightMarginPx, min(scrollbarReach, a.width / 8))
+        let lastColumn = max(1, a.width - margin)
+        var pinnedRows = 0
+        var followingRows = 0
+        for row in 0..<max(0, a.height - shift) {
+            var difference: UInt64 = 0
+            var samples: UInt64 = 0
+            var differingPixels = 0
+            var lowestA = Int.max, highestA = Int.min
+            var lowestB = Int.max, highestB = Int.min
+            for column in stride(from: 0, to: lastColumn, by: 4) {
+                guard let aOffset = a.offset(x: column, y: row),
+                      let bOffset = b.offset(x: column, y: row + shift) else { continue }
+                let (ar, ag, ab) = (Int(a.bytes[aOffset + a.redOffset]), Int(a.bytes[aOffset + a.greenOffset]),
+                                    Int(a.bytes[aOffset + a.blueOffset]))
+                let (br, bg, bb) = (Int(b.bytes[bOffset + b.redOffset]), Int(b.bytes[bOffset + b.greenOffset]),
+                                    Int(b.bytes[bOffset + b.blueOffset]))
+                let pixelDifference = abs(ar - br) + abs(ag - bg) + abs(ab - bb)
+                difference += UInt64(pixelDifference)
+                samples += 1
+                if pixelDifference > clearPixelDifference { differingPixels += 1 }
+                lowestA = min(lowestA, ar + ag + ab); highestA = max(highestA, ar + ag + ab)
+                lowestB = min(lowestB, br + bg + bb); highestB = max(highestB, br + bg + bb)
+            }
+            guard samples > 0 else { continue }
+            if difference / samples > rowMatchLimit || differingPixels > strayPixels {
+                pinnedRows = row + 1
+                followingRows = 0
+            } else if highestA - lowestA > contentRowContrast, highestB - lowestB > contentRowContrast {
+                followingRows += 1
+                if followingRows >= rowsThatSettle { break }
+            }
+        }
+        return pinnedRows
+    }
+
+    /// Summed channel difference above which a pixel is clearly something else.
+    static let clearPixelDifference = 48
+    /// Clearly different pixels a row can have and still follow the scroll.
+    static let strayPixels = 2
+    /// Rows of content following the scroll, one after another, that put the
+    /// scan past anything pinned.
+    static let rowsThatSettle = 8
+    /// Columns at the right edge a scrollbar can take up.
+    static let scrollbarReach = 48
+
     /// How many rows at the top of the frame are unchanged — a pinned header
     /// that must not be stitched in again with every strip.
     ///

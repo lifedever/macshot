@@ -19,7 +19,8 @@ import Vision
 /// - **`matchNotFoundCount`** tracking — surfaces errors to the user via callbacks
 ///   instead of silently failing.
 /// - **Programmatic scrolling** via `CGEventCreateScrollWheelEvent2`.
-/// - **Frozen header detection** — identifies sticky headers and excludes from stitching.
+/// - **Pinned header detection** — the top rows that don't scroll with the page are
+///   left out of every strip after the first.
 /// - **Scrollbar exclusion** — auto-detects scrollbar width, excludes from comparisons.
 /// - **Max height: 30,000 pixels** (configurable via UserDefaults).
 @MainActor
@@ -86,9 +87,9 @@ final class ScrollCaptureController {
     private var shotB: CGImage?          // current frame
     private var lastComparedTIFF: Data?  // TIFF of last settled frame for byte comparison
     private var mergedImage: CGImage?    // accumulated stitched result
-    private var headerHeight: Int = 0    // frozen header height in pixels
-    private var headerDetectionDone: Bool = false
-    private var headerDetectionSamples: Int = 0
+    /// Height in pixels of the header pinned over the top of the region; 0
+    /// until a stitched pair shows one.
+    private var headerHeight: Int = 0
 
     // Scrollbar exclusion
     private var rightMarginPx: Int = 0
@@ -180,8 +181,6 @@ final class ScrollCaptureController {
         lastComparedTIFF = nil
         mergedImage = firstFrame
         headerHeight = 0
-        headerDetectionDone = false
-        headerDetectionSamples = 0
         rightMarginPx = 0
         rightMarginDetected = false
         matchNotFoundCount = 0
@@ -541,8 +540,8 @@ final class ScrollCaptureController {
         if !rightMarginDetected {
             detectRightMargin(current: currentFrame, previous: previousFrame, shiftPx: offsetPx)
         }
-        // Header detection (first few frames)
-        if frozenDetectionEnabled && !headerDetectionDone {
+        // Header detection, until one is found
+        if frozenDetectionEnabled && headerHeight == 0 {
             detectHeader(current: currentFrame, previous: previousFrame, shiftPx: offsetPx)
         }
 
@@ -584,11 +583,21 @@ final class ScrollCaptureController {
             mergedImage = currentFrame
             return
         }
+        guard let merged = Self.stitched(onto: existing, frame: currentFrame, newRows: offsetPx,
+                                         underPinnedHeader: headerHeight > 0, rightMarginPx: rightMarginPx)
+        else { return }
+        mergedImage = merged
+        stitchedImage = merged
+        stitchedPixelSize = CGSize(width: CGFloat(merged.width), height: CGFloat(merged.height))
+    }
 
+    /// `existing` with the `newRows` rows that `frame` scrolled into view
+    /// added below it, or nil when that can't be drawn.
+    nonisolated static func stitched(onto existing: CGImage, frame currentFrame: CGImage, newRows: Int,
+                                     underPinnedHeader: Bool, rightMarginPx: Int) -> CGImage? {
         let w = currentFrame.width
         let existingH = existing.height
-        let newRows = offsetPx  // pixels of new content
-        guard newRows > 0, newRows <= currentFrame.height else { return }
+        guard newRows > 0, newRows <= currentFrame.height else { return nil }
 
         let totalH = existingH + newRows
 
@@ -596,7 +605,7 @@ final class ScrollCaptureController {
         let bitmapInfo = CGImageAlphaInfo.premultipliedFirst.rawValue | CGBitmapInfo.byteOrder32Little.rawValue
         guard let ctx = CGContext(data: nil, width: w, height: totalH,
                                   bitsPerComponent: 8, bytesPerRow: w * 4,
-                                  space: cs, bitmapInfo: bitmapInfo) else { return }
+                                  space: cs, bitmapInfo: bitmapInfo) else { return nil }
 
         // Draw existing image at the top (CGContext: bottom-left origin, so top = highest y)
         let existingRect = CGRect(x: 0, y: newRows, width: w, height: existingH)
@@ -605,28 +614,25 @@ final class ScrollCaptureController {
         // captured it leaves a dash per strip down the right edge. Covering the
         // whole image again each time also clears the first frame, which was
         // stitched before the scrollbar was found.
-        Self.coverRightMargin(of: existing, at: existingRect, marginPx: rightMarginPx, in: ctx)
+        coverRightMargin(of: existing, at: existingRect, marginPx: rightMarginPx, in: ctx)
 
-        if headerDetectionDone && headerHeight > 0 {
+        if underPinnedHeader {
             // Sticky header detected: only append the bottom newRows pixels.
             let stripY = currentFrame.height - newRows
             if let strip = currentFrame.cropping(to: CGRect(
                 x: 0, y: stripY, width: w, height: newRows)) {
                 let stripRect = CGRect(x: 0, y: 0, width: w, height: newRows)
                 ctx.draw(strip, in: stripRect)
-                Self.coverRightMargin(of: strip, at: stripRect, marginPx: rightMarginPx, in: ctx)
+                coverRightMargin(of: strip, at: stripRect, marginPx: rightMarginPx, in: ctx)
             }
         } else {
             // No header: draw full current frame with natural overlap.
             let frameRect = CGRect(x: 0, y: 0, width: w, height: currentFrame.height)
             ctx.draw(currentFrame, in: frameRect)
-            Self.coverRightMargin(of: currentFrame, at: frameRect, marginPx: rightMarginPx, in: ctx)
+            coverRightMargin(of: currentFrame, at: frameRect, marginPx: rightMarginPx, in: ctx)
         }
 
-        guard let merged = ctx.makeImage() else { return }
-        mergedImage = merged
-        stitchedImage = merged
-        stitchedPixelSize = CGSize(width: CGFloat(w), height: CGFloat(totalH))
+        return ctx.makeImage()
     }
 
     /// Paints the `marginPx` columns at the right of `image`, drawn in
@@ -734,7 +740,7 @@ final class ScrollCaptureController {
         if !rightMarginDetected {
             detectRightMargin(current: currentFrame, previous: previousFrame, shiftPx: offsetPx)
         }
-        if frozenDetectionEnabled && !headerDetectionDone {
+        if frozenDetectionEnabled && headerHeight == 0 {
             detectHeader(current: currentFrame, previous: previousFrame, shiftPx: offsetPx)
         }
 
@@ -767,7 +773,7 @@ final class ScrollCaptureController {
     private func visionShift(current: CGImage, previous: CGImage) -> CGFloat? {
         Self.verticalShift(
             current: current, previous: previous,
-            confirmedHeaderRows: headerDetectionDone ? headerHeight : nil,
+            confirmedHeaderRows: headerHeight > 0 ? headerHeight : nil,
             rightMarginPx: rightMarginPx)
     }
 
@@ -855,39 +861,35 @@ final class ScrollCaptureController {
         rightMarginPx = scrollbarWidth + 4
     }
 
-    // MARK: - Header (frozen region) detection
+    // MARK: - Header (pinned region) detection
 
+    /// Looks for a header in a pair about to be stitched. Like the scrollbar,
+    /// it is retried on every stitch until one is found: it used to be
+    /// settled on the first pair, and the first frame is the page at its top,
+    /// where a toolbar that only shows its edge over scrolled content has
+    /// nothing to show yet.
     private func detectHeader(current: CGImage, previous: CGImage, shiftPx: Int) {
-        guard shiftPx > 5 else { return }
-        guard let frozenRows = ScrollFrameAnalyzer.frozenTopRows(
-            current: current, previous: previous, rightMarginPx: rightMarginPx) else { return }
+        guard let rows = Self.pinnedHeaderRows(current: current, previous: previous, shiftPx: shiftPx,
+                                               rightMarginPx: rightMarginPx) else { return }
+        headerHeight = rows
+        frozenTopHeight = CGFloat(rows) / backingScale
+    }
 
-        let h = current.height
-        // Nothing changed anywhere: this pair says nothing about a header, so
-        // leave detection open for the next frame instead of freezing the
-        // whole capture area.
-        guard frozenRows < h else { return }
-
-        if frozenRows >= 10 && frozenRows < (h * 6 / 10) {
-            headerDetectionSamples += 1
-
-            if headerDetectionSamples == 1 {
-                headerHeight = frozenRows
-                frozenTopHeight = CGFloat(headerHeight) / backingScale
-                headerDetectionDone = true
-            } else {
-                if abs(frozenRows - headerHeight) <= 5 {
-                    headerHeight = min(headerHeight, frozenRows)
-                    frozenTopHeight = CGFloat(headerHeight) / backingScale
-                } else {
-                    headerHeight = 0
-                    frozenTopHeight = 0
-                }
-                headerDetectionDone = true
-            }
-        } else if frozenRows < 10 {
-            headerDetectionDone = true
-        }
+    /// Height in pixels of the header this pair shows pinned over the top of
+    /// the region, or nil when it shows none.
+    ///
+    /// A header is the rows that did not scroll with the page, not the rows
+    /// that stayed the same: see `ScrollFrameAnalyzer.pinnedTopRows`. A few
+    /// rows are enough — once stitched in with every frame, the shadow under
+    /// a toolbar is a line across the image at each seam. Anything reaching
+    /// most of the way down the frame is not a header.
+    nonisolated static func pinnedHeaderRows(current: CGImage, previous: CGImage, shiftPx: Int,
+                                             rightMarginPx: Int) -> Int? {
+        guard shiftPx > 5,
+              let rows = ScrollFrameAnalyzer.pinnedTopRows(
+                current: current, previous: previous, shift: shiftPx, rightMarginPx: rightMarginPx),
+              rows >= 4, rows < current.height * 6 / 10 else { return nil }
+        return rows
     }
 
     // MARK: - Preview
