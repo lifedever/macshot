@@ -81,7 +81,7 @@ class ToolbarButtonView: NSView {
 
     /// Glyph colour on the accent fill of a selected button: white, unless
     /// the accent is so light that white would disappear into it.
-    private static var onAccentColor: NSColor {
+    static var onAccentColor: NSColor {
         let accent = ToolbarLayout.accentColor.usingColorSpace(.deviceRGB) ?? ToolbarLayout.accentColor
         var brightness: CGFloat = 0, saturation: CGFloat = 0
         accent.getHue(nil, saturation: &saturation, brightness: &brightness, alpha: nil)

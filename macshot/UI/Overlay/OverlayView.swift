@@ -364,6 +364,9 @@ class OverlayView: NSView {
                 OverlayView.lastUsedTool = currentTool
                 UserDefaults.standard.set(currentTool.rawValue, forKey: "lastUsedTool")
             }
+            // The editor's crop button stays lit while cropping, however the
+            // mode was entered or left (button, shortcut, Escape, applying it).
+            findTopBar()?.setCropActive(currentTool == .crop)
         }
     }
     var currentColor: NSColor = {

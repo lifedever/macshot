@@ -4,13 +4,16 @@ import Cocoa
 /// Contains: pixel dimensions, crop/flip/add-capture buttons, drag-out handle, zoom dropdown.
 class EditorTopBarView: NSView {
 
-    weak var overlayView: OverlayView?
+    weak var overlayView: OverlayView? {
+        didSet { setCropActive(overlayView?.currentTool == .crop) }
+    }
     /// Drags the current image into other apps; the editor controller supplies the image.
     let dragHandle = EditorDragHandleView()
     private var sizeLabel: NSTextField!
-    private var zoomButton: NSButton!
+    private var zoomButton: EditorTopBarButton!
     private var doneButton: NSButton?
-    private var toolButtons: [NSButton] = []
+    private var cropButton: EditorTopBarButton?
+    private var toolButtons: [EditorTopBarButton] = []
     var onDone: (() -> Void)?
     var onSaveProject: (() -> Void)?
 
@@ -40,14 +43,14 @@ class EditorTopBarView: NSView {
         let saveProjectBtn = makeButton("square.and.arrow.down.on.square",
             tooltip: L("Save as Editable Project (⇧⌘S)"), action: #selector(saveProjectClicked))
         toolButtons = [cropBtn, flipHBtn, flipVBtn, addCaptureBtn, saveProjectBtn]
+        cropButton = cropBtn
 
         // Zoom dropdown button
-        zoomButton = NSButton()
-        zoomButton.bezelStyle = .recessed
-        zoomButton.isBordered = false
+        zoomButton = EditorTopBarButton()
         zoomButton.title = "100% ▾"
         zoomButton.font = UIFonts.monospacedDigit(ofSize: 11, weight: .medium)
-        zoomButton.contentTintColor = ToolbarLayout.iconColor.withAlphaComponent(0.45)
+        zoomButton.idleTintAlpha = 0.45
+        zoomButton.horizontalPadding = 4
         zoomButton.target = self
         zoomButton.action = #selector(zoomButtonClicked)
 
@@ -97,6 +100,7 @@ class EditorTopBarView: NSView {
 
             zoomButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12),
             zoomButton.centerYAnchor.constraint(equalTo: centerYAnchor),
+            zoomButton.heightAnchor.constraint(equalToConstant: 22),
 
             dragHandle.trailingAnchor.constraint(equalTo: zoomButton.leadingAnchor, constant: -10),
             dragHandle.centerYAnchor.constraint(equalTo: centerYAnchor),
@@ -128,9 +132,9 @@ class EditorTopBarView: NSView {
         bottomBorder.layer?.backgroundColor = ToolbarLayout.surfaceBorderColor.cgColor
         // Optional: an appearance change can arrive before init has built these.
         sizeLabel?.textColor = ToolbarLayout.iconColor.withAlphaComponent(0.45)
-        zoomButton?.contentTintColor = ToolbarLayout.iconColor.withAlphaComponent(0.45)
+        zoomButton?.applyTint()
         for button in toolButtons {
-            button.contentTintColor = ToolbarLayout.iconColor.withAlphaComponent(0.85)
+            button.applyTint()
         }
         doneButton?.contentTintColor = ToolbarLayout.accentColor
         dragHandle.needsDisplay = true
@@ -138,13 +142,10 @@ class EditorTopBarView: NSView {
 
     required init?(coder: NSCoder) { fatalError() }
 
-    private func makeButton(_ symbol: String, tooltip: String, action: Selector) -> NSButton {
-        let btn = NSButton()
-        btn.bezelStyle = .recessed
-        btn.isBordered = false
+    private func makeButton(_ symbol: String, tooltip: String, action: Selector) -> EditorTopBarButton {
+        let btn = EditorTopBarButton()
         btn.image = NSImage(systemSymbolName: symbol, accessibilityDescription: tooltip)?
             .withSymbolConfiguration(.init(pointSize: 13, weight: .medium))
-        btn.contentTintColor = ToolbarLayout.iconColor.withAlphaComponent(0.85)
         btn.toolTip = tooltip
         btn.target = self
         btn.action = action
@@ -162,6 +163,13 @@ class EditorTopBarView: NSView {
     func updateSizeLabel(width: Int, height: Int) {
         sizeLabel.stringValue = "\(width) × \(height)"
     }
+
+    /// Crop is a mode: its button stays lit while the mode is on.
+    func setCropActive(_ active: Bool) {
+        cropButton?.isActive = active
+    }
+
+    var isCropActive: Bool { cropButton?.isActive ?? false }
 
     func updateZoom(_ magnification: CGFloat) {
         zoomButton.title = "\(Int(magnification * 100))% ▾"

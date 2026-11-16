@@ -51,9 +51,9 @@ final class EditorDragHandleView: NSView, NSDraggingSource {
 
     override func draw(_ dirtyRect: NSRect) {
         if isHovered || isPressed {
-            let hover: NSColor = ToolbarLayout.usesLightPalette ? .black : .white
-            hover.withAlphaComponent(isPressed ? 0.16 : 0.09).setFill()
-            NSBezierPath(roundedRect: bounds, xRadius: 5, yRadius: 5).fill()
+            EditorTopBarButton.highlightFill(pressed: isPressed).setFill()
+            let radius = EditorTopBarButton.cornerRadius
+            NSBezierPath(roundedRect: bounds, xRadius: radius, yRadius: radius).fill()
         }
 
         let tint = ToolbarLayout.iconColor.withAlphaComponent(0.85)
