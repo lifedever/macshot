@@ -168,35 +168,53 @@ enum RecordingLibrary {
         var failed = 0
     }
 
-    /// Move `sessions` into `destination`, one folder at a time. A folder that
-    /// fails to move stays where it was (any partial copy is removed), and is
-    /// still part of the library through its old root. Call from a worker.
+    /// Move `sessions` into `destination`, one folder at a time. On the same
+    /// volume that is a rename. Across volumes the folder is copied and the
+    /// original removed only once the copy is complete: a failed copy leaves
+    /// the original where it was (and still part of the library through its
+    /// old root), and a complete copy is never removed. Call from a worker.
     nonisolated static func move(_ sessions: [URL], into destination: URL,
                                  cancellation: MediaExportCancellation = MediaExportCancellation(),
+                                 copyingAcrossVolumes forceCopy: Bool = false,
                                  progress: @Sendable (Double) -> Void = { _ in }) throws -> MigrationResult {
-        try FileManager.default.createDirectory(at: destination, withIntermediateDirectories: true)
+        let fm = FileManager.default
+        try fm.createDirectory(at: destination, withIntermediateDirectories: true)
+        let destinationVolume = volume(of: destination)
         var result = MigrationResult()
         for (index, source) in sessions.enumerated() {
             try cancellation.check()
+            defer { progress(Double(index + 1) / Double(max(sessions.count, 1))) }
             let target = destination.appendingPathComponent(source.lastPathComponent, isDirectory: true)
-            if FileManager.default.fileExists(atPath: target.path) {
+            guard fm.fileExists(atPath: source.path), !fm.fileExists(atPath: target.path) else {
                 result.failed += 1
-            } else {
+                continue
+            }
+            if !forceCopy, let destinationVolume, volume(of: source) == destinationVolume {
                 do {
-                    try FileManager.default.moveItem(at: source, to: target)
+                    try fm.moveItem(at: source, to: target)
                     result.moved += 1
                 } catch {
-                    // Across volumes a move is a copy then a delete; don't
-                    // leave half a take behind in the new location.
-                    if FileManager.default.fileExists(atPath: source.path) {
-                        try? FileManager.default.removeItem(at: target)
-                    }
                     result.failed += 1
                 }
+                continue
             }
-            progress(Double(index + 1) / Double(max(sessions.count, 1)))
+            do {
+                try fm.copyItem(at: source, to: target)
+            } catch {
+                try? fm.removeItem(at: target)
+                result.failed += 1
+                continue
+            }
+            // The copy is whole; only now does the original go. If that
+            // fails, both stay — the copy in the current location is the take.
+            try? fm.removeItem(at: source)
+            result.moved += 1
         }
         return result
+    }
+
+    nonisolated private static func volume(of url: URL) -> NSObject? {
+        (try? url.resourceValues(forKeys: [.volumeIdentifierKey]))?.volumeIdentifier as? NSObject
     }
 
     /// Drop past locations that no longer hold any take.

@@ -65,6 +65,36 @@ final class RecordingLibraryTests: XCTestCase {
         XCTAssertTrue(FileManager.default.fileExists(atPath: blocked.appendingPathComponent("Take.mp4").path))
     }
 
+    func testACopyAcrossVolumesRemovesTheOriginalOnlyOnceComplete() throws {
+        let old = directory.appendingPathComponent("Old")
+        let new = directory.appendingPathComponent("New")
+        let source = try take(in: old, bytes: 64)
+        let result = try RecordingLibrary.move([source], into: new, copyingAcrossVolumes: true)
+        XCTAssertEqual(result, RecordingLibrary.MigrationResult(moved: 1, failed: 0))
+        XCTAssertFalse(FileManager.default.fileExists(atPath: source.path))
+        let copied = new.appendingPathComponent(source.lastPathComponent).appendingPathComponent("Take.mp4")
+        XCTAssertEqual(try Data(contentsOf: copied).count, 64)
+    }
+
+    func testACompleteCopyIsKeptWhenTheOriginalCantBeRemoved() throws {
+        let old = directory.appendingPathComponent("Old")
+        let new = directory.appendingPathComponent("New")
+        let source = try take(in: old, bytes: 64)
+        // The old location can't be written, so the original can't be removed.
+        try FileManager.default.setAttributes([.posixPermissions: 0o555], ofItemAtPath: old.path)
+        try FileManager.default.setAttributes([.posixPermissions: 0o555], ofItemAtPath: source.path)
+        defer {
+            try? FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: source.path)
+            try? FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: old.path)
+        }
+        let result = try RecordingLibrary.move([source], into: new, copyingAcrossVolumes: true)
+        XCTAssertEqual(result.moved, 1)
+        let copied = new.appendingPathComponent(source.lastPathComponent).appendingPathComponent("Take.mp4")
+        XCTAssertEqual(try Data(contentsOf: copied).count, 64, "the complete copy must survive")
+        XCTAssertTrue(FileManager.default.fileExists(atPath: source.appendingPathComponent("Take.mp4").path),
+                      "and so does the original it couldn't remove")
+    }
+
     func testTheDefaultLocationIsTheContainerLibrary() {
         RecordingLibrary.activate(defaults: defaults)
         XCTAssertTrue(RecordingLibrary.usesDefaultLocation)
