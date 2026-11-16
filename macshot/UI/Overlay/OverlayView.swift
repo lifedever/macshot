@@ -3988,8 +3988,10 @@ class OverlayView: NSView {
             windowRect = imageRect
         }
 
-        // Drop shadow (not for snapped windows — handled via transparency layer below)
-        if shadowRadius > 0 && !config.isWindowSnap {
+        // Drop shadow for the synthetic window chrome, cast from its opaque body as
+        // `renderWindow` does. Snapped windows and rounded mode cast theirs from the
+        // image's own alpha below.
+        if shadowRadius > 0 && config.mode == .window && !config.isWindowSnap {
             let shadowPath = NSBezierPath(
                 roundedRect: windowRect, xRadius: cornerRadius, yRadius: cornerRadius)
             BeautifyRenderer.drawShadowedPath(shadowPath, radius: shadowRadius)
@@ -4153,15 +4155,23 @@ class OverlayView: NSView {
 
             context.cgContext.restoreGState()
         } else {
-            // Rounded mode — just rounded corners on the image
-            context.cgContext.saveGState()
-            NSBezierPath(roundedRect: imageRect, xRadius: cornerRadius, yRadius: cornerRadius)
-                .addClip()
-
+            // Rounded mode draws exactly as `renderRounded` exports: the shadow comes
+            // from the image's own rounded alpha and transparent pixels show the
+            // background. An image can be transparent well inside its rect — a window
+            // snap saved with room for its own shadow, reopened in the editor — and an
+            // opaque white caster or a `.copy` draw showed that room as a white frame
+            // the export didn't have.
+            let roundedPath = NSBezierPath(
+                roundedRect: imageRect, xRadius: cornerRadius, yRadius: cornerRadius)
             if let image = screenshotImage {
                 let drawImage = effectsActive ? effectsProcessedScreenshot(image) : image
-                drawImage.draw(in: imageRect, from: selectionRect, operation: .copy, fraction: 1.0)
+                BeautifyRenderer.drawRoundedImageWithShadow(
+                    drawImage, from: selectionRect, clipPath: roundedPath, in: imageRect,
+                    shadowRadius: shadowRadius, context: context.cgContext)
             }
+
+            context.cgContext.saveGState()
+            roundedPath.addClip()
 
             // Draw annotations shifted to preview position (including current live annotation)
             let dx = imageRect.minX - selectionRect.minX

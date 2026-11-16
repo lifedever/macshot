@@ -634,12 +634,15 @@ class BeautifyRenderer {
     /// layer, draws the rounded image into it, and closes the layer — so the
     /// shadow emanates from the composited rounded alpha exactly. A final pass
     /// draws the image with no shadow (crisp). `context` is the current CGContext.
-    static func drawRoundedImageWithShadow(_ image: NSImage, clipPath: NSBezierPath, in rect: NSRect,
+    /// `sourceRect` picks part of `image` (the live preview draws the selection
+    /// out of a full-screen shot); `.zero` draws all of it.
+    static func drawRoundedImageWithShadow(_ image: NSImage, from sourceRect: NSRect = .zero,
+                                           clipPath: NSBezierPath, in rect: NSRect,
                                            shadowRadius: CGFloat, context: CGContext) {
         func drawRoundedImage() {
             context.saveGState()
             clipPath.addClip()
-            image.draw(in: rect, from: .zero, operation: .sourceOver, fraction: 1.0)
+            image.draw(in: rect, from: sourceRect, operation: .sourceOver, fraction: 1.0)
             context.restoreGState()
         }
 
