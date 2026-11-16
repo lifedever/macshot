@@ -1055,3 +1055,29 @@
 "Close this recording in the video editor first." = "Önce bu kaydı video düzenleyicide kapatın.";
 "Move to Trash" = "Çöp Sepetine Taşı";
 "Recordings" = "Kayıtlar";
+
+/* Library window */
+"%d Items Selected" = "%d öğe seçildi";
+"Annotated" = "Notlu";
+"Created" = "Oluşturma";
+"Date Created" = "Oluşturma Tarihi";
+"Delete %d screenshots?" = "%d ekran görüntüsü silinsin mi?";
+"Dimensions" = "Boyutlar";
+"Edited" = "Düzenleme";
+"Icons" = "Simgeler";
+"Info" = "Bilgi";
+"Kind" = "Tür";
+"Last 30 Days" = "Son 30 Gün";
+"Last 7 Days" = "Son 7 Gün";
+"Library" = "Arşiv";
+"Library…" = "Arşiv…";
+"List" = "Liste";
+"Name" = "Ad";
+"No Items" = "Öğe Yok";
+"No Selection" = "Seçim Yok";
+"Screenshot" = "Ekran Görüntüsü";
+"Search" = "Ara";
+"Sort By" = "Sıralama Ölçütü";
+"Source" = "Kaynak";
+"They are removed from history permanently." = "Geçmişten kalıcı olarak silinirler.";
+"Today" = "Bugün";

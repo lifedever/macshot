@@ -1049,3 +1049,29 @@
 "Close this recording in the video editor first." = "Tutup rakaman ini dalam editor video dahulu.";
 "Move to Trash" = "Alihkan ke Tong Sampah";
 "Recordings" = "Rakaman";
+
+/* Library window */
+"%d Items Selected" = "%d item dipilih";
+"Annotated" = "Beranotasi";
+"Created" = "Dicipta";
+"Date Created" = "Tarikh Dicipta";
+"Delete %d screenshots?" = "Padam %d tangkapan skrin?";
+"Dimensions" = "Dimensi";
+"Edited" = "Disunting";
+"Icons" = "Ikon";
+"Info" = "Maklumat";
+"Kind" = "Jenis";
+"Last 30 Days" = "30 Hari Lalu";
+"Last 7 Days" = "7 Hari Lalu";
+"Library" = "Pustaka";
+"Library…" = "Pustaka…";
+"List" = "Senarai";
+"Name" = "Nama";
+"No Items" = "Tiada Item";
+"No Selection" = "Tiada Pilihan";
+"Screenshot" = "Tangkapan Skrin";
+"Search" = "Cari";
+"Sort By" = "Isih Mengikut";
+"Source" = "Sumber";
+"They are removed from history permanently." = "Ia dibuang daripada sejarah secara kekal.";
+"Today" = "Hari Ini";

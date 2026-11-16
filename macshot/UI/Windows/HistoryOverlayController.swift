@@ -120,6 +120,11 @@ final class HistoryOverlayController: NSObject, QLPreviewPanelDataSource, QLPrev
         panel?.alphaValue = 0.0
     }
 
+    func openLibrary() {
+        dismiss()
+        (NSApp.delegate as? AppDelegate)?.showLibrary()
+    }
+
     func confirmClearHistory() {
         dismiss()
         MainActor.assumeIsolated {
@@ -556,6 +561,7 @@ private final class HistoryPanelView: NSView, NSDraggingSource {
     private static let topBarHeight: CGFloat = 50
     private static let cornerRadius: CGFloat = 14
     private var trashButtonRect: NSRect = .zero
+    private var libraryButtonRect: NSRect = .zero
 
     override init(frame: NSRect) {
         super.init(frame: frame)
@@ -887,6 +893,15 @@ private final class HistoryPanelView: NSView, NSDraggingSource {
             x += tabWidths[i] + tabGap
         }
 
+        // Library button (top-left): everything, in a window of its own.
+        let librarySize: CGFloat = 22
+        let libraryRect = NSRect(
+            x: bounds.minX + Self.sidePadding,
+            y: tabY + (tabH - librarySize) / 2,
+            width: librarySize, height: librarySize)
+        libraryButtonRect = libraryRect
+        drawTopBarSymbol("photo.on.rectangle", description: L("Library"), in: libraryRect)
+
         // Trash button (top-right)
         let trashSize: CGFloat = 22
         let trashRect = NSRect(
@@ -1010,6 +1025,18 @@ private final class HistoryPanelView: NSView, NSDraggingSource {
             at: NSPoint(x: rect.midX - labelSize.width / 2,
                         y: rect.maxY - labelH + (labelH - labelSize.height) / 2),
             withAttributes: labelAttrs)
+    }
+
+    /// A dim white SF Symbol centred in `rect`, as the top bar's buttons draw.
+    private func drawTopBarSymbol(_ name: String, description: String, in rect: NSRect) {
+        guard let symbol = NSImage(systemSymbolName: name, accessibilityDescription: description)?
+            .withSymbolConfiguration(NSImage.SymbolConfiguration(pointSize: 12, weight: .medium)
+                .applying(NSImage.SymbolConfiguration(paletteColors: [NSColor.white.withAlphaComponent(0.45)])))
+        else { return }
+        let size = symbol.size
+        symbol.draw(in: NSRect(x: rect.midX - size.width / 2, y: rect.midY - size.height / 2,
+                               width: size.width, height: size.height),
+                    from: .zero, operation: .sourceOver, fraction: 1, respectFlipped: true, hints: nil)
     }
 
     /// A video glyph in the image's corner, so a take reads as a movie
@@ -1184,6 +1211,12 @@ private final class HistoryPanelView: NSView, NSDraggingSource {
                 mouseDownCardIndex = -1
                 return
             }
+        }
+
+        if libraryButtonRect.insetBy(dx: -4, dy: -4).contains(point) {
+            controller?.openLibrary()
+            mouseDownCardIndex = -1
+            return
         }
 
         // Trash button — clear all history with confirmation

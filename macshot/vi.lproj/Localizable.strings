@@ -1047,3 +1047,29 @@
 "Close this recording in the video editor first." = "Hãy đóng bản ghi này trong trình chỉnh sửa video trước.";
 "Move to Trash" = "Chuyển vào Thùng rác";
 "Recordings" = "Bản ghi";
+
+/* Library window */
+"%d Items Selected" = "Đã chọn %d mục";
+"Annotated" = "Có chú thích";
+"Created" = "Ngày tạo";
+"Date Created" = "Ngày tạo";
+"Delete %d screenshots?" = "Xóa %d ảnh chụp màn hình?";
+"Dimensions" = "Kích thước";
+"Edited" = "Ngày sửa";
+"Icons" = "Biểu tượng";
+"Info" = "Thông tin";
+"Kind" = "Loại";
+"Last 30 Days" = "30 ngày qua";
+"Last 7 Days" = "7 ngày qua";
+"Library" = "Thư viện";
+"Library…" = "Thư viện…";
+"List" = "Danh sách";
+"Name" = "Tên";
+"No Items" = "Không có mục nào";
+"No Selection" = "Chưa chọn mục nào";
+"Screenshot" = "Ảnh chụp màn hình";
+"Search" = "Tìm kiếm";
+"Sort By" = "Sắp xếp theo";
+"Source" = "Nguồn";
+"They are removed from history permanently." = "Chúng sẽ bị xóa vĩnh viễn khỏi lịch sử.";
+"Today" = "Hôm nay";

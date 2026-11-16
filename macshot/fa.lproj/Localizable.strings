@@ -1055,3 +1055,29 @@
 "Close this recording in the video editor first." = "ابتدا این ضبط را در ویرایشگر ویدیو ببندید.";
 "Move to Trash" = "انتقال به سطل زباله";
 "Recordings" = "ضبط‌ها";
+
+/* Library window */
+"%d Items Selected" = "%d مورد انتخاب شد";
+"Annotated" = "دارای یادداشت";
+"Created" = "ایجاد";
+"Date Created" = "تاریخ ایجاد";
+"Delete %d screenshots?" = "%d عکس صفحه حذف شود؟";
+"Dimensions" = "ابعاد";
+"Edited" = "ویرایش";
+"Icons" = "نمادها";
+"Info" = "اطلاعات";
+"Kind" = "نوع";
+"Last 30 Days" = "۳۰ روز گذشته";
+"Last 7 Days" = "۷ روز گذشته";
+"Library" = "کتابخانه";
+"Library…" = "کتابخانه…";
+"List" = "فهرست";
+"Name" = "نام";
+"No Items" = "موردی نیست";
+"No Selection" = "چیزی انتخاب نشده";
+"Screenshot" = "عکس صفحه";
+"Search" = "جستجو";
+"Sort By" = "مرتب‌سازی بر اساس";
+"Source" = "منبع";
+"They are removed from history permanently." = "برای همیشه از تاریخچه حذف می‌شوند.";
+"Today" = "امروز";

@@ -1047,3 +1047,29 @@
 "Close this recording in the video editor first." = "Stäng först inspelningen i videoredigeraren.";
 "Move to Trash" = "Flytta till papperskorgen";
 "Recordings" = "Inspelningar";
+
+/* Library window */
+"%d Items Selected" = "%d objekt markerade";
+"Annotated" = "Med anteckningar";
+"Created" = "Skapad";
+"Date Created" = "Skapad den";
+"Delete %d screenshots?" = "Radera %d skärmavbilder?";
+"Dimensions" = "Mått";
+"Edited" = "Redigerad";
+"Icons" = "Symboler";
+"Info" = "Info";
+"Kind" = "Typ";
+"Last 30 Days" = "Senaste 30 dagarna";
+"Last 7 Days" = "Senaste 7 dagarna";
+"Library" = "Bibliotek";
+"Library…" = "Bibliotek…";
+"List" = "Lista";
+"Name" = "Namn";
+"No Items" = "Inga objekt";
+"No Selection" = "Inget markerat";
+"Screenshot" = "Skärmavbild";
+"Search" = "Sök";
+"Sort By" = "Sortera efter";
+"Source" = "Källa";
+"They are removed from history permanently." = "De tas bort permanent från historiken.";
+"Today" = "Idag";

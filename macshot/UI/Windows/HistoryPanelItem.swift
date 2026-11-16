@@ -13,10 +13,13 @@ enum HistoryPanelItem {
     /// Unique across both kinds.
     var id: String {
         switch self {
-        case .capture(let entry): return "capture:" + entry.id
-        case .recording(let take): return "recording:" + take.id
+        case .capture(let entry): return Self.captureID(entry.id)
+        case .recording(let take): return Self.recordingID(take.id)
         }
     }
+
+    nonisolated static func captureID(_ entryID: String) -> String { "capture:" + entryID }
+    nonisolated static func recordingID(_ takeID: String) -> String { "recording:" + takeID }
 
     var isRecording: Bool {
         if case .recording = self { return true }

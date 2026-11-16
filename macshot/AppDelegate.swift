@@ -983,6 +983,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
         HotkeyManager.applyMenuShortcut(for: .historyOverlay, to: historyOverlayItem)
         menu.addItem(historyOverlayItem)
 
+        let libraryItem = NSMenuItem(title: L("Library…"), action: #selector(showLibrary), keyEquivalent: "")
+        libraryItem.target = self
+        libraryItem.image = NSImage(systemSymbolName: "photo.on.rectangle", accessibilityDescription: nil)
+        menu.addItem(libraryItem)
+
         menu.addItem(NSMenuItem.separator())
 
         let openImageItem = NSMenuItem(title: L("Open Image..."), action: #selector(openImageFromMenu), keyEquivalent: "")
@@ -1256,6 +1261,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
         guard prepareToStartCapture() else { return }
         pendingFullScreen = true
         startCapture(fromMenu: fromMenu)
+    }
+
+    @objc func showLibrary() {
+        LibraryWindowController.show()
     }
 
     @objc private func showHistoryOverlay() {
@@ -2972,7 +2981,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
     /// available (falls back to the flattened image, like the history overlay does). Lets
     /// external tools re-open a specific capture for editing — `macshot://edit?id=<id>` —
     /// without flattening it, which `open?file=` cannot do.
-    private func openHistoryEntryInEditor(id: String) {
+    func openHistoryEntryInEditor(id: String) {
         guard let entry = ScreenshotHistory.shared.entries.first(where: { $0.id == id }) else { return }
 
         if entry.hasAnnotations,

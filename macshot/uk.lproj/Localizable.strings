@@ -1048,3 +1048,29 @@
 "Close this recording in the video editor first." = "Спершу закрийте цей запис у відеоредакторі.";
 "Move to Trash" = "Перемістити в Смітник";
 "Recordings" = "Записи";
+
+/* Library window */
+"%d Items Selected" = "Вибрано об’єктів: %d";
+"Annotated" = "З примітками";
+"Created" = "Створено";
+"Date Created" = "Дата створення";
+"Delete %d screenshots?" = "Видалити знімків екрана: %d?";
+"Dimensions" = "Розміри";
+"Edited" = "Змінено";
+"Icons" = "Значки";
+"Info" = "Відомості";
+"Kind" = "Тип";
+"Last 30 Days" = "Останні 30 днів";
+"Last 7 Days" = "Останні 7 днів";
+"Library" = "Медіатека";
+"Library…" = "Медіатека…";
+"List" = "Список";
+"Name" = "Назва";
+"No Items" = "Немає об’єктів";
+"No Selection" = "Нічого не вибрано";
+"Screenshot" = "Знімок екрана";
+"Search" = "Пошук";
+"Sort By" = "Сортувати за";
+"Source" = "Джерело";
+"They are removed from history permanently." = "Їх буде остаточно видалено з історії.";
+"Today" = "Сьогодні";

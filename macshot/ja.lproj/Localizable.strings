@@ -1047,3 +1047,29 @@
 "Close this recording in the video editor first." = "先にビデオエディタでこの録画を閉じてください。";
 "Move to Trash" = "ゴミ箱に入れる";
 "Recordings" = "録画";
+
+/* Library window */
+"%d Items Selected" = "%d 項目を選択中";
+"Annotated" = "注釈付き";
+"Created" = "作成日時";
+"Date Created" = "作成日";
+"Delete %d screenshots?" = "%d 件のスクリーンショットを削除しますか？";
+"Dimensions" = "サイズ";
+"Edited" = "編集日時";
+"Icons" = "アイコン";
+"Info" = "情報";
+"Kind" = "種類";
+"Last 30 Days" = "過去 30 日間";
+"Last 7 Days" = "過去 7 日間";
+"Library" = "ライブラリ";
+"Library…" = "ライブラリ…";
+"List" = "リスト";
+"Name" = "名前";
+"No Items" = "項目なし";
+"No Selection" = "選択されていません";
+"Screenshot" = "スクリーンショット";
+"Search" = "検索";
+"Sort By" = "並べ替え";
+"Source" = "ソース";
+"They are removed from history permanently." = "履歴から完全に削除されます。";
+"Today" = "今日";

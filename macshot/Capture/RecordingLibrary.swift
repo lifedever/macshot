@@ -32,7 +32,7 @@ enum RecordingLibrary {
         var customPath: String?
     }
 
-    private static let state = OSAllocatedUnfairLock(initialState: State())
+    nonisolated private static let state = OSAllocatedUnfairLock(initialState: State())
 
     // MARK: Roots
 
@@ -163,7 +163,7 @@ enum RecordingLibrary {
         return allRoots.filter { !sameFolder($0, current) }.flatMap(sessionDirectories(in:))
     }
 
-    struct MigrationResult: Equatable {
+    nonisolated struct MigrationResult: Equatable, Sendable {
         var moved = 0
         var failed = 0
     }

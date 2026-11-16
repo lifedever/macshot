@@ -1048,3 +1048,29 @@
 "Close this recording in the video editor first." = "Nejprve zavřete tuto nahrávku v editoru videa.";
 "Move to Trash" = "Přesunout do koše";
 "Recordings" = "Nahrávky";
+
+/* Library window */
+"%d Items Selected" = "Vybrané položky: %d";
+"Annotated" = "S poznámkami";
+"Created" = "Vytvořeno";
+"Date Created" = "Datum vytvoření";
+"Delete %d screenshots?" = "Smazat snímky obrazovky (%d)?";
+"Dimensions" = "Rozměry";
+"Edited" = "Upraveno";
+"Icons" = "Ikony";
+"Info" = "Informace";
+"Kind" = "Druh";
+"Last 30 Days" = "Posledních 30 dní";
+"Last 7 Days" = "Posledních 7 dní";
+"Library" = "Knihovna";
+"Library…" = "Knihovna…";
+"List" = "Seznam";
+"Name" = "Název";
+"No Items" = "Žádné položky";
+"No Selection" = "Nic není vybráno";
+"Screenshot" = "Snímek obrazovky";
+"Search" = "Hledat";
+"Sort By" = "Řadit podle";
+"Source" = "Zdroj";
+"They are removed from history permanently." = "Z historie se trvale odstraní.";
+"Today" = "Dnes";

@@ -1046,3 +1046,29 @@
 "Close this recording in the video editor first." = "先在影片編輯器中關閉這個錄製。";
 "Move to Trash" = "移到垃圾桶";
 "Recordings" = "錄製";
+
+/* Library window */
+"%d Items Selected" = "已選取 %d 個項目";
+"Annotated" = "有標註";
+"Created" = "建立時間";
+"Date Created" = "建立日期";
+"Delete %d screenshots?" = "刪除 %d 張截圖？";
+"Dimensions" = "尺寸";
+"Edited" = "編輯時間";
+"Icons" = "圖像";
+"Info" = "資訊";
+"Kind" = "種類";
+"Last 30 Days" = "過去 30 天";
+"Last 7 Days" = "過去 7 天";
+"Library" = "資料庫";
+"Library…" = "資料庫⋯";
+"List" = "列表";
+"Name" = "名稱";
+"No Items" = "沒有項目";
+"No Selection" = "未選取";
+"Screenshot" = "截圖";
+"Search" = "搜尋";
+"Sort By" = "排序方式";
+"Source" = "來源";
+"They are removed from history permanently." = "它們會從歷史記錄中永久刪除。";
+"Today" = "今天";

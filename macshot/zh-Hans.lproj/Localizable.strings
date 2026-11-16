@@ -1046,3 +1046,29 @@
 "Close this recording in the video editor first." = "先在视频编辑器中关闭这个录制。";
 "Move to Trash" = "移到废纸篓";
 "Recordings" = "录制";
+
+/* Library window */
+"%d Items Selected" = "已选择 %d 项";
+"Annotated" = "有标注";
+"Created" = "创建时间";
+"Date Created" = "创建日期";
+"Delete %d screenshots?" = "删除 %d 张截图？";
+"Dimensions" = "尺寸";
+"Edited" = "编辑时间";
+"Icons" = "图标";
+"Info" = "简介";
+"Kind" = "种类";
+"Last 30 Days" = "过去 30 天";
+"Last 7 Days" = "过去 7 天";
+"Library" = "资源库";
+"Library…" = "资源库…";
+"List" = "列表";
+"Name" = "名称";
+"No Items" = "无项目";
+"No Selection" = "未选择";
+"Screenshot" = "截图";
+"Search" = "搜索";
+"Sort By" = "排序方式";
+"Source" = "来源";
+"They are removed from history permanently." = "它们会从历史记录中永久删除。";
+"Today" = "今天";

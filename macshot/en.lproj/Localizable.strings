@@ -1046,3 +1046,29 @@
 "Close this recording in the video editor first." = "Close this recording in the video editor first.";
 "Move to Trash" = "Move to Trash";
 "Recordings" = "Recordings";
+
+/* Library window */
+"%d Items Selected" = "%d Items Selected";
+"Annotated" = "Annotated";
+"Created" = "Created";
+"Date Created" = "Date Created";
+"Delete %d screenshots?" = "Delete %d screenshots?";
+"Dimensions" = "Dimensions";
+"Edited" = "Edited";
+"Icons" = "Icons";
+"Info" = "Info";
+"Kind" = "Kind";
+"Last 30 Days" = "Last 30 Days";
+"Last 7 Days" = "Last 7 Days";
+"Library" = "Library";
+"Library…" = "Library…";
+"List" = "List";
+"Name" = "Name";
+"No Items" = "No Items";
+"No Selection" = "No Selection";
+"Screenshot" = "Screenshot";
+"Search" = "Search";
+"Sort By" = "Sort By";
+"Source" = "Source";
+"They are removed from history permanently." = "They are removed from history permanently.";
+"Today" = "Today";

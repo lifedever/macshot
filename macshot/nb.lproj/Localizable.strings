@@ -1047,3 +1047,29 @@
 "Close this recording in the video editor first." = "Lukk dette opptaket i videoredigeringen først.";
 "Move to Trash" = "Flytt til papirkurven";
 "Recordings" = "Opptak";
+
+/* Library window */
+"%d Items Selected" = "%d objekter valgt";
+"Annotated" = "Med merknader";
+"Created" = "Opprettet";
+"Date Created" = "Opprettelsesdato";
+"Delete %d screenshots?" = "Slette %d skjermbilder?";
+"Dimensions" = "Dimensjoner";
+"Edited" = "Redigert";
+"Icons" = "Symboler";
+"Info" = "Info";
+"Kind" = "Type";
+"Last 30 Days" = "Siste 30 dager";
+"Last 7 Days" = "Siste 7 dager";
+"Library" = "Bibliotek";
+"Library…" = "Bibliotek…";
+"List" = "Liste";
+"Name" = "Navn";
+"No Items" = "Ingen objekter";
+"No Selection" = "Ingen valgt";
+"Screenshot" = "Skjermbilde";
+"Search" = "Søk";
+"Sort By" = "Sorter etter";
+"Source" = "Kilde";
+"They are removed from history permanently." = "De fjernes permanent fra loggen.";
+"Today" = "I dag";

@@ -1047,3 +1047,29 @@
 "Close this recording in the video editor first." = "Sulje ensin tämä tallenne videoeditorissa.";
 "Move to Trash" = "Siirrä roskakoriin";
 "Recordings" = "Tallenteet";
+
+/* Library window */
+"%d Items Selected" = "%d kohdetta valittu";
+"Annotated" = "Merkinnöillä";
+"Created" = "Luotu";
+"Date Created" = "Luontipäivä";
+"Delete %d screenshots?" = "Poistetaanko %d kuvakaappausta?";
+"Dimensions" = "Mitat";
+"Edited" = "Muokattu";
+"Icons" = "Symbolit";
+"Info" = "Tiedot";
+"Kind" = "Laji";
+"Last 30 Days" = "Viimeiset 30 päivää";
+"Last 7 Days" = "Viimeiset 7 päivää";
+"Library" = "Kirjasto";
+"Library…" = "Kirjasto…";
+"List" = "Luettelo";
+"Name" = "Nimi";
+"No Items" = "Ei kohteita";
+"No Selection" = "Ei valintaa";
+"Screenshot" = "Kuvakaappaus";
+"Search" = "Etsi";
+"Sort By" = "Järjestys";
+"Source" = "Lähde";
+"They are removed from history permanently." = "Ne poistetaan historiasta pysyvästi.";
+"Today" = "Tänään";

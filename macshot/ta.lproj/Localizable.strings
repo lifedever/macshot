@@ -1053,3 +1053,29 @@
 "Close this recording in the video editor first." = "முதலில் வீடியோ எடிட்டரில் இந்தப் பதிவை மூடவும்.";
 "Move to Trash" = "குப்பைக்கு நகர்த்து";
 "Recordings" = "பதிவுகள்";
+
+/* Library window */
+"%d Items Selected" = "%d உருப்படிகள் தேர்ந்தெடுக்கப்பட்டன";
+"Annotated" = "குறிப்புகளுடன்";
+"Created" = "உருவாக்கப்பட்டது";
+"Date Created" = "உருவாக்கிய தேதி";
+"Delete %d screenshots?" = "%d திரைப்பிடிப்புகளை நீக்கவா?";
+"Dimensions" = "பரிமாணங்கள்";
+"Edited" = "திருத்தப்பட்டது";
+"Icons" = "ஐகான்கள்";
+"Info" = "தகவல்";
+"Kind" = "வகை";
+"Last 30 Days" = "கடந்த 30 நாட்கள்";
+"Last 7 Days" = "கடந்த 7 நாட்கள்";
+"Library" = "நூலகம்";
+"Library…" = "நூலகம்…";
+"List" = "பட்டியல்";
+"Name" = "பெயர்";
+"No Items" = "உருப்படிகள் இல்லை";
+"No Selection" = "தேர்வு இல்லை";
+"Screenshot" = "திரைப்பிடிப்பு";
+"Search" = "தேடு";
+"Sort By" = "வரிசைப்படுத்து";
+"Source" = "மூலம்";
+"They are removed from history permanently." = "இவை வரலாற்றிலிருந்து நிரந்தரமாக நீக்கப்படும்.";
+"Today" = "இன்று";

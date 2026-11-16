@@ -1053,3 +1053,29 @@
 "Close this recording in the video editor first." = "প্রথমে ভিডিও এডিটরে এই রেকর্ডিংটি বন্ধ করুন।";
 "Move to Trash" = "ট্র্যাশে সরান";
 "Recordings" = "রেকর্ডিং";
+
+/* Library window */
+"%d Items Selected" = "%dটি আইটেম নির্বাচিত";
+"Annotated" = "টীকাসহ";
+"Created" = "তৈরি";
+"Date Created" = "তৈরির তারিখ";
+"Delete %d screenshots?" = "%dটি স্ক্রিনশট মুছবেন?";
+"Dimensions" = "মাপ";
+"Edited" = "সম্পাদিত";
+"Icons" = "আইকন";
+"Info" = "তথ্য";
+"Kind" = "ধরন";
+"Last 30 Days" = "শেষ ৩০ দিন";
+"Last 7 Days" = "শেষ ৭ দিন";
+"Library" = "লাইব্রেরি";
+"Library…" = "লাইব্রেরি…";
+"List" = "তালিকা";
+"Name" = "নাম";
+"No Items" = "কোনো আইটেম নেই";
+"No Selection" = "কিছু নির্বাচিত নয়";
+"Screenshot" = "স্ক্রিনশট";
+"Search" = "খুঁজুন";
+"Sort By" = "সাজানোর ক্রম";
+"Source" = "উৎস";
+"They are removed from history permanently." = "এগুলো ইতিহাস থেকে স্থায়ীভাবে মুছে যায়।";
+"Today" = "আজ";

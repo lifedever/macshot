@@ -1051,3 +1051,29 @@
 "Close this recording in the video editor first." = "Sluit deze opname eerst in de video-editor.";
 "Move to Trash" = "Verplaats naar prullenmand";
 "Recordings" = "Opnamen";
+
+/* Library window */
+"%d Items Selected" = "%d onderdelen geselecteerd";
+"Annotated" = "Met annotaties";
+"Created" = "Aangemaakt";
+"Date Created" = "Aanmaakdatum";
+"Delete %d screenshots?" = "%d schermafbeeldingen verwijderen?";
+"Dimensions" = "Afmetingen";
+"Edited" = "Bewerkt";
+"Icons" = "Symbolen";
+"Info" = "Info";
+"Kind" = "Soort";
+"Last 30 Days" = "Afgelopen 30 dagen";
+"Last 7 Days" = "Afgelopen 7 dagen";
+"Library" = "Bibliotheek";
+"Library…" = "Bibliotheek…";
+"List" = "Lijst";
+"Name" = "Naam";
+"No Items" = "Geen onderdelen";
+"No Selection" = "Geen selectie";
+"Screenshot" = "Schermafbeelding";
+"Search" = "Zoek";
+"Sort By" = "Sorteer op";
+"Source" = "Bron";
+"They are removed from history permanently." = "Ze worden definitief uit de geschiedenis verwijderd.";
+"Today" = "Vandaag";

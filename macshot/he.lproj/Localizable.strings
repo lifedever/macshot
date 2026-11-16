@@ -1055,3 +1055,29 @@
 "Close this recording in the video editor first." = "יש לסגור קודם את ההקלטה הזו בעורך הווידאו.";
 "Move to Trash" = "העברה לפח";
 "Recordings" = "הקלטות";
+
+/* Library window */
+"%d Items Selected" = "נבחרו %d פריטים";
+"Annotated" = "עם הערות";
+"Created" = "נוצר";
+"Date Created" = "תאריך יצירה";
+"Delete %d screenshots?" = "למחוק %d צילומי מסך?";
+"Dimensions" = "ממדים";
+"Edited" = "נערך";
+"Icons" = "צלמיות";
+"Info" = "מידע";
+"Kind" = "סוג";
+"Last 30 Days" = "30 הימים האחרונים";
+"Last 7 Days" = "7 הימים האחרונים";
+"Library" = "ספרייה";
+"Library…" = "ספרייה…";
+"List" = "רשימה";
+"Name" = "שם";
+"No Items" = "אין פריטים";
+"No Selection" = "אין בחירה";
+"Screenshot" = "צילום מסך";
+"Search" = "חיפוש";
+"Sort By" = "מיון לפי";
+"Source" = "מקור";
+"They are removed from history permanently." = "הם יוסרו מההיסטוריה לצמיתות.";
+"Today" = "היום";

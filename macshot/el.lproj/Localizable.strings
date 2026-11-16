@@ -1053,3 +1053,29 @@
 "Close this recording in the video editor first." = "Κλείστε πρώτα αυτή την εγγραφή στο πρόγραμμα επεξεργασίας βίντεο.";
 "Move to Trash" = "Μεταφορά στον Κάδο";
 "Recordings" = "Εγγραφές";
+
+/* Library window */
+"%d Items Selected" = "Επιλέχθηκαν %d στοιχεία";
+"Annotated" = "Με σημειώσεις";
+"Created" = "Δημιουργία";
+"Date Created" = "Ημερομηνία δημιουργίας";
+"Delete %d screenshots?" = "Διαγραφή %d στιγμιότυπων οθόνης;";
+"Dimensions" = "Διαστάσεις";
+"Edited" = "Επεξεργασία";
+"Icons" = "Εικονίδια";
+"Info" = "Πληροφορίες";
+"Kind" = "Είδος";
+"Last 30 Days" = "Τελευταίες 30 ημέρες";
+"Last 7 Days" = "Τελευταίες 7 ημέρες";
+"Library" = "Βιβλιοθήκη";
+"Library…" = "Βιβλιοθήκη…";
+"List" = "Λίστα";
+"Name" = "Όνομα";
+"No Items" = "Κανένα στοιχείο";
+"No Selection" = "Καμία επιλογή";
+"Screenshot" = "Στιγμιότυπο οθόνης";
+"Search" = "Αναζήτηση";
+"Sort By" = "Ταξινόμηση κατά";
+"Source" = "Προέλευση";
+"They are removed from history permanently." = "Αφαιρούνται οριστικά από το ιστορικό.";
+"Today" = "Σήμερα";

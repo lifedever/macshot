@@ -1049,3 +1049,29 @@
 "Close this recording in the video editor first." = "먼저 비디오 편집기에서 이 녹화를 닫으세요.";
 "Move to Trash" = "휴지통으로 이동";
 "Recordings" = "녹화";
+
+/* Library window */
+"%d Items Selected" = "%d개 항목 선택됨";
+"Annotated" = "주석 있음";
+"Created" = "생성일";
+"Date Created" = "생성일";
+"Delete %d screenshots?" = "스크린샷 %d개를 삭제할까요?";
+"Dimensions" = "크기";
+"Edited" = "편집일";
+"Icons" = "아이콘";
+"Info" = "정보";
+"Kind" = "종류";
+"Last 30 Days" = "지난 30일";
+"Last 7 Days" = "지난 7일";
+"Library" = "보관함";
+"Library…" = "보관함…";
+"List" = "목록";
+"Name" = "이름";
+"No Items" = "항목 없음";
+"No Selection" = "선택 항목 없음";
+"Screenshot" = "스크린샷";
+"Search" = "검색";
+"Sort By" = "정렬 기준";
+"Source" = "출처";
+"They are removed from history permanently." = "기록에서 영구적으로 삭제됩니다.";
+"Today" = "오늘";

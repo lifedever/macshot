@@ -1051,3 +1051,29 @@
 "Close this recording in the video editor first." = "Închide mai întâi această înregistrare în editorul video.";
 "Move to Trash" = "Mută la coș";
 "Recordings" = "Înregistrări";
+
+/* Library window */
+"%d Items Selected" = "%d articole selectate";
+"Annotated" = "Cu adnotări";
+"Created" = "Creat";
+"Date Created" = "Dată creare";
+"Delete %d screenshots?" = "Ștergi %d capturi de ecran?";
+"Dimensions" = "Dimensiuni";
+"Edited" = "Editat";
+"Icons" = "Pictograme";
+"Info" = "Info";
+"Kind" = "Tip";
+"Last 30 Days" = "Ultimele 30 de zile";
+"Last 7 Days" = "Ultimele 7 zile";
+"Library" = "Bibliotecă";
+"Library…" = "Bibliotecă…";
+"List" = "Listă";
+"Name" = "Nume";
+"No Items" = "Niciun articol";
+"No Selection" = "Nicio selecție";
+"Screenshot" = "Captură de ecran";
+"Search" = "Caută";
+"Sort By" = "Sortează după";
+"Source" = "Sursă";
+"They are removed from history permanently." = "Sunt eliminate definitiv din istoric.";
+"Today" = "Astăzi";

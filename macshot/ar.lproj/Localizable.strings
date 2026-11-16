@@ -1055,3 +1055,29 @@
 "Close this recording in the video editor first." = "أغلق هذا التسجيل في محرر الفيديو أولاً.";
 "Move to Trash" = "نقل إلى سلة المهملات";
 "Recordings" = "التسجيلات";
+
+/* Library window */
+"%d Items Selected" = "تم تحديد %d عنصر";
+"Annotated" = "مع تعليقات";
+"Created" = "تاريخ الإنشاء";
+"Date Created" = "تاريخ الإنشاء";
+"Delete %d screenshots?" = "هل تريد حذف %d لقطة شاشة؟";
+"Dimensions" = "الأبعاد";
+"Edited" = "تاريخ التعديل";
+"Icons" = "أيقونات";
+"Info" = "معلومات";
+"Kind" = "النوع";
+"Last 30 Days" = "آخر 30 يومًا";
+"Last 7 Days" = "آخر 7 أيام";
+"Library" = "المكتبة";
+"Library…" = "المكتبة…";
+"List" = "قائمة";
+"Name" = "الاسم";
+"No Items" = "لا توجد عناصر";
+"No Selection" = "لا يوجد تحديد";
+"Screenshot" = "لقطة شاشة";
+"Search" = "بحث";
+"Sort By" = "الفرز حسب";
+"Source" = "المصدر";
+"They are removed from history permanently." = "تُحذف من السجل نهائيًا.";
+"Today" = "اليوم";

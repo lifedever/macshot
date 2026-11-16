@@ -1048,3 +1048,29 @@
 "Close this recording in the video editor first." = "Najprije zatvorite ovu snimku u uređivaču videozapisa.";
 "Move to Trash" = "Premjesti u smeće";
 "Recordings" = "Snimke";
+
+/* Library window */
+"%d Items Selected" = "Odabrane stavke: %d";
+"Annotated" = "S bilješkama";
+"Created" = "Stvoreno";
+"Date Created" = "Datum stvaranja";
+"Delete %d screenshots?" = "Obrisati snimke zaslona (%d)?";
+"Dimensions" = "Dimenzije";
+"Edited" = "Uređeno";
+"Icons" = "Ikone";
+"Info" = "Informacije";
+"Kind" = "Vrsta";
+"Last 30 Days" = "Zadnjih 30 dana";
+"Last 7 Days" = "Zadnjih 7 dana";
+"Library" = "Knjižnica";
+"Library…" = "Knjižnica…";
+"List" = "Popis";
+"Name" = "Naziv";
+"No Items" = "Nema stavki";
+"No Selection" = "Ništa nije odabrano";
+"Screenshot" = "Snimka zaslona";
+"Search" = "Traži";
+"Sort By" = "Sortiraj po";
+"Source" = "Izvor";
+"They are removed from history permanently." = "Trajno se uklanjaju iz povijesti.";
+"Today" = "Danas";

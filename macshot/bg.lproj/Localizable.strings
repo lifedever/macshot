@@ -1048,3 +1048,29 @@
 "Close this recording in the video editor first." = "Първо затворете този запис във видео редактора.";
 "Move to Trash" = "Преместване в кошчето";
 "Recordings" = "Записи";
+
+/* Library window */
+"%d Items Selected" = "Избрани елементи: %d";
+"Annotated" = "С бележки";
+"Created" = "Създаден";
+"Date Created" = "Дата на създаване";
+"Delete %d screenshots?" = "Да се изтрият ли екранните снимки (%d)?";
+"Dimensions" = "Размери";
+"Edited" = "Редактиран";
+"Icons" = "Икони";
+"Info" = "Информация";
+"Kind" = "Вид";
+"Last 30 Days" = "Последните 30 дни";
+"Last 7 Days" = "Последните 7 дни";
+"Library" = "Библиотека";
+"Library…" = "Библиотека…";
+"List" = "Списък";
+"Name" = "Име";
+"No Items" = "Няма елементи";
+"No Selection" = "Няма избрано";
+"Screenshot" = "Екранна снимка";
+"Search" = "Търсене";
+"Sort By" = "Сортиране по";
+"Source" = "Източник";
+"They are removed from history permanently." = "Изтриват се от историята за постоянно.";
+"Today" = "Днес";

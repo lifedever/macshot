@@ -1048,3 +1048,29 @@
 "Close this recording in the video editor first." = "Сначала закройте эту запись в видеоредакторе.";
 "Move to Trash" = "Переместить в Корзину";
 "Recordings" = "Записи";
+
+/* Library window */
+"%d Items Selected" = "Выбрано объектов: %d";
+"Annotated" = "С пометками";
+"Created" = "Создан";
+"Date Created" = "Дата создания";
+"Delete %d screenshots?" = "Удалить снимков экрана: %d?";
+"Dimensions" = "Размеры";
+"Edited" = "Изменен";
+"Icons" = "Значки";
+"Info" = "Свойства";
+"Kind" = "Тип";
+"Last 30 Days" = "Последние 30 дней";
+"Last 7 Days" = "Последние 7 дней";
+"Library" = "Медиатека";
+"Library…" = "Медиатека…";
+"List" = "Список";
+"Name" = "Имя";
+"No Items" = "Нет объектов";
+"No Selection" = "Нет выбранных";
+"Screenshot" = "Снимок экрана";
+"Search" = "Поиск";
+"Sort By" = "Сортировать по";
+"Source" = "Источник";
+"They are removed from history permanently." = "Они будут удалены из истории без возможности восстановления.";
+"Today" = "Сегодня";

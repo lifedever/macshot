@@ -1053,3 +1053,29 @@
 "Close this recording in the video editor first." = "Tanca primer aquest enregistrament a l’editor de vídeo.";
 "Move to Trash" = "Mou a la paperera";
 "Recordings" = "Enregistraments";
+
+/* Library window */
+"%d Items Selected" = "%d ítems seleccionats";
+"Annotated" = "Amb anotacions";
+"Created" = "Creació";
+"Date Created" = "Data de creació";
+"Delete %d screenshots?" = "Vols eliminar %d captures de pantalla?";
+"Dimensions" = "Dimensions";
+"Edited" = "Edició";
+"Icons" = "Icones";
+"Info" = "Informació";
+"Kind" = "Tipus";
+"Last 30 Days" = "Últims 30 dies";
+"Last 7 Days" = "Últims 7 dies";
+"Library" = "Biblioteca";
+"Library…" = "Biblioteca…";
+"List" = "Llista";
+"Name" = "Nom";
+"No Items" = "Cap ítem";
+"No Selection" = "Cap selecció";
+"Screenshot" = "Captura de pantalla";
+"Search" = "Cerca";
+"Sort By" = "Ordena per";
+"Source" = "Origen";
+"They are removed from history permanently." = "S’eliminen de l’historial de manera permanent.";
+"Today" = "Avui";

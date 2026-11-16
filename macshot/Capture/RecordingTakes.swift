@@ -14,12 +14,12 @@ struct RecordingTake: Identifiable, Equatable, Sendable {
     /// The take ended with an error; what was written is kept and playable.
     let wasInterrupted: Bool
 
-    var title: String { mediaURL.deletingPathExtension().lastPathComponent }
+    nonisolated var title: String { mediaURL.deletingPathExtension().lastPathComponent }
 }
 
 extension RecordingLibrary {
 
-    private static let writing = OSAllocatedUnfairLock(initialState: Set<String>())
+    nonisolated private static let writing = OSAllocatedUnfairLock(initialState: Set<String>())
 
     /// The engine is writing into `folder`; it is not listed until it finishes.
     nonisolated static func beginWriting(_ folder: URL) {

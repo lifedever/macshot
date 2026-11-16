@@ -1047,3 +1047,29 @@
 "Close this recording in the video editor first." = "Feche primeiro esta gravação no editor de vídeo.";
 "Move to Trash" = "Mover para o lixo";
 "Recordings" = "Gravações";
+
+/* Library window */
+"%d Items Selected" = "%d elementos selecionados";
+"Annotated" = "Com anotações";
+"Created" = "Criação";
+"Date Created" = "Data de criação";
+"Delete %d screenshots?" = "Apagar %d capturas de ecrã?";
+"Dimensions" = "Dimensões";
+"Edited" = "Edição";
+"Icons" = "Ícones";
+"Info" = "Informações";
+"Kind" = "Tipo";
+"Last 30 Days" = "Últimos 30 dias";
+"Last 7 Days" = "Últimos 7 dias";
+"Library" = "Biblioteca";
+"Library…" = "Biblioteca…";
+"List" = "Lista";
+"Name" = "Nome";
+"No Items" = "Nenhum elemento";
+"No Selection" = "Nenhuma seleção";
+"Screenshot" = "Captura de ecrã";
+"Search" = "Pesquisar";
+"Sort By" = "Ordenar por";
+"Source" = "Origem";
+"They are removed from history permanently." = "São removidas do histórico de forma permanente.";
+"Today" = "Hoje";

@@ -1051,3 +1051,29 @@
 "Close this recording in the video editor first." = "Előbb zárja be ezt a felvételt a videószerkesztőben.";
 "Move to Trash" = "Áthelyezés a Kukába";
 "Recordings" = "Felvételek";
+
+/* Library window */
+"%d Items Selected" = "%d elem kijelölve";
+"Annotated" = "Jegyzetekkel";
+"Created" = "Létrehozva";
+"Date Created" = "Létrehozás dátuma";
+"Delete %d screenshots?" = "Törli a(z) %d képernyőképet?";
+"Dimensions" = "Méretek";
+"Edited" = "Szerkesztve";
+"Icons" = "Ikonok";
+"Info" = "Infó";
+"Kind" = "Típus";
+"Last 30 Days" = "Utolsó 30 nap";
+"Last 7 Days" = "Utolsó 7 nap";
+"Library" = "Könyvtár";
+"Library…" = "Könyvtár…";
+"List" = "Lista";
+"Name" = "Név";
+"No Items" = "Nincsenek elemek";
+"No Selection" = "Nincs kijelölés";
+"Screenshot" = "Képernyőkép";
+"Search" = "Keresés";
+"Sort By" = "Rendezés";
+"Source" = "Forrás";
+"They are removed from history permanently." = "Véglegesen törlődnek az előzményekből.";
+"Today" = "Ma";

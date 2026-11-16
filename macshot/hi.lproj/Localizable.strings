@@ -1053,3 +1053,29 @@
 "Close this recording in the video editor first." = "पहले इस रिकॉर्डिंग को वीडियो एडिटर में बंद करें।";
 "Move to Trash" = "ट्रैश में ले जाएँ";
 "Recordings" = "रिकॉर्डिंग";
+
+/* Library window */
+"%d Items Selected" = "%d आइटम चयनित";
+"Annotated" = "एनोटेशन वाले";
+"Created" = "बनाया गया";
+"Date Created" = "बनाने की तारीख";
+"Delete %d screenshots?" = "%d स्क्रीनशॉट डिलीट करें?";
+"Dimensions" = "आयाम";
+"Edited" = "संपादित";
+"Icons" = "आइकन";
+"Info" = "जानकारी";
+"Kind" = "प्रकार";
+"Last 30 Days" = "पिछले 30 दिन";
+"Last 7 Days" = "पिछले 7 दिन";
+"Library" = "लाइब्रेरी";
+"Library…" = "लाइब्रेरी…";
+"List" = "सूची";
+"Name" = "नाम";
+"No Items" = "कोई आइटम नहीं";
+"No Selection" = "कुछ चयनित नहीं";
+"Screenshot" = "स्क्रीनशॉट";
+"Search" = "खोजें";
+"Sort By" = "इसके अनुसार क्रमबद्ध करें";
+"Source" = "स्रोत";
+"They are removed from history permanently." = "इन्हें इतिहास से स्थायी रूप से हटा दिया जाता है।";
+"Today" = "आज";

@@ -1049,3 +1049,29 @@
 "Close this recording in the video editor first." = "Isara muna ang recording na ito sa video editor.";
 "Move to Trash" = "Ilipat sa Basurahan";
 "Recordings" = "Mga Recording";
+
+/* Library window */
+"%d Items Selected" = "%d item ang napili";
+"Annotated" = "May anotasyon";
+"Created" = "Ginawa";
+"Date Created" = "Petsa ng Paggawa";
+"Delete %d screenshots?" = "Burahin ang %d screenshot?";
+"Dimensions" = "Dimensyon";
+"Edited" = "Na-edit";
+"Icons" = "Mga Icon";
+"Info" = "Impormasyon";
+"Kind" = "Uri";
+"Last 30 Days" = "Nakaraang 30 Araw";
+"Last 7 Days" = "Nakaraang 7 Araw";
+"Library" = "Library";
+"Library…" = "Library…";
+"List" = "Listahan";
+"Name" = "Pangalan";
+"No Items" = "Walang Item";
+"No Selection" = "Walang Napili";
+"Screenshot" = "Screenshot";
+"Search" = "Maghanap";
+"Sort By" = "Pagbukud-bukurin Ayon sa";
+"Source" = "Pinagmulan";
+"They are removed from history permanently." = "Permanenteng inaalis ang mga ito sa history.";
+"Today" = "Ngayon";

@@ -1047,3 +1047,29 @@
 "Close this recording in the video editor first." = "ปิดวิดีโอบันทึกนี้ในตัวแก้ไขวิดีโอก่อน";
 "Move to Trash" = "ย้ายไปที่ถังขยะ";
 "Recordings" = "วิดีโอบันทึก";
+
+/* Library window */
+"%d Items Selected" = "เลือกแล้ว %d รายการ";
+"Annotated" = "มีคำอธิบายประกอบ";
+"Created" = "สร้างเมื่อ";
+"Date Created" = "วันที่สร้าง";
+"Delete %d screenshots?" = "ลบภาพหน้าจอ %d ภาพหรือไม่";
+"Dimensions" = "ขนาด";
+"Edited" = "แก้ไขเมื่อ";
+"Icons" = "ไอคอน";
+"Info" = "ข้อมูล";
+"Kind" = "ชนิด";
+"Last 30 Days" = "30 วันที่ผ่านมา";
+"Last 7 Days" = "7 วันที่ผ่านมา";
+"Library" = "คลัง";
+"Library…" = "คลัง…";
+"List" = "รายการ";
+"Name" = "ชื่อ";
+"No Items" = "ไม่มีรายการ";
+"No Selection" = "ไม่ได้เลือก";
+"Screenshot" = "ภาพหน้าจอ";
+"Search" = "ค้นหา";
+"Sort By" = "เรียงตาม";
+"Source" = "แหล่งที่มา";
+"They are removed from history permanently." = "ภาพเหล่านี้จะถูกลบออกจากประวัติถาวร";
+"Today" = "วันนี้";
