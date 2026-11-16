@@ -42,4 +42,25 @@ final class LibraryModelTests: XCTestCase {
     func testEverySectionIsInTheSidebar() {
         XCTAssertEqual(Set(LibrarySection.kinds + LibrarySection.dates), Set(LibrarySection.allCases))
     }
+
+    func testTheInspectorOpensOnlyForASelection() {
+        withDefaults(["libraryShowsInspector": nil]) {
+            let model = LibraryModel()
+            XCTAssertTrue(model.wantsInspector)
+            XCTAssertFalse(model.inspectorPresented, "nothing selected: closed")
+            model.selection = ["capture:x"]
+            XCTAssertTrue(model.inspectorPresented)
+
+            // The selection going away closes it without forgetting the wish.
+            model.selection = []
+            model.inspectorPresented = false
+            XCTAssertTrue(model.wantsInspector)
+
+            // Closing it by hand is remembered.
+            model.selection = ["capture:x"]
+            model.inspectorPresented = false
+            XCTAssertFalse(model.wantsInspector)
+            XCTAssertFalse(model.inspectorPresented)
+        }
+    }
 }

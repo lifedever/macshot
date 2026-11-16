@@ -89,25 +89,41 @@ final class LibraryModel: ObservableObject {
     @Published var viewMode: LibraryViewMode {
         didSet { UserDefaults.standard.set(viewMode.rawValue, forKey: Self.viewModeKey) }
     }
-    @Published var showsInspector = true
+    /// The inspector is wanted (toggled with Info, remembered); it shows only
+    /// while something is selected.
+    @Published var wantsInspector: Bool {
+        didSet { UserDefaults.standard.set(wantsInspector, forKey: Self.inspectorKey) }
+    }
+
+    /// Drives `.inspector(isPresented:)`: open while wanted and something is
+    /// selected. Closing it by hand turns the wish off.
+    var inspectorPresented: Bool {
+        get { wantsInspector && !selection.isEmpty }
+        set { if !newValue, !selection.isEmpty { wantsInspector = false } }
+    }
     @Published var quickLookURL: URL?
     @Published private(set) var thumbnails: [String: NSImage] = [:]
     /// Lengths of takes, filled in as their poster frames load.
     @Published private(set) var durations: [String: Double] = [:]
 
     private static let viewModeKey = "libraryViewMode"
+    private static let inspectorKey = "libraryShowsInspector"
     private var observers: [NSObjectProtocol] = []
     private var thumbnailsInFlight = Set<String>()
     private var reloadToken = UUID()
 
     init() {
         viewMode = LibraryViewMode(rawValue: UserDefaults.standard.string(forKey: Self.viewModeKey) ?? "") ?? .grid
+        wantsInspector = UserDefaults.standard.object(forKey: Self.inspectorKey) as? Bool ?? true
+        // Load before observing: the first touch of ScreenshotHistory.shared
+        // initialises it, and the change it posts while doing so would call
+        // reload() back into that initialiser.
+        reload()
         for name in [ScreenshotHistory.didChange, RecordingLibrary.didChangeNotification] {
             observers.append(NotificationCenter.default.addObserver(forName: name, object: nil, queue: .main) { [weak self] _ in
                 MainActor.assumeIsolated { self?.reload() }
             })
         }
-        reload()
     }
 
     deinit {

@@ -12,9 +12,13 @@ struct LibraryView: View {
             LibrarySidebar(model: model)
                 .navigationSplitViewColumnWidth(min: 170, ideal: 200, max: 260)
         } detail: {
+            // The toolbar, search and inspector belong to the content column.
+            // On the split view as a whole they went to the trailing-most
+            // column — the inspector — which is too narrow for them, and the
+            // buttons collapsed into an overflow menu.
             LibraryContent(model: model)
+                .modifier(LibraryChrome(model: model))
         }
-        .modifier(LibraryChrome(model: model))
         .quickLookPreview($model.quickLookURL, in: model.selectedItems.map(\.fileURL))
     }
 }
@@ -53,7 +57,7 @@ private struct LibraryChrome: ViewModifier {
             content
                 .searchable(text: $model.search, placement: .toolbar)
                 .toolbar { toolbarItems }
-                .inspector(isPresented: $model.showsInspector) {
+                .inspector(isPresented: $model.inspectorPresented) {
                     LibraryInspector(model: model)
                         .inspectorColumnWidth(min: 220, ideal: 260, max: 360)
                 }
@@ -75,9 +79,11 @@ private struct LibraryChrome: ViewModifier {
         }
     }
 
+    /// `.automatic` places these at the content column's trailing edge, where
+    /// the Finder keeps them; `.primaryAction` is the leading edge on macOS.
     @ToolbarContentBuilder
     private var toolbarItems: some ToolbarContent {
-        ToolbarItemGroup(placement: .primaryAction) {
+        ToolbarItemGroup(placement: .automatic) {
             LibraryViewModePicker(model: model)
             LibrarySortMenu(model: model)
             ShareLink(items: model.selectedItems.map(\.fileURL)) {
@@ -91,10 +97,13 @@ private struct LibraryChrome: ViewModifier {
             }
             .disabled(model.selection.isEmpty)
             Button {
-                model.showsInspector.toggle()
+                model.wantsInspector.toggle()
             } label: {
                 Label(L("Info"), systemImage: "info.circle")
             }
+            // With nothing selected the inspector stays closed, so the
+            // button would do nothing visible.
+            .disabled(model.selection.isEmpty)
         }
     }
 }
