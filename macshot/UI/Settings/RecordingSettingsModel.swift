@@ -29,6 +29,11 @@ final class RecordingSettingsModel: ObservableObject {
         didSet { store(hideHUD, "hideRecordingHUD", oldValue) }
     }
 
+    /// Keep the pointer, clicks and keystrokes as data the video editor can restyle.
+    @Published var editablePointer: Bool {
+        didSet { store(editablePointer, AppDelegate.editablePointerDefaultsKey, oldValue) }
+    }
+
     // MARK: Webcam
 
     static let webcamPositions = ["bottomRight", "bottomLeft", "topRight", "topLeft"]
@@ -53,6 +58,10 @@ final class RecordingSettingsModel: ObservableObject {
         didSet { store(webcamShape, "webcamShape", oldValue) }
     }
 
+    @Published var webcamSnapsToCorners: Bool {
+        didSet { store(webcamSnapsToCorners, WebcamPlacement.snapKey, oldValue) }
+    }
+
     // MARK: Lifecycle
 
     init() {
@@ -61,9 +70,11 @@ final class RecordingSettingsModel: ObservableObject {
         frameRate = Self.frameRates.contains(storedFPS) ? storedFPS : 30
         onStop = defaults.string(forKey: "recordingOnStop") ?? "editor"
         hideHUD = defaults.bool(forKey: "hideRecordingHUD")
+        editablePointer = AppDelegate.recordsEditablePointer
         webcamPosition = defaults.string(forKey: "webcamPosition") ?? "bottomRight"
         webcamSize = Double(WebcamSize.savedPoints)
         webcamShape = defaults.string(forKey: "webcamShape") ?? "circle"
+        webcamSnapsToCorners = WebcamPlacement.snapsToCorners
     }
 
     private func store<T: Equatable>(_ value: T, _ key: String, _ oldValue: T) {

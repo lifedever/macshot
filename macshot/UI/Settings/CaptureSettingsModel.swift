@@ -12,10 +12,21 @@ final class CaptureSettingsModel: ObservableObject {
 
     // MARK: Capture
 
-    /// 0 = save to file, 1 = copy, 2 = save + copy, 3 = do nothing.
+    /// A `QuickCaptureMode` raw value.
     @Published var quickCaptureMode: Int {
-        didSet { store(quickCaptureMode, "quickCaptureMode", oldValue) }
+        didSet { store(quickCaptureMode, QuickCaptureMode.userDefaultsKey, oldValue) }
     }
+    /// A `PinPlacement` raw value.
+    @Published var pinPlacement: Int {
+        didSet {
+            guard pinPlacement != oldValue, let placement = PinPlacement(rawValue: pinPlacement) else { return }
+            PinPlacement.current = placement
+        }
+    }
+    @Published var openEditorAfterSelection: Bool {
+        didSet { store(openEditorAfterSelection, "openEditorAfterSelection", oldValue) }
+    }
+
     @Published var quickCaptureOpenEditor: Bool {
         didSet { store(quickCaptureOpenEditor, "quickCaptureOpenEditor", oldValue) }
     }
@@ -92,6 +103,14 @@ final class CaptureSettingsModel: ObservableObject {
     @Published var thumbnailLetterbox: Bool {
         didSet { store(thumbnailLetterbox, "thumbnailLetterbox", oldValue) }
     }
+    /// A `ThumbnailClickAction` raw value.
+    @Published var thumbnailClickAction: String {
+        didSet { store(thumbnailClickAction, ThumbnailClickAction.userDefaultsKey, oldValue) }
+    }
+    /// A `ThumbnailEditBehavior` raw value.
+    @Published var thumbnailEditBehavior: String {
+        didSet { store(thumbnailEditBehavior, ThumbnailEditBehavior.userDefaultsKey, oldValue) }
+    }
 
     // MARK: Output
 
@@ -158,6 +177,12 @@ final class CaptureSettingsModel: ObservableObject {
 
     @Published var downscaleRetina: Bool {
         didSet { store(downscaleRetina, "downscaleRetina", oldValue) }
+    }
+    @Published var copyPathAfterSave: Bool {
+        didSet { store(copyPathAfterSave, ImageSaveService.copyPathAfterSaveKey, oldValue) }
+    }
+    @Published var clipboardIncludesImageFormat: Bool {
+        didSet { store(clipboardIncludesImageFormat, "clipboardIncludesImageFormat", oldValue) }
     }
 
     @Published var historyUnlimited: Bool {
@@ -247,7 +272,9 @@ final class CaptureSettingsModel: ObservableObject {
 
     init() {
         let ud = UserDefaults.standard
-        quickCaptureMode = ud.object(forKey: "quickCaptureMode") as? Int ?? 1
+        quickCaptureMode = QuickCaptureMode.current.rawValue
+        pinPlacement = PinPlacement.current.rawValue
+        openEditorAfterSelection = ud.bool(forKey: "openEditorAfterSelection")
         quickCaptureOpenEditor = ud.bool(forKey: "quickCaptureOpenEditor")
         closeEditorAfterCopy = DetachedEditorWindowController.closesAfterCopy
         ocrAction = ud.integer(forKey: "ocrAction")
@@ -269,12 +296,16 @@ final class CaptureSettingsModel: ObservableObject {
         thumbnailCorner = FloatingThumbnailCorner.allCases.firstIndex(of: ThumbnailPlacementPreferences.corner()) ?? 0
         thumbnailScale = ud.object(forKey: "thumbnailScale") as? Double ?? 1.0
         thumbnailLetterbox = ud.object(forKey: "thumbnailLetterbox") as? Bool ?? true
+        thumbnailClickAction = ThumbnailClickAction.current.rawValue
+        thumbnailEditBehavior = ThumbnailEditBehavior.current.rawValue
         saveAction = SaveActionPreference.current.rawValue
         saveFolderPath = SaveDirectoryAccess.displayPath
         filenameTemplate = ud.string(forKey: FilenameFormatter.userDefaultsKey) ?? FilenameFormatter.defaultTemplate
         imageFormat = ud.string(forKey: "imageFormat") ?? "png"
         imageQuality = Double(ImageEncoder.quality)
         downscaleRetina = ud.bool(forKey: "downscaleRetina")
+        copyPathAfterSave = ImageSaveService.copyPathAfterSave
+        clipboardIncludesImageFormat = ImageEncoder.clipboardIncludesImageFormat
         historyUnlimited = ud.bool(forKey: "historyUnlimited")
         historySize = ud.object(forKey: "historySize") as? Int ?? ScreenshotHistory.defaultMaxEntries
         historyOrderByLastEdit = ScreenshotHistory.orderByLastEdit

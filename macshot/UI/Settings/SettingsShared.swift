@@ -98,3 +98,10 @@ struct AppKitView: NSViewRepresentable {
     func makeNSView(context: Context) -> NSView { make() }
     func updateNSView(_ nsView: NSView, context: Context) {}
 }
+
+/// A label written for the old AppKit settings window ("  Click on preview:")
+/// as a form row label: its indent and trailing colon removed, so the existing
+/// translations are reused rather than duplicated.
+func formLabel(_ localized: String) -> String {
+    localized.trimmingCharacters(in: CharacterSet(charactersIn: ":：").union(.whitespaces))
+}

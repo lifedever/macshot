@@ -14,6 +14,11 @@ struct ToolsSettingsView: View {
     var body: some View {
         Form {
             Section {
+                Toggle(isOn: $model.hideBottomToolbar) {
+                    Text(L("Hide the bottom toolbar"))
+                    Text(L("Pick tools with their keyboard shortcuts instead."))
+                }
+                Toggle(L("Start captures in move mode"), isOn: $model.startCapturesInMoveMode)
                 Picker("", selection: $model.group) {
                     ForEach(ToolsSettingsModel.Group.allCases) { group in
                         Text(group.title).tag(group)
@@ -24,15 +29,25 @@ struct ToolsSettingsView: View {
             }
 
             Section {
-                // Two columns: this many toggles in a single column is a scroll
-                // even on a tall display.
-                let items = model.items
-                let half = (items.count + 1) / 2
-                HStack(alignment: .top, spacing: 24) {
-                    column(items: Array(items.prefix(half)))
-                    column(items: Array(items.dropFirst(half)))
+                if model.group == .colors {
+                    PresetColorGrid(model: model)
+                    HStack {
+                        Button(L("Add Color")) { model.addPresetColor() }
+                            .disabled(!model.canAddPresetColor)
+                        Spacer()
+                        Button(L("Reset to default")) { model.resetPresetColors() }
+                    }
+                } else {
+                    // Two columns: this many toggles in a single column is a
+                    // scroll even on a tall display.
+                    let items = model.items
+                    let half = (items.count + 1) / 2
+                    HStack(alignment: .top, spacing: 24) {
+                        column(items: Array(items.prefix(half)))
+                        column(items: Array(items.dropFirst(half)))
+                    }
+                    .padding(.vertical, 2)
                 }
-                .padding(.vertical, 2)
             } header: {
                 Text(model.group.title)
             } footer: {
@@ -64,5 +79,42 @@ struct ToolsSettingsView: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+/// The colour picker's preset swatches as editable wells, six to a row like
+/// the picker itself, each with a button that removes it.
+private struct PresetColorGrid: View {
+    @ObservedObject var model: ToolsSettingsModel
+    private static let perRow = 6
+
+    var body: some View {
+        if model.presetColors.isEmpty {
+            Text(L("No default colors."))
+                .foregroundStyle(.secondary)
+        } else {
+            let columns = Array(repeating: GridItem(.fixed(64), spacing: 12, alignment: .leading), count: Self.perRow)
+            LazyVGrid(columns: columns, alignment: .leading, spacing: 10) {
+                ForEach(Array(model.presetColors.enumerated()), id: \.offset) { index, color in
+                    HStack(spacing: 2) {
+                        ColorPicker("", selection: Binding(
+                            get: { color },
+                            set: { model.setPresetColor($0, at: index) }
+                        ), supportsOpacity: false)
+                        .labelsHidden()
+                        Button {
+                            model.removePresetColor(at: index)
+                        } label: {
+                            Image(systemName: "minus.circle.fill")
+                                .foregroundStyle(.secondary)
+                        }
+                        .buttonStyle(.plain)
+                        .help(L("Delete"))
+                        .accessibilityLabel(L("Delete"))
+                    }
+                }
+            }
+            .padding(.vertical, 2)
+        }
     }
 }

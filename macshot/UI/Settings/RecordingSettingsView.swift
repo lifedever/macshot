@@ -28,6 +28,10 @@ struct RecordingSettingsView: View {
                     Text(L("Hide recording controls"))
                     Text(L("Stop recording from the menu bar icon instead."))
                 }
+                Toggle(isOn: $model.editablePointer) {
+                    Text(L("Editable pointer, clicks and keystrokes"))
+                    Text(L("When recordings open in the editor, the pointer is recorded separately so you can smooth, resize, restyle or hide it, and add zooms that follow it."))
+                }
             }
 
             Section(L("Webcam")) {
@@ -51,6 +55,7 @@ struct RecordingSettingsView: View {
                     Text(L("Circle")).tag("circle")
                     Text(L("Rounded Rectangle")).tag("roundedRect")
                 }
+                Toggle(L("Snap webcam to corners when moved"), isOn: $model.webcamSnapsToCorners)
             }
 
         }

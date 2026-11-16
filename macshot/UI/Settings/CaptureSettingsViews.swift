@@ -11,10 +11,9 @@ struct CaptureSettingsView: View {
         Form {
             Section(L("Capture")) {
                 Picker(L("Enter / Quick Capture"), selection: $model.quickCaptureMode) {
-                    Text(L("Save to file")).tag(0)
-                    Text(L("Copy to clipboard")).tag(1)
-                    Text(L("Save + copy to clipboard")).tag(2)
-                    Text(L("Do nothing")).tag(3)
+                    ForEach(QuickCaptureMode.settingsOrder, id: \.rawValue) { mode in
+                        Text(mode.title).tag(mode.rawValue)
+                    }
                 }
                 Toggle(L("Also open in Editor"), isOn: $model.quickCaptureOpenEditor)
                 // Tags are the values the capture reads: 0 = window + copy,
@@ -39,6 +38,7 @@ struct CaptureSettingsView: View {
                     (L("Hide capture instructions"), $model.hideInstructions),
                     (L("Disable shadow outside selection"), $model.disableOutsideShadow),
                     (L("Close editor after copying"), $model.closeEditorAfterCopy),
+                    (L("Open in Editor right after selection"), $model.openEditorAfterSelection),
                 ])
             }
 
@@ -141,6 +141,26 @@ struct ThumbnailSettingsView: View {
                     }
                 }
                 Toggle(L("Fit image in preview (letterbox)"), isOn: $model.thumbnailLetterbox)
+                Picker(formLabel(L("  Click on preview:")), selection: $model.thumbnailClickAction) {
+                    Text(L("Open in Editor")).tag(ThumbnailClickAction.openEditor.rawValue)
+                    Text(L("Dismiss")).tag(ThumbnailClickAction.dismiss.rawValue)
+                    Text(L("Copy & dismiss")).tag(ThumbnailClickAction.copy.rawValue)
+                    Text(L("Do nothing")).tag(ThumbnailClickAction.nothing.rawValue)
+                }
+                Picker(formLabel(L("  When opened in Editor:")), selection: $model.thumbnailEditBehavior) {
+                    Text(L("Close preview")).tag(ThumbnailEditBehavior.dismiss.rawValue)
+                    Text(L("Keep in stack")).tag(ThumbnailEditBehavior.keep.rawValue)
+                    Text(L("Return to stack when editor closes")).tag(ThumbnailEditBehavior.returnAfterClose.rawValue)
+                }
+            }
+
+            // The other window a capture can float in.
+            Section(L("Pin")) {
+                Picker(formLabel(L("Pin position:")), selection: $model.pinPlacement) {
+                    ForEach(PinPlacement.allCases, id: \.rawValue) { placement in
+                        Text(placement.title).tag(placement.rawValue)
+                    }
+                }
             }
         }
         .formStyle(.grouped)
@@ -169,6 +189,9 @@ struct OutputSettingsView: View {
                         Button(L("Browse…")) { model.browseSaveFolder() }
                     }
                 }
+                // Right under the folder, as upstream places it: after a save,
+                // the saved file's path goes on the clipboard.
+                Toggle(L("Copy Path"), isOn: $model.copyPathAfterSave)
                 LabeledContent(L("Filename")) {
                     HStack(spacing: 8) {
                         TextField("", text: $model.filenameTemplate)
@@ -212,6 +235,10 @@ struct OutputSettingsView: View {
                                 .frame(width: 52, alignment: .trailing)
                         }
                     }
+                }
+                Toggle(isOn: $model.clipboardIncludesImageFormat) {
+                    Text(L("Also copy to the clipboard in this format"))
+                    Text(L("PNG is always included so every app can paste"))
                 }
                 Toggle(L("Save at standard resolution (1x)"), isOn: $model.downscaleRetina)
             }

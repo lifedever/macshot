@@ -17,7 +17,10 @@ final class SettingsConsistencyTests: XCTestCase {
         "historySize", "historyOrderByLastEdit", "scrollAutoScrollEnabled",
         "scrollAutoScrollSpeed", "scrollMaxHeight", "beautifyShadowRadius",
         "thumbnailCorner", "thumbnailStacking", "historyUnlimited",
-        OverlayView.boundarySnapStartEnabledKey,
+        OverlayView.boundarySnapStartEnabledKey, PinPlacement.userDefaultsKey,
+        "openEditorAfterSelection", ThumbnailClickAction.userDefaultsKey,
+        ThumbnailEditBehavior.userDefaultsKey, ImageSaveService.copyPathAfterSaveKey,
+        "clipboardIncludesImageFormat",
     ]
 
     private func withFreshInstall(_ body: () throws -> Void) rethrows {
@@ -43,6 +46,41 @@ final class SettingsConsistencyTests: XCTestCase {
             XCTAssertEqual(model.thumbnailCorner, 0, "cards start in the bottom-right corner")
             XCTAssertEqual(model.boundarySnapStart, OverlayView().boundarySnapStartEnabled,
                            "the pane shows whether a new selection's start snaps")
+            XCTAssertEqual(model.quickCaptureMode, QuickCaptureMode.current.rawValue)
+            XCTAssertEqual(model.pinPlacement, PinPlacement.current.rawValue)
+            XCTAssertFalse(model.openEditorAfterSelection)
+            XCTAssertEqual(model.thumbnailClickAction, ThumbnailClickAction.current.rawValue)
+            XCTAssertEqual(model.thumbnailClickAction, ThumbnailClickAction.defaultValue.rawValue,
+                           "a click on the card opens the editor until changed")
+            XCTAssertEqual(model.thumbnailEditBehavior, ThumbnailEditBehavior.current.rawValue)
+            XCTAssertEqual(model.copyPathAfterSave, ImageSaveService.copyPathAfterSave)
+            XCTAssertEqual(model.clipboardIncludesImageFormat, ImageEncoder.clipboardIncludesImageFormat)
+        }
+    }
+
+    func testToolsAndRecordingPanesShowWhatTheFeaturesRead() {
+        withDefaults([
+            OverlayView.hideBottomToolbarKey: nil, OverlayView.startCapturesInMoveModeKey: nil,
+            AppDelegate.editablePointerDefaultsKey: nil, WebcamPlacement.snapKey: nil,
+            PresetColorPalette.defaultsKey: nil,
+        ]) {
+            let tools = ToolsSettingsModel()
+            XCTAssertEqual(tools.hideBottomToolbar, UserDefaults.standard.bool(forKey: OverlayView.hideBottomToolbarKey))
+            XCTAssertEqual(tools.startCapturesInMoveMode, OverlayView.startCapturesInMoveModeSetting)
+            XCTAssertEqual(tools.presetColors.count, PresetColorPalette.defaultColors.count)
+
+            tools.startCapturesInMoveMode = true
+            XCTAssertTrue(OverlayView.startCapturesInMoveModeSetting, "the toggle writes what the overlay reads")
+            tools.removePresetColor(at: 0)
+            XCTAssertEqual(PresetColorPalette.colors.count, PresetColorPalette.defaultColors.count - 1)
+            tools.resetPresetColors()
+            XCTAssertEqual(PresetColorPalette.colors.count, PresetColorPalette.defaultColors.count)
+
+            let recording = RecordingSettingsModel()
+            XCTAssertEqual(recording.editablePointer, AppDelegate.recordsEditablePointer)
+            XCTAssertEqual(recording.webcamSnapsToCorners, WebcamPlacement.snapsToCorners)
+            recording.webcamSnapsToCorners = false
+            XCTAssertFalse(WebcamPlacement.snapsToCorners)
         }
     }
 
