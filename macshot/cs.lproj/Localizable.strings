@@ -1043,3 +1043,8 @@
 "Recording Library" = "Knihovna nahrávek";
 "Stop the recording and close the video editor before moving recordings." = "Před přesunem nahrávek zastavte nahrávání a zavřete editor videa.";
 "The recording library isn't available. New recordings are saved to the default location." = "Knihovna nahrávek není dostupná. Nové nahrávky se ukládají do výchozího umístění.";
+
+/* Recordings in history */
+"Close this recording in the video editor first." = "Nejprve zavřete tuto nahrávku v editoru videa.";
+"Move to Trash" = "Přesunout do koše";
+"Recordings" = "Nahrávky";

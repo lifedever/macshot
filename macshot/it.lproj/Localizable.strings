@@ -1023,3 +1023,8 @@
 "Recording Library" = "Libreria registrazioni";
 "Stop the recording and close the video editor before moving recordings." = "Interrompi la registrazione e chiudi l’editor video prima di spostare le registrazioni.";
 "The recording library isn't available. New recordings are saved to the default location." = "La libreria registrazioni non è disponibile. Le nuove registrazioni vengono salvate nella posizione predefinita.";
+
+/* Recordings in history */
+"Close this recording in the video editor first." = "Chiudi prima questa registrazione nell’editor video.";
+"Move to Trash" = "Sposta nel cestino";
+"Recordings" = "Registrazioni";

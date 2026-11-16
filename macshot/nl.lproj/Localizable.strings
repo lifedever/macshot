@@ -1046,3 +1046,8 @@
 "Recording Library" = "Opnamebibliotheek";
 "Stop the recording and close the video editor before moving recordings." = "Stop de opname en sluit de video-editor voordat je opnamen verplaatst.";
 "The recording library isn't available. New recordings are saved to the default location." = "De opnamebibliotheek is niet beschikbaar. Nieuwe opnamen worden op de standaardlocatie bewaard.";
+
+/* Recordings in history */
+"Close this recording in the video editor first." = "Sluit deze opname eerst in de video-editor.";
+"Move to Trash" = "Verplaats naar prullenmand";
+"Recordings" = "Opnamen";

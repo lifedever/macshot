@@ -1044,3 +1044,8 @@
 "Recording Library" = "녹화 보관함";
 "Stop the recording and close the video editor before moving recordings." = "녹화를 이동하기 전에 녹화를 중지하고 비디오 편집기를 닫으세요.";
 "The recording library isn't available. New recordings are saved to the default location." = "녹화 보관함을 사용할 수 없습니다. 새 녹화는 기본 위치에 저장됩니다.";
+
+/* Recordings in history */
+"Close this recording in the video editor first." = "먼저 비디오 편집기에서 이 녹화를 닫으세요.";
+"Move to Trash" = "휴지통으로 이동";
+"Recordings" = "녹화";

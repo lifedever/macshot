@@ -1050,3 +1050,8 @@
 "Recording Library" = "ספריית הקלטות";
 "Stop the recording and close the video editor before moving recordings." = "יש לעצור את ההקלטה ולסגור את עורך הווידאו לפני העברת הקלטות.";
 "The recording library isn't available. New recordings are saved to the default location." = "ספריית ההקלטות אינה זמינה. הקלטות חדשות נשמרות במיקום ברירת המחדל.";
+
+/* Recordings in history */
+"Close this recording in the video editor first." = "יש לסגור קודם את ההקלטה הזו בעורך הווידאו.";
+"Move to Trash" = "העברה לפח";
+"Recordings" = "הקלטות";

@@ -1042,3 +1042,8 @@
 "Recording Library" = "Tallennekirjasto";
 "Stop the recording and close the video editor before moving recordings." = "Lopeta tallennus ja sulje videoeditori ennen tallenteiden siirtämistä.";
 "The recording library isn't available. New recordings are saved to the default location." = "Tallennekirjasto ei ole käytettävissä. Uudet tallenteet tallennetaan oletussijaintiin.";
+
+/* Recordings in history */
+"Close this recording in the video editor first." = "Sulje ensin tämä tallenne videoeditorissa.";
+"Move to Trash" = "Siirrä roskakoriin";
+"Recordings" = "Tallenteet";

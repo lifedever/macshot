@@ -1048,3 +1048,8 @@
 "Recording Library" = "রেকর্ডিং লাইব্রেরি";
 "Stop the recording and close the video editor before moving recordings." = "রেকর্ডিং সরানোর আগে রেকর্ডিং থামান এবং ভিডিও এডিটর বন্ধ করুন।";
 "The recording library isn't available. New recordings are saved to the default location." = "রেকর্ডিং লাইব্রেরি পাওয়া যাচ্ছে না। নতুন রেকর্ডিং ডিফল্ট অবস্থানে সংরক্ষিত হয়।";
+
+/* Recordings in history */
+"Close this recording in the video editor first." = "প্রথমে ভিডিও এডিটরে এই রেকর্ডিংটি বন্ধ করুন।";
+"Move to Trash" = "ট্র্যাশে সরান";
+"Recordings" = "রেকর্ডিং";

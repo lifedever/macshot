@@ -1044,3 +1044,8 @@
 "Recording Library" = "Library ng Recording";
 "Stop the recording and close the video editor before moving recordings." = "Ihinto ang pag-record at isara ang video editor bago ilipat ang mga recording.";
 "The recording library isn't available. New recordings are saved to the default location." = "Hindi available ang library ng recording. Sine-save ang mga bagong recording sa default na lokasyon.";
+
+/* Recordings in history */
+"Close this recording in the video editor first." = "Isara muna ang recording na ito sa video editor.";
+"Move to Trash" = "Ilipat sa Basurahan";
+"Recordings" = "Mga Recording";

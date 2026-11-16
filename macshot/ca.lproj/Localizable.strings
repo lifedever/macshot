@@ -1048,3 +1048,8 @@
 "Recording Library" = "Biblioteca d’enregistraments";
 "Stop the recording and close the video editor before moving recordings." = "Atura l’enregistrament i tanca l’editor de vídeo abans de moure els enregistraments.";
 "The recording library isn't available. New recordings are saved to the default location." = "La biblioteca d’enregistraments no està disponible. Els enregistraments nous es desen a la ubicació predeterminada.";
+
+/* Recordings in history */
+"Close this recording in the video editor first." = "Tanca primer aquest enregistrament a l’editor de vídeo.";
+"Move to Trash" = "Mou a la paperera";
+"Recordings" = "Enregistraments";

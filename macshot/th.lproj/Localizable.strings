@@ -1042,3 +1042,8 @@
 "Recording Library" = "คลังวิดีโอบันทึก";
 "Stop the recording and close the video editor before moving recordings." = "หยุดการบันทึกและปิดตัวแก้ไขวิดีโอก่อนย้ายวิดีโอบันทึก";
 "The recording library isn't available. New recordings are saved to the default location." = "คลังวิดีโอบันทึกใช้งานไม่ได้ วิดีโอบันทึกใหม่จะบันทึกไว้ในตำแหน่งเริ่มต้น";
+
+/* Recordings in history */
+"Close this recording in the video editor first." = "ปิดวิดีโอบันทึกนี้ในตัวแก้ไขวิดีโอก่อน";
+"Move to Trash" = "ย้ายไปที่ถังขยะ";
+"Recordings" = "วิดีโอบันทึก";

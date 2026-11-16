@@ -1042,3 +1042,8 @@
 "Recording Library" = "Pustaka Rekaman";
 "Stop the recording and close the video editor before moving recordings." = "Hentikan perekaman dan tutup editor video sebelum memindahkan rekaman.";
 "The recording library isn't available. New recordings are saved to the default location." = "Pustaka rekaman tidak tersedia. Rekaman baru disimpan di lokasi default.";
+
+/* Recordings in history */
+"Close this recording in the video editor first." = "Tutup rekaman ini di editor video terlebih dahulu.";
+"Move to Trash" = "Pindahkan ke Tong Sampah";
+"Recordings" = "Rekaman";

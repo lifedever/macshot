@@ -1041,3 +1041,8 @@
 "Recording Library" = "录制文件库";
 "Stop the recording and close the video editor before moving recordings." = "先停止录制并关闭视频编辑器，再移动录制文件。";
 "The recording library isn't available. New recordings are saved to the default location." = "录制文件库不可用，新的录制会保存到默认位置。";
+
+/* Recordings in history */
+"Close this recording in the video editor first." = "先在视频编辑器中关闭这个录制。";
+"Move to Trash" = "移到废纸篓";
+"Recordings" = "录制";

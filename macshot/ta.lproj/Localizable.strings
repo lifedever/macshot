@@ -1048,3 +1048,8 @@
 "Recording Library" = "பதிவு நூலகம்";
 "Stop the recording and close the video editor before moving recordings." = "பதிவுகளை நகர்த்தும் முன் பதிவை நிறுத்தி வீடியோ எடிட்டரை மூடவும்.";
 "The recording library isn't available. New recordings are saved to the default location." = "பதிவு நூலகம் கிடைக்கவில்லை. புதிய பதிவுகள் இயல்புநிலை இடத்தில் சேமிக்கப்படும்.";
+
+/* Recordings in history */
+"Close this recording in the video editor first." = "முதலில் வீடியோ எடிட்டரில் இந்தப் பதிவை மூடவும்.";
+"Move to Trash" = "குப்பைக்கு நகர்த்து";
+"Recordings" = "பதிவுகள்";

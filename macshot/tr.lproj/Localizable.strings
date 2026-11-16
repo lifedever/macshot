@@ -1050,3 +1050,8 @@
 "Recording Library" = "Kayıt kitaplığı";
 "Stop the recording and close the video editor before moving recordings." = "Kayıtları taşımadan önce kaydı durdurun ve video düzenleyiciyi kapatın.";
 "The recording library isn't available. New recordings are saved to the default location." = "Kayıt kitaplığı kullanılamıyor. Yeni kayıtlar varsayılan konuma kaydedilir.";
+
+/* Recordings in history */
+"Close this recording in the video editor first." = "Önce bu kaydı video düzenleyicide kapatın.";
+"Move to Trash" = "Çöp Sepetine Taşı";
+"Recordings" = "Kayıtlar";

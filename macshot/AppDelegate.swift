@@ -3835,7 +3835,7 @@ extension AppDelegate: OverlayWindowControllerDelegate {
     }
 
     /// Cancelling Save leaves the original in the recording library.
-    private func promptToSaveRecording(tmpURL: URL, revealInFinder: Bool = true,
+    func promptToSaveRecording(tmpURL: URL, revealInFinder: Bool = true,
                                        onSuccess: ((URL) -> Void)? = nil) {
         let panel = NSSavePanel()
         panel.nameFieldStringValue = tmpURL.lastPathComponent
@@ -3895,7 +3895,7 @@ extension AppDelegate: OverlayWindowControllerDelegate {
         MediaExportProgressController.show(for: job)
     }
 
-    private func copyRecordingToClipboard(url: URL) {
+    func copyRecordingToClipboard(url: URL) {
         let pasteboard = NSPasteboard.general
         pasteboard.clearContents()
 

@@ -1042,3 +1042,8 @@
 "Recording Library" = "Optagelsesbibliotek";
 "Stop the recording and close the video editor before moving recordings." = "Stop optagelsen, og luk videoeditoren, før du flytter optagelser.";
 "The recording library isn't available. New recordings are saved to the default location." = "Optagelsesbiblioteket er ikke tilgængeligt. Nye optagelser gemmes på standardplaceringen.";
+
+/* Recordings in history */
+"Close this recording in the video editor first." = "Luk først denne optagelse i videoeditoren.";
+"Move to Trash" = "Flyt til papirkurven";
+"Recordings" = "Optagelser";

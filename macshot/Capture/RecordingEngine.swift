@@ -295,6 +295,7 @@ final class RecordingEngine: NSObject {
                 return
             }
             storedSession = stored
+            RecordingLibrary.beginWriting(stored.directoryURL)
             let outURL = stored.mediaURL
             outputURL = outURL
             recordingActivity = ProcessInfo.processInfo.beginActivity(options: [.userInitiated, .idleSystemSleepDisabled],
@@ -499,6 +500,7 @@ final class RecordingEngine: NSObject {
             recordingQueue.async {
                 try? stored.update(status: error == nil ? "complete" : "interrupted", error: error)
                 stored.removeIfEmpty()
+                RecordingLibrary.endWriting(stored.directoryURL)
             }
         }
         if let error = error, let stored = stored {

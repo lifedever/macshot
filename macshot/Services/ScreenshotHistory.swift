@@ -19,7 +19,10 @@ struct HistoryEntry {
     /// The time used for "order by last edit": the most recent of edit/creation.
     var effectiveSortDate: Date { lastEditedAt ?? timestamp }
 
-    var timeAgoString: String {
+    var timeAgoString: String { Self.timeAgo(timestamp) }
+
+    /// "just now", "5m ago", "3h ago", then the date — for any capture or take.
+    static func timeAgo(_ timestamp: Date) -> String {
         guard timestamp.timeIntervalSinceReferenceDate.isFinite,
               timestamp >= .distantPast, timestamp <= .distantFuture else { return "-" }
         let seconds = SafeNumerics.int((-timestamp.timeIntervalSinceNow).rounded(.towardZero))

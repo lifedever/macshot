@@ -1046,3 +1046,8 @@
 "Recording Library" = "Felvételtár";
 "Stop the recording and close the video editor before moving recordings." = "Állítsa le a felvételt, és zárja be a videószerkesztőt a felvételek áthelyezése előtt.";
 "The recording library isn't available. New recordings are saved to the default location." = "A felvételtár nem érhető el. Az új felvételek az alapértelmezett helyre kerülnek.";
+
+/* Recordings in history */
+"Close this recording in the video editor first." = "Előbb zárja be ezt a felvételt a videószerkesztőben.";
+"Move to Trash" = "Áthelyezés a Kukába";
+"Recordings" = "Felvételek";

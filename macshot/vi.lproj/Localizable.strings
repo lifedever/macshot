@@ -1042,3 +1042,8 @@
 "Recording Library" = "Thư viện bản ghi";
 "Stop the recording and close the video editor before moving recordings." = "Hãy dừng ghi và đóng trình chỉnh sửa video trước khi di chuyển bản ghi.";
 "The recording library isn't available. New recordings are saved to the default location." = "Thư viện bản ghi không khả dụng. Bản ghi mới được lưu vào vị trí mặc định.";
+
+/* Recordings in history */
+"Close this recording in the video editor first." = "Hãy đóng bản ghi này trong trình chỉnh sửa video trước.";
+"Move to Trash" = "Chuyển vào Thùng rác";
+"Recordings" = "Bản ghi";

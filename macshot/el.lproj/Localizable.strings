@@ -1048,3 +1048,8 @@
 "Recording Library" = "Βιβλιοθήκη εγγραφών";
 "Stop the recording and close the video editor before moving recordings." = "Σταματήστε την εγγραφή και κλείστε το πρόγραμμα επεξεργασίας βίντεο πριν μετακινήσετε εγγραφές.";
 "The recording library isn't available. New recordings are saved to the default location." = "Η βιβλιοθήκη εγγραφών δεν είναι διαθέσιμη. Οι νέες εγγραφές αποθηκεύονται στην προεπιλεγμένη θέση.";
+
+/* Recordings in history */
+"Close this recording in the video editor first." = "Κλείστε πρώτα αυτή την εγγραφή στο πρόγραμμα επεξεργασίας βίντεο.";
+"Move to Trash" = "Μεταφορά στον Κάδο";
+"Recordings" = "Εγγραφές";

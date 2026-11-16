@@ -1041,3 +1041,8 @@
 "Recording Library" = "Recording Library";
 "Stop the recording and close the video editor before moving recordings." = "Stop the recording and close the video editor before moving recordings.";
 "The recording library isn't available. New recordings are saved to the default location." = "The recording library isn't available. New recordings are saved to the default location.";
+
+/* Recordings in history */
+"Close this recording in the video editor first." = "Close this recording in the video editor first.";
+"Move to Trash" = "Move to Trash";
+"Recordings" = "Recordings";

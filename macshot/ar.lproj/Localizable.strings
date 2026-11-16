@@ -1050,3 +1050,8 @@
 "Recording Library" = "مكتبة التسجيلات";
 "Stop the recording and close the video editor before moving recordings." = "أوقف التسجيل وأغلق محرر الفيديو قبل نقل التسجيلات.";
 "The recording library isn't available. New recordings are saved to the default location." = "مكتبة التسجيلات غير متاحة. تُحفظ التسجيلات الجديدة في الموقع الافتراضي.";
+
+/* Recordings in history */
+"Close this recording in the video editor first." = "أغلق هذا التسجيل في محرر الفيديو أولاً.";
+"Move to Trash" = "نقل إلى سلة المهملات";
+"Recordings" = "التسجيلات";

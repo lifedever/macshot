@@ -9,6 +9,11 @@ final class VideoEditorWindowController: NSWindowController, NSWindowDelegate {
     private static var activeControllers: [VideoEditorWindowController] = []
     /// Any video editor is open or preparing — its take must not be moved.
     static var hasOpenEditors: Bool { !activeControllers.isEmpty }
+    /// A video editor has `url` open (or is preparing it).
+    static func isEditing(_ url: URL) -> Bool {
+        let target = url.standardizedFileURL
+        return activeControllers.contains { $0.requestedURL == target }
+    }
     private var preparationJob: MediaExportCoordinator.Job?
     /// The URL this editor was opened for, so a second request for the same
     /// take raises this window instead of building another one.

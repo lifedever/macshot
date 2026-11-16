@@ -1042,3 +1042,8 @@
 "Recording Library" = "Inspelningsbibliotek";
 "Stop the recording and close the video editor before moving recordings." = "Stoppa inspelningen och stäng videoredigeraren innan du flyttar inspelningar.";
 "The recording library isn't available. New recordings are saved to the default location." = "Inspelningsbiblioteket är inte tillgängligt. Nya inspelningar sparas på standardplatsen.";
+
+/* Recordings in history */
+"Close this recording in the video editor first." = "Stäng först inspelningen i videoredigeraren.";
+"Move to Trash" = "Flytta till papperskorgen";
+"Recordings" = "Inspelningar";

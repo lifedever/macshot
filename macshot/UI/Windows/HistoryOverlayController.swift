@@ -25,10 +25,10 @@ final class HistoryOverlayController: NSObject, QLPreviewPanelDataSource, QLPrev
     /// controller, which left Quick Look messaging a freed object on the next
     /// key press or when it closed. Kept alive here until the preview closes.
     private static var quickLookOwner: HistoryOverlayController?
-    /// The entry a context menu was opened on. Menu items used to carry its
+    /// The item a context menu was opened on. Menu items used to carry its
     /// position, which a history write landing while the menu was open
     /// shifted onto a neighbouring capture — Delete removed the wrong one.
-    private var contextMenuEntryID: String?
+    private var contextMenuItem: HistoryPanelItem?
 
     private static let panelHeight: CGFloat = 240
     private static let animationDuration: TimeInterval = 0.12
@@ -104,6 +104,8 @@ final class HistoryOverlayController: NSObject, QLPreviewPanelDataSource, QLPrev
             name: NSApplication.didResignActiveNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(historyDidChange),
             name: ScreenshotHistory.didChange, object: ScreenshotHistory.shared)
+        NotificationCenter.default.addObserver(self, selector: #selector(historyDidChange),
+            name: RecordingLibrary.didChangeNotification, object: nil)
     }
 
     @objc private func historyDidChange() { contentView?.loadEntries() }
@@ -131,6 +133,7 @@ final class HistoryOverlayController: NSObject, QLPreviewPanelDataSource, QLPrev
 
     private func dismiss(immediate: Bool) {
         NotificationCenter.default.removeObserver(self, name: ScreenshotHistory.didChange, object: nil)
+        NotificationCenter.default.removeObserver(self, name: RecordingLibrary.didChangeNotification, object: nil)
         NotificationCenter.default.removeObserver(self,
             name: NSApplication.didResignActiveNotification, object: nil)
 
@@ -175,27 +178,62 @@ final class HistoryOverlayController: NSObject, QLPreviewPanelDataSource, QLPrev
 
     // MARK: - Actions
 
-    func copyAndDismiss(index: Int) {
-        ScreenshotHistory.shared.copyEntry(at: index)
-        let soundEnabled = UserDefaults.standard.object(forKey: "playCopySound") as? Bool ?? true
-        if soundEnabled {
-            CaptureSound.shared.play()
+    /// Where `entry` sits in history now; nil once it has gone.
+    private func captureIndex(_ entry: HistoryEntry) -> Int? {
+        ScreenshotHistory.shared.entries.firstIndex { $0.id == entry.id }
+    }
+
+    /// The file behind an item: the capture's image, or the take's movie.
+    private func fileURL(for item: HistoryPanelItem) -> URL? {
+        switch item {
+        case .capture(let entry):
+            return captureIndex(entry).map { ScreenshotHistory.shared.fileURL(for: ScreenshotHistory.shared.entries[$0]) }
+        case .recording(let take):
+            return FileManager.default.fileExists(atPath: take.mediaURL.path) ? take.mediaURL : nil
+        }
+    }
+
+    private var appDelegate: AppDelegate? { NSApp.delegate as? AppDelegate }
+
+    func copyAndDismiss(_ item: HistoryPanelItem) {
+        switch item {
+        case .capture(let entry):
+            guard let index = captureIndex(entry) else { return }
+            ScreenshotHistory.shared.copyEntry(at: index)
+            let soundEnabled = UserDefaults.standard.object(forKey: "playCopySound") as? Bool ?? true
+            if soundEnabled {
+                CaptureSound.shared.play()
+            }
+        case .recording(let take):
+            // Plays the copy sound itself.
+            appDelegate?.copyRecordingToClipboard(url: take.mediaURL)
         }
         dismiss()
     }
 
-    func deleteEntry(index: Int) {
-        let entries = ScreenshotHistory.shared.entries
-        guard index >= 0, index < entries.count else { return }
-        let entry = entries[index]
-        ScreenshotHistory.shared.removeEntry(id: entry.id)
+    func deleteEntry(_ item: HistoryPanelItem) {
+        switch item {
+        case .capture(let entry):
+            guard captureIndex(entry) != nil else { return }
+            ScreenshotHistory.shared.removeEntry(id: entry.id)
+        case .recording(let take):
+            do {
+                try RecordingLibrary.moveToTrash(take)
+            } catch {
+                appDelegate?.showFailureToast(error.localizedDescription)
+            }
+        }
         contentView?.loadEntries()
     }
 
-    func openInEditor(index: Int) {
-        let entries = ScreenshotHistory.shared.entries
-        guard index >= 0, index < entries.count else { return }
-        let entry = entries[index]
+    func openInEditor(_ item: HistoryPanelItem) {
+        guard case .capture(let entry) = item else {
+            guard let url = fileURL(for: item) else { return }
+            dismiss()
+            DispatchQueue.main.async { VideoEditorWindowController.open(url: url) }
+            return
+        }
+        guard captureIndex(entry) != nil else { return }
 
         // Try loading editable annotations + raw image first
         if entry.hasAnnotations,
@@ -222,19 +260,17 @@ final class HistoryOverlayController: NSObject, QLPreviewPanelDataSource, QLPrev
         }
     }
 
-    func pinToScreen(index: Int) {
-        let entries = ScreenshotHistory.shared.entries
-        guard index >= 0, index < entries.count else { return }
-        guard let image = ScreenshotHistory.shared.loadImage(for: entries[index]) else { return }
+    func pinToScreen(_ item: HistoryPanelItem) {
+        guard let entry = item.capture, captureIndex(entry) != nil,
+              let image = ScreenshotHistory.shared.loadImage(for: entry) else { return }
         dismiss()
         // Post notification so AppDelegate handles pin creation (it owns pinControllers)
         NotificationCenter.default.post(name: .init("macshot.pinFromHistory"), object: image)
     }
 
-    func quickLook(index: Int) {
-        let entries = ScreenshotHistory.shared.entries
-        guard index >= 0, index < entries.count else { return }
-        quickLookURL = ScreenshotHistory.shared.fileURL(for: entries[index])
+    func quickLook(_ item: HistoryPanelItem) {
+        guard let url = fileURL(for: item) else { return }
+        quickLookURL = url
         dismiss()
         guard let qlPanel = QLPreviewPanel.shared() else { return }
         Self.quickLookOwner = self
@@ -258,53 +294,56 @@ final class HistoryOverlayController: NSObject, QLPreviewPanelDataSource, QLPrev
         }
     }
 
-    func saveToFile(index: Int) {
-        let entries = ScreenshotHistory.shared.entries
-        guard index >= 0, index < entries.count else { return }
-        let entry = entries[index]
-        guard let image = ScreenshotHistory.shared.loadImage(for: entry) else { return }
-
-        let template = UserDefaults.standard.string(forKey: FilenameFormatter.userDefaultsKey) ?? FilenameFormatter.defaultTemplate
-        let base = FilenameFormatter.format(template: template, date: entry.timestamp)
-        ImageSaveService.showSavePanel(
-            for: image,
-            suggestedFilename: "\(base).\(ImageEncoder.fileExtension)",
-            panelLevel: .floating
-        )
+    func saveToFile(_ item: HistoryPanelItem) {
+        switch item {
+        case .capture(let entry):
+            guard captureIndex(entry) != nil,
+                  let image = ScreenshotHistory.shared.loadImage(for: entry) else { return }
+            let template = UserDefaults.standard.string(forKey: FilenameFormatter.userDefaultsKey) ?? FilenameFormatter.defaultTemplate
+            let base = FilenameFormatter.format(template: template, date: entry.timestamp)
+            ImageSaveService.showSavePanel(
+                for: image,
+                suggestedFilename: "\(base).\(ImageEncoder.fileExtension)",
+                panelLevel: .floating
+            )
+        case .recording(let take):
+            dismiss()
+            appDelegate?.promptToSaveRecording(tmpURL: take.mediaURL)
+        }
     }
 
     #if !OFFLINE
-    func uploadEntry(index: Int) {
-        let entries = ScreenshotHistory.shared.entries
-        guard index >= 0, index < entries.count else { return }
-        guard let image = ScreenshotHistory.shared.loadImage(for: entries[index]) else { return }
-        dismiss()
-        (NSApp.delegate as? AppDelegate)?.uploadImage(image)
+    func uploadEntry(_ item: HistoryPanelItem) {
+        switch item {
+        case .capture(let entry):
+            guard captureIndex(entry) != nil,
+                  let image = ScreenshotHistory.shared.loadImage(for: entry) else { return }
+            dismiss()
+            appDelegate?.uploadImage(image)
+        case .recording(let take):
+            dismiss()
+            appDelegate?.uploadRecording(url: take.mediaURL)
+        }
     }
     #endif
 
-    func runOCR(index: Int) {
-        let entries = ScreenshotHistory.shared.entries
-        guard index >= 0, index < entries.count else { return }
-        guard let image = ScreenshotHistory.shared.loadImage(for: entries[index]) else { return }
+    func runOCR(_ item: HistoryPanelItem) {
+        guard let entry = item.capture, captureIndex(entry) != nil,
+              let image = ScreenshotHistory.shared.loadImage(for: entry) else { return }
         dismiss()
-        (NSApp.delegate as? AppDelegate)?.runOCR(on: image)
+        appDelegate?.runOCR(on: image)
     }
 
-    func transformEntry(index: Int, transform: ImageContextTransform) {
-        let entries = ScreenshotHistory.shared.entries
-        guard index >= 0, index < entries.count else { return }
-        let entry = entries[index]
-        guard let image = ScreenshotHistory.shared.loadImage(for: entry),
+    func transformEntry(_ item: HistoryPanelItem, transform: ImageContextTransform) {
+        guard let entry = item.capture, captureIndex(entry) != nil,
+              let image = ScreenshotHistory.shared.loadImage(for: entry),
               let transformed = image.macshotTransformed(transform) else { return }
         ScreenshotHistory.shared.updateEntry(id: entry.id, compositedImage: transformed, rawImage: nil, annotations: nil)
         contentView?.loadEntries()
     }
 
-    func openEntry(index: Int, with appURL: URL) {
-        let entries = ScreenshotHistory.shared.entries
-        guard index >= 0, index < entries.count else { return }
-        let fileURL = ScreenshotHistory.shared.fileURL(for: entries[index])
+    func openEntry(_ item: HistoryPanelItem, with appURL: URL) {
+        guard let fileURL = fileURL(for: item) else { return }
         dismiss(immediate: true)
         NSWorkspace.shared.open(
             [fileURL],
@@ -313,110 +352,103 @@ final class HistoryOverlayController: NSObject, QLPreviewPanelDataSource, QLPrev
         )
     }
 
-    func shareEntry(index: Int, service: NSSharingService) {
-        let entries = ScreenshotHistory.shared.entries
-        guard index >= 0, index < entries.count else { return }
-        let fileURL = ScreenshotHistory.shared.fileURL(for: entries[index])
+    func shareEntry(_ item: HistoryPanelItem, service: NSSharingService) {
+        guard let fileURL = fileURL(for: item) else { return }
         dismiss(immediate: true)
         service.perform(withItems: [fileURL])
     }
 
+    func showInFinder(_ item: HistoryPanelItem) {
+        guard let fileURL = fileURL(for: item) else { return }
+        dismiss(immediate: true)
+        NSWorkspace.shared.activateFileViewerSelecting([fileURL])
+    }
+
     // MARK: - Context Menu
 
-    func showContextMenu(for globalIndex: Int, at point: NSPoint, in view: NSView) {
-        let entries = ScreenshotHistory.shared.entries
-        guard globalIndex >= 0, globalIndex < entries.count else { return }
-        let fileURL = ScreenshotHistory.shared.fileURL(for: entries[globalIndex])
-        contextMenuEntryID = entries[globalIndex].id
+    func showContextMenu(for item: HistoryPanelItem, at point: NSPoint, in view: NSView) {
+        guard let fileURL = fileURL(for: item) else { return }
+        contextMenuItem = item
+        let isCapture = !item.isRecording
 
         let menu = NSMenu()
 
         let copyItem = ImageContextMenu.item(title: L("Copy"), symbolName: "doc.on.doc", action: #selector(contextCopy(_:)), target: self, keyEquivalent: "c")
         copyItem.keyEquivalentModifierMask = [.command]
-        copyItem.tag = globalIndex
         menu.addItem(copyItem)
 
         let saveItem = ImageContextMenu.item(title: L("Save As..."), symbolName: "square.and.arrow.down", action: #selector(contextSave(_:)), target: self, keyEquivalent: "s")
         saveItem.keyEquivalentModifierMask = [.command]
-        saveItem.tag = globalIndex
         menu.addItem(saveItem)
 
         menu.addItem(NSMenuItem.separator())
 
         let editorItem = ImageContextMenu.item(title: L("Open in Editor"), symbolName: "pencil", action: #selector(contextOpenEditor(_:)), target: self, keyEquivalent: "e")
         editorItem.keyEquivalentModifierMask = [.command]
-        editorItem.tag = globalIndex
         menu.addItem(editorItem)
 
-        let pinItem = ImageContextMenu.item(title: L("Pin to Screen"), symbolName: "pin.fill", action: #selector(contextPin(_:)), target: self)
-        pinItem.tag = globalIndex
-        menu.addItem(pinItem)
+        if isCapture {
+            menu.addItem(ImageContextMenu.item(title: L("Pin to Screen"), symbolName: "pin.fill", action: #selector(contextPin(_:)), target: self))
+        }
 
         #if !OFFLINE
-        let uploadItem = ImageContextMenu.item(title: L("Upload"), symbolName: "icloud.and.arrow.up", action: #selector(contextUpload(_:)), target: self)
-        uploadItem.tag = globalIndex
-        menu.addItem(uploadItem)
+        menu.addItem(ImageContextMenu.item(title: L("Upload"), symbolName: "icloud.and.arrow.up", action: #selector(contextUpload(_:)), target: self))
         #endif
 
         let qlItem = ImageContextMenu.item(title: L("Quick Look"), symbolName: "eye", action: #selector(contextQuickLook(_:)), target: self, keyEquivalent: " ")
         qlItem.keyEquivalentModifierMask = []
-        qlItem.tag = globalIndex
         menu.addItem(qlItem)
 
-        let ocrItem = ImageContextMenu.item(title: L("Run OCR & QR"), symbolName: "text.viewfinder", action: #selector(contextOCR(_:)), target: self)
-        ocrItem.tag = globalIndex
-        menu.addItem(ocrItem)
+        if isCapture {
+            menu.addItem(ImageContextMenu.item(title: L("Run OCR & QR"), symbolName: "text.viewfinder", action: #selector(contextOCR(_:)), target: self))
+            menu.addItem(NSMenuItem.separator())
+            ImageContextMenu.addTransformItems(to: menu, target: self, action: #selector(contextTransform(_:)), representedObject: 0)
+        } else {
+            menu.addItem(ImageContextMenu.item(title: L("Show in Finder"), symbolName: "folder", action: #selector(contextShowInFinder(_:)), target: self))
+        }
 
         menu.addItem(NSMenuItem.separator())
-        ImageContextMenu.addTransformItems(to: menu, target: self, action: #selector(contextTransform(_:)), representedObject: globalIndex)
-
-        menu.addItem(NSMenuItem.separator())
-        let openWith = ImageContextMenu.openWithItem(fileURL: fileURL, target: self, action: #selector(contextOpenWith(_:)))
-        openWith.submenu?.items.forEach { $0.tag = globalIndex }
-        menu.addItem(openWith)
-
-        let share = ImageContextMenu.shareItem(fileURL: fileURL, target: self, action: #selector(contextShare(_:)))
-        share.submenu?.items.forEach { $0.tag = globalIndex }
-        menu.addItem(share)
+        menu.addItem(ImageContextMenu.openWithItem(fileURL: fileURL, target: self, action: #selector(contextOpenWith(_:))))
+        menu.addItem(ImageContextMenu.shareItem(fileURL: fileURL, target: self, action: #selector(contextShare(_:))))
 
         menu.addItem(NSMenuItem.separator())
 
-        let deleteItem = ImageContextMenu.item(title: L("Delete"), symbolName: "trash", action: #selector(contextDelete(_:)), target: self, keyEquivalent: "\u{8}")
+        // A take goes to the Trash, folder and all; a capture leaves history.
+        let deleteTitle = isCapture ? L("Delete") : L("Move to Trash")
+        let deleteItem = ImageContextMenu.item(title: deleteTitle, symbolName: "trash", action: #selector(contextDelete(_:)), target: self, keyEquivalent: "\u{8}")
         deleteItem.keyEquivalentModifierMask = []
-        deleteItem.tag = globalIndex
         menu.addItem(deleteItem)
 
         NSMenu.popUpContextMenu(menu, with: NSApp.currentEvent!, for: view)
     }
 
-    /// Where the context menu's entry is now; -1 once it has gone, which
-    /// every action below treats as nothing to do.
-    private var contextMenuIndex: Int {
-        guard let id = contextMenuEntryID else { return -1 }
-        return ScreenshotHistory.shared.entries.firstIndex { $0.id == id } ?? -1
+    private func withContextItem(_ action: (HistoryPanelItem) -> Void) {
+        guard let item = contextMenuItem else { return }
+        action(item)
     }
 
-    @objc private func contextCopy(_ sender: NSMenuItem) { copyAndDismiss(index: contextMenuIndex) }
-    @objc private func contextSave(_ sender: NSMenuItem) { saveToFile(index: contextMenuIndex) }
-    @objc private func contextOpenEditor(_ sender: NSMenuItem) { openInEditor(index: contextMenuIndex) }
-    @objc private func contextPin(_ sender: NSMenuItem) { pinToScreen(index: contextMenuIndex) }
+    @objc private func contextCopy(_ sender: NSMenuItem) { withContextItem(copyAndDismiss) }
+    @objc private func contextSave(_ sender: NSMenuItem) { withContextItem(saveToFile) }
+    @objc private func contextOpenEditor(_ sender: NSMenuItem) { withContextItem(openInEditor) }
+    @objc private func contextPin(_ sender: NSMenuItem) { withContextItem(pinToScreen) }
     #if !OFFLINE
-    @objc private func contextUpload(_ sender: NSMenuItem) { uploadEntry(index: contextMenuIndex) }
+    @objc private func contextUpload(_ sender: NSMenuItem) { withContextItem(uploadEntry) }
     #endif
-    @objc private func contextQuickLook(_ sender: NSMenuItem) { quickLook(index: contextMenuIndex) }
-    @objc private func contextOCR(_ sender: NSMenuItem) { runOCR(index: contextMenuIndex) }
-    @objc private func contextDelete(_ sender: NSMenuItem) { deleteEntry(index: contextMenuIndex) }
+    @objc private func contextQuickLook(_ sender: NSMenuItem) { withContextItem(quickLook) }
+    @objc private func contextOCR(_ sender: NSMenuItem) { withContextItem(runOCR) }
+    @objc private func contextDelete(_ sender: NSMenuItem) { withContextItem(deleteEntry) }
+    @objc private func contextShowInFinder(_ sender: NSMenuItem) { withContextItem(showInFinder) }
     @objc private func contextTransform(_ sender: NSMenuItem) {
         guard let transform = ImageContextTransform(rawValue: sender.tag) else { return }
-        transformEntry(index: contextMenuIndex, transform: transform)
+        withContextItem { transformEntry($0, transform: transform) }
     }
     @objc private func contextOpenWith(_ sender: NSMenuItem) {
         guard let appURL = sender.representedObject as? URL else { return }
-        openEntry(index: contextMenuIndex, with: appURL)
+        withContextItem { openEntry($0, with: appURL) }
     }
     @objc private func contextShare(_ sender: NSMenuItem) {
         guard let service = sender.representedObject as? NSSharingService else { return }
-        shareEntry(index: contextMenuIndex, service: service)
+        withContextItem { shareEntry($0, service: service) }
     }
 
     // MARK: - QLPreviewPanelDataSource
@@ -451,13 +483,13 @@ private final class BackdropView: NSView {
 private enum HistoryFilter: String, CaseIterable {
     case all = "All"
     case screenshots = "Screenshots"
-    case gifs = "GIFs"
+    case recordings = "Recordings"
 
-    func matches(_ entry: HistoryEntry) -> Bool {
+    func matches(_ item: HistoryPanelItem) -> Bool {
         switch self {
         case .all: return true
-        case .screenshots: return entry.fileExtension == "png"
-        case .gifs: return entry.fileExtension == "gif"
+        case .screenshots: return !item.isRecording
+        case .recordings: return item.isRecording
         }
     }
 }
@@ -468,7 +500,9 @@ private final class HistoryPanelView: NSView, NSDraggingSource {
 
     weak var controller: HistoryOverlayController?
 
-    private var entries: [HistoryEntry] = []
+    private var items: [HistoryPanelItem] = []
+    /// Takes whose poster frame could not be read; not retried every draw.
+    private var previewsUnavailable: Set<String> = []
     private var filteredIndices: [Int] = []
     /// Bounded preview cache. Eager-loading every entry's preview was hammering
     /// memory for users with hundreds of history items (#mem-audit). Now we
@@ -544,11 +578,14 @@ private final class HistoryPanelView: NSView, NSDraggingSource {
     // MARK: - Data Loading
 
     func loadEntries() {
-        let updated = ScreenshotHistory.shared.entries
-        let updatedByID = Dictionary(uniqueKeysWithValues: updated.map { ($0.id, $0) })
-        let changedIDs = Set(entries.compactMap { old -> String? in
-            guard let new = updatedByID[old.id],
-                  new.revision == old.revision else { return old.id }
+        let updated = HistoryPanelItem.merged(
+            captures: ScreenshotHistory.shared.entries,
+            takes: RecordingLibrary.takes(),
+            orderByLastEdit: ScreenshotHistory.orderByLastEdit)
+        let updatedByID = Dictionary(updated.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        let changedIDs = Set(items.compactMap { old -> String? in
+            guard let new = updatedByID[old.id] else { return old.id }
+            if let before = old.capture, let after = new.capture, before.revision != after.revision { return old.id }
             return nil
         })
         for id in changedIDs {
@@ -556,9 +593,9 @@ private final class HistoryPanelView: NSView, NSDraggingSource {
             previewLoadsInFlight.removeValue(forKey: id)
         }
         previewLRU.removeAll { changedIDs.contains($0) }
-        let selectedID = globalIndexForSelected().map { entries[$0].id }
+        let selectedID = globalIndexForSelected().map { items[$0].id }
         let selectedPosition = selectedIndex
-        entries = updated
+        items = updated
         applyFilter(keepingSelectionOf: selectedID, near: selectedPosition)
         // Previews are loaded lazily as cards become visible — see
         // requestPreviewIfNeeded(for:) and prefetchPreviewsAroundVisible().
@@ -572,24 +609,42 @@ private final class HistoryPanelView: NSView, NSDraggingSource {
     /// Return the cached preview for `entry`, or trigger an async load and
     /// return nil. Keeps the cache bounded by evicting the oldest non-visible
     /// entry when over the soft cap.
-    private func cachedPreview(for entry: HistoryEntry) -> NSImage? {
-        if let img = previews[entry.id] {
+    private func cachedPreview(for item: HistoryPanelItem) -> NSImage? {
+        if let img = previews[item.id] {
             // Bump to MRU
-            if let pos = previewLRU.firstIndex(of: entry.id) {
+            if let pos = previewLRU.firstIndex(of: item.id) {
                 previewLRU.remove(at: pos)
             }
-            previewLRU.append(entry.id)
+            previewLRU.append(item.id)
             return img
         }
-        requestPreviewIfNeeded(for: entry)
+        requestPreviewIfNeeded(for: item)
         return nil
     }
 
-    private func requestPreviewIfNeeded(for entry: HistoryEntry) {
-        let id = entry.id
-        guard previews[id] == nil, previewLoadsInFlight[id] == nil else { return }
+    private func requestPreviewIfNeeded(for item: HistoryPanelItem) {
+        let id = item.id
+        guard previews[id] == nil, previewLoadsInFlight[id] == nil,
+              !previewsUnavailable.contains(id) else { return }
         let token = UUID()
         previewLoadsInFlight[id] = token
+        guard case .capture(let entry) = item else {
+            guard case .recording(let take) = item else { return }
+            RecordingThumbnails.shared.load(take) { [weak self] info in
+                guard let self, self.previewLoadsInFlight[id] == token else { return }
+                self.previewLoadsInFlight.removeValue(forKey: id)
+                guard let image = info?.image else {
+                    self.previewsUnavailable.insert(id)
+                    self.needsDisplay = true
+                    return
+                }
+                self.previews[id] = NSImage(cgImage: image, size: .zero)
+                self.previewLRU.append(id)
+                self.evictPreviewsIfNeeded()
+                self.needsDisplay = true
+            }
+            return
+        }
         // Resolve the immutable revision URLs while history is main-isolated.
         // Only ImageIO decoding belongs on the worker, never shared NSImage or
         // the mutable history index.
@@ -653,8 +708,8 @@ private final class HistoryPanelView: NSView, NSDraggingSource {
         let hi = min(filteredIndices.count - 1, lastVisible + look)
         for fi in lo...hi {
             let globalIndex = filteredIndices[fi]
-            if globalIndex < entries.count {
-                ids.insert(entries[globalIndex].id)
+            if globalIndex < items.count {
+                ids.insert(items[globalIndex].id)
             }
         }
         return ids
@@ -666,10 +721,10 @@ private final class HistoryPanelView: NSView, NSDraggingSource {
     private func prefetchPreviewsAroundVisible() {
         let ids = currentVisibleAndPrefetchIDs()
         guard !ids.isEmpty else { return }
-        let entriesByID = Dictionary(uniqueKeysWithValues: entries.map { ($0.id, $0) })
+        let itemsByID = Dictionary(items.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
         for id in ids {
-            if let entry = entriesByID[id] {
-                requestPreviewIfNeeded(for: entry)
+            if let item = itemsByID[id] {
+                requestPreviewIfNeeded(for: item)
             }
         }
     }
@@ -680,8 +735,8 @@ private final class HistoryPanelView: NSView, NSDraggingSource {
     /// Resetting to the first card there meant a second ⌫ deleted the newest
     /// capture instead of the next one, with the list jumped back to the start.
     private func applyFilter(keepingSelectionOf selectedID: String? = nil, near position: Int? = nil) {
-        filteredIndices = entries.enumerated().compactMap { (i, entry) in
-            activeFilter.matches(entry) ? i : nil
+        filteredIndices = items.enumerated().compactMap { (i, item) in
+            activeFilter.matches(item) ? i : nil
         }
         let isReload = selectedID != nil || position != nil
         if !isReload {
@@ -690,7 +745,7 @@ private final class HistoryPanelView: NSView, NSDraggingSource {
             // can immediately arrow/Enter without moving the mouse.
             selectedIndex = filteredIndices.isEmpty ? -1 : 0
         } else if let id = selectedID,
-                  let kept = filteredIndices.firstIndex(where: { entries[$0].id == id }) {
+                  let kept = filteredIndices.firstIndex(where: { items[$0].id == id }) {
             selectedIndex = kept
         } else {
             // The selected card went away: select what took its place.
@@ -765,14 +820,15 @@ private final class HistoryPanelView: NSView, NSDraggingSource {
 
             guard rect.maxX > 0, rect.origin.x < bounds.width else { continue }
 
-            let entry = entries[globalIndex]
+            guard items.indices.contains(globalIndex) else { continue }
+            let item = items[globalIndex]
             let isHovered = (fi == hoveredIndex)
             // Hover and keyboard selection share one outline: `selectedIndex`
             // always follows the hovered card, so there's never a flicker
             // when the mouse moves over a different card than the arrow-key
             // selection.
             let isSelected = (fi == selectedIndex)
-            drawCard(entry: entry, rect: rect, isHovered: isHovered, isSelected: isSelected)
+            drawCard(item: item, rect: rect, isHovered: isHovered, isSelected: isSelected)
         }
 
         drawScrollFades(in: cardClip)
@@ -783,7 +839,7 @@ private final class HistoryPanelView: NSView, NSDraggingSource {
         switch filter {
         case .all: return L("All")
         case .screenshots: return L("Screenshots")
-        case .gifs: return L("GIFs")
+        case .recordings: return L("Recordings")
         }
     }
 
@@ -863,7 +919,7 @@ private final class HistoryPanelView: NSView, NSDraggingSource {
         }
     }
 
-    private func drawCard(entry: HistoryEntry, rect: NSRect, isHovered: Bool, isSelected: Bool) {
+    private func drawCard(item: HistoryPanelItem, rect: NSRect, isHovered: Bool, isSelected: Bool) {
         // Card background — same slight lift for hover OR keyboard selection
         // so both states feel equivalent.
         let lifted = isHovered || isSelected
@@ -890,7 +946,7 @@ private final class HistoryPanelView: NSView, NSDraggingSource {
             width: rect.width - imgPad * 2,
             height: rect.height - labelH - imgPad)
 
-        if let img = cachedPreview(for: entry) {
+        if let img = cachedPreview(for: item) {
             let aspect = img.size.width / max(img.size.height, 1)
             var drawRect: NSRect
             if aspect > imgArea.width / imgArea.height {
@@ -927,14 +983,24 @@ private final class HistoryPanelView: NSView, NSDraggingSource {
                                       y: drawRect.midY - hintSize.height / 2),
                           withAttributes: hintAttrs)
             }
+            if item.isRecording { drawRecordingBadge(in: drawRect) }
         } else {
             // Loading placeholder
             NSColor.white.withAlphaComponent(0.03).setFill()
             NSBezierPath(roundedRect: imgArea, xRadius: 6, yRadius: 6).fill()
+            if item.isRecording { drawRecordingBadge(in: imgArea) }
         }
 
         // Label
-        let labelStr = "\(entry.pixelWidth) x \(entry.pixelHeight)  ·  \(entry.timeAgoString)" as NSString
+        let labelStr: NSString
+        switch item {
+        case .capture(let entry):
+            labelStr = "\(entry.pixelWidth) x \(entry.pixelHeight)  ·  \(entry.timeAgoString)" as NSString
+        case .recording(let take):
+            let duration = RecordingThumbnails.shared.cached(take).map { RecordingThumbnails.durationText($0.duration) }
+            labelStr = [duration, HistoryEntry.timeAgo(take.createdAt)].compactMap { $0 }
+                .joined(separator: "  ·  ") as NSString
+        }
         let labelAttrs: [NSAttributedString.Key: Any] = [
             .font: NSFont.systemFont(ofSize: 11, weight: .medium),
             .foregroundColor: NSColor.white.withAlphaComponent(lifted ? 0.85 : 0.45),
@@ -944,6 +1010,22 @@ private final class HistoryPanelView: NSView, NSDraggingSource {
             at: NSPoint(x: rect.midX - labelSize.width / 2,
                         y: rect.maxY - labelH + (labelH - labelSize.height) / 2),
             withAttributes: labelAttrs)
+    }
+
+    /// A video glyph in the image's corner, so a take reads as a movie
+    /// before it is played.
+    private func drawRecordingBadge(in imageRect: NSRect) {
+        let config = NSImage.SymbolConfiguration(pointSize: 10, weight: .semibold)
+            .applying(NSImage.SymbolConfiguration(paletteColors: [.white]))
+        guard let glyph = NSImage(systemSymbolName: "video.fill", accessibilityDescription: L("Recordings"))?
+            .withSymbolConfiguration(config) else { return }
+        let pill = NSRect(x: imageRect.minX + 6, y: imageRect.minY + 6, width: 26, height: 18)
+        NSColor.black.withAlphaComponent(0.6).setFill()
+        NSBezierPath(roundedRect: pill, xRadius: 5, yRadius: 5).fill()
+        let size = glyph.size
+        glyph.draw(in: NSRect(x: pill.midX - size.width / 2, y: pill.midY - size.height / 2,
+                              width: size.width, height: size.height),
+                   from: .zero, operation: .sourceOver, fraction: 1, respectFlipped: true, hints: nil)
     }
 
     private func drawScrollFades(in clipRect: NSRect) {
@@ -1057,9 +1139,13 @@ private final class HistoryPanelView: NSView, NSDraggingSource {
               filterIndex < filteredIndices.count,
               filterIndex < cardRects.count else { return }
         let globalIndex = filteredIndices[filterIndex]
-        guard entries.indices.contains(globalIndex) else { return }
-        let entry = entries[globalIndex]
-        let fileURL = ScreenshotHistory.shared.fileURL(for: entry) as NSURL
+        guard items.indices.contains(globalIndex) else { return }
+        let item = items[globalIndex]
+        let fileURL: NSURL
+        switch item {
+        case .capture(let entry): fileURL = ScreenshotHistory.shared.fileURL(for: entry) as NSURL
+        case .recording(let take): fileURL = take.mediaURL as NSURL
+        }
 
         // Use NSURL as the pasteboard writer — it automatically provides
         // the file URL in all standard pasteboard types that apps expect
@@ -1069,7 +1155,7 @@ private final class HistoryPanelView: NSView, NSDraggingSource {
         // Use the preview as the drag image
         var cardRect = cardRects[filterIndex]
         cardRect.origin.x -= scrollOffset
-        if let preview = previews[entry.id] {
+        if let preview = previews[item.id] {
             dragItem.setDraggingFrame(cardRect, contents: preview)
         }
 
@@ -1139,7 +1225,8 @@ private final class HistoryPanelView: NSView, NSDraggingSource {
 
         // Click — copy to clipboard
         let globalIndex = filteredIndices[mouseDownCardIndex]
-        controller?.copyAndDismiss(index: globalIndex)
+        guard items.indices.contains(globalIndex) else { return }
+        controller?.copyAndDismiss(items[globalIndex])
     }
 
     override func rightMouseDown(with event: NSEvent) {
@@ -1153,7 +1240,8 @@ private final class HistoryPanelView: NSView, NSDraggingSource {
 
         guard clickedCard >= 0, clickedCard < filteredIndices.count else { return }
         let globalIndex = filteredIndices[clickedCard]
-        controller?.showContextMenu(for: globalIndex, at: point, in: self)
+        guard items.indices.contains(globalIndex) else { return }
+        controller?.showContextMenu(for: items[globalIndex], at: point, in: self)
     }
 
     // MARK: - Keyboard
@@ -1231,30 +1319,35 @@ private final class HistoryPanelView: NSView, NSDraggingSource {
         return filteredIndices[selectedIndex]
     }
 
+    private var selectedItem: HistoryPanelItem? {
+        guard let index = globalIndexForSelected(), items.indices.contains(index) else { return nil }
+        return items[index]
+    }
+
     private func activateSelectedForCopy() {
-        guard let idx = globalIndexForSelected() else { return }
-        controller?.copyAndDismiss(index: idx)
+        guard let item = selectedItem else { return }
+        controller?.copyAndDismiss(item)
     }
 
     private func activateSelectedForOpenEditor() {
-        guard let idx = globalIndexForSelected() else { return }
-        controller?.openInEditor(index: idx)
+        guard let item = selectedItem else { return }
+        controller?.openInEditor(item)
     }
 
     private func activateSelectedForSave() {
-        guard let idx = globalIndexForSelected() else { return }
-        controller?.saveToFile(index: idx)
+        guard let item = selectedItem else { return }
+        controller?.saveToFile(item)
     }
 
     private func activateSelectedForQuickLook() {
-        guard let idx = globalIndexForSelected() else { return }
-        controller?.quickLook(index: idx)
+        guard let item = selectedItem else { return }
+        controller?.quickLook(item)
     }
 
     private func activateSelectedForDelete() {
-        guard let idx = globalIndexForSelected() else { return }
+        guard let item = selectedItem else { return }
         // loadEntries (called from deleteEntry) moves the selection to the
         // card that takes this one's place, so repeated ⌫ works along the row.
-        controller?.deleteEntry(index: idx)
+        controller?.deleteEntry(item)
     }
 }

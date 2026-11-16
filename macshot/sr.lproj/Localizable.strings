@@ -1045,3 +1045,8 @@
 "Recording Library" = "Библиотека снимака";
 "Stop the recording and close the video editor before moving recordings." = "Зауставите снимање и затворите видео-уређивач пре премештања снимака.";
 "The recording library isn't available. New recordings are saved to the default location." = "Библиотека снимака није доступна. Нови снимци се чувају на подразумеваној локацији.";
+
+/* Recordings in history */
+"Close this recording in the video editor first." = "Прво затворите овај снимак у видео-уређивачу.";
+"Move to Trash" = "Премести у отпад";
+"Recordings" = "Снимци";

@@ -1042,3 +1042,8 @@
 "Recording Library" = "録画ライブラリ";
 "Stop the recording and close the video editor before moving recordings." = "録画を移動する前に、録画を停止してビデオエディタを閉じてください。";
 "The recording library isn't available. New recordings are saved to the default location." = "録画ライブラリを使用できません。新しい録画はデフォルトの場所に保存されます。";
+
+/* Recordings in history */
+"Close this recording in the video editor first." = "先にビデオエディタでこの録画を閉じてください。";
+"Move to Trash" = "ゴミ箱に入れる";
+"Recordings" = "録画";

@@ -1043,3 +1043,8 @@
 "Recording Library" = "Бібліотека записів";
 "Stop the recording and close the video editor before moving recordings." = "Зупиніть запис і закрийте відеоредактор, перш ніж переміщувати записи.";
 "The recording library isn't available. New recordings are saved to the default location." = "Бібліотека записів недоступна. Нові записи зберігаються в місце за замовчуванням.";
+
+/* Recordings in history */
+"Close this recording in the video editor first." = "Спершу закрийте цей запис у відеоредакторі.";
+"Move to Trash" = "Перемістити в Смітник";
+"Recordings" = "Записи";

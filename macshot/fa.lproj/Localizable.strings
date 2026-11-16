@@ -1050,3 +1050,8 @@
 "Recording Library" = "کتابخانه ضبط‌ها";
 "Stop the recording and close the video editor before moving recordings." = "پیش از انتقال ضبط‌ها، ضبط را متوقف کنید و ویرایشگر ویدیو را ببندید.";
 "The recording library isn't available. New recordings are saved to the default location." = "کتابخانه ضبط‌ها در دسترس نیست. ضبط‌های جدید در مکان پیش‌فرض ذخیره می‌شوند.";
+
+/* Recordings in history */
+"Close this recording in the video editor first." = "ابتدا این ضبط را در ویرایشگر ویدیو ببندید.";
+"Move to Trash" = "انتقال به سطل زباله";
+"Recordings" = "ضبط‌ها";
