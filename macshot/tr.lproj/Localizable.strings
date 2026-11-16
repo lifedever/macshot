@@ -92,7 +92,30 @@
 "Color Sampler" = "Renk Örnekleyici";
 "Color Picker" = "Renk Seçici";
 "Select & Edit" = "Seç ve Düzenle";
+"Select & Move" = "Seç ve Taşı";
 "Color" = "Renk";
+
+/* Measure Scale */
+"Measure Scale" = "Ölçüm Ölçeği";
+"Set Scale..." = "Ölçek Ayarla...";
+"Set Scale" = "Ölçek Ayarla";
+"Scale: %@" = "Ölçek: %@";
+"Remove Scale" = "Ölçeği Kaldır";
+"Show lengths in" = "Uzunluk birimi";
+"Current scale: 1 %@ = %@ px" = "Geçerli ölçek: 1 %@ = %@ px";
+"Draw Reference Line" = "Referans Çizgisi Çiz";
+"Draw a measure line along something whose length you know" = "Uzunluğunu bildiğiniz bir şey boyunca ölçüm çizgisi çizin";
+"Draw or select a measure line along something whose length you know, then enter that length." = "Uzunluğunu bildiğiniz bir şey boyunca bir ölçüm çizgisi çizin veya seçin, ardından o uzunluğu girin.";
+"This line is %d px long. How long is it in real life?" = "Bu çizgi %d px uzunluğunda. Gerçekte ne kadar uzun?";
+"e.g. 90 mm or 3 1/2 in" = "ör. 90 mm veya 3 1/2 in";
+"Enter a length, like 90 mm, 3.5 in or 3 1/2 in." = "90 mm, 3.5 in veya 3 1/2 in gibi bir uzunluk girin.";
+"Real-world lengths are estimates. They are only reliable for things in the same plane as the reference line." = "Gerçek uzunluklar tahminidir. Yalnızca referans çizgisiyle aynı düzlemdeki nesneler için güvenilirdir.";
+"Measure in mm, cm, m, inches or feet using something of known length in the image" = "Görseldeki uzunluğu bilinen bir şeyle mm, cm, m, inç veya fit cinsinden ölç";
+"Millimeters (mm)" = "Milimetre (mm)";
+"Centimeters (cm)" = "Santimetre (cm)";
+"Meters (m)" = "Metre (m)";
+"Inches (in)" = "İnç (in)";
+"Feet (ft)" = "Fit (ft)";
 
 /* Toolbar - Actions */
 "Copy to Clipboard" = "Panoya Kopyala";
@@ -153,6 +176,7 @@
 "Smooth" = "Yumuşat";
 "Refined" = "İnce";
 "Smart" = "Akıllı";
+"Smart snaps the highlighter to lines of text. Hold Shift for a straight line." = "Akıllı mod, vurgulayıcıyı metin satırlarına hizalar. Düz bir çizgi için Shift tuşunu basılı tutun.";
 "Padding" = "Dolgu";
 "Shadow" = "Gölge";
 "Right-click to add points" = "Nokta eklemek için sağ tıklayın";
@@ -210,6 +234,7 @@
 "Play sound on capture" = "Yakalama sırasında ses çal";
 "Play sound on copy" = "Kopyalamada ses çal";
 "Remember last selected tool" = "Son seçilen aracı hatırla";
+"Start captures in move mode" = "Yakalamaları taşıma modunda başlat";
 "Show floating thumbnail after capture" = "Yakalamadan sonra kayan küçük resim göster";
 "Launch at login" = "Oturum açılışında başlat";
 "Show snap alignment guides" = "Hizalama kılavuzlarını göster";
@@ -264,6 +289,8 @@
 "Move down" = "Aşağı taşı";
 "Output" = "Çıktı";
 "Image format:" = "Görsel biçimi:";
+"Also copy to the clipboard in this format" = "Panoya bu biçimde de kopyala";
+"PNG is always included so every app can paste" = "Her uygulamanın yapıştırabilmesi için PNG her zaman eklenir";
 "Quality:" = "Kalite:";
 "Image" = "Görsel";
 "Image format" = "Görsel biçimi";
@@ -432,7 +459,7 @@
 "Upload History" = "Yükleme Geçmişi";
 "No uploads yet." = "Henüz yükleme yok.";
 "Base URL for public access. If empty, the S3 endpoint URL is used (may not be publicly accessible)." = "Genel erişim için temel URL. Boşsa S3 uç nokta URL'si kullanılır (herkese açık olmayabilir).";
-"A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "Paylaşımlı bir anahtar dahildir — hız sınırına ulaşırsanız imgbb.com/api adresinden kendi ücretsiz anahtarınızı alın. Yalnızca görseller (video desteği yok).";
+"A shared key is included. Get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "Paylaşımlı bir anahtar dahildir, hız sınırına ulaşırsanız imgbb.com/api adresinden kendi ücretsiz anahtarınızı alın. Yalnızca görseller (video desteği yok).";
 "Works with AWS S3, Cloudflare R2, MinIO, DigitalOcean Spaces, Backblaze B2, and other S3-compatible services. Supports images and videos." = "AWS S3, Cloudflare R2, MinIO, DigitalOcean Spaces, Backblaze B2 ve diğer S3 uyumlu servislerle çalışır. Görselleri ve videoları destekler.";
 "Configure S3 in Preferences" = "Tercihlerde S3'ü yapılandırın";
 "Sign in to Google Drive in Preferences" = "Tercihlerde Google Drive'a giriş yapın";
@@ -458,6 +485,7 @@
 "Licensed under the GPLv3" = "GPLv3 lisansı altında";
 "Licensed under GPLv3" = "GPLv3 lisansı altında";
 "A free, open-source screenshot & screen recording tool for macOS.\nFully native — built with Swift and AppKit." = "macOS için ücretsiz, açık kaynaklı ekran görüntüsü ve ekran kaydı aracı.\nTamamen yerel — Swift ve AppKit ile geliştirilmiştir.";
+"A free, open-source screenshot & screen recording tool for macOS.\nFully native, built with Swift and AppKit." = "macOS için ücretsiz, açık kaynaklı ekran görüntüsü ve ekran kaydı aracı.\nTamamen yerel, Swift ve AppKit ile geliştirilmiştir.";
 
 /* Alerts */
 "No Image on Clipboard" = "Panoda Görsel Yok";
@@ -479,11 +507,17 @@
 
 /* Permission Onboarding */
 "Welcome to macshot" = "macshot'a Hoş Geldiniz";
+"Welcome back to macshot" = "macshot'a tekrar hoş geldin";
+"Turn Screen Recording back on" = "Ekran Kaydı'nı yeniden aç";
+"After some updates, macOS asks you to allow macshot again. Your settings and captures are safe. If macshot is already in the list, select it, click the minus button (−) to remove it, then click the plus button (+) and add macshot again." = "Bazı güncellemelerden sonra macOS, macshot için erişimi yeniden onaylamanı ister. Ayarların ve görüntülerin güvende. macshot listede zaten varsa seç, kaldırmak için eksi düğmesine (−) tıkla, ardından artı düğmesine (+) tıklayıp macshot'u yeniden ekle.";
 "macshot needs one permission" = "macshot bir izne ihtiyaç duyar";
 "Screen Recording not yet granted" = "Ekran Kaydı izni henüz verilmedi";
 "Screen Recording granted!" = "Ekran Kaydı izni verildi!";
 "Enable macshot, then try taking a screenshot" = "macshot'u etkinleştirin, ardından ekran görüntüsü almayı deneyin";
 "Open Screen Recording Settings" = "Ekran Kaydı Ayarlarını Aç";
+"Still not working? Run this command in Terminal, then restart macshot." = "Hâlâ çalışmıyor mu? Bu komutu Terminal'de çalıştırın, ardından macshot'u yeniden başlatın.";
+"Copy Command" = "Komutu Kopyala";
+"Restart macshot" = "macshot'u Yeniden Başlat";
 "Continue" = "Devam";
 
 /* OCR Window */
@@ -542,6 +576,22 @@
 "Could not encode the image." = "Görsel kodlanamadı.";
 "Could not save the screenshot: %@" = "Ekran görüntüsü kaydedilemedi: %@";
 "Could not save the screenshot to history." = "Ekran görüntüsü geçmişe kaydedilemedi.";
+
+/* Project Files */
+"Save Project" = "Projeyi Kaydet";
+"Save Project As..." = "Projeyi Farklı Kaydet...";
+"Save as Editable Project (⇧⌘S)" = "Düzenlenebilir Proje Olarak Kaydet (⇧⌘S)";
+"Saves the image with every annotation still editable. Open the file in macshot to keep editing." = "Görseli tüm açıklamalar düzenlenebilir kalacak şekilde kaydeder. Düzenlemeye devam etmek için dosyayı macshot'ta açın.";
+"Open..." = "Aç...";
+"Choose an image or macshot project to open in the editor" = "Düzenleyicide açmak için bir görsel veya macshot projesi seçin";
+"Could not open “%@”" = "“%@” açılamadı";
+"Could not save the project: %@" = "Proje kaydedilemedi: %@";
+"Some annotations in this project could not be restored, so it opened flattened. The original file is unchanged." = "Bu projedeki bazı açıklamalar geri yüklenemedi, bu yüzden düzleştirilmiş olarak açıldı. Orijinal dosya değişmedi.";
+"The file is not a macshot project or is damaged." = "Dosya bir macshot projesi değil veya hasarlı.";
+"The project could not be prepared for saving." = "Proje kaydetmeye hazırlanamadı.";
+"The image is too large to save as an editable project." = "Görüntü, düzenlenebilir proje olarak kaydedilemeyecek kadar büyük.";
+"The project file is too large to open." = "Proje dosyası açılamayacak kadar büyük.";
+"The project's image could not be read." = "Projenin görseli okunamadı.";
 
 /* Scroll Capture HUD */
 "Auto Scroll" = "Otomatik Kaydır";
@@ -613,6 +663,7 @@
 "Settings..." = "Ayarlar...";
 "macshot Settings" = "macshot Ayarları";
 "Also open in Editor" = "Düzenleyicide de aç";
+"Open in Editor right after selection" = "Seçimden hemen sonra düzenleyicide aç";
 "Close editor after copying" = "Kopyaladıktan sonra düzenleyiciyi kapat";
 "Hide controls" = "Kontrolleri gizle";
 "Hide recording controls" = "Kayıt kontrollerini gizle";
@@ -671,7 +722,7 @@
 "Clear History?" = "Geçmiş Temizlensin mi?";
 "This will permanently delete all screenshots from history." = "Bu işlem, geçmişteki tüm ekran görüntülerini kalıcı olarak siler.";
 "Click \"Set\" and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧) to set a shortcut." = "\"Ayarla\"ya tıklayın ve kısayol atamak için en az bir değiştirici tuş (⌘, ⌥, ⌃, ⇧) içeren bir tuş kombinasyonuna basın.";
-"Files are uploaded to this folder in your Google Drive. Leave empty to use \"macshot\". macshot can only use folders it created itself, so a folder you made in Drive with the same name won't be reused — a new one is created instead. Everything stays private — nothing is shared publicly." = "Dosyalar, Google Drive'ınızdaki bu klasöre yüklenir. \"macshot\" kullanmak için boş bırakın. macshot yalnızca kendi oluşturduğu klasörleri kullanabilir; bu nedenle Drive'da aynı adla oluşturduğunuz bir klasör yeniden kullanılmaz — bunun yerine yeni bir klasör oluşturulur. Her şey gizli kalır — hiçbir şey herkesle paylaşılmaz.";
+"Files are uploaded to this folder in your Google Drive. Leave empty to use \"macshot\". macshot can only use folders it created itself, so a folder you made in Drive with the same name won't be reused. A new one is created instead. Everything stays private and nothing is shared publicly." = "Dosyalar, Google Drive'ınızdaki bu klasöre yüklenir. \"macshot\" kullanmak için boş bırakın. macshot yalnızca kendi oluşturduğu klasörleri kullanabilir; bu nedenle Drive'da aynı adla oluşturduğunuz bir klasör yeniden kullanılmaz, bunun yerine yeni bir klasör oluşturulur. Her şey gizli kalır, hiçbir şey herkesle paylaşılmaz.";
 
 "Pressure" = "Basınç";
 
@@ -738,6 +789,10 @@
 "Background" = "Arka Plan";
 "Custom" = "Özel";
 "Theme:" = "Tema:";
+"Toolbar appearance:" = "Araç çubuğu görünümü:";
+"Dark" = "Koyu";
+"Light" = "Açık";
+"Follow System" = "Sisteme göre";
 "Application" = "Uygulama";
 "Capture area and extract text" = "Alan yakala ve metin çıkar";
 "Capture the full screen" = "Tam ekranı yakala";
@@ -751,7 +806,7 @@
 "Open this settings window" = "Bu ayarlar penceresini aç";
 "Quick capture (uses your Enter action)" = "Hızlı yakalama (Enter eyleminizi kullanır)";
 "Re-capture the last selected area" = "Son seçilen alanı yeniden yakala";
-"Screenshots only — captured window title (blank otherwise)" = "Yalnızca ekran görüntüleri — yakalanan pencere başlığı (aksi halde boş)";
+"Captured window title (screenshots only, blank otherwise)" = "Yalnızca ekran görüntüleri, yakalanan pencere başlığı (aksi halde boş)";
 "Show available filename tokens" = "Kullanılabilir dosya adı belirteçlerini göster";
 "Enable macshot:// URL scheme" = "macshot:// URL şemasını etkinleştir";
 "Show supported URL scheme commands" = "Desteklenen URL şeması komutlarını göster";
@@ -820,3 +875,162 @@
 "Play" = "Oynat";
 "Mute" = "Sesi kapat";
 "Unmute" = "Sesi aç";
+
+/* Video editor (Studio) */
+"%.1f× · follows pointer" = "%.1f× · imleci izler";
+"Add" = "Ekle";
+"Add Cut Here" = "Buraya Kesme Ekle";
+"Add Text Here" = "Buraya Metin Ekle";
+"Add Zoom Here" = "Buraya Yakınlaştırma Ekle";
+"Added %d captions" = "%d altyazı eklendi";
+"Added %d zooms" = "%d yakınlaştırma eklendi";
+"Apply Default Zoom to All" = "Varsayılan Yakınlaştırmayı Tümüne Uygula";
+"Auto" = "Otomatik";
+"Auto Zoom" = "Otomatik Yakınlaştırma";
+"Auto Zoom needs pointer data, which macshot records with every new recording. You can still add zooms by double-clicking the zoom lane." = "Otomatik Yakınlaştırma, macshot'ın her yeni kayıtta kaydettiği imleç verilerine ihtiyaç duyar. Yakınlaştırma şeridine çift tıklayarak yine de yakınlaştırma ekleyebilirsiniz.";
+"Background color" = "Arka plan rengi";
+"Background, padding, rounded corners and shadow" = "Arka plan, dolgu, yuvarlatılmış köşeler ve gölge";
+"Bold Italic" = "Kalın İtalik";
+"Box" = "Kutu";
+"Camera" = "Kamera";
+"Caption" = "Altyazı";
+"Captions" = "Altyazılar";
+"Captions are transcribed on this Mac. Nothing is uploaded." = "Altyazılar bu Mac'te yazıya dökülür. Hiçbir şey yüklenmez.";
+"Choose Image…" = "Görüntü Seç…";
+"Click color" = "Tıklama rengi";
+"Clicks" = "Tıklamalar";
+"Clip" = "Klip";
+"Colors" = "Renkler";
+"Connect nearby zooms" = "Yakın yakınlaştırmaları birleştir";
+"Copy the edited video to the clipboard" = "Düzenlenmiş videoyu panoya kopyala";
+"Creates zooms that follow the pointer wherever you click or type. Adjust or delete them on the timeline." = "Tıkladığınız veya yazdığınız her yerde imleci izleyen yakınlaştırmalar oluşturur. Bunları zaman çizelgesinde ayarlayın veya silin.";
+"Custom color" = "Özel renk";
+"Cut" = "Kesme";
+"Cuts, speed and freeze frames" = "Kesmeler, hız ve dondurulmuş kareler";
+"Default zoom" = "Varsayılan yakınlaştırma";
+"Dot" = "Nokta";
+"Double-click the text on the preview to edit it." = "Düzenlemek için önizlemedeki metne çift tıklayın.";
+"Double-click to add a zoom" = "Yakınlaştırma eklemek için çift tıklayın";
+"Double-click to add a zoom, or use Auto Zoom" = "Yakınlaştırma eklemek için çift tıklayın, veya Otomatik Yakınlaştırma'yı kullanın";
+"Drag the frame on the preview to choose where the zoom looks." = "Yakınlaştırmanın nereye bakacağını seçmek için önizlemedeki çerçeveyi sürükleyin.";
+"Duration" = "Süre";
+"Edge highlight" = "Kenar vurgusu";
+"Edit Text" = "Metni Düzenle";
+"Editable pointer, clicks and keystrokes" = "Düzenlenebilir imleç, tıklamalar ve tuş vuruşları";
+"Edits" = "Düzenlemeler";
+"Export" = "Dışa Aktar";
+"Export Subtitles (.srt)…" = "Altyazıları Dışa Aktar (.srt)…";
+"Fade in" = "Belirme";
+"Fade out" = "Kaybolma";
+"Fit" = "Sığdır";
+"Fixed" = "Sabit";
+"Fixed point" = "Sabit nokta";
+"Focus" = "Odak";
+"Follow" = "İzle";
+"Follow Pointer" = "İmleci İzle";
+"Follow pointer" = "İmleci izle";
+"Follow tightness" = "İzleme sıkılığı";
+"Format" = "Biçim";
+"Frame the recording" = "Kaydı çerçevele";
+"Freeze Frame" = "Kareyi Dondur";
+"Generate Captions" = "Altyazı Oluştur";
+"Gentle" = "Yumuşak";
+"Gradient" = "Gradyan";
+"Hide ordinary typing, show key combinations" = "Sıradan yazmayı gizle, tuş kombinasyonlarını göster";
+"Hide when idle" = "Boştayken gizle";
+"Hide while typing" = "Yazarken gizle";
+"Hold Focus" = "Odağı Sabitle";
+"Idle delay" = "Boşta bekleme süresi";
+"Keystrokes" = "Tuş vuruşları";
+"Keystrokes in this recording are part of the video pixels." = "Bu kayıttaki tuş vuruşları video piksellerinin bir parçasıdır.";
+"Light appearance" = "Açık görünüm";
+"Makes looping GIFs seamless" = "Döngüdeki GIF'leri kesintisiz yapar";
+"Mirror" = "Aynala";
+"Motion" = "Hareket";
+"Motion blur" = "Hareket bulanıklığı";
+"Next edit" = "Sonraki düzenleme";
+"No clicks or typing found to zoom into" = "Yakınlaştırılacak tıklama veya yazma bulunamadı";
+"No speech was recognized" = "Konuşma tanınmadı";
+"No system wallpapers were found. Choose an image instead." = "Sistem duvar kağıdı bulunamadı. Bunun yerine bir görüntü seçin.";
+"Off" = "Kapalı";
+"On-device speech recognition isn't available for your language on this Mac." = "Cihaz üzerinde konuşma tanıma bu Mac'te dilinizde kullanılamıyor.";
+"Original" = "Orijinal";
+"Outline color" = "Dış çizgi rengi";
+"Outline width" = "Dış çizgi kalınlığı";
+"Overlays" = "Katmanlar";
+"Pan between zooms instead of zooming out" = "Uzaklaştırmak yerine yakınlaştırmalar arasında kaydır";
+"Pill" = "Hap";
+"Pointer" = "İmleç";
+"Press animation" = "Basma animasyonu";
+"Previous edit" = "Önceki düzenleme";
+"Regenerate Captions" = "Altyazıları Yeniden Oluştur";
+"Regular" = "Normal";
+"Remove Automatic Zooms" = "Otomatik Yakınlaştırmaları Kaldır";
+"Remove Captions" = "Altyazıları Kaldır";
+"Removes %.1f seconds from the video. Drag its edges on the timeline to adjust." = "Videodan %.1f saniye kaldırır. Ayarlamak için zaman çizelgesindeki kenarlarını sürükleyin.";
+"Return to start at the end" = "Sonda başlangıca dön";
+"Ring" = "Halka";
+"Ripple" = "Dalga";
+"Save As…" = "Farklı Kaydet…";
+"Shortcuts only" = "Yalnızca kısayollar";
+"Show camera" = "Kamerayı göster";
+"Show captions" = "Altyazıları göster";
+"Show keystrokes" = "Tuş vuruşlarını göster";
+"Show pointer" = "İmleci göster";
+"Shrink during zooms" = "Yakınlaştırmalarda küçült";
+"Smoothing" = "Yumuşatma";
+"Snappy" = "Çevik";
+"Speech recognition is turned off for macshot in System Settings › Privacy & Security." = "macshot için konuşma tanıma Sistem Ayarları › Gizlilik ve Güvenlik'te kapalı.";
+"Speed" = "Hız";
+"Spotlight" = "Spot ışığı";
+"Square" = "Kare";
+"Tall" = "Dikey";
+"Text and blur" = "Metin ve bulanıklık";
+"The recording's audio could not be read." = "Kaydın sesi okunamadı.";
+"This recording already shows the pointer in its pixels, so it can't be restyled. Zooms can still follow it." = "Bu kayıt imleci zaten piksellerinde gösteriyor, bu yüzden stili değiştirilemez. Yakınlaştırmalar yine de onu izleyebilir.";
+"This recording has no audio to transcribe." = "Bu kayıtta yazıya dökülecek ses yok.";
+"This video has no recorded pointer data. Recordings made with macshot that open in the editor let you restyle, smooth and resize the pointer after recording." = "Bu videoda kaydedilmiş imleç verisi yok. macshot ile yapılan ve düzenleyicide açılan kayıtlar, kayıttan sonra imlecin stilini, yumuşaklığını ve boyutunu değiştirmenize olanak tanır.";
+"Title" = "Başlık";
+"Transcribing…" = "Yazıya dökülüyor…";
+"Transition" = "Geçiş";
+"Turn on Show Keystrokes before recording. macshot then records them separately so you can style them here." = "Kayıttan önce Tuş Vuruşlarını Göster'i açın. macshot bunları ayrı olarak kaydeder, böylece burada stillerini ayarlayabilirsiniz.";
+"Turn on the camera before recording. macshot records it separately so you can move, resize, restyle or hide it here, and shrink it during zooms." = "Kayıttan önce kamerayı açın. macshot onu ayrı olarak kaydeder, böylece burada taşıyabilir, yeniden boyutlandırabilir, stilini değiştirebilir veya gizleyebilirsiniz, ve yakınlaştırmalar sırasında küçültebilirsiniz.";
+"Use Solid to hide sensitive information: blur and pixelation can sometimes be reversed." = "Hassas bilgileri gizlemek için Düz'ü kullanın: bulanıklaştırma ve pikselleştirme bazen geri alınabilir.";
+"Visibility" = "Görünürlük";
+"Wallpaper" = "Duvar kağıdı";
+"When recordings open in the editor, the pointer is recorded separately so you can smooth, resize, restyle or hide it, and add zooms that follow it." = "Kayıtlar düzenleyicide açıldığında imleç ayrı olarak kaydedilir, böylece onu yumuşatabilir, yeniden boyutlandırabilir, stilini değiştirebilir veya gizleyebilir ve onu izleyen yakınlaştırmalar ekleyebilirsiniz.";
+"Wide" = "Geniş";
+"Zoom in" = "Yakınlaşma";
+"Zoom in timeline" = "Zaman çizelgesini yakınlaştır";
+"Zoom level" = "Yakınlaştırma düzeyi";
+"Zoom out" = "Uzaklaşma";
+"Zoom out timeline" = "Zaman çizelgesini uzaklaştır";
+"macOS" = "macOS";
+"Sway" = "Salınım";
+
+"Snap webcam to corners when moved" = "Taşırken web kamerasını köşelere yasla";
+"Search emoji" = "Emoji ara";
+"Hide the bottom toolbar" = "Alt araç çubuğunu gizle";
+"Pick tools with their keyboard shortcuts instead." = "Araçları klavye kısayollarıyla seçin.";
+
+"Pin position:" = "Sabitleme konumu:";
+"Center of screen" = "Ekranın ortası";
+"Original capture position" = "Orijinal yakalama konumu";
+
+"Default Colors" = "Varsayılan renkler";
+"The preset swatches in the color picker." = "Renk seçicideki hazır renkler.";
+"Add Color" = "Renk ekle";
+"No default colors." = "Varsayılan renk yok.";
+
+/* Floating preview: click action & editor behavior */
+"Dismiss" = "Kapat";
+"Copy & dismiss" = "Kopyala ve kapat";
+"Close preview" = "Önizlemeyi kapat";
+"Keep in stack" = "Yığında tut";
+"Return to stack when editor closes" = "Düzenleyici kapanınca yığına geri dön";
+"  Click on preview:" = "  Önizlemeye tıklama:";
+"  When opened in Editor:" = "  Düzenleyicide açıldığında:";
+
+/* Kept from this fork (upstream reworded these) */
+"Screenshots only — captured window title (blank otherwise)" = "Yalnızca ekran görüntüleri — yakalanan pencere başlığı (aksi halde boş)";
+"A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "Paylaşımlı bir anahtar dahildir — hız sınırına ulaşırsanız imgbb.com/api adresinden kendi ücretsiz anahtarınızı alın. Yalnızca görseller (video desteği yok).";

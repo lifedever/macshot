@@ -17,16 +17,57 @@ class PermissionOnboardingController: NSWindowController {
     private var pollTimer: Timer?
     private var permissionGranted = false
 
+    /// Someone who has used macshot before is asked to turn the permission
+    /// back on (macOS can require it again after an update, e.g. when the
+    /// signing identity changes) rather than greeted as a new user.
+    private let isReturningUser: Bool
+
+    private static let grantedBeforeKey = "screenRecordingGrantedBefore"
+    /// The native request runs at most once per process (see `openSettings`).
+    private static var didRequestScreenRecordingAccess = false
+    /// Whether the user opened the Screen Recording pane from this window in
+    /// this process. After that, captures are allowed to try even while the
+    /// preflight still says no (see `AppDelegate.prepareToStartCapture`).
+    private(set) static var didOpenScreenRecordingSettings = false
+
+    /// Sparkle records the first launch; the flag covers later grants.
+    static func isReturningUser(_ defaults: UserDefaults = .standard) -> Bool {
+        defaults.bool(forKey: grantedBeforeKey) || defaults.bool(forKey: "SUHasLaunchedBefore")
+    }
+
+    static func rememberGranted(_ defaults: UserDefaults = .standard) {
+        defaults.set(true, forKey: grantedBeforeKey)
+    }
+
+    /// The Terminal command that clears every privacy record macOS keeps for
+    /// this app (#496). A record written for a build signed by another Team ID
+    /// stores that build's code requirement; macOS ignores it for the new
+    /// build but still shows it as on. Toggling the switch keeps the stale
+    /// requirement, and removing it with "−" can leave the system prompt
+    /// silent until a reboot (FB22261705). `tccutil reset` deletes the records
+    /// so the next request starts clean. `All` also covers Accessibility and
+    /// Input Monitoring, which went stale the same way.
+    static func permissionResetCommand(bundleID rawBundleID: String) -> String {
+        // An empty argument could read as "every app"; never emit that.
+        let bundleID = rawBundleID.isEmpty ? "com.sw33tlie.macshot.macshot" : rawBundleID
+        let isPlain = bundleID.unicodeScalars.allSatisfy {
+            CharacterSet.alphanumerics.contains($0) && $0.isASCII || $0 == "." || $0 == "-"
+        }
+        let quoted = isPlain ? bundleID : "'" + bundleID.replacingOccurrences(of: "'", with: "'\\''") + "'"
+        return "tccutil reset All \(quoted)"
+    }
+
     // MARK: - Init
 
-    init() {
+    init(returningUser: Bool = PermissionOnboardingController.isReturningUser()) {
+        isReturningUser = returningUser
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 400, height: 520),
+            contentRect: NSRect(x: 0, y: 0, width: 400, height: returningUser ? 665 : 520),
             styleMask: [.titled, .closable],
             backing: .buffered,
             defer: false
         )
-        window.title = L("Welcome to macshot")
+        window.title = returningUser ? L("Welcome back to macshot") : L("Welcome to macshot")
         window.center()
         window.isReleasedWhenClosed = false
         window.titlebarAppearsTransparent = false
@@ -50,6 +91,12 @@ class PermissionOnboardingController: NSWindowController {
     private weak var continueButton: NSButton?
     private weak var spinner: NSProgressIndicator?
     private weak var checkmark: NSTextField?
+    private weak var copyCommandButton: NSButton?
+    private var copiedResetWork: DispatchWorkItem?
+
+    private var resetCommand: String {
+        Self.permissionResetCommand(bundleID: Bundle.main.bundleIdentifier ?? "com.sw33tlie.macshot.macshot")
+    }
 
     private func buildUI() {
         guard let cv = window?.contentView else { return }
@@ -63,12 +110,22 @@ class PermissionOnboardingController: NSWindowController {
         cv.addSubview(logoView)
 
         // Title
-        let title = NSTextField(labelWithString: L("macshot needs one permission"))
+        let title = NSTextField(labelWithString: isReturningUser ? L("Turn Screen Recording back on") : L("macshot needs one permission"))
         title.font = NSFont.systemFont(ofSize: 15, weight: .semibold)
         title.textColor = .labelColor
         title.alignment = .center
         title.translatesAutoresizingMaskIntoConstraints = false
         cv.addSubview(title)
+
+        // Returning users: reassure, and give the fix for a stale entry that
+        // still shows as on in System Settings.
+        let note = NSTextField(wrappingLabelWithString: L("After some updates, macOS asks you to allow macshot again. Your settings and captures are safe. If macshot is already in the list, select it, click the minus button (−) to remove it, then click the plus button (+) and add macshot again."))
+        note.font = NSFont.systemFont(ofSize: 12)
+        note.textColor = .secondaryLabelColor
+        note.alignment = .center
+        note.isHidden = !isReturningUser
+        note.translatesAutoresizingMaskIntoConstraints = false
+        cv.addSubview(note)
 
         // Guide image — always visible, shows how to enable permission
         let imgView = NSImageView()
@@ -136,8 +193,80 @@ class PermissionOnboardingController: NSWindowController {
         cv.addSubview(contBtn)
         self.continueButton = contBtn
 
+        // Returning users whose old entry won't let go: show the reset command
+        // itself (so they can see what they paste), a copy button and a restart.
+        let resetLabel = NSTextField(wrappingLabelWithString: L("Still not working? Run this command in Terminal, then restart macshot."))
+        resetLabel.font = NSFont.systemFont(ofSize: 11)
+        resetLabel.textColor = .secondaryLabelColor
+        resetLabel.alignment = .center
+        resetLabel.translatesAutoresizingMaskIntoConstraints = false
+
+        let commandBox = NSBox()
+        commandBox.boxType = .custom
+        commandBox.fillColor = NSColor.quaternaryLabelColor.withAlphaComponent(0.12)
+        commandBox.borderColor = NSColor.separatorColor
+        commandBox.borderWidth = 1
+        commandBox.cornerRadius = 6
+        commandBox.translatesAutoresizingMaskIntoConstraints = false
+
+        let commandField = NSTextField(labelWithString: resetCommand)
+        commandField.font = NSFont.monospacedSystemFont(ofSize: 11, weight: .regular)
+        commandField.textColor = .labelColor
+        commandField.isSelectable = true
+        commandField.alignment = .center
+        commandField.lineBreakMode = .byCharWrapping
+        commandField.maximumNumberOfLines = 2
+        commandField.translatesAutoresizingMaskIntoConstraints = false
+        commandBox.addSubview(commandField)
+
+        let copyBtn = NSButton(title: L("Copy Command"), target: self, action: #selector(copyResetCommand))
+        copyBtn.bezelStyle = .rounded
+        copyBtn.controlSize = .small
+        self.copyCommandButton = copyBtn
+        let restartBtn = NSButton(title: L("Restart macshot"), target: self, action: #selector(restartApp))
+        restartBtn.bezelStyle = .rounded
+        restartBtn.controlSize = .small
+        let resetButtons = NSStackView(views: [copyBtn, restartBtn])
+        resetButtons.orientation = .horizontal
+        resetButtons.spacing = 8
+        resetButtons.setHuggingPriority(.required, for: .vertical)
+        resetButtons.translatesAutoresizingMaskIntoConstraints = false
+
+        if isReturningUser {
+            cv.addSubview(resetLabel)
+            cv.addSubview(commandBox)
+            cv.addSubview(resetButtons)
+        }
+
         // Image aspect ratio: 1405 × 892
         let imgAspect: CGFloat = 892.0 / 1405.0
+
+        if isReturningUser {
+            NSLayoutConstraint.activate([
+                resetLabel.topAnchor.constraint(equalTo: openBtn.bottomAnchor, constant: 22),
+                resetLabel.leadingAnchor.constraint(equalTo: cv.leadingAnchor, constant: 28),
+                resetLabel.trailingAnchor.constraint(equalTo: cv.trailingAnchor, constant: -28),
+
+                commandBox.topAnchor.constraint(equalTo: resetLabel.bottomAnchor, constant: 8),
+                commandBox.leadingAnchor.constraint(equalTo: cv.leadingAnchor, constant: 20),
+                commandBox.trailingAnchor.constraint(equalTo: cv.trailingAnchor, constant: -20),
+
+                commandField.topAnchor.constraint(equalTo: commandBox.topAnchor, constant: 7),
+                commandField.bottomAnchor.constraint(equalTo: commandBox.bottomAnchor, constant: -7),
+                commandField.leadingAnchor.constraint(equalTo: commandBox.leadingAnchor, constant: 10),
+                commandField.trailingAnchor.constraint(equalTo: commandBox.trailingAnchor, constant: -10),
+
+                resetButtons.topAnchor.constraint(equalTo: commandBox.bottomAnchor, constant: 10),
+                resetButtons.centerXAnchor.constraint(equalTo: cv.centerXAnchor),
+                // Spare height (longer translations wrap less) stays at the bottom.
+                resetButtons.bottomAnchor.constraint(lessThanOrEqualTo: cv.bottomAnchor, constant: -20),
+            ])
+        } else {
+            NSLayoutConstraint.activate([
+                openBtn.bottomAnchor.constraint(equalTo: cv.bottomAnchor, constant: -20),
+                contBtn.bottomAnchor.constraint(equalTo: cv.bottomAnchor, constant: -20),
+            ])
+        }
 
         NSLayoutConstraint.activate([
             logoView.centerXAnchor.constraint(equalTo: cv.centerXAnchor),
@@ -149,8 +278,12 @@ class PermissionOnboardingController: NSWindowController {
             title.leadingAnchor.constraint(equalTo: cv.leadingAnchor, constant: 24),
             title.trailingAnchor.constraint(equalTo: cv.trailingAnchor, constant: -24),
 
+            note.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 6),
+            note.leadingAnchor.constraint(equalTo: cv.leadingAnchor, constant: 28),
+            note.trailingAnchor.constraint(equalTo: cv.trailingAnchor, constant: -28),
+
             // Guide image — fixed small size, centered, just enough to orient the user
-            imgView.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 12),
+            imgView.topAnchor.constraint(equalTo: isReturningUser ? note.bottomAnchor : title.bottomAnchor, constant: 12),
             imgView.centerXAnchor.constraint(equalTo: cv.centerXAnchor),
             imgView.widthAnchor.constraint(equalToConstant: 360),
             imgView.heightAnchor.constraint(equalToConstant: floor(360 * imgAspect)),
@@ -174,12 +307,10 @@ class PermissionOnboardingController: NSWindowController {
             openBtn.topAnchor.constraint(equalTo: stepBox.bottomAnchor, constant: 14),
             openBtn.centerXAnchor.constraint(equalTo: cv.centerXAnchor),
             openBtn.widthAnchor.constraint(equalToConstant: 260),
-            openBtn.bottomAnchor.constraint(equalTo: cv.bottomAnchor, constant: -20),
 
             contBtn.topAnchor.constraint(equalTo: stepBox.bottomAnchor, constant: 14),
             contBtn.centerXAnchor.constraint(equalTo: cv.centerXAnchor),
             contBtn.widthAnchor.constraint(equalToConstant: 260),
-            contBtn.bottomAnchor.constraint(equalTo: cv.bottomAnchor, constant: -20),
         ])
     }
 
@@ -240,6 +371,7 @@ class PermissionOnboardingController: NSWindowController {
     }
 
     private func showGranted() {
+        Self.rememberGranted()
         spinner?.stopAnimation(nil)
         spinner?.isHidden = true
         checkmark?.isHidden = false
@@ -258,15 +390,41 @@ class PermissionOnboardingController: NSWindowController {
     // MARK: - Actions
 
     @objc private func openSettings() {
+        // macOS lists an app under Screen Recording only once it has asked
+        // (#299): the preflight polling never asks, and captures wait for the
+        // permission. Ask once per process. Returning users need it too: after
+        // the `tccutil reset` below (#496) macshot is gone from the list, and
+        // the restart that follows is a new process. Asking again in the same
+        // process can't replace a stale grant and only repeats the prompt.
+        if !Self.didRequestScreenRecordingAccess {
+            Self.didRequestScreenRecordingAccess = true
+            _ = CGRequestScreenCaptureAccess()
+        }
+        Self.didOpenScreenRecordingSettings = true
         // Deep-link directly to Privacy & Security → Screen Recording.
-        // macOS will add macshot to the list automatically when it first
-        // attempts a capture — no CGRequestScreenCaptureAccess() call needed
-        // (that API shows the redundant native dialog we want to avoid).
         if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture") {
             NSWorkspace.shared.open(url)
         }
 
         statusLabel?.stringValue = L("Enable macshot, then try taking a screenshot")
+    }
+
+    @objc private func copyResetCommand() {
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(resetCommand, forType: .string)
+        copyCommandButton?.title = L("Copied!")
+        copiedResetWork?.cancel()
+        let work = DispatchWorkItem { [weak self] in
+            self?.copyCommandButton?.title = L("Copy Command")
+        }
+        copiedResetWork = work
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: work)
+    }
+
+    /// A running process can keep the answer it already got, so the request
+    /// after a reset has to come from a fresh process.
+    @objc private func restartApp() {
+        AppDelegate.relaunchApp()
     }
 
     @objc private func continueClicked() {

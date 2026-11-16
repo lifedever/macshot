@@ -21,6 +21,7 @@ final class ImageSaveServiceTests: XCTestCase {
 
     override func tearDownWithError() throws {
         ImageSaveService.onFailure = nil
+        UserDefaults.standard.removeObject(forKey: ImageSaveService.copyPathAfterSaveKey)
         try? FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: directory.path)
         try? FileManager.default.removeItem(at: directory)
     }
@@ -103,6 +104,70 @@ final class ImageSaveServiceTests: XCTestCase {
         }
     }
 
+    func testCopyPathAfterSaveWritesTheActualAvailablePathToTheClipboard() {
+        let pasteboard = NSPasteboard.general
+        pasteboard.clearContents()
+        pasteboard.setString("sentinel", forType: .string)
+
+        withDefaults([
+            "imageFormat": "png",
+            "downscaleRetina": false,
+            ImageSaveService.copyPathAfterSaveKey: true,
+        ]) {
+            XCTAssertTrue(save(ImageProbe.solidImage(), as: "shot.png"))
+            XCTAssertTrue(save(ImageProbe.solidImage(), as: "shot.png"))
+        }
+
+        XCTAssertEqual(
+            pasteboard.string(forType: .string),
+            directory.appendingPathComponent("shot (2).png").standardizedFileURL.path
+        )
+    }
+
+    func testCopyPathAfterSaveIsOffByDefault() {
+        let pasteboard = NSPasteboard.general
+        pasteboard.clearContents()
+        pasteboard.setString("sentinel", forType: .string)
+
+        withDefaults([
+            "imageFormat": "png",
+            "downscaleRetina": false,
+            ImageSaveService.copyPathAfterSaveKey: nil,
+        ]) {
+            XCTAssertFalse(ImageSaveService.copyPathAfterSave)
+            XCTAssertTrue(save(ImageProbe.solidImage(), as: "shot.png"))
+        }
+
+        XCTAssertEqual(pasteboard.string(forType: .string), "sentinel")
+    }
+
+    func testQuickCaptureModesKeepTheirPersistedValuesAndOutputSemantics() {
+        let expected: [(QuickCaptureMode, Int, Bool, Bool, Bool?)] = [
+            (.saveToFile, 0, false, true, nil),
+            (.copyImage, 1, true, false, nil),
+            (.saveAndCopyImage, 2, true, true, nil),
+            (.doNothing, 3, false, false, nil),
+            (.saveAndCopyPath, 4, false, true, true),
+        ]
+
+        for (mode, rawValue, copiesImage, saves, pathOverride) in expected {
+            XCTAssertEqual(mode.rawValue, rawValue)
+            XCTAssertEqual(mode.shouldCopyImage, copiesImage)
+            XCTAssertEqual(mode.shouldSave, saves)
+            XCTAssertEqual(mode.copyPathOverride, pathOverride)
+            XCTAssertFalse(mode.title.isEmpty)
+        }
+    }
+
+    func testQuickCaptureModeDefaultsSafelyForMissingOrUnknownValues() {
+        withDefaults([QuickCaptureMode.userDefaultsKey: nil]) {
+            XCTAssertEqual(QuickCaptureMode.current, .copyImage)
+        }
+        withDefaults([QuickCaptureMode.userDefaultsKey: 99]) {
+            XCTAssertEqual(QuickCaptureMode.current, .copyImage)
+        }
+    }
+
     // MARK: - Failure reporting
 
     func testConcurrentSavesAreCoordinatedAndKeepEveryDistinctImage() throws {
@@ -181,6 +246,25 @@ final class ImageSaveServiceTests: XCTestCase {
         DispatchQueue.main.async { reportArrived.fulfill() }
         wait(for: [reportArrived], timeout: 5)
         XCTAssertFalse(reported.isEmpty)
+    }
+
+    func testTemplateSubfoldersAreCreatedOnlyBelowAnExistingSaveFolder() throws {
+        let nested = directory.appendingPathComponent("2026/09/25/Safari-14.30.05.png")
+        try ImageSaveService.createSubfolders(for: nested, below: directory)
+        var isDirectory: ObjCBool = false
+        XCTAssertTrue(FileManager.default.fileExists(atPath: nested.deletingLastPathComponent().path,
+                                                     isDirectory: &isDirectory))
+        XCTAssertTrue(isDirectory.boolValue)
+
+        // A vanished save folder is never recreated.
+        let missingRoot = directory.appendingPathComponent("unplugged-drive")
+        try ImageSaveService.createSubfolders(for: missingRoot.appendingPathComponent("2026/x.png"), below: missingRoot)
+        XCTAssertFalse(FileManager.default.fileExists(atPath: missingRoot.path))
+
+        // Paths outside the save folder are ignored.
+        let outside = directory.deletingLastPathComponent().appendingPathComponent("elsewhere-\(UUID().uuidString)/x.png")
+        try ImageSaveService.createSubfolders(for: outside, below: directory)
+        XCTAssertFalse(FileManager.default.fileExists(atPath: outside.deletingLastPathComponent().path))
     }
 
     func testTheDefaultSaveActionIsToUseTheConfiguredFolder() {

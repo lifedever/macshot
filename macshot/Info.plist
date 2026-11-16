@@ -21,8 +21,41 @@
 			</array>
 		</dict>
 	</array>
+	<key>UTExportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeIdentifier</key>
+			<string>com.sw33tlie.macshot.project</string>
+			<key>UTTypeDescription</key>
+			<string>macshot Project</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+				<string>public.content</string>
+			</array>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>macshot</string>
+				</array>
+			</dict>
+		</dict>
+	</array>
 	<key>CFBundleDocumentTypes</key>
 	<array>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>macshot Project</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.sw33tlie.macshot.project</string>
+			</array>
+		</dict>
 		<dict>
 			<key>CFBundleTypeName</key>
 			<string>Image</string>
@@ -42,6 +75,20 @@
 				<string>com.microsoft.bmp</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Video</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>public.mpeg-4</string>
+				<string>com.apple.quicktime-movie</string>
+				<string>com.apple.m4v-video</string>
+			</array>
+		</dict>
 	</array>
 	<key>Privacy - Screen Capture Usage Description</key>
 	<string>macshot needs screen recording permission to capture screenshots.</string>
@@ -58,6 +105,8 @@
 	     app with sw33tLie's DMG, silently discarding every local change and resetting the TCC
 	     grants tied to our signing identity. Update by rebuilding from source instead
 	     (scripts/build-install.sh). Without SUFeedURL, Sparkle has nothing to check. -->
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>macshot transcribes your recordings on this Mac to create captions. Audio is not uploaded.</string>
 	<key>SUEnableAutomaticChecks</key>
 	<false/>
 	<key>NSSupportsAutomaticTermination</key>

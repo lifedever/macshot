@@ -236,6 +236,33 @@ enum ToolbarActionPreferences {
     }
 }
 
+/// Posts `.toolbarColorsDidChange` when the system switches between light and
+/// dark while the toolbar follows it (the default theme), so chrome that
+/// listens for the notification rather than for its own appearance change
+/// repaints too. Observes `NSApp.effectiveAppearance` with KVO; the token is
+/// released with the owner.
+final class HUDSystemAppearanceObserver {
+    private var observation: NSKeyValueObservation?
+    private var systemIsDark: Bool
+
+    init(application: NSApplication) {
+        systemIsDark = ToolbarLayout.isSystemDark
+        observation = application.observe(\.effectiveAppearance, options: [.new]) { [weak self] _, _ in
+            DispatchQueue.main.async { [weak self] in
+                self?.systemAppearanceMayHaveChanged()
+            }
+        }
+    }
+
+    private func systemAppearanceMayHaveChanged() {
+        let isDark = ToolbarLayout.isSystemDark
+        guard isDark != systemIsDark else { return }
+        systemIsDark = isDark
+        guard ToolbarLayout.usesDefaultTheme else { return }
+        NotificationCenter.default.post(name: .toolbarColorsDidChange, object: nil)
+    }
+}
+
 class ToolbarLayout {
 
     // Default theme: the Flameshot purple accent on a surface that follows the
@@ -338,6 +365,11 @@ class ToolbarLayout {
         NSAppearance(named: isDarkSurface ? .darkAqua : .aqua)
     }
 
+    /// The surfaces are light — the default theme in Light mode, or a light
+    /// colour picked in Settings. Upstream chrome keys its few hard-coded
+    /// dark-palette details off this.
+    static var usesLightPalette: Bool { !isDarkSurface }
+
     /// Whether the toolbar surfaces are dark, from the background actually in use.
     static var isDarkSurface: Bool {
         let color = bgColor.usingColorSpace(.deviceRGB) ?? bgColor
@@ -397,7 +429,7 @@ class ToolbarLayout {
 
     // Bottom toolbar items (drawing tools + colors + undo/redo + processing actions)
     static func bottomButtons(
-        selectedTool: AnnotationTool, selectedColor: NSColor, beautifyEnabled: Bool = false,
+        selectedTool: AnnotationTool?, selectedColor: NSColor, beautifyEnabled: Bool = false,
         beautifyStyleIndex: Int = 0, hasAnnotations: Bool = false, isRecording: Bool = false,
         effectsActive: Bool = false
     ) -> [ToolbarButton] {
@@ -409,7 +441,7 @@ class ToolbarLayout {
         // Get enabled tools from UserDefaults — migrate: only add tools that are brand-new.
         // Track introduced tools in `knownToolRawValues` so user-disabled tools are never re-enabled.
         let allKnownToolRawValues = AnnotationTool.allCases
-            .filter { $0 != .select && $0 != .translateOverlay }
+            .filter { $0 != .translateOverlay }
             .map { $0.rawValue }
         var enabledRawValues = UserDefaults.standard.array(forKey: "enabledTools") as? [Int]
         let knownToolRawValues = UserDefaults.standard.array(forKey: "knownToolRawValues") as? [Int]
@@ -430,6 +462,7 @@ class ToolbarLayout {
         }
 
         let tools: [(AnnotationTool, String, String)] = [
+            (.select, "cursorarrow", L("Select & Move")),
             (.pencil, "scribble", L("Pencil (Draw)")),
             (.line, "line.diagonal", L("Line")),
             (.arrow, "arrow.up.right", L("Arrow")),
@@ -439,14 +472,14 @@ class ToolbarLayout {
                 if #available(macOS 14.0, *) { return "highlighter" }
                 return "paintbrush.pointed.fill"
             }(), L("Marker")),
-            (.text, "textformat", L("Text")),
+            (.text, "_custom.text", L("Text")),
             (.number, "1.circle.fill", L("Number")),
             (.pixelate, "_custom.checkerboard", L("Censor (Pixelate / Blur / Solid)")),
             (.highlight, "sun.max", L("Highlight (Spotlight)")),
             (.loupe, "magnifyingglass", L("Magnify (Loupe)")),
             (.stamp, "face.smiling", L("Stamp / Emoji")),
             (.colorSampler, "eyedropper", L("Color Picker")),
-            (.measure, "ruler", L("Measure (px)")),
+            (.measure, "ruler", L("Measure")),
         ]
 
         for (tool, symbol, tip) in tools {

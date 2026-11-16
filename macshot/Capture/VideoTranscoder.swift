@@ -15,12 +15,16 @@ enum VideoTranscoder {
         let decodedSize: CGSize?
         let outputTransform: CGAffineTransform
         var sourceFrameDuration: CMTime? = nil
+        /// Extra video tracks the composition reads (a separately recorded camera).
+        nonisolated(unsafe) var additionalVideoTracks: [AVAssetTrack] = []
 
         nonisolated func writing(to url: URL) -> Request {
-            Request(asset: asset, videoTrack: videoTrack, audioTracks: audioTracks,
-                    composition: composition, timeRange: timeRange, outputURL: url,
-                    videoSettings: videoSettings, decodedSize: decodedSize, outputTransform: outputTransform,
-                    sourceFrameDuration: sourceFrameDuration)
+            var copy = Request(asset: asset, videoTrack: videoTrack, audioTracks: audioTracks,
+                               composition: composition, timeRange: timeRange, outputURL: url,
+                               videoSettings: videoSettings, decodedSize: decodedSize, outputTransform: outputTransform,
+                               sourceFrameDuration: sourceFrameDuration)
+            copy.additionalVideoTracks = additionalVideoTracks
+            return copy
         }
     }
 
@@ -43,6 +47,9 @@ enum VideoTranscoder {
         let reader = try AVAssetReader(asset: request.asset)
         reader.timeRange = request.timeRange
         let writer = try AVAssetWriter(outputURL: request.outputURL, fileType: .mp4)
+        // Fast start: the index goes before the media, so an uploaded or
+        // linked export starts playing before it has fully downloaded (#452).
+        writer.shouldOptimizeForNetworkUse = true
         let cadence = request.composition?.frameDuration ?? request.sourceFrameDuration
             ?? VideoFrameCadence.declaredDuration(in: request.asset.metadata)
             ?? VideoFrameCadence.Inspection(track: request.videoTrack).duration()
@@ -55,7 +62,7 @@ enum VideoTranscoder {
         videoInput.transform = request.outputTransform
         let videoOutput: AVAssetReaderOutput
         if let composition = request.composition {
-            let output = AVAssetReaderVideoCompositionOutput(videoTracks: [request.videoTrack], videoSettings: [
+            let output = AVAssetReaderVideoCompositionOutput(videoTracks: [request.videoTrack] + request.additionalVideoTracks, videoSettings: [
                 kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA,
             ])
             output.videoComposition = composition

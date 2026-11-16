@@ -76,7 +76,7 @@ private final class ScreenshotOverlayRootView: NSView {
 protocol OverlayWindowControllerDelegate: AnyObject {
     func overlayDidCancel(_ controller: OverlayWindowController)
     func overlayDidConfirm(_ controller: OverlayWindowController, capturedImage: NSImage?, annotationData: CaptureAnnotationData?)
-    func overlayDidRequestPin(_ controller: OverlayWindowController, image: NSImage, annotationData: CaptureAnnotationData?)
+    func overlayDidRequestPin(_ controller: OverlayWindowController, image: NSImage, annotationData: CaptureAnnotationData?, source: PinSource?)
     func overlayDidRequestOCR(_ controller: OverlayWindowController, result: OCRScanResult, image: NSImage?)
     func overlayDidRequestUpload(_ controller: OverlayWindowController, image: NSImage, annotationData: CaptureAnnotationData?)
     func overlayDidRequestStartRecording(
@@ -97,10 +97,15 @@ protocol OverlayWindowControllerDelegate: AnyObject {
     func overlayDidChangeSnapMode(_ controller: OverlayWindowController)
     func overlayDidRequestPointerColorPick(_ controller: OverlayWindowController)
     func overlayDidRequestWholeScreenAtPointer(_ controller: OverlayWindowController) -> Bool
+    func overlayDidRequestRestoreLastSelection(_ controller: OverlayWindowController)
 }
 
 extension OverlayWindowControllerDelegate {
     func overlayDidRequestWholeScreenAtPointer(_ controller: OverlayWindowController) -> Bool { false }
+    func overlayDidRequestRestoreLastSelection(_ controller: OverlayWindowController) {}
+    func overlayDidRequestCopyScrollCapture(_ controller: OverlayWindowController) {
+        overlayDidRequestStopScrollCapture(controller)
+    }
 }
 
 /// Manages one fullscreen overlay per screen.
@@ -110,6 +115,31 @@ class OverlayWindowController {
 
     weak var overlayDelegate: OverlayWindowControllerDelegate?
     var capturedWindowTitle: String?
+    /// Frontmost app when the capture started (for the `{app}` filename token).
+    var capturedAppName: String?
+
+    /// App a capture belongs to: the owner of a snapped window, nil for a
+    /// whole-display selection, otherwise the app that was frontmost when the
+    /// capture started. Call before `dismiss()`, which resets the selection.
+    func resolvedAppName() -> String? {
+        guard let view = overlayView else { return capturedAppName }
+        if view.selectionIsWindowSnap, let windowID = view.snappedWindowID ?? view.hoveredSnapWindowID,
+           let owner = Self.ownerName(ofWindow: windowID) {
+            return FilenameFormatter.appNameForTemplate(owner)
+        }
+        let selection = view.selectionRect
+        if selection.width >= view.bounds.width - 1, selection.height >= view.bounds.height - 1 {
+            return nil
+        }
+        return capturedAppName
+    }
+
+    private static func ownerName(ofWindow windowID: CGWindowID) -> String? {
+        guard let info = CGWindowListCopyWindowInfo([.optionIncludingWindow], windowID) as? [[String: Any]] else {
+            return nil
+        }
+        return info.first?[kCGWindowOwnerName as String] as? String
+    }
     var timingMark: ((String) -> Void)? {
         didSet {
             overlayView?.timingMark = timingMark
@@ -121,6 +151,16 @@ class OverlayWindowController {
     private var overlayWindow: OverlayWindow?
     private var shareDelegate: SharePickerDelegate?
     private var shareDismissTime: Date = .distantPast
+    /// Bumped by dismiss() and tearDown(). A pooled controller serves many
+    /// capture sessions, so async work (OCR) only acts if the session that
+    /// started it is still live.
+    private var sessionGeneration = 0
+    /// Text + QR recognition for the OCR action. Calls back on any queue.
+    var recognizeTextAndQRCodes: (CGImage, @escaping (OCRScanResult) -> Void) -> Void = { cgImage, completion in
+        DispatchQueue.global(qos: .userInitiated).async {
+            VisionOCR.performTextAndQRCodeRecognition(cgImage: cgImage, completionHandler: completion)
+        }
+    }
     var windowNumber: CGWindowID {
         overlayWindow.map { CGWindowID($0.windowNumber) } ?? CGWindowID.max
     }
@@ -257,6 +297,12 @@ class OverlayWindowController {
         if let view = overlayView {
             overlayWindow?.invalidateCursorRects(for: view)
         }
+    }
+
+    /// Whether the user has started or finished a selection on this display.
+    var hasSelection: Bool {
+        guard let state = overlayView?.state else { return false }
+        return state != .idle
     }
 
     func makeKey() {
@@ -454,6 +500,7 @@ class OverlayWindowController {
     /// what makes the next capture instant, since WindowServer's per-window
     /// composition cache survives `orderOut`).
     func dismiss() {
+        sessionGeneration &+= 1
         saveSelectionIfNeeded()
         overlayView?.reset()
         overlayView?.screenshotImage = nil
@@ -476,6 +523,7 @@ class OverlayWindowController {
     /// (display added/removed), or app shutdown. After this the controller is
     /// dead and a new one must be constructed.
     func tearDown() {
+        sessionGeneration &+= 1
         overlayView?.reset()
         overlayView?.overlayDelegate = nil
         overlayWindow?.contentView = nil
@@ -499,8 +547,7 @@ class OverlayWindowController {
     private func playCopySound() {
         let soundEnabled = UserDefaults.standard.object(forKey: "playCopySound") as? Bool ?? true
         guard soundEnabled else { return }
-        AppDelegate.captureSound?.stop()
-        AppDelegate.captureSound?.play()
+        CaptureSound.shared.play()
     }
 
     private func captureRegion() -> NSImage? {
@@ -517,7 +564,7 @@ class OverlayWindowController {
         guard let view = overlayView else { return nil }
         let annotations = view.annotations.filter { $0.isMovable }
         let editState = view.captureEditState()
-        guard !annotations.isEmpty || editState.hasPostProcessing else { return nil }
+        guard !annotations.isEmpty || editState.hasEditableState else { return nil }
 
         let sel = view.selectionRect
         let shifted = annotations.map { ann -> Annotation in
@@ -528,7 +575,7 @@ class OverlayWindowController {
         return CaptureAnnotationData(
             rawImage: rawImage,
             annotations: shifted,
-            editState: editState.hasPostProcessing ? editState : nil
+            editState: editState.hasEditableState ? editState : nil
         )
     }
 
@@ -537,7 +584,7 @@ class OverlayWindowController {
         let editState = view.captureEditState()
         let snapWindowImg = view.snappedWindowImage
         let hasAnnotations = view.annotations.contains(where: { $0.isMovable })
-        guard hasAnnotations || editState.hasPostProcessing else { return nil }
+        guard hasAnnotations || editState.hasEditableState else { return nil }
         let rawImage: NSImage? = (editState.beautifyIsWindowSnap && snapWindowImg != nil)
             ? snapWindowImg : view.captureSelectedRegionRaw()
         guard let rawImage else { return nil }
@@ -568,6 +615,18 @@ class OverlayWindowController {
         return result
     }
 
+    /// Where a pin of the current selection came from. Read before dismiss()
+    /// resets the selection. A cross-screen capture is stitched from the
+    /// unsnapped rect, at most half a point from this one.
+    private func pinSource(capturedSize: NSSize) -> PinSource? {
+        guard let view = overlayView else { return nil }
+        let rect = view.pixelSnappedSelectionRect.offsetBy(dx: screen.frame.minX, dy: screen.frame.minY)
+        let contentOrigin = view.beautifyEnabled
+            ? BeautifyRenderer.contentRect(forImageSize: capturedSize, config: view.beautifyConfig).origin
+            : nil
+        return PinSource(rect: rect, contentOrigin: contentOrigin)
+    }
+
     private func applyBeautifyIfNeeded(_ image: NSImage?) -> NSImage? {
         guard let image = image, let view = overlayView else { return image }
         var result = image
@@ -591,6 +650,10 @@ class OverlayWindowController {
 // MARK: - OverlayViewDelegate
 
 extension OverlayWindowController: OverlayViewDelegate {
+    func overlayViewDidRequestRestoreLastSelection() {
+        overlayDelegate?.overlayDidRequestRestoreLastSelection(self)
+    }
+
     func overlayViewDidFinishSelection(_ rect: NSRect) {
         // No-op: window is already key (.nonactivatingPanel + makeKeyAndOrderFront).
     }
@@ -679,10 +742,11 @@ extension OverlayWindowController: OverlayViewDelegate {
     func overlayViewDidRequestPin() {
         guard var image = captureRegion() else { return }
         let annotationData = currentAnnotationDataForHistory()
+        let source = pinSource(capturedSize: image.size)
         image = applyBeautifyIfNeeded(image) ?? image
         playCopySound()
         dismiss()
-        overlayDelegate?.overlayDidRequestPin(self, image: image, annotationData: annotationData)
+        overlayDelegate?.overlayDidRequestPin(self, image: image, annotationData: annotationData, source: source)
     }
 
     func overlayViewDidRequestOCR() {
@@ -690,16 +754,17 @@ extension OverlayWindowController: OverlayViewDelegate {
         guard let cgImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil) else {
             return
         }
+        overlayView?.isRecognizingText = true
+        let generation = sessionGeneration
 
-        DispatchQueue.global(qos: .userInitiated).async {
-            VisionOCR.performTextAndQRCodeRecognition(cgImage: cgImage) { [weak self] result in
-                guard let self = self else { return }
-                let capturedImage = image  // capture before dismiss
-                DispatchQueue.main.async {
-                    self.playCopySound()
-                    self.dismiss()
-                    self.overlayDelegate?.overlayDidRequestOCR(self, result: result, image: capturedImage)
-                }
+        recognizeTextAndQRCodes(cgImage) { [weak self] result in
+            DispatchQueue.main.async {
+                // Cancelled with Escape, or this pooled overlay already serves a
+                // newer capture: the result must not dismiss it or open a window.
+                guard let self = self, self.sessionGeneration == generation else { return }
+                self.playCopySound()
+                self.dismiss()
+                self.overlayDelegate?.overlayDidRequestOCR(self, result: result, image: image)
             }
         }
     }
@@ -810,6 +875,10 @@ extension OverlayWindowController: OverlayViewDelegate {
 
     func overlayViewDidRequestStopScrollCapture() {
         overlayDelegate?.overlayDidRequestStopScrollCapture(self)
+    }
+
+    func overlayViewDidRequestCopyScrollCapture() {
+        overlayDelegate?.overlayDidRequestCopyScrollCapture(self)
     }
 
     func overlayViewDidRequestCancelScrollCapture() {
@@ -935,13 +1004,14 @@ extension OverlayWindowController: OverlayViewDelegate {
         DetachedEditorWindowController.open(
             image: image, tool: tool, color: color, strokeWidth: stroke,
             annotations: shiftedAnnotations, fromCapture: true,
-            editState: editState.hasPostProcessing ? editState : nil)
+            editState: editState.hasEditableState ? editState : nil)
     }
 
     @available(macOS 14.0, *)
 
 
     func overlayViewDidRequestRemoveBackground() {
+        let appName = resolvedAppName()
         guard var image = captureRegion() else { return }
         image = applyBeautifyIfNeeded(image) ?? image
 
@@ -988,19 +1058,20 @@ extension OverlayWindowController: OverlayViewDelegate {
                 let finalNSImage = NSImage(cgImage: finalCGImage, size: image.size)
 
                 DispatchQueue.main.async {
-                    // Same outputs as Return: quickCaptureMode 0=save, 1=copy,
-                    // 2=both, 3=do nothing (thumbnail only).
-                    let mode = UserDefaults.standard.object(forKey: "quickCaptureMode") as? Int ?? 1
-                    let windowTitle = self.capturedWindowTitle
-                    if mode == 1 || mode == 2 {
+                    let mode = QuickCaptureMode.current
+                    if mode.shouldCopyImage {
                         self.copyImageToClipboard(finalNSImage)
+                    }
+                    if mode.shouldSave {
+                        ImageSaveService.saveToConfiguredFolder(
+                            finalNSImage,
+                            windowTitle: self.capturedWindowTitle,
+                            appName: appName,
+                            copyPathToClipboard: mode.copyPathOverride)
                     }
                     self.playCopySound()
                     self.dismiss()
                     self.overlayDelegate?.overlayDidConfirm(self, capturedImage: finalNSImage, annotationData: nil)
-                    if mode == 0 || mode == 2 {
-                        ImageSaveService.saveToConfiguredFolder(finalNSImage, windowTitle: windowTitle)
-                    }
                 }
             } catch {
                 #if DEBUG
@@ -1014,6 +1085,7 @@ extension OverlayWindowController: OverlayViewDelegate {
     }
 
     func overlayViewDidRequestQuickSave() {
+        let appName = resolvedAppName()
         // Snapshot post-processing config before dismissing
         let hasEffects = overlayView?.effectsActive ?? false
         let effectsCfg = overlayView?.effectsConfig ?? ImageEffectsConfig()
@@ -1061,23 +1133,27 @@ extension OverlayWindowController: OverlayViewDelegate {
             image = BeautifyRenderer.render(image: beautifyInput, config: beautifyCfg)
         }
 
-        // quickCaptureMode: 0=save, 1=copy, 2=both, 3=do nothing (thumbnail only)
-        let mode = UserDefaults.standard.object(forKey: "quickCaptureMode") as? Int ?? 1
+        let mode = QuickCaptureMode.current
 
-        if mode == 1 || mode == 2 {
+        if mode.shouldCopyImage {
             ImageEncoder.copyToClipboard(image)
         }
         playCopySound()
 
         overlayDelegate?.overlayDidConfirm(self, capturedImage: image, annotationData: annotationData)
 
-        if mode == 0 || mode == 2 {
-            ImageSaveService.saveToConfiguredFolder(image, windowTitle: capturedWindowTitle)
+        if mode.shouldSave {
+            ImageSaveService.saveToConfiguredFolder(
+                image,
+                windowTitle: capturedWindowTitle,
+                appName: appName,
+                copyPathToClipboard: mode.copyPathOverride)
         }
-        // mode 3: do nothing — image is passed to delegate which shows the thumbnail
+        // In do-nothing mode, the image is still passed to the delegate for the thumbnail.
     }
 
     func overlayViewDidRequestFileSave() {
+        let appName = resolvedAppName()
         guard let image = captureImageForSave() else {
             dismiss()
             overlayDelegate?.overlayDidCancel(self)
@@ -1090,6 +1166,7 @@ extension OverlayWindowController: OverlayViewDelegate {
         ImageSaveService.saveToConfiguredFolder(
             image,
             windowTitle: capturedWindowTitle,
+            appName: appName,
             panelLevel: NSWindow.Level(258)
         ) { [weak self] url in
             guard let url else { return }
@@ -1113,6 +1190,7 @@ extension OverlayWindowController: OverlayViewDelegate {
         ImageSaveService.showSavePanel(
             for: image,
             windowTitle: capturedWindowTitle,
+            appName: resolvedAppName(),
             panelLevel: NSWindow.Level(258)
         ) { [weak self] url in
             guard let self = self else { return }

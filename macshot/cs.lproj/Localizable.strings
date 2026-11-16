@@ -31,6 +31,7 @@
 "Recent Captures" = "Nedávné snímky";
 "Show History Panel" = "Zobrazit panel historie";
 "Open Image..." = "Otevřít obrázek...";
+"Open..." = "Otevřít...";
 "Open from Clipboard" = "Otevřít ze schránky";
 "Pin from Clipboard" = "Připnout ze schránky";
 "Preferences..." = "Předvolby...";
@@ -91,7 +92,30 @@
 "Color Sampler" = "Kapátko";
 "Color Picker" = "Výběr barvy";
 "Select & Edit" = "Vybrat a upravit";
+"Select & Move" = "Vybrat a přesunout";
 "Color" = "Barva";
+
+/* Measure scale */
+"Measure Scale" = "Měřítko měření";
+"Set Scale..." = "Nastavit měřítko...";
+"Set Scale" = "Nastavit měřítko";
+"Scale: %@" = "Měřítko: %@";
+"Remove Scale" = "Odstranit měřítko";
+"Show lengths in" = "Zobrazit délky v";
+"Current scale: 1 %@ = %@ px" = "Aktuální měřítko: 1 %@ = %@ px";
+"Draw Reference Line" = "Nakreslit referenční čáru";
+"Draw a measure line along something whose length you know" = "Nakreslete měřicí čáru podél něčeho se známou délkou";
+"Draw or select a measure line along something whose length you know, then enter that length." = "Nakreslete nebo vyberte měřicí čáru podél něčeho se známou délkou a poté zadejte tuto délku.";
+"This line is %d px long. How long is it in real life?" = "Tato čára je dlouhá %d px. Jak dlouhá je ve skutečnosti?";
+"e.g. 90 mm or 3 1/2 in" = "např. 90 mm nebo 3 1/2 in";
+"Enter a length, like 90 mm, 3.5 in or 3 1/2 in." = "Zadejte délku, např. 90 mm, 3.5 in nebo 3 1/2 in.";
+"Real-world lengths are estimates. They are only reliable for things in the same plane as the reference line." = "Skutečné délky jsou odhady. Spolehlivé jsou pouze pro objekty ve stejné rovině jako referenční čára.";
+"Measure in mm, cm, m, inches or feet using something of known length in the image" = "Měření v mm, cm, m, palcích nebo stopách podle něčeho se známou délkou v obrázku";
+"Millimeters (mm)" = "Milimetry (mm)";
+"Centimeters (cm)" = "Centimetry (cm)";
+"Meters (m)" = "Metry (m)";
+"Inches (in)" = "Palce (in)";
+"Feet (ft)" = "Stopy (ft)";
 
 /* Aspect ratio & resolution presets */
 "Aspect ratio & resolution presets" = "Předvolby poměru stran a rozlišení";
@@ -174,6 +198,7 @@
 "Smooth" = "Vyhlazení";
 "Refined" = "Vyhlazené";
 "Smart" = "Chytrý";
+"Smart snaps the highlighter to lines of text. Hold Shift for a straight line." = "„Chytrý“ přichytí zvýrazňovač k řádkům textu. Pro rovnou čáru podržte Shift.";
 "Padding" = "Odsazení";
 "Shadow" = "Stín";
 /* Beautify */
@@ -242,6 +267,7 @@
 "Play sound on capture" = "Přehrát zvuk při snímání";
 "Play sound on copy" = "Přehrát zvuk při kopírování";
 "Remember last selected tool" = "Zapamatovat poslední vybraný nástroj";
+"Start captures in move mode" = "Zahajovat snímání v režimu přesouvání";
 "Show floating thumbnail after capture" = "Zobrazit plovoucí náhled po zachycení";
 "Launch at login" = "Spustit při přihlášení";
 "Show snap alignment guides" = "Zobrazit vodítka zarovnání";
@@ -277,6 +303,8 @@
 "Multiple previews" = "Více náhledů";
 "Output" = "Výstup";
 "Image format:" = "Formát obrázku:";
+"Also copy to the clipboard in this format" = "Kopírovat do schránky i v tomto formátu";
+"PNG is always included so every app can paste" = "PNG je vždy zahrnuto, aby šlo vložit do každé aplikace";
 "Quality:" = "Kvalita:";
 "Image" = "Obrázek";
 "Image format" = "Formát obrázku";
@@ -431,7 +459,7 @@
 "Upload History" = "Historie nahrávání";
 "No uploads yet." = "Zatím žádná nahrávání.";
 "Base URL for public access. If empty, the S3 endpoint URL is used (may not be publicly accessible)." = "Základní URL pro veřejný přístup. Pokud je prázdná, použije se URL S3 endpointu (nemusí být veřejně přístupná).";
-"A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "Sdílený klíč je součástí — získejte vlastní bezplatný klíč na imgbb.com/api, pokud narazíte na limity. Pouze obrázky (bez podpory videa).";
+"A shared key is included. Get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "Sdílený klíč je součástí, získejte vlastní bezplatný klíč na imgbb.com/api, pokud narazíte na limity. Pouze obrázky (bez podpory videa).";
 "Works with AWS S3, Cloudflare R2, MinIO, DigitalOcean Spaces, Backblaze B2, and other S3-compatible services. Supports images and videos." = "Funguje s AWS S3, Cloudflare R2, MinIO, DigitalOcean Spaces, Backblaze B2 a dalšími S3-kompatibilními službami. Podporuje obrázky a videa.";
 /* Uploads - GitHub */
 "Token" = "Token";
@@ -454,6 +482,7 @@
 "Licensed under the GPLv3" = "Licencováno pod GPLv3";
 "Licensed under GPLv3" = "Licencováno pod GPLv3";
 "A free, open-source screenshot & screen recording tool for macOS.\nFully native — built with Swift and AppKit." = "Bezplatný open-source nástroj pro snímky obrazovky a nahrávání pro macOS.\nPlně nativní — vytvořený ve Swift a AppKit.";
+"A free, open-source screenshot & screen recording tool for macOS.\nFully native, built with Swift and AppKit." = "Bezplatný open-source nástroj pro snímky obrazovky a nahrávání pro macOS.\nPlně nativní, vytvořený ve Swift a AppKit.";
 
 /* Alerts */
 "No Image on Clipboard" = "Žádný obrázek ve schránce";
@@ -475,11 +504,17 @@
 
 /* Permission Onboarding */
 "Welcome to macshot" = "Vítejte v macshot";
+"Welcome back to macshot" = "Vítejte zpět v macshotu";
+"Turn Screen Recording back on" = "Znovu zapněte nahrávání obrazovky";
+"After some updates, macOS asks you to allow macshot again. Your settings and captures are safe. If macshot is already in the list, select it, click the minus button (−) to remove it, then click the plus button (+) and add macshot again." = "Po některých aktualizacích vás macOS požádá, abyste macshotu znovu udělili oprávnění. Vaše nastavení a snímky jsou v bezpečí. Pokud už je macshot v seznamu, vyberte ho, klikněte na tlačítko minus (−) a odstraňte ho, potom klikněte na tlačítko plus (+) a macshot znovu přidejte.";
 "macshot needs one permission" = "macshot potřebuje jedno oprávnění";
 "Screen Recording not yet granted" = "Nahrávání obrazovky zatím nebylo povoleno";
 "Screen Recording granted!" = "Nahrávání obrazovky povoleno!";
 "Enable macshot, then try taking a screenshot" = "Povolte macshot a zkuste pořídit snímek";
 "Open Screen Recording Settings" = "Otevřít nastavení nahrávání obrazovky";
+"Still not working? Run this command in Terminal, then restart macshot." = "Stále to nefunguje? Spusťte tento příkaz v Terminálu a poté restartujte macshot.";
+"Copy Command" = "Kopírovat příkaz";
+"Restart macshot" = "Restartovat macshot";
 "Continue" = "Pokračovat";
 
 /* OCR Window */
@@ -529,6 +564,21 @@
 "Could not encode the image." = "Nepodařilo se zakódovat obrázek.";
 "Could not save the screenshot: %@" = "Nepodařilo se uložit snímek obrazovky: %@";
 "Could not save the screenshot to history." = "Nepodařilo se uložit snímek obrazovky do historie.";
+
+/* Editable projects */
+"Save Project" = "Uložit projekt";
+"Save Project As..." = "Uložit projekt jako...";
+"Save as Editable Project (⇧⌘S)" = "Uložit jako upravitelný projekt (⇧⌘S)";
+"Saves the image with every annotation still editable. Open the file in macshot to keep editing." = "Uloží obrázek tak, že všechny anotace zůstanou upravitelné. Otevřete soubor v macshot a pokračujte v úpravách.";
+"Choose an image or macshot project to open in the editor" = "Vyberte obrázek nebo projekt macshot k otevření v editoru";
+"Could not open “%@”" = "Nepodařilo se otevřít „%@“";
+"Could not save the project: %@" = "Nepodařilo se uložit projekt: %@";
+"Some annotations in this project could not be restored, so it opened flattened. The original file is unchanged." = "Některé anotace v tomto projektu nebylo možné obnovit, proto byl otevřen jako sloučený obrázek. Původní soubor zůstal beze změny.";
+"The file is not a macshot project or is damaged." = "Soubor není projekt macshot nebo je poškozený.";
+"The project could not be prepared for saving." = "Projekt se nepodařilo připravit k uložení.";
+"The image is too large to save as an editable project." = "Obrázek je příliš velký na uložení jako upravitelný projekt.";
+"The project file is too large to open." = "Soubor projektu je příliš velký na otevření.";
+"The project's image could not be read." = "Obrázek projektu se nepodařilo načíst.";
 
 /* Scroll Capture HUD */
 "Auto Scroll" = "Automatické posouvání";
@@ -600,6 +650,7 @@
 "Settings..." = "Nastavení...";
 "macshot Settings" = "Nastavení macshot";
 "Also open in Editor" = "Otevřít také v editoru";
+"Open in Editor right after selection" = "Otevřít v editoru hned po výběru";
 "Close editor after copying" = "Zavřít editor po zkopírování";
 "Hide controls" = "Skrýt ovládací prvky";
 "Hide recording controls" = "Skrýt ovládací prvky nahrávání";
@@ -670,6 +721,7 @@
 "Click \"Set\" and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧) to set a shortcut." = "Klikněte na \"Nastavit\" a stiskněte kombinaci kláves s alespoň jedním modifikátorem (⌘, ⌥, ⌃, ⇧) pro nastavení zkratky.";
 "Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels, ⌫ clears. Function keys work on their own." = "Klikněte na zkratku a stiskněte kombinaci kláves s alespoň jedním modifikátorem (⌘, ⌥, ⌃, ⇧). Esc zruší zadávání, ⌫ zkratku smaže. Funkční klávesy fungují samostatně.";
 "Files are uploaded to this folder in your Google Drive. Leave empty to use \"macshot\". macshot can only use folders it created itself, so a folder you made in Drive with the same name won't be reused — a new one is created instead. Everything stays private — nothing is shared publicly." = "Soubory jsou nahrávány do této složky na vašem Disku Google. Ponecháte-li pole prázdné, použije se \"macshot\". macshot může používat pouze složky, které sám vytvořil, takže složka se stejným názvem, kterou jste vytvořili na Disku, nebude použita — místo ní se vytvoří nová. Vše zůstává soukromé — nic není veřejně sdíleno.";
+"Files are uploaded to this folder in your Google Drive. Leave empty to use \"macshot\". macshot can only use folders it created itself, so a folder you made in Drive with the same name won't be reused. A new one is created instead. Everything stays private and nothing is shared publicly." = "Soubory jsou nahrávány do této složky na vašem Disku Google. Ponecháte-li pole prázdné, použije se \"macshot\". macshot může používat pouze složky, které sám vytvořil, takže složka se stejným názvem, kterou jste vytvořili na Disku, nebude použita, místo ní se vytvoří nová. Vše zůstává soukromé, nic není veřejně sdíleno.";
 
 "Pressure" = "Přítlak";
 
@@ -730,6 +782,10 @@
 "Theme:" = "Motiv:";
 "Theme" = "Motiv";
 "The Default theme follows the system's Light or Dark appearance." = "Výchozí motiv se řídí světlým nebo tmavým vzhledem systému.";
+"Toolbar appearance:" = "Vzhled lišty:";
+"Dark" = "Tmavý";
+"Light" = "Světlý";
+"Follow System" = "Podle systému";
 "Application" = "Aplikace";
 "Capture area and extract text" = "Zachytit oblast a extrahovat text";
 "Capture the full screen" = "Zachytit celou obrazovku";
@@ -743,7 +799,7 @@
 "Open this settings window" = "Otevřít toto okno nastavení";
 "Quick capture (uses your Enter action)" = "Rychlé zachycení (použije vaši akci Enter)";
 "Re-capture the last selected area" = "Znovu zachytit poslední vybranou oblast";
-"Screenshots only — captured window title (blank otherwise)" = "Pouze snímky obrazovky — název zachyceného okna (jinak prázdné)";
+"Captured window title (screenshots only, blank otherwise)" = "Pouze snímky obrazovky, název zachyceného okna (jinak prázdné)";
 "Show available filename tokens" = "Zobrazit dostupné tokeny názvu souboru";
 "Show supported URL scheme commands" = "Zobrazit podporované příkazy URL schématu";
 "Start area capture" = "Spustit snímání oblasti";
@@ -812,3 +868,162 @@
 "Play" = "Přehrát";
 "Mute" = "Ztlumit";
 "Unmute" = "Zapnout zvuk";
+
+/* Video editor (Studio) */
+"%.1f× · follows pointer" = "%.1f× · sleduje ukazatel";
+"Add" = "Přidat";
+"Add Cut Here" = "Přidat střih sem";
+"Add Text Here" = "Přidat text sem";
+"Add Zoom Here" = "Přidat přiblížení sem";
+"Added %d captions" = "Přidané titulky: %d";
+"Added %d zooms" = "Přidaná přiblížení: %d";
+"Apply Default Zoom to All" = "Použít výchozí přiblížení na vše";
+"Auto" = "Auto";
+"Auto Zoom" = "Automatické přiblížení";
+"Auto Zoom needs pointer data, which macshot records with every new recording. You can still add zooms by double-clicking the zoom lane." = "Automatické přiblížení potřebuje data ukazatele, která macshot zaznamenává s každou novou nahrávkou. Přiblížení můžete stále přidávat dvojklikem na stopu přiblížení.";
+"Background color" = "Barva pozadí";
+"Background, padding, rounded corners and shadow" = "Pozadí, odsazení, zaoblené rohy a stín";
+"Bold Italic" = "Tučná kurzíva";
+"Box" = "Box";
+"Camera" = "Kamera";
+"Caption" = "Titulek";
+"Captions" = "Titulky";
+"Captions are transcribed on this Mac. Nothing is uploaded." = "Titulky se přepisují na tomto Macu. Nic se nenahrává na internet.";
+"Choose Image…" = "Vybrat obrázek…";
+"Click color" = "Barva kliknutí";
+"Clicks" = "Kliknutí";
+"Clip" = "Klip";
+"Colors" = "Barvy";
+"Connect nearby zooms" = "Spojovat blízká přiblížení";
+"Copy the edited video to the clipboard" = "Zkopírovat upravené video do schránky";
+"Creates zooms that follow the pointer wherever you click or type. Adjust or delete them on the timeline." = "Vytvoří přiblížení, která sledují ukazatel všude, kde kliknete nebo píšete. Na časové ose je můžete upravit nebo smazat.";
+"Custom color" = "Vlastní barva";
+"Cut" = "Střih";
+"Cuts, speed and freeze frames" = "Střihy, rychlost a zastavené snímky";
+"Default zoom" = "Výchozí přiblížení";
+"Dot" = "Tečka";
+"Double-click the text on the preview to edit it." = "Dvojklikem na text v náhledu jej upravíte.";
+"Double-click to add a zoom" = "Dvojklikem přidáte přiblížení";
+"Double-click to add a zoom, or use Auto Zoom" = "Dvojklikem přidáte přiblížení, nebo použijte Automatické přiblížení";
+"Drag the frame on the preview to choose where the zoom looks." = "Tažením rámečku v náhledu zvolte, kam se přiblížení dívá.";
+"Duration" = "Doba trvání";
+"Edge highlight" = "Zvýraznění okraje";
+"Edit Text" = "Upravit text";
+"Editable pointer, clicks and keystrokes" = "Upravitelný ukazatel, kliknutí a stisky kláves";
+"Edits" = "Úpravy";
+"Export" = "Exportovat";
+"Export Subtitles (.srt)…" = "Exportovat titulky (.srt)…";
+"Fade in" = "Náběh";
+"Fade out" = "Doznění";
+"Fit" = "Přizpůsobit";
+"Fixed" = "Pevné";
+"Fixed point" = "Pevný bod";
+"Focus" = "Zaměření";
+"Follow" = "Sledovat";
+"Follow Pointer" = "Sledovat ukazatel";
+"Follow pointer" = "Sledovat ukazatel";
+"Follow tightness" = "Těsnost sledování";
+"Format" = "Formát";
+"Frame the recording" = "Zarámovat nahrávku";
+"Freeze Frame" = "Zastavený snímek";
+"Generate Captions" = "Vytvořit titulky";
+"Gentle" = "Jemný";
+"Gradient" = "Přechod barev";
+"Hide ordinary typing, show key combinations" = "Skrýt běžné psaní, zobrazit kombinace kláves";
+"Hide when idle" = "Skrýt při nečinnosti";
+"Hide while typing" = "Skrýt při psaní";
+"Hold Focus" = "Držet zaměření";
+"Idle delay" = "Prodleva nečinnosti";
+"Keystrokes" = "Stisky kláves";
+"Keystrokes in this recording are part of the video pixels." = "Stisky kláves jsou v této nahrávce součástí obrazu videa.";
+"Light appearance" = "Světlý vzhled";
+"Makes looping GIFs seamless" = "Zajistí plynulou smyčku GIF";
+"Mirror" = "Zrcadlit";
+"Motion" = "Pohyb";
+"Motion blur" = "Rozmazání pohybem";
+"Next edit" = "Další úprava";
+"No clicks or typing found to zoom into" = "Nenalezena žádná kliknutí ani psaní k přiblížení";
+"No speech was recognized" = "Nebyla rozpoznána žádná řeč";
+"No system wallpapers were found. Choose an image instead." = "Nebyly nalezeny žádné systémové tapety. Vyberte raději obrázek.";
+"Off" = "Vyp.";
+"On-device speech recognition isn't available for your language on this Mac." = "Rozpoznávání řeči v zařízení není na tomto Macu pro váš jazyk k dispozici.";
+"Original" = "Původní";
+"Outline color" = "Barva obrysu";
+"Outline width" = "Šířka obrysu";
+"Overlays" = "Překryvy";
+"Pan between zooms instead of zooming out" = "Přejíždět mezi přiblíženími místo oddálení";
+"Pill" = "Kapsle";
+"Pointer" = "Ukazatel";
+"Press animation" = "Animace stisku";
+"Previous edit" = "Předchozí úprava";
+"Regenerate Captions" = "Znovu vytvořit titulky";
+"Regular" = "Normální";
+"Remove Automatic Zooms" = "Odstranit automatická přiblížení";
+"Remove Captions" = "Odstranit titulky";
+"Removes %.1f seconds from the video. Drag its edges on the timeline to adjust." = "Odstraní z videa %.1f s. Úpravu provedete tažením okrajů na časové ose.";
+"Return to start at the end" = "Na konci se vrátit na začátek";
+"Ring" = "Kroužek";
+"Ripple" = "Vlnění";
+"Save As…" = "Uložit jako…";
+"Shortcuts only" = "Jen zkratky";
+"Show camera" = "Zobrazit kameru";
+"Show captions" = "Zobrazit titulky";
+"Show keystrokes" = "Zobrazit stisky kláves";
+"Show pointer" = "Zobrazit ukazatel";
+"Shrink during zooms" = "Zmenšit při přiblížení";
+"Smoothing" = "Vyhlazování";
+"Snappy" = "Svižný";
+"Speech recognition is turned off for macshot in System Settings › Privacy & Security." = "Rozpoznávání řeči je pro macshot vypnuté v Nastavení systému › Soukromí a zabezpečení.";
+"Speed" = "Rychlost";
+"Spotlight" = "Reflektor";
+"Square" = "Čtverec";
+"Tall" = "Na výšku";
+"Text and blur" = "Text a rozostření";
+"The recording's audio could not be read." = "Zvuk nahrávky nelze přečíst.";
+"This recording already shows the pointer in its pixels, so it can't be restyled. Zooms can still follow it." = "Tato nahrávka už obsahuje ukazatel v obrazu, takže jeho styl nelze změnit. Přiblížení jej však mohou sledovat.";
+"This recording has no audio to transcribe." = "Tato nahrávka nemá žádný zvuk k přepisu.";
+"This video has no recorded pointer data. Recordings made with macshot that open in the editor let you restyle, smooth and resize the pointer after recording." = "Toto video neobsahuje zaznamenaná data ukazatele. Nahrávky pořízené v macshotu, které se otevřou v editoru, umožňují po nahrání měnit styl, vyhlazení a velikost ukazatele.";
+"Title" = "Nadpis";
+"Transcribing…" = "Přepisování…";
+"Transition" = "Přechod";
+"Turn on Show Keystrokes before recording. macshot then records them separately so you can style them here." = "Před nahráváním zapněte Zobrazit stisky kláves. macshot je pak zaznamená zvlášť, abyste jim zde mohli upravit styl.";
+"Turn on the camera before recording. macshot records it separately so you can move, resize, restyle or hide it here, and shrink it during zooms." = "Před nahráváním zapněte kameru. macshot ji zaznamená zvlášť, takže ji zde můžete přesouvat, měnit její velikost a styl, skrýt ji, a zmenšit ji během přiblížení.";
+"Use Solid to hide sensitive information: blur and pixelation can sometimes be reversed." = "K skrytí citlivých údajů použijte Plná: rozostření a pixelizaci lze někdy zvrátit.";
+"Visibility" = "Viditelnost";
+"Wallpaper" = "Tapeta";
+"When recordings open in the editor, the pointer is recorded separately so you can smooth, resize, restyle or hide it, and add zooms that follow it." = "Když se nahrávky otevírají v editoru, ukazatel se zaznamenává zvlášť, takže jej můžete vyhladit, změnit jeho velikost a styl, skrýt ho a přidat přiblížení, která jej sledují.";
+"Wide" = "Na šířku";
+"Zoom in" = "Přiblížení";
+"Zoom in timeline" = "Přiblížit časovou osu";
+"Zoom level" = "Míra přiblížení";
+"Zoom out" = "Oddálení";
+"Zoom out timeline" = "Oddálit časovou osu";
+"macOS" = "macOS";
+"Sway" = "Kývání";
+
+"Snap webcam to corners when moved" = "Přichytávat webkameru k rohům při přesouvání";
+"Search emoji" = "Hledat emoji";
+"Hide the bottom toolbar" = "Skrýt spodní lištu nástrojů";
+"Pick tools with their keyboard shortcuts instead." = "Nástroje vybírejte jejich klávesovými zkratkami.";
+
+"Pin position:" = "Umístění připnutí:";
+"Center of screen" = "Střed obrazovky";
+"Original capture position" = "Původní místo snímku";
+
+"Default Colors" = "Výchozí barvy";
+"The preset swatches in the color picker." = "Přednastavené vzorky v nástroji pro výběr barvy.";
+"Add Color" = "Přidat barvu";
+"No default colors." = "Žádné výchozí barvy.";
+
+/* Floating preview: click action & editor behavior */
+"Dismiss" = "Zavřít";
+"Copy & dismiss" = "Kopírovat a zavřít";
+"Close preview" = "Zavřít náhled";
+"Keep in stack" = "Ponechat v zásobníku";
+"Return to stack when editor closes" = "Vrátit do zásobníku po zavření editoru";
+"  Click on preview:" = "  Kliknutí na náhled:";
+"  When opened in Editor:" = "  Při otevření v editoru:";
+
+/* Kept from this fork (upstream reworded these) */
+"Screenshots only — captured window title (blank otherwise)" = "Pouze snímky obrazovky — název zachyceného okna (jinak prázdné)";
+"A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "Sdílený klíč je součástí — získejte vlastní bezplatný klíč na imgbb.com/api, pokud narazíte na limity. Pouze obrázky (bez podpory videa).";

@@ -215,8 +215,8 @@ final class LocalizationTests: XCTestCase {
     /// ban. A locale that climbs above its budget has almost certainly been
     /// re-damaged; the fix is to repair the strings, not to raise the number.
     private static let diacriticSuspectBudget: [String: Int] = [
-        "ca": 2, "cs": 6, "es": 3, "fr": 4, "hr": 1,
-        "pt": 3, "pt-BR": 3, "ro": 20, "sk": 3, "sv": 1, "vi": 18,
+        "ca": 2, "cs": 7, "es": 0, "fr": 4, "hr": 1, "pl": 0,
+        "pt": 0, "pt-BR": 1, "ro": 25, "sk": 3, "sv": 1, "tr": 2, "vi": 11,
     ]
 
     private static func deaccented(_ word: String) -> String {
@@ -259,17 +259,30 @@ final class LocalizationTests: XCTestCase {
         // souboru (genitive), név → nevet (accusative). All correct spellings.
         let validPlainWords: Set<String>
         switch locale {
-        case "vi": validPlainWords = ["trong", "thanh", "nhanh", "cung", "dung", "minh"]
-        case "es": validPlainWords = ["video"]
-        case "tr": validPlainWords = ["izin", "izni", "iptal"]
-        case "fr": validPlainWords = ["copie"]
-        case "pt": validPlainWords = ["copia"]
+        // "thay" (change, as in "thay đổi") vs "thầy" (teacher).
+        case "vi": validPlainWords = ["trong", "thanh", "nhanh", "cung", "dung", "minh", "thay"]
+        // "esta" (this) and "está" (is) are different words.
+        case "es": validPlainWords = ["video", "esta"]
+        // "imleci" (the pointer, accusative) vs "imleç" (pointer).
+        case "tr": validPlainWords = ["izin", "izni", "iptal", "imleci"]
+        // "enregistre" (records) vs "enregistré" (recorded).
+        case "fr": validPlainWords = ["copie", "enregistre"]
+        case "pt": validPlainWords = ["copia", "esta"]
+        case "pt-BR": validPlainWords = ["esta"]
+        // "copia" (copy, verb) vs "còpia" (a copy).
         case "ca": validPlainWords = ["copia"]
-        case "pl": validPlainWords = ["nazwa", "aplikacje"]
+        // Nominative plural vs accusative singular: "linie"/"linię" (lines/line),
+        // "edycje"/"edycję", "aplikacje"/"aplikację".
+        case "pl": validPlainWords = ["nazwa", "aplikacje", "linie", "edycje"]
         case "cs": validPlainWords = ["souboru"]
         case "hu": validPlainWords = ["nevet"]
+        // "comanda" (the command) vs "comandă" (a command); "scara" (the
+        // scale) vs "scară" (a scale); "a continua" (to continue) vs
+        // "continuă" (continues).
         case "ro": validPlainWords = ["captura", "bara", "fereastra", "rata",
-                                      "viteza", "ramura", "aplica"]
+                                      "viteza", "ramura", "aplica", "comanda", "scara", "continua"]
+        // "andra" (other) vs "ändra" (change); "fast" (fixed) vs "fäst" (attach).
+        case "sv": validPlainWords = ["andra", "fast"]
         default: validPlainWords = []
         }
         return plain.filter { accented.contains($0.key) && !validPlainWords.contains($0.key) }

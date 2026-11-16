@@ -14,6 +14,16 @@ struct RecordingConfiguration {
     let microphoneDeviceID: String?
     let excludedWindows: [CGWindowID]
     let filename: String
+    /// Recorded area in global Core Graphics coordinates, for pointer data.
+    var pointerRegion: CGRect?
+    /// Keep the system pointer out of the pixels; the editor draws it from
+    /// recorded pointer data instead.
+    var hidesCursor = false
+    /// Click and keystroke overlays are excluded from the pixels and
+    /// rendered by the editor.
+    var overlaysInTelemetry = false
+    /// Webcam window excluded because the camera records to its own file.
+    var cameraWindowID: CGWindowID?
 
     init(displayID: CGDirectDisplayID, rect: CGRect, displayBounds: CGRect,
          backingScale: CGFloat, frameRate: Int, microphone: Bool, systemAudio: Bool,
@@ -39,7 +49,7 @@ struct RecordingConfiguration {
         self.frameRate = frameRate
         self.microphone = microphone
         self.systemAudio = systemAudio
-        self.microphoneDeviceID = microphoneDeviceID?.isEmpty == false ? microphoneDeviceID : nil
+        self.microphoneDeviceID = MicrophoneDeviceSelection.persistentDeviceID(microphoneDeviceID)
         self.excludedWindows = excludedWindows
         self.filename = filename
     }

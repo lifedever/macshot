@@ -235,13 +235,18 @@ final class ScrollCaptureController {
         }
     }
 
+    private var didDeliver = false
+
     func stopSession() {
         // The HUD (and its Stop button) is on screen before `isActive` becomes
         // true — startSession first awaits a settled frame, which can take a
         // couple of seconds on a page with a blinking caret or a clock. A stop
         // in that window used to do nothing at all, and the session then
         // installed its scroll monitors anyway.
-        guard isActive || !isCancelled else { return }
+        // Delivers at most once: Stop, Return and ⌘C can all arrive for the
+        // same session, and a second stop must not report an empty result.
+        guard !didDeliver, isActive || !isCancelled else { return }
+        didDeliver = true
         guard isActive else {
             isCancelled = true
             onSessionDone?(nil)
@@ -450,7 +455,13 @@ final class ScrollCaptureController {
             for _ in 0..<burstCount {
                 if let event = CGEvent(scrollWheelEvent2Source: nil, units: .line, wheelCount: 1,
                                        wheel1: -linesPerTick, wheel2: 0, wheel3: 0) {
-                    event.post(tap: .cghidEventTap)
+                    // Post at the session tap, not the HID tap. Mouse utilities
+                    // such as Mac Mouse Fix and LinearMouse rewrite wheel
+                    // events at the HID tap and would apply the user's "reverse
+                    // direction" setting to this synthetic event too, scrolling
+                    // the page up instead of down (#186). ScrollCaptureEventTap
+                    // sits at the session tap as well, so it still sees it.
+                    event.post(tap: .cgSessionEventTap)
                 }
             }
 

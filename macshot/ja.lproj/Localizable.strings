@@ -84,6 +84,26 @@
 "Censor (Pixelate / Blur / Solid)" = "モザイク (ピクセル化 / ぼかし / 塗りつぶし)";
 "Measure" = "計測";
 "Measure (px)" = "計測 (px)";
+"Measure Scale" = "計測スケール";
+"Set Scale..." = "スケールを設定...";
+"Set Scale" = "スケールを設定";
+"Scale: %@" = "スケール: %@";
+"Remove Scale" = "スケールを削除";
+"Show lengths in" = "長さの表示単位";
+"Current scale: 1 %@ = %@ px" = "現在のスケール: 1 %@ = %@ px";
+"Draw Reference Line" = "基準線を描く";
+"Draw a measure line along something whose length you know" = "長さがわかっているものに沿って計測線を描いてください";
+"Draw or select a measure line along something whose length you know, then enter that length." = "長さがわかっているものに沿って計測線を描くか選択し、その長さを入力してください。";
+"This line is %d px long. How long is it in real life?" = "この線の長さは %d px です。実際の長さはどれくらいですか？";
+"e.g. 90 mm or 3 1/2 in" = "例: 90 mm または 3 1/2 in";
+"Enter a length, like 90 mm, 3.5 in or 3 1/2 in." = "90 mm、3.5 in、3 1/2 in のように長さを入力してください。";
+"Real-world lengths are estimates. They are only reliable for things in the same plane as the reference line." = "実際の長さは推定値です。基準線と同じ平面上にあるものに対してのみ信頼できます。";
+"Measure in mm, cm, m, inches or feet using something of known length in the image" = "画像内の長さがわかっているものを使って、mm、cm、m、インチ、フィートで計測";
+"Millimeters (mm)" = "ミリメートル (mm)";
+"Centimeters (cm)" = "センチメートル (cm)";
+"Meters (m)" = "メートル (m)";
+"Inches (in)" = "インチ (in)";
+"Feet (ft)" = "フィート (ft)";
 "Magnify (Loupe)" = "拡大鏡 (ルーペ)";
 "Highlight" = "スポット";
 "Highlight (Spotlight)" = "スポット (スポットライト)";
@@ -91,6 +111,7 @@
 "Color Sampler" = "カラーサンプラー";
 "Color Picker" = "カラーピッカー";
 "Select & Edit" = "選択して編集";
+"Select & Move" = "選択して移動";
 "Color" = "カラー";
 
 /* Toolbar - Actions */
@@ -154,6 +175,7 @@
 "Smooth" = "スムーズ";
 "Refined" = "精密";
 "Smart" = "スマート";
+"Smart snaps the highlighter to lines of text. Hold Shift for a straight line." = "「スマート」はマーカーをテキストの行に合わせます。Shift キーを押したままにすると直線になります。";
 "Padding" = "余白";
 "Shadow" = "シャドウ";
 "Right-click to add points" = "右クリックでポイントを追加";
@@ -210,6 +232,7 @@
 "Play sound on capture" = "キャプチャ時にサウンドを再生";
 "Play sound on copy" = "コピー時にサウンドを再生";
 "Remember last selected tool" = "前回選択したツールを記憶";
+"Start captures in move mode" = "キャプチャ時は移動モードで開始";
 "Show floating thumbnail after capture" = "キャプチャ後にフローティングサムネイルを表示";
 "Launch at login" = "ログイン時に起動";
 "Show snap alignment guides" = "スナップ整列ガイドを表示";
@@ -251,6 +274,8 @@
 "Image format:" = "画像形式:";
 "Image" = "画像";
 "Image format" = "画像形式";
+"Also copy to the clipboard in this format" = "この形式でもクリップボードにコピー";
+"PNG is always included so every app can paste" = "どのアプリでもペーストできるよう、PNG は常に含まれます";
 "Quality:" = "品質:";
 "Quality" = "品質";
 "%d%%" = "%d%%";
@@ -411,7 +436,7 @@
 "Upload History" = "アップロード履歴";
 "No uploads yet." = "アップロードはまだありません。";
 "Base URL for public access. If empty, the S3 endpoint URL is used (may not be publicly accessible)." = "公開アクセス用のベース URL。空の場合、S3 エンドポイント URL が使用されます (公開アクセスできない場合があります)。";
-"A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "共有キーが含まれています — レート制限に達した場合は imgbb.com/api で無料キーを取得してください。画像のみ (動画は非対応)。";
+"A shared key is included. Get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "共有キーが含まれています, レート制限に達した場合は imgbb.com/api で無料キーを取得してください。画像のみ (動画は非対応)。";
 "Works with AWS S3, Cloudflare R2, MinIO, DigitalOcean Spaces, Backblaze B2, and other S3-compatible services. Supports images and videos." = "AWS S3、Cloudflare R2、MinIO、DigitalOcean Spaces、Backblaze B2、その他の S3 互換サービスで利用できます。画像と動画に対応。";
 "Configure S3 in Preferences" = "環境設定で S3 を設定してください";
 "Sign in to Google Drive in Preferences" = "環境設定で Google Drive にサインインしてください";
@@ -444,6 +469,7 @@
 "Licensed under the GPLv3" = "GPLv3 ライセンス";
 "Licensed under GPLv3" = "GPLv3 ライセンス";
 "A free, open-source screenshot & screen recording tool for macOS.\nFully native — built with Swift and AppKit." = "macOS 用の無料・オープンソースのスクリーンショット & 画面録画ツール。\n完全ネイティブ — Swift と AppKit で構築。";
+"A free, open-source screenshot & screen recording tool for macOS.\nFully native, built with Swift and AppKit." = "macOS 用の無料・オープンソースのスクリーンショット & 画面録画ツール。\n完全ネイティブ, Swift と AppKit で構築。";
 
 /* Alerts */
 "No Image on Clipboard" = "クリップボードに画像がありません";
@@ -465,11 +491,17 @@
 
 /* Permission Onboarding */
 "Welcome to macshot" = "macshot へようこそ";
+"Welcome back to macshot" = "macshot へおかえりなさい";
+"Turn Screen Recording back on" = "画面収録をもう一度オンにしてください";
+"After some updates, macOS asks you to allow macshot again. Your settings and captures are safe. If macshot is already in the list, select it, click the minus button (−) to remove it, then click the plus button (+) and add macshot again." = "一部のアップデートの後、macOS から macshot をもう一度許可するよう求められます。設定とキャプチャはそのまま残っています。リストに macshot がすでにある場合は、選択してマイナスボタン（−）で削除し、プラスボタン（+）で macshot をもう一度追加してください。";
 "macshot needs one permission" = "macshot には1つの許可が必要です";
 "Screen Recording not yet granted" = "画面収録がまだ許可されていません";
 "Screen Recording granted!" = "画面収録が許可されました!";
 "Enable macshot, then try taking a screenshot" = "macshot を有効にして、スクリーンショットを撮ってみてください";
 "Open Screen Recording Settings" = "画面収録の設定を開く";
+"Still not working? Run this command in Terminal, then restart macshot." = "それでも解決しない場合は、ターミナルでこのコマンドを実行してから、macshot を再起動してください。";
+"Copy Command" = "コマンドをコピー";
+"Restart macshot" = "macshot を再起動";
 "Continue" = "続ける";
 
 /* OCR Window */
@@ -526,6 +558,22 @@
 "Save As..." = "名前を付けて保存...";
 "Choose a folder" = "フォルダを選択";
 "Save All to Folder…" = "すべてフォルダに保存…";
+
+/* Editable Project */
+"Save Project" = "プロジェクトを保存";
+"Save Project As..." = "プロジェクトに名前を付けて保存...";
+"Save as Editable Project (⇧⌘S)" = "編集可能なプロジェクトとして保存 (⇧⌘S)";
+"Saves the image with every annotation still editable. Open the file in macshot to keep editing." = "すべての注釈を編集可能なまま画像を保存します。macshot でファイルを開くと編集を続けられます。";
+"Open..." = "開く...";
+"Choose an image or macshot project to open in the editor" = "エディタで開く画像または macshot プロジェクトを選択";
+"Could not open “%@”" = "「%@」を開けませんでした";
+"Could not save the project: %@" = "プロジェクトを保存できませんでした: %@";
+"Some annotations in this project could not be restored, so it opened flattened. The original file is unchanged." = "このプロジェクトの一部の注釈を復元できなかったため、統合した画像として開きました。元のファイルは変更されていません。";
+"The file is not a macshot project or is damaged." = "このファイルは macshot プロジェクトではないか、破損しています。";
+"The project could not be prepared for saving." = "保存用にプロジェクトを準備できませんでした。";
+"The image is too large to save as an editable project." = "画像が大きすぎるため、編集可能なプロジェクトとして保存できません。";
+"The project file is too large to open." = "プロジェクトファイルが大きすぎるため開けません。";
+"The project's image could not be read." = "プロジェクトの画像を読み込めませんでした。";
 
 /* Scroll Capture HUD */
 "Auto Scroll" = "自動スクロール";
@@ -598,6 +646,7 @@
 "Settings..." = "設定...";
 "macshot Settings" = "macshot 設定";
 "Also open in Editor" = "エディタでも開く";
+"Open in Editor right after selection" = "選択直後にエディタで開く";
 "Close editor after copying" = "コピー後にエディタを閉じる";
 "Hide controls" = "コントロールを隠す";
 "Hide recording controls" = "録画コントロールを隠す";
@@ -659,7 +708,7 @@
 "Clear History?" = "履歴をクリアしますか？";
 "This will permanently delete all screenshots from history." = "履歴からすべてのスクリーンショットが完全に削除されます。";
 "Click \"Set\" and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧) to set a shortcut." = "\"設定\" をクリックし、少なくとも1つの修飾キー (⌘, ⌥, ⌃, ⇧) を含むキーの組み合わせを押してショートカットを設定してください。";
-"Files are uploaded to this folder in your Google Drive. Leave empty to use \"macshot\". macshot can only use folders it created itself, so a folder you made in Drive with the same name won't be reused — a new one is created instead. Everything stays private — nothing is shared publicly." = "ファイルはGoogle Driveのこのフォルダにアップロードされます。空欄の場合は \"macshot\" が使用されます。macshotは自身が作成したフォルダしか使用できないため、Drive上で同じ名前のフォルダを自分で作成していても再利用されず、新しいフォルダが作成されます。すべてプライベートに保たれ、公開されることはありません。";
+"Files are uploaded to this folder in your Google Drive. Leave empty to use \"macshot\". macshot can only use folders it created itself, so a folder you made in Drive with the same name won't be reused. A new one is created instead. Everything stays private and nothing is shared publicly." = "ファイルはGoogle Driveのこのフォルダにアップロードされます。空欄の場合は \"macshot\" が使用されます。macshotは自身が作成したフォルダしか使用できないため、Drive上で同じ名前のフォルダを自分で作成していても再利用されず、新しいフォルダが作成されます。すべてプライベートに保たれ、公開されることはありません。";
 
 "Pressure" = "筆圧";
 
@@ -720,6 +769,10 @@
 "Theme:" = "テーマ:";
 "Theme" = "テーマ";
 "The Default theme follows the system's Light or Dark appearance." = "デフォルトのテーマはシステムのライト/ダークの外観に従います。";
+"Toolbar appearance:" = "ツールバーの外観:";
+"Dark" = "ダーク";
+"Light" = "ライト";
+"Follow System" = "システムに合わせる";
 "Application" = "アプリケーション";
 "Capture area and extract text" = "エリアをキャプチャしてテキストを抽出";
 "Capture the full screen" = "フルスクリーンをキャプチャ";
@@ -734,7 +787,7 @@
 "Open this settings window" = "この設定ウインドウを開く";
 "Quick capture (uses your Enter action)" = "クイックキャプチャ (Enter アクションを使用)";
 "Re-capture the last selected area" = "前回選択したエリアを再キャプチャ";
-"Screenshots only — captured window title (blank otherwise)" = "スクリーンショットのみ — キャプチャしたウインドウのタイトル (それ以外は空白)";
+"Captured window title (screenshots only, blank otherwise)" = "スクリーンショットのみ, キャプチャしたウインドウのタイトル (それ以外は空白)";
 "Show available filename tokens" = "利用可能なファイル名トークンを表示";
 "Show supported URL scheme commands" = "サポートされている URL スキームコマンドを表示";
 "Start area capture" = "エリアキャプチャを開始";
@@ -814,3 +867,162 @@
 "Play" = "再生";
 "Mute" = "ミュート";
 "Unmute" = "ミュート解除";
+
+/* Video editor (Studio) */
+"%.1f× · follows pointer" = "%.1f× · ポインタに追従";
+"Add" = "追加";
+"Add Cut Here" = "ここにカットを追加";
+"Add Text Here" = "ここにテキストを追加";
+"Add Zoom Here" = "ここにズームを追加";
+"Added %d captions" = "%d 件の字幕を追加しました";
+"Added %d zooms" = "%d 件のズームを追加しました";
+"Apply Default Zoom to All" = "デフォルトズームをすべてに適用";
+"Auto" = "自動";
+"Auto Zoom" = "自動ズーム";
+"Auto Zoom needs pointer data, which macshot records with every new recording. You can still add zooms by double-clicking the zoom lane." = "自動ズームにはポインタデータが必要です。macshot は新しい録画ごとにこのデータを記録します。ズームレーンをダブルクリックしてズームを追加することもできます。";
+"Background color" = "背景色";
+"Background, padding, rounded corners and shadow" = "背景、余白、角丸、シャドウ";
+"Bold Italic" = "太字斜体";
+"Box" = "ボックス";
+"Camera" = "カメラ";
+"Caption" = "字幕";
+"Captions" = "字幕";
+"Captions are transcribed on this Mac. Nothing is uploaded." = "字幕はこの Mac 上で文字起こしされます。何もアップロードされません。";
+"Choose Image…" = "画像を選択…";
+"Click color" = "クリックの色";
+"Clicks" = "クリック";
+"Clip" = "クリップ";
+"Colors" = "カラー";
+"Connect nearby zooms" = "近くのズームをつなげる";
+"Copy the edited video to the clipboard" = "編集した動画をクリップボードにコピー";
+"Creates zooms that follow the pointer wherever you click or type. Adjust or delete them on the timeline." = "クリックや入力をした場所で、ポインタに追従するズームを作成します。タイムライン上で調整または削除できます。";
+"Custom color" = "カスタムカラー";
+"Cut" = "カット";
+"Cuts, speed and freeze frames" = "カット、速度、フリーズフレーム";
+"Default zoom" = "デフォルトズーム";
+"Dot" = "ドット";
+"Double-click the text on the preview to edit it." = "プレビュー上のテキストをダブルクリックすると編集できます。";
+"Double-click to add a zoom" = "ダブルクリックでズームを追加";
+"Double-click to add a zoom, or use Auto Zoom" = "ダブルクリックでズームを追加, または自動ズームを使用";
+"Drag the frame on the preview to choose where the zoom looks." = "プレビュー上の枠をドラッグして、ズームする位置を選択します。";
+"Duration" = "長さ";
+"Edge highlight" = "エッジハイライト";
+"Edit Text" = "テキストを編集";
+"Editable pointer, clicks and keystrokes" = "編集可能なポインタ、クリック、キー入力";
+"Edits" = "編集";
+"Export" = "書き出す";
+"Export Subtitles (.srt)…" = "字幕を書き出す (.srt)…";
+"Fade in" = "フェードイン";
+"Fade out" = "フェードアウト";
+"Fit" = "全体表示";
+"Fixed" = "固定";
+"Fixed point" = "固定位置";
+"Focus" = "フォーカス";
+"Follow" = "追従";
+"Follow Pointer" = "ポインタに追従";
+"Follow pointer" = "ポインタに追従";
+"Follow tightness" = "追従の強さ";
+"Format" = "形式";
+"Frame the recording" = "録画をフレームで囲む";
+"Freeze Frame" = "フリーズフレーム";
+"Generate Captions" = "字幕を生成";
+"Gentle" = "ゆるやか";
+"Gradient" = "グラデーション";
+"Hide ordinary typing, show key combinations" = "通常の入力は隠し、キーの組み合わせを表示";
+"Hide when idle" = "アイドル時に隠す";
+"Hide while typing" = "入力中は隠す";
+"Hold Focus" = "フォーカスを固定";
+"Idle delay" = "アイドル遅延";
+"Keystrokes" = "キー入力";
+"Keystrokes in this recording are part of the video pixels." = "この録画のキー入力は動画の画素に含まれています。";
+"Light appearance" = "ライト外観";
+"Makes looping GIFs seamless" = "ループ GIF を継ぎ目なくします";
+"Mirror" = "反転";
+"Motion" = "モーション";
+"Motion blur" = "モーションブラー";
+"Next edit" = "次の編集点";
+"No clicks or typing found to zoom into" = "ズームするクリックや入力が見つかりません";
+"No speech was recognized" = "音声を認識できませんでした";
+"No system wallpapers were found. Choose an image instead." = "システムの壁紙が見つかりませんでした。代わりに画像を選択してください。";
+"Off" = "オフ";
+"On-device speech recognition isn't available for your language on this Mac." = "この Mac では、お使いの言語のオンデバイス音声認識を利用できません。";
+"Original" = "オリジナル";
+"Outline color" = "アウトラインの色";
+"Outline width" = "アウトラインの幅";
+"Overlays" = "オーバーレイ";
+"Pan between zooms instead of zooming out" = "ズームアウトせずにズーム間をパン";
+"Pill" = "ピル";
+"Pointer" = "ポインタ";
+"Press animation" = "押下アニメーション";
+"Previous edit" = "前の編集点";
+"Regenerate Captions" = "字幕を再生成";
+"Regular" = "標準";
+"Remove Automatic Zooms" = "自動ズームを削除";
+"Remove Captions" = "字幕を削除";
+"Removes %.1f seconds from the video. Drag its edges on the timeline to adjust." = "動画から %.1f 秒を削除します。タイムライン上で端をドラッグして調整できます。";
+"Return to start at the end" = "最後に開始位置へ戻る";
+"Ring" = "リング";
+"Ripple" = "波紋";
+"Save As…" = "名前を付けて保存…";
+"Shortcuts only" = "ショートカットのみ";
+"Show camera" = "カメラを表示";
+"Show captions" = "字幕を表示";
+"Show keystrokes" = "キー入力を表示";
+"Show pointer" = "ポインタを表示";
+"Shrink during zooms" = "ズーム中は縮小";
+"Smoothing" = "スムージング";
+"Snappy" = "きびきび";
+"Speech recognition is turned off for macshot in System Settings › Privacy & Security." = "システム設定 › プライバシーとセキュリティで、macshot の音声認識がオフになっています。";
+"Speed" = "速度";
+"Spotlight" = "スポットライト";
+"Square" = "正方形";
+"Tall" = "縦長";
+"Text and blur" = "テキストとぼかし";
+"The recording's audio could not be read." = "録画の音声を読み込めませんでした。";
+"This recording already shows the pointer in its pixels, so it can't be restyled. Zooms can still follow it." = "この録画にはポインタが画素として含まれているため、スタイルを変更できません。ズームは引き続きポインタに追従できます。";
+"This recording has no audio to transcribe." = "この録画には文字起こしする音声がありません。";
+"This video has no recorded pointer data. Recordings made with macshot that open in the editor let you restyle, smooth and resize the pointer after recording." = "この動画にはポインタデータが記録されていません。macshot で録画してエディタで開いた動画では、録画後にポインタのスタイル、スムージング、サイズを変更できます。";
+"Title" = "タイトル";
+"Transcribing…" = "文字起こし中…";
+"Transition" = "トランジション";
+"Turn on Show Keystrokes before recording. macshot then records them separately so you can style them here." = "録画前に「キー入力を表示」をオンにしてください。macshot がキー入力を別に記録するので、ここでスタイルを設定できます。";
+"Turn on the camera before recording. macshot records it separately so you can move, resize, restyle or hide it here, and shrink it during zooms." = "録画前にカメラをオンにしてください。macshot はカメラを別に記録するので、ここで移動、サイズ変更、スタイル変更、非表示ができます, ズーム中に縮小することもできます。";
+"Use Solid to hide sensitive information: blur and pixelation can sometimes be reversed." = "機密情報を隠すには「塗りつぶし」を使用してください。ぼかしやピクセル化は元に戻せる場合があります。";
+"Visibility" = "表示";
+"Wallpaper" = "壁紙";
+"When recordings open in the editor, the pointer is recorded separately so you can smooth, resize, restyle or hide it, and add zooms that follow it." = "録画をエディタで開く場合、ポインタが別に記録されるため、スムージング、サイズ変更、スタイル変更、非表示が可能になり、ポインタに追従するズームも追加できます。";
+"Wide" = "横長";
+"Zoom in" = "ズームイン";
+"Zoom in timeline" = "タイムラインを拡大";
+"Zoom level" = "ズームレベル";
+"Zoom out" = "ズームアウト";
+"Zoom out timeline" = "タイムラインを縮小";
+"macOS" = "macOS";
+"Sway" = "揺れ";
+
+"Snap webcam to corners when moved" = "移動時にウェブカメラを四隅にスナップ";
+"Search emoji" = "絵文字を検索";
+"Hide the bottom toolbar" = "下部ツールバーを非表示";
+"Pick tools with their keyboard shortcuts instead." = "ツールはキーボードショートカットで選択します。";
+
+"Pin position:" = "ピン留めの位置:";
+"Center of screen" = "画面中央";
+"Original capture position" = "元のキャプチャ位置";
+
+"Default Colors" = "デフォルトの色";
+"The preset swatches in the color picker." = "カラーピッカーのプリセット色。";
+"Add Color" = "色を追加";
+"No default colors." = "デフォルトの色はありません。";
+
+/* Floating preview: click action & editor behavior */
+"Dismiss" = "閉じる";
+"Copy & dismiss" = "コピーして閉じる";
+"Close preview" = "プレビューを閉じる";
+"Keep in stack" = "スタックに残す";
+"Return to stack when editor closes" = "エディタを閉じたらスタックに戻す";
+"  Click on preview:" = "  プレビューをクリック:";
+"  When opened in Editor:" = "  エディタで開いたとき:";
+
+/* Kept from this fork (upstream reworded these) */
+"Screenshots only — captured window title (blank otherwise)" = "スクリーンショットのみ — キャプチャしたウインドウのタイトル (それ以外は空白)";
+"A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "共有キーが含まれています — レート制限に達した場合は imgbb.com/api で無料キーを取得してください。画像のみ (動画は非対応)。";

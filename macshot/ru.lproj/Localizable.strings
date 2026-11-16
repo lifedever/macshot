@@ -31,6 +31,7 @@
 "Recent Captures" = "Недавние снимки";
 "Show History Panel" = "Показать панель истории";
 "Open Image..." = "Открыть изображение...";
+"Open..." = "Открыть...";
 "Open from Clipboard" = "Открыть из буфера обмена";
 "Pin from Clipboard" = "Закрепить из буфера обмена";
 "Preferences..." = "Настройки...";
@@ -91,7 +92,30 @@
 "Color Sampler" = "Пипетка";
 "Color Picker" = "Палитра";
 "Select & Edit" = "Выбрать и изменить";
+"Select & Move" = "Выбрать и переместить";
 "Color" = "Цвет";
+
+/* Measure scale */
+"Measure Scale" = "Масштаб линейки";
+"Set Scale..." = "Задать масштаб...";
+"Set Scale" = "Задать масштаб";
+"Scale: %@" = "Масштаб: %@";
+"Remove Scale" = "Удалить масштаб";
+"Show lengths in" = "Показывать длину в";
+"Current scale: 1 %@ = %@ px" = "Текущий масштаб: 1 %@ = %@ px";
+"Draw Reference Line" = "Провести эталонную линию";
+"Draw a measure line along something whose length you know" = "Проведите линию вдоль объекта известной длины";
+"Draw or select a measure line along something whose length you know, then enter that length." = "Проведите или выберите линию вдоль объекта известной длины, затем введите эту длину.";
+"This line is %d px long. How long is it in real life?" = "Длина этой линии %d px. Какова её реальная длина?";
+"e.g. 90 mm or 3 1/2 in" = "например, 90 mm или 3 1/2 in";
+"Enter a length, like 90 mm, 3.5 in or 3 1/2 in." = "Введите длину, например 90 mm, 3.5 in или 3 1/2 in.";
+"Real-world lengths are estimates. They are only reliable for things in the same plane as the reference line." = "Реальные длины приблизительны. Они надёжны только для объектов в той же плоскости, что и эталонная линия.";
+"Measure in mm, cm, m, inches or feet using something of known length in the image" = "Измерение в mm, cm, m, дюймах или футах по объекту известной длины на изображении";
+"Millimeters (mm)" = "Миллиметры (mm)";
+"Centimeters (cm)" = "Сантиметры (cm)";
+"Meters (m)" = "Метры (m)";
+"Inches (in)" = "Дюймы (in)";
+"Feet (ft)" = "Футы (ft)";
 
 /* Aspect ratio & resolution presets */
 "Aspect ratio & resolution presets" = "Пресеты соотношения сторон и разрешения";
@@ -174,6 +198,7 @@
 "Smooth" = "Сглаживание";
 "Refined" = "Точный";
 "Smart" = "Умное";
+"Smart snaps the highlighter to lines of text. Hold Shift for a straight line." = "«Умное» привязывает маркер к строкам текста. Удерживайте Shift, чтобы провести прямую линию.";
 "Padding" = "Отступ";
 "Shadow" = "Тень";
 /* Beautify */
@@ -242,6 +267,7 @@
 "Play sound on capture" = "Воспроизводить звук при захвате";
 "Play sound on copy" = "Воспроизводить звук при копировании";
 "Remember last selected tool" = "Запоминать последний выбранный инструмент";
+"Start captures in move mode" = "Начинать захват в режиме перемещения";
 "Show floating thumbnail after capture" = "Показывать миниатюру после захвата";
 "Launch at login" = "Запускать при входе в систему";
 "Show snap alignment guides" = "Показывать направляющие привязки";
@@ -277,6 +303,8 @@
 "Multiple previews" = "Несколько превью";
 "Output" = "Вывод";
 "Image format:" = "Формат изображения:";
+"Also copy to the clipboard in this format" = "Также копировать в буфер обмена в этом формате";
+"PNG is always included so every app can paste" = "PNG всегда добавляется, чтобы вставка работала в любом приложении";
 "Quality:" = "Качество:";
 "Image" = "Изображение";
 "Image format" = "Формат изображения";
@@ -431,7 +459,7 @@
 "Upload History" = "История загрузок";
 "No uploads yet." = "Загрузок пока нет.";
 "Base URL for public access. If empty, the S3 endpoint URL is used (may not be publicly accessible)." = "Базовый URL для публичного доступа. Если пуст, используется URL S3 (может быть недоступен публично).";
-"A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "Используется общий ключ — получите свой бесплатный ключ на imgbb.com/api при превышении лимитов. Только изображения (видео не поддерживается).";
+"A shared key is included. Get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "Используется общий ключ, получите свой бесплатный ключ на imgbb.com/api при превышении лимитов. Только изображения (видео не поддерживается).";
 "Works with AWS S3, Cloudflare R2, MinIO, DigitalOcean Spaces, Backblaze B2, and other S3-compatible services. Supports images and videos." = "Работает с AWS S3, Cloudflare R2, MinIO, DigitalOcean Spaces, Backblaze B2 и другими S3-совместимыми сервисами. Поддерживает изображения и видео.";
 /* Uploads - GitHub */
 "Token" = "Токен";
@@ -454,6 +482,7 @@
 "Licensed under the GPLv3" = "Лицензия GPLv3";
 "Licensed under GPLv3" = "Лицензия GPLv3";
 "A free, open-source screenshot & screen recording tool for macOS.\nFully native — built with Swift and AppKit." = "Бесплатный инструмент для снимков экрана и записи видео с открытым исходным кодом для macOS.\nПолностью нативный — создан на Swift и AppKit.";
+"A free, open-source screenshot & screen recording tool for macOS.\nFully native, built with Swift and AppKit." = "Бесплатный инструмент для снимков экрана и записи видео с открытым исходным кодом для macOS.\nПолностью нативный, создан на Swift и AppKit.";
 
 /* Alerts */
 "No Image on Clipboard" = "Нет изображения в буфере обмена";
@@ -475,11 +504,17 @@
 
 /* Permission Onboarding */
 "Welcome to macshot" = "Добро пожаловать в macshot";
+"Welcome back to macshot" = "С возвращением в macshot";
+"Turn Screen Recording back on" = "Снова включите запись экрана";
+"After some updates, macOS asks you to allow macshot again. Your settings and captures are safe. If macshot is already in the list, select it, click the minus button (−) to remove it, then click the plus button (+) and add macshot again." = "После некоторых обновлений macOS просит снова разрешить доступ macshot. Ваши настройки и снимки на месте. Если macshot уже есть в списке, выберите его, нажмите кнопку «минус» (−), чтобы удалить, затем нажмите кнопку «плюс» (+) и добавьте macshot снова.";
 "macshot needs one permission" = "macshot требуется одно разрешение";
 "Screen Recording not yet granted" = "Разрешение на запись экрана не предоставлено";
 "Screen Recording granted!" = "Разрешение на запись экрана получено!";
 "Enable macshot, then try taking a screenshot" = "Включите macshot, затем попробуйте сделать снимок экрана";
 "Open Screen Recording Settings" = "Открыть настройки записи экрана";
+"Still not working? Run this command in Terminal, then restart macshot." = "Всё ещё не работает? Выполните эту команду в Терминале, затем перезапустите macshot.";
+"Copy Command" = "Копировать команду";
+"Restart macshot" = "Перезапустить macshot";
 "Continue" = "Продолжить";
 
 /* OCR Window */
@@ -529,6 +564,21 @@
 "Could not encode the image." = "Не удалось закодировать изображение.";
 "Could not save the screenshot: %@" = "Не удалось сохранить снимок экрана: %@";
 "Could not save the screenshot to history." = "Не удалось сохранить снимок экрана в историю.";
+
+/* Editable projects */
+"Save Project" = "Сохранить проект";
+"Save Project As..." = "Сохранить проект как...";
+"Save as Editable Project (⇧⌘S)" = "Сохранить как редактируемый проект (⇧⌘S)";
+"Saves the image with every annotation still editable. Open the file in macshot to keep editing." = "Сохраняет изображение, оставляя все аннотации редактируемыми. Откройте файл в macshot, чтобы продолжить редактирование.";
+"Choose an image or macshot project to open in the editor" = "Выберите изображение или проект macshot для открытия в редакторе";
+"Could not open “%@”" = "Не удалось открыть «%@»";
+"Could not save the project: %@" = "Не удалось сохранить проект: %@";
+"Some annotations in this project could not be restored, so it opened flattened. The original file is unchanged." = "Некоторые аннотации в этом проекте не удалось восстановить, поэтому он открыт как плоское изображение. Исходный файл не изменён.";
+"The file is not a macshot project or is damaged." = "Файл не является проектом macshot или повреждён.";
+"The project could not be prepared for saving." = "Не удалось подготовить проект к сохранению.";
+"The image is too large to save as an editable project." = "Изображение слишком большое для сохранения в виде редактируемого проекта.";
+"The project file is too large to open." = "Файл проекта слишком велик для открытия.";
+"The project's image could not be read." = "Не удалось прочитать изображение проекта.";
 
 /* Scroll Capture HUD */
 "Auto Scroll" = "Авто-прокрутка";
@@ -600,6 +650,7 @@
 "Settings" = "Настройки";
 "macshot Settings" = "Настройки macshot";
 "Also open in Editor" = "Также открыть в редакторе";
+"Open in Editor right after selection" = "Открыть в редакторе сразу после выделения";
 "Close editor after copying" = "Закрывать редактор после копирования";
 "Hide controls" = "Скрыть элементы управления";
 "Hide recording controls" = "Скрыть элементы управления записью";
@@ -670,6 +721,7 @@
 "Click \"Set\" and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧) to set a shortcut." = "Нажмите \"Задать\" и введите комбинацию клавиш с хотя бы одним модификатором (⌘, ⌥, ⌃, ⇧), чтобы установить сочетание.";
 "Click a shortcut and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧). Esc cancels, ⌫ clears. Function keys work on their own." = "Нажмите на сочетание и введите комбинацию клавиш с хотя бы одним модификатором (⌘, ⌥, ⌃, ⇧). Esc отменяет, ⌫ удаляет. Функциональные клавиши работают сами по себе.";
 "Files are uploaded to this folder in your Google Drive. Leave empty to use \"macshot\". macshot can only use folders it created itself, so a folder you made in Drive with the same name won't be reused — a new one is created instead. Everything stays private — nothing is shared publicly." = "Файлы загружаются в эту папку на вашем Google Drive. Оставьте поле пустым, чтобы использовать \"macshot\". macshot может использовать только созданные им самим папки, поэтому папка с таким же именем, созданная вами в Drive, не будет использована — вместо неё будет создана новая. Всё остаётся приватным — ничего не публикуется в открытый доступ.";
+"Files are uploaded to this folder in your Google Drive. Leave empty to use \"macshot\". macshot can only use folders it created itself, so a folder you made in Drive with the same name won't be reused. A new one is created instead. Everything stays private and nothing is shared publicly." = "Файлы загружаются в эту папку на вашем Google Drive. Оставьте поле пустым, чтобы использовать \"macshot\". macshot может использовать только созданные им самим папки, поэтому папка с таким же именем, созданная вами в Drive, не будет использована, вместо неё будет создана новая. Всё остаётся приватным, ничего не публикуется в открытый доступ.";
 
 "Pressure" = "Нажим";
 
@@ -730,6 +782,10 @@
 "Theme:" = "Тема:";
 "Theme" = "Тема";
 "The Default theme follows the system's Light or Dark appearance." = "Тема по умолчанию следует светлому или тёмному оформлению системы.";
+"Toolbar appearance:" = "Панель инструментов:";
+"Dark" = "Тёмная";
+"Light" = "Светлая";
+"Follow System" = "Как в системе";
 "Application" = "Приложение";
 "Capture area and extract text" = "Захват области и извлечение текста";
 "Capture the full screen" = "Захватить весь экран";
@@ -743,7 +799,7 @@
 "Open this settings window" = "Открыть это окно настроек";
 "Quick capture (uses your Enter action)" = "Быстрый захват (использует действие Enter)";
 "Re-capture the last selected area" = "Повторный захват последней выбранной области";
-"Screenshots only — captured window title (blank otherwise)" = "Только для скриншотов — заголовок захваченного окна (иначе пусто)";
+"Captured window title (screenshots only, blank otherwise)" = "Только для скриншотов, заголовок захваченного окна (иначе пусто)";
 "Show available filename tokens" = "Показать доступные токены имени файла";
 "Show supported URL scheme commands" = "Показать поддерживаемые команды URL-схемы";
 "Start area capture" = "Начать захват области";
@@ -812,3 +868,162 @@
 "Play" = "Воспроизвести";
 "Mute" = "Выключить звук";
 "Unmute" = "Включить звук";
+
+/* Video editor (Studio) */
+"%.1f× · follows pointer" = "%.1f× · следует за указателем";
+"Add" = "Добавить";
+"Add Cut Here" = "Добавить вырез здесь";
+"Add Text Here" = "Добавить текст здесь";
+"Add Zoom Here" = "Добавить масштаб здесь";
+"Added %d captions" = "Добавлено субтитров: %d";
+"Added %d zooms" = "Добавлено увеличений: %d";
+"Apply Default Zoom to All" = "Применить масштаб по умолчанию ко всем";
+"Auto" = "Авто";
+"Auto Zoom" = "Автомасштаб";
+"Auto Zoom needs pointer data, which macshot records with every new recording. You can still add zooms by double-clicking the zoom lane." = "Автомасштабу нужны данные об указателе, которые macshot записывает при каждой новой записи. Вы по-прежнему можете добавлять увеличения двойным щелчком по дорожке масштаба.";
+"Background color" = "Цвет фона";
+"Background, padding, rounded corners and shadow" = "Фон, отступы, скруглённые углы и тень";
+"Bold Italic" = "Жирный курсив";
+"Box" = "Блок";
+"Camera" = "Камера";
+"Caption" = "Субтитр";
+"Captions" = "Субтитры";
+"Captions are transcribed on this Mac. Nothing is uploaded." = "Субтитры распознаются на этом Mac. Ничего не загружается.";
+"Choose Image…" = "Выбрать изображение…";
+"Click color" = "Цвет щелчка";
+"Clicks" = "Щелчки";
+"Clip" = "Клип";
+"Colors" = "Цвета";
+"Connect nearby zooms" = "Связывать соседние увеличения";
+"Copy the edited video to the clipboard" = "Скопировать отредактированное видео в буфер обмена";
+"Creates zooms that follow the pointer wherever you click or type. Adjust or delete them on the timeline." = "Создаёт увеличения, следующие за указателем там, где вы щёлкаете или печатаете. Настройте или удалите их на шкале времени.";
+"Custom color" = "Свой цвет";
+"Cut" = "Вырез";
+"Cuts, speed and freeze frames" = "Вырезы, скорость и стоп-кадры";
+"Default zoom" = "Масштаб по умолчанию";
+"Dot" = "Точка";
+"Double-click the text on the preview to edit it." = "Дважды щёлкните текст в предпросмотре, чтобы изменить его.";
+"Double-click to add a zoom" = "Дважды щёлкните, чтобы добавить увеличение";
+"Double-click to add a zoom, or use Auto Zoom" = "Дважды щёлкните, чтобы добавить увеличение,, или используйте автомасштаб";
+"Drag the frame on the preview to choose where the zoom looks." = "Перетащите рамку в предпросмотре, чтобы выбрать, куда направлено увеличение.";
+"Duration" = "Длительность";
+"Edge highlight" = "Подсветка краёв";
+"Edit Text" = "Изменить текст";
+"Editable pointer, clicks and keystrokes" = "Редактируемые указатель, щелчки и нажатия клавиш";
+"Edits" = "Правки";
+"Export" = "Экспорт";
+"Export Subtitles (.srt)…" = "Экспорт субтитров (.srt)…";
+"Fade in" = "Появление";
+"Fade out" = "Исчезание";
+"Fit" = "Вместить";
+"Fixed" = "Фикс.";
+"Fixed point" = "Фиксированная точка";
+"Focus" = "Фокус";
+"Follow" = "Следование";
+"Follow Pointer" = "Следовать за указателем";
+"Follow pointer" = "За указателем";
+"Follow tightness" = "Плотность следования";
+"Format" = "Формат";
+"Frame the recording" = "Оформить запись";
+"Freeze Frame" = "Стоп-кадр";
+"Generate Captions" = "Создать субтитры";
+"Gentle" = "Мягкий";
+"Gradient" = "Градиент";
+"Hide ordinary typing, show key combinations" = "Скрывать обычный ввод, показывать сочетания клавиш";
+"Hide when idle" = "Скрывать при бездействии";
+"Hide while typing" = "Скрывать при вводе";
+"Hold Focus" = "Удерживать фокус";
+"Idle delay" = "Задержка бездействия";
+"Keystrokes" = "Нажатия клавиш";
+"Keystrokes in this recording are part of the video pixels." = "Нажатия клавиш в этой записи являются частью изображения видео.";
+"Light appearance" = "Светлое оформление";
+"Makes looping GIFs seamless" = "Делает зацикленные GIF бесшовными";
+"Mirror" = "Зеркально";
+"Motion" = "Движение";
+"Motion blur" = "Размытие движения";
+"Next edit" = "Следующая правка";
+"No clicks or typing found to zoom into" = "Не найдено щелчков или ввода для увеличения";
+"No speech was recognized" = "Речь не распознана";
+"No system wallpapers were found. Choose an image instead." = "Системные обои не найдены. Выберите изображение.";
+"Off" = "Выкл.";
+"On-device speech recognition isn't available for your language on this Mac." = "Распознавание речи на устройстве недоступно для вашего языка на этом Mac.";
+"Original" = "Оригинал";
+"Outline color" = "Цвет контура";
+"Outline width" = "Толщина контура";
+"Overlays" = "Наложения";
+"Pan between zooms instead of zooming out" = "Переходить между увеличениями без отдаления";
+"Pill" = "Капсула";
+"Pointer" = "Указатель";
+"Press animation" = "Анимация нажатия";
+"Previous edit" = "Предыдущая правка";
+"Regenerate Captions" = "Пересоздать субтитры";
+"Regular" = "Обычный";
+"Remove Automatic Zooms" = "Удалить автоматические увеличения";
+"Remove Captions" = "Удалить субтитры";
+"Removes %.1f seconds from the video. Drag its edges on the timeline to adjust." = "Удаляет %.1f с из видео. Перетащите края на шкале времени, чтобы изменить.";
+"Return to start at the end" = "Вернуться к началу в конце";
+"Ring" = "Кольцо";
+"Ripple" = "Волна";
+"Save As…" = "Сохранить как…";
+"Shortcuts only" = "Только сочетания";
+"Show camera" = "Показывать камеру";
+"Show captions" = "Показывать субтитры";
+"Show keystrokes" = "Показывать нажатия клавиш";
+"Show pointer" = "Показывать указатель";
+"Shrink during zooms" = "Уменьшать при увеличении";
+"Smoothing" = "Сглаживание";
+"Snappy" = "Быстрый";
+"Speech recognition is turned off for macshot in System Settings › Privacy & Security." = "Распознавание речи для macshot отключено в Системных настройках › Конфиденциальность и безопасность.";
+"Speed" = "Скорость";
+"Spotlight" = "Прожектор";
+"Square" = "Квадрат";
+"Tall" = "Высокая";
+"Text and blur" = "Текст и размытие";
+"The recording's audio could not be read." = "Не удалось прочитать звук записи.";
+"This recording already shows the pointer in its pixels, so it can't be restyled. Zooms can still follow it." = "В этой записи указатель уже является частью изображения, поэтому его нельзя изменить. Увеличения по-прежнему могут следовать за ним.";
+"This recording has no audio to transcribe." = "В этой записи нет звука для распознавания.";
+"This video has no recorded pointer data. Recordings made with macshot that open in the editor let you restyle, smooth and resize the pointer after recording." = "В этом видео нет записанных данных указателя. Записи macshot, открываемые в редакторе, позволяют менять стиль, сглаживать и изменять размер указателя после записи.";
+"Title" = "Заголовок";
+"Transcribing…" = "Распознавание…";
+"Transition" = "Переход";
+"Turn on Show Keystrokes before recording. macshot then records them separately so you can style them here." = "Включите «Показывать нажатия клавиш» перед записью. Тогда macshot запишет их отдельно, и здесь их можно будет оформить.";
+"Turn on the camera before recording. macshot records it separately so you can move, resize, restyle or hide it here, and shrink it during zooms." = "Включите камеру перед записью. macshot запишет её отдельно, и здесь её можно будет перемещать, менять размер и стиль, скрывать, и уменьшать во время увеличений.";
+"Use Solid to hide sensitive information: blur and pixelation can sometimes be reversed." = "Используйте «Заливка», чтобы скрыть конфиденциальные данные: размытие и пикселизацию иногда можно обратить.";
+"Visibility" = "Видимость";
+"Wallpaper" = "Обои";
+"When recordings open in the editor, the pointer is recorded separately so you can smooth, resize, restyle or hide it, and add zooms that follow it." = "Если записи открываются в редакторе, указатель записывается отдельно, поэтому его можно сглаживать, менять размер и стиль, скрывать, а также добавлять следующие за ним увеличения.";
+"Wide" = "Широкая";
+"Zoom in" = "Приближение";
+"Zoom in timeline" = "Увеличить шкалу времени";
+"Zoom level" = "Уровень масштаба";
+"Zoom out" = "Отдаление";
+"Zoom out timeline" = "Уменьшить шкалу времени";
+"macOS" = "macOS";
+"Sway" = "Покачивание";
+
+"Snap webcam to corners when moved" = "Привязывать веб-камеру к углам при перемещении";
+"Search emoji" = "Поиск эмодзи";
+"Hide the bottom toolbar" = "Скрывать нижнюю панель инструментов";
+"Pick tools with their keyboard shortcuts instead." = "Выбирайте инструменты сочетаниями клавиш.";
+
+"Pin position:" = "Положение закреплённого снимка:";
+"Center of screen" = "Центр экрана";
+"Original capture position" = "Исходное место захвата";
+
+"Default Colors" = "Цвета по умолчанию";
+"The preset swatches in the color picker." = "Предустановленные образцы в палитре цветов.";
+"Add Color" = "Добавить цвет";
+"No default colors." = "Нет цветов по умолчанию.";
+
+/* Floating preview: click action & editor behavior */
+"Dismiss" = "Закрыть";
+"Copy & dismiss" = "Скопировать и закрыть";
+"Close preview" = "Закрыть превью";
+"Keep in stack" = "Оставить в стопке";
+"Return to stack when editor closes" = "Вернуть в стопку после закрытия редактора";
+"  Click on preview:" = "  Клик по превью:";
+"  When opened in Editor:" = "  При открытии в редакторе:";
+
+/* Kept from this fork (upstream reworded these) */
+"Screenshots only — captured window title (blank otherwise)" = "Только для скриншотов — заголовок захваченного окна (иначе пусто)";
+"A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "Используется общий ключ — получите свой бесплатный ключ на imgbb.com/api при превышении лимитов. Только изображения (видео не поддерживается).";

@@ -152,6 +152,81 @@ final class ImageEncoderTests: XCTestCase {
         }
     }
 
+    // MARK: - Clipboard flavors (#309, #373, #393)
+
+    private func clipboardTypes(format: ImageEncoder.Format, optIn: Bool) throws -> [NSPasteboard.PasteboardType] {
+        var prepared: ImageEncoder.PreparedImage?
+        try withDefaults(["imageFormat": format.rawValue]) {
+            prepared = try ImageEncoder.PreparedImage(ImageProbe.quadrantImage(width: 16, height: 12))
+        }
+        let representations = ImageEncoder.clipboardRepresentations(for: try XCTUnwrap(prepared), includeConfiguredFormat: optIn)
+        for representation in representations {
+            XCTAssertNotNil(NSImage(data: representation.data), "\(representation.type.rawValue) must decode")
+        }
+        return representations.map(\.type)
+    }
+
+    func testClipboardDefaultsToPNGAndTIFFOnlyForEveryFormat() throws {
+        for format in ImageEncoder.availableFormats {
+            XCTAssertEqual(try clipboardTypes(format: format, optIn: false), [.png, .tiff], "\(format)")
+        }
+    }
+
+    func testClipboardOptInPutsConfiguredFormatFirstAndKeepsPNGAndTIFF() throws {
+        for format in ImageEncoder.availableFormats where format != .png {
+            let expected = NSPasteboard.PasteboardType(format.utType.identifier)
+            XCTAssertEqual(try clipboardTypes(format: format, optIn: true), [expected, .png, .tiff], "\(format)")
+        }
+        XCTAssertEqual(try clipboardTypes(format: .png, optIn: true), [.png, .tiff], "PNG is never listed twice")
+    }
+
+    func testClipboardWriteKeepsFlavorOrderAndDataWithoutAFileURL() throws {
+        var prepared: ImageEncoder.PreparedImage?
+        try withDefaults(["imageFormat": "jpeg"]) {
+            prepared = try ImageEncoder.PreparedImage(ImageProbe.quadrantImage(width: 16, height: 12))
+        }
+        let representations = ImageEncoder.clipboardRepresentations(for: try XCTUnwrap(prepared), includeConfiguredFormat: true)
+        let pasteboard = NSPasteboard(name: NSPasteboard.Name("macshot.tests.\(UUID().uuidString)"))
+        defer { pasteboard.releaseGlobally() }
+        pasteboard.setString("stale", forType: .string)
+        let changeCount = pasteboard.changeCount
+        ImageEncoder.writeImagePasteboard(pasteboard, representations: representations)
+        XCTAssertEqual(pasteboard.changeCount, changeCount + 1, "one copy is one clipboard change (#483)")
+        XCTAssertNil(pasteboard.string(forType: .string), "the previous contents are cleared")
+        // AppKit adds legacy aliases (e.g. "Apple PNG pasteboard type"); the UTIs keep our order.
+        let utis = (pasteboard.types ?? []).filter { $0.rawValue.hasPrefix("public.") }
+        XCTAssertEqual(utis, [NSPasteboard.PasteboardType("public.jpeg"), .png, .tiff])
+        XCTAssertNil(pasteboard.string(forType: .fileURL), "a sandbox file URL breaks Teams and RDP paste")
+        for representation in representations {
+            XCTAssertEqual(pasteboard.data(forType: representation.type), representation.data)
+        }
+    }
+
+    func testWebPKeepsSemiTransparentColorsInsteadOfDarkeningThem() throws {
+        let translucent = ImageProbe.solidImage(width: 16, height: 16,
+                                                color: CGColor(srgbRed: 1, green: 0.5, blue: 0, alpha: 0.5))
+        let png = try XCTUnwrap(NSImage(data: try encode(format: .png, image: translucent)))
+        let webp = try XCTUnwrap(NSImage(data: try encode(format: .webp, quality: 1.0, image: translucent)))
+        let expected = try XCTUnwrap(ImageProbe.pixelColor(png, x: 8, y: 8)?.usingColorSpace(.sRGB))
+        let actual = try XCTUnwrap(ImageProbe.pixelColor(webp, x: 8, y: 8)?.usingColorSpace(.sRGB))
+        XCTAssertEqual(actual.alphaComponent, expected.alphaComponent, accuracy: 0.02)
+        XCTAssertEqual(actual.redComponent, expected.redComponent, accuracy: 0.05, "premultiplied bytes darken WebP edges")
+        XCTAssertEqual(actual.greenComponent, expected.greenComponent, accuracy: 0.05)
+    }
+
+    func testWebPRefusesImagesBeyondItsSizeLimitInsteadOfAllocating() {
+        let tall = ImageProbe.solidImage(width: 2, height: ImageEncoder.webPMaximumDimension + 1)
+        withDefaults(["imageFormat": "webp"]) { XCTAssertNil(ImageEncoder.encode(tall)) }
+        let edge = ImageProbe.solidImage(width: 2, height: ImageEncoder.webPMaximumDimension)
+        withDefaults(["imageFormat": "webp"]) { XCTAssertNotNil(ImageEncoder.encode(edge)) }
+    }
+
+    func testUnpremultiplyRestoresStraightAlpha() {
+        var pixels: [UInt8] = [128, 64, 0, 128,  10, 20, 30, 255,  0, 0, 0, 0,  255, 255, 255, 255]
+        pixels.withUnsafeMutableBufferPointer { ImageEncoder.unpremultiplyRGBA($0) }
+        XCTAssertEqual(pixels, [255, 128, 0, 128,  10, 20, 30, 255,  0, 0, 0, 0,  255, 255, 255, 255])
+    }
+
     // MARK: - Retina downscaling
 
     func testRetinaDownscaleHalvesATwoTimesCapture() throws {
@@ -208,6 +283,58 @@ final class ImageEncoderTests: XCTestCase {
         let jpeg = try XCTUnwrap(NSImage(data: try encode(format: .jpeg, image: transparent)))
         let jpegPixel = try XCTUnwrap(ImageProbe.pixelColor(jpeg, x: 5, y: 5))
         XCTAssertEqual(jpegPixel.alphaComponent, 1, accuracy: 0.01, "JPEG has no alpha, so it flattens")
+        XCTAssertGreaterThan(jpegPixel.redComponent, 0.95, "transparency mattes onto white, not black")
+        XCTAssertGreaterThan(jpegPixel.greenComponent, 0.95)
+        XCTAssertGreaterThan(jpegPixel.blueComponent, 0.95)
+    }
+
+    /// The matte is applied by the encoder itself, not by a marker on one
+    /// NSImage instance: a copy of a translucent image (history re-save,
+    /// downscale, a new NSImage around the same pixels) still mattes.
+    func testJPEGMattesCopiesOfTranslucentImages() throws {
+        let original = ImageProbe.makeImage(width: 12, height: 12) { context in
+            context.setFillColor(CGColor(srgbRed: 0, green: 0, blue: 0, alpha: 0.5))
+            context.fill(CGRect(x: 0, y: 0, width: 12, height: 12))
+        }
+        let cgImage = try XCTUnwrap(original.cgImage(forProposedRect: nil, context: nil, hints: nil))
+        let copy = NSImage(cgImage: cgImage, size: original.size)
+        let jpeg = try XCTUnwrap(NSImage(data: try encode(format: .jpeg, image: copy)))
+        let pixel = try XCTUnwrap(ImageProbe.pixelColor(jpeg, x: 6, y: 6))
+        XCTAssertEqual(pixel.redComponent, 0.5, accuracy: 0.06, "half-black over white is mid grey")
+        XCTAssertEqual(pixel.greenComponent, 0.5, accuracy: 0.06)
+    }
+
+    func testMatteOntoWhiteBlendsAlphaAndDropsTheChannel() throws {
+        let source = ImageProbe.makeImage(width: 4, height: 2) { context in
+            context.setFillColor(CGColor(srgbRed: 1, green: 0, blue: 0, alpha: 0.5))
+            context.fill(CGRect(x: 0, y: 0, width: 2, height: 2))
+        }
+        let pixels = try XCTUnwrap(source.cgImage(forProposedRect: nil, context: nil, hints: nil))
+        let matted = ImageEncoder.compositeOverWhite(pixels)
+        XCTAssertEqual(matted.width, 4)
+        XCTAssertEqual(matted.height, 2)
+        XCTAssertTrue([.none, .noneSkipFirst, .noneSkipLast].contains(matted.alphaInfo),
+                      "the encoder must receive an opaque image")
+        let image = NSImage(cgImage: matted, size: NSSize(width: 4, height: 2))
+        let clear = try XCTUnwrap(ImageProbe.pixelColor(image, x: 3, y: 0))
+        XCTAssertEqual(clear.redComponent, 1, accuracy: 0.01)
+        XCTAssertEqual(clear.greenComponent, 1, accuracy: 0.01)
+        XCTAssertEqual(clear.blueComponent, 1, accuracy: 0.01)
+        let half = try XCTUnwrap(ImageProbe.pixelColor(image, x: 0, y: 0))
+        XCTAssertEqual(half.redComponent, 1, accuracy: 0.01)
+        XCTAssertEqual(half.greenComponent, 0.5, accuracy: 0.02)
+        XCTAssertEqual(half.alphaComponent, 1, accuracy: 0.01)
+    }
+
+    func testMatteLeavesOpaqueImagesAlone() throws {
+        let space = try XCTUnwrap(CGColorSpace(name: CGColorSpace.sRGB))
+        let context = try XCTUnwrap(CGContext(
+            data: nil, width: 3, height: 3, bitsPerComponent: 8, bytesPerRow: 0, space: space,
+            bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue))
+        context.setFillColor(CGColor(srgbRed: 0, green: 0, blue: 1, alpha: 1))
+        context.fill(CGRect(x: 0, y: 0, width: 3, height: 3))
+        let opaque = try XCTUnwrap(context.makeImage())
+        XCTAssertTrue(ImageEncoder.compositeOverWhite(opaque) === opaque)
     }
 
     // MARK: - Fixtures

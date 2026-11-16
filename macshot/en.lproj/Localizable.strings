@@ -169,6 +169,7 @@
 "Smooth" = "Smooth";
 "Refined" = "Refined";
 "Smart" = "Smart";
+"Smart snaps the highlighter to lines of text. Hold Shift for a straight line." = "Smart snaps the highlighter to lines of text. Hold Shift for a straight line.";
 "Padding" = "Padding";
 "Shadow" = "Shadow";
 "Right-click to add points" = "Right-click to add points";
@@ -218,6 +219,7 @@
 "Capture" = "Capture";
 "Play sound on capture" = "Play sound on capture";
 "Remember last selected tool" = "Remember last selected tool";
+"Start captures in move mode" = "Start captures in move mode";
 "Show floating thumbnail after capture" = "Show floating thumbnail after capture";
 "Launch at login" = "Launch at login";
 "Show snap alignment guides" = "Show snap alignment guides";
@@ -253,6 +255,8 @@
 "Move down" = "Move down";
 "Output" = "Output";
 "Image format:" = "Image format:";
+"Also copy to the clipboard in this format" = "Also copy to the clipboard in this format";
+"PNG is always included so every app can paste" = "PNG is always included so every app can paste";
 "Quality:" = "Quality:";
 "%d%%" = "%d%%";
 "Save at standard resolution (1x)" = "Save at standard resolution (1x)";
@@ -380,7 +384,7 @@
 "No uploads yet." = "No uploads yet.";
 "Base URL for public access. If empty, the S3 endpoint URL is used (may not be publicly accessible)." = "Base URL for public access. If empty, the S3 endpoint URL is used (may not be publicly accessible).";
 "Sends the public-read ACL so uploaded files are viewable by anyone with the link. Needed for AWS S3, DigitalOcean Spaces, MinIO and Backblaze B2, which store objects privately by default. Leave off for Cloudflare R2, which has no ACLs and rejects the header." = "Sends the public-read ACL so uploaded files are viewable by anyone with the link. Needed for AWS S3, DigitalOcean Spaces, MinIO and Backblaze B2, which store objects privately by default. Leave off for Cloudflare R2, which has no ACLs and rejects the header.";
-"A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support).";
+"A shared key is included. Get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "A shared key is included. Get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support).";
 "Works with AWS S3, Cloudflare R2, MinIO, DigitalOcean Spaces, Backblaze B2, and other S3-compatible services. Supports images and videos." = "Works with AWS S3, Cloudflare R2, MinIO, DigitalOcean Spaces, Backblaze B2, and other S3-compatible services. Supports images and videos.";
 "Configure S3 in Preferences" = "Configure S3 in Preferences";
 "Sign in to Google Drive in Preferences" = "Sign in to Google Drive in Preferences";
@@ -390,7 +394,7 @@
 "Version %@ (%@)" = "Version %@ (%@)";
 "Made by" = "Made by";
 "Licensed under the GPLv3" = "Licensed under the GPLv3";
-"A free, open-source screenshot & screen recording tool for macOS.\nFully native — built with Swift and AppKit." = "A free, open-source screenshot & screen recording tool for macOS.\nFully native — built with Swift and AppKit.";
+"A free, open-source screenshot & screen recording tool for macOS.\nFully native, built with Swift and AppKit." = "A free, open-source screenshot & screen recording tool for macOS.\nFully native, built with Swift and AppKit.";
 
 /* Alerts */
 "No Image on Clipboard" = "No Image on Clipboard";
@@ -412,11 +416,17 @@
 
 /* Permission Onboarding */
 "Welcome to macshot" = "Welcome to macshot";
+"Welcome back to macshot" = "Welcome back to macshot";
+"Turn Screen Recording back on" = "Turn Screen Recording back on";
+"After some updates, macOS asks you to allow macshot again. Your settings and captures are safe. If macshot is already in the list, select it, click the minus button (−) to remove it, then click the plus button (+) and add macshot again." = "After some updates, macOS asks you to allow macshot again. Your settings and captures are safe. If macshot is already in the list, select it, click the minus button (−) to remove it, then click the plus button (+) and add macshot again.";
 "macshot needs one permission" = "macshot needs one permission";
 "Screen Recording not yet granted" = "Screen Recording not yet granted";
 "Screen Recording granted!" = "Screen Recording granted!";
 "Enable macshot, then try taking a screenshot" = "Enable macshot, then try taking a screenshot";
 "Open Screen Recording Settings" = "Open Screen Recording Settings";
+"Still not working? Run this command in Terminal, then restart macshot." = "Still not working? Run this command in Terminal, then restart macshot.";
+"Copy Command" = "Copy Command";
+"Restart macshot" = "Restart macshot";
 "Continue" = "Continue";
 
 /* OCR Window */
@@ -513,6 +523,7 @@
 "Settings..." = "Settings...";
 "macshot Settings" = "macshot Settings";
 "Also open in Editor" = "Also open in Editor";
+"Open in Editor right after selection" = "Open in Editor right after selection";
 "Close editor after copying" = "Close editor after copying";
 "Hide controls" = "Hide controls";
 "Hide recording controls" = "Hide recording controls";
@@ -567,7 +578,7 @@
 "Clear History?" = "Clear History?";
 "This will permanently delete all screenshots from history." = "This will permanently delete all screenshots from history.";
 "Click \"Set\" and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧) to set a shortcut." = "Click \"Set\" and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧) to set a shortcut.";
-"Files are uploaded to this folder in your Google Drive. Leave empty to use \"macshot\". macshot can only use folders it created itself, so a folder you made in Drive with the same name won't be reused — a new one is created instead. Everything stays private — nothing is shared publicly." = "Files are uploaded to this folder in your Google Drive. Leave empty to use \"macshot\". macshot can only use folders it created itself, so a folder you made in Drive with the same name won't be reused — a new one is created instead. Everything stays private — nothing is shared publicly.";
+"Files are uploaded to this folder in your Google Drive. Leave empty to use \"macshot\". macshot can only use folders it created itself, so a folder you made in Drive with the same name won't be reused. A new one is created instead. Everything stays private and nothing is shared publicly." = "Files are uploaded to this folder in your Google Drive. Leave empty to use \"macshot\". macshot can only use folders it created itself, so a folder you made in Drive with the same name won't be reused. A new one is created instead. Everything stays private and nothing is shared publicly.";
 
 "Pressure" = "Pressure";
 
@@ -627,6 +638,10 @@
 "Background" = "Background";
 "Custom" = "Custom";
 "Theme:" = "Theme:";
+"Toolbar appearance:" = "Toolbar appearance:";
+"Dark" = "Dark";
+"Light" = "Light";
+"Follow System" = "Follow System";
 
 /* Settings — shortcuts help text */
 "Application" = "Application";
@@ -643,7 +658,7 @@
 "Open this settings window" = "Open this settings window";
 "Quick capture (uses your Enter action)" = "Quick capture (uses your Enter action)";
 "Re-capture the last selected area" = "Re-capture the last selected area";
-"Screenshots only — captured window title (blank otherwise)" = "Screenshots only — captured window title (blank otherwise)";
+"Captured window title (screenshots only, blank otherwise)" = "Captured window title (screenshots only, blank otherwise)";
 "Show available filename tokens" = "Show available filename tokens";
 "Show supported URL scheme commands" = "Show supported URL scheme commands";
 "Start area capture" = "Start area capture";
@@ -814,3 +829,199 @@
 "S3 not configured — check Settings" = "S3 not configured — check Settings";
 "Link copied: %@" = "Link copied: %@";
 "Video upload requires Google Drive, S3 or GitHub" = "Video upload requires Google Drive, S3 or GitHub";
+/* Video editor (Studio) */
+"%.1f× · follows pointer" = "%.1f× · follows pointer";
+"Add" = "Add";
+"Add Cut Here" = "Add Cut Here";
+"Add Text Here" = "Add Text Here";
+"Add Zoom Here" = "Add Zoom Here";
+"Added %d captions" = "Added %d captions";
+"Added %d zooms" = "Added %d zooms";
+"Apply Default Zoom to All" = "Apply Default Zoom to All";
+"Auto" = "Auto";
+"Auto Zoom" = "Auto Zoom";
+"Auto Zoom needs pointer data, which macshot records with every new recording. You can still add zooms by double-clicking the zoom lane." = "Auto Zoom needs pointer data, which macshot records with every new recording. You can still add zooms by double-clicking the zoom lane.";
+"Background color" = "Background color";
+"Background, padding, rounded corners and shadow" = "Background, padding, rounded corners and shadow";
+"Bold Italic" = "Bold Italic";
+"Box" = "Box";
+"Camera" = "Camera";
+"Caption" = "Caption";
+"Captions" = "Captions";
+"Captions are transcribed on this Mac. Nothing is uploaded." = "Captions are transcribed on this Mac. Nothing is uploaded.";
+"Choose Image…" = "Choose Image…";
+"Click color" = "Click color";
+"Clicks" = "Clicks";
+"Clip" = "Clip";
+"Colors" = "Colors";
+"Connect nearby zooms" = "Connect nearby zooms";
+"Copy the edited video to the clipboard" = "Copy the edited video to the clipboard";
+"Creates zooms that follow the pointer wherever you click or type. Adjust or delete them on the timeline." = "Creates zooms that follow the pointer wherever you click or type. Adjust or delete them on the timeline.";
+"Custom color" = "Custom color";
+"Cut" = "Cut";
+"Cuts, speed and freeze frames" = "Cuts, speed and freeze frames";
+"Default zoom" = "Default zoom";
+"Dot" = "Dot";
+"Double-click the text on the preview to edit it." = "Double-click the text on the preview to edit it.";
+"Double-click to add a zoom" = "Double-click to add a zoom";
+"Double-click to add a zoom, or use Auto Zoom" = "Double-click to add a zoom, or use Auto Zoom";
+"Drag the frame on the preview to choose where the zoom looks." = "Drag the frame on the preview to choose where the zoom looks.";
+"Duration" = "Duration";
+"Edge highlight" = "Edge highlight";
+"Edit Text" = "Edit Text";
+"Editable pointer, clicks and keystrokes" = "Editable pointer, clicks and keystrokes";
+"Edits" = "Edits";
+"Export" = "Export";
+"Export Subtitles (.srt)…" = "Export Subtitles (.srt)…";
+"Fade in" = "Fade in";
+"Fade out" = "Fade out";
+"Fit" = "Fit";
+"Fixed" = "Fixed";
+"Fixed point" = "Fixed point";
+"Focus" = "Focus";
+"Follow" = "Follow";
+"Follow Pointer" = "Follow Pointer";
+"Follow pointer" = "Follow pointer";
+"Follow tightness" = "Follow tightness";
+"Format" = "Format";
+"Frame the recording" = "Frame the recording";
+"Freeze Frame" = "Freeze Frame";
+"Generate Captions" = "Generate Captions";
+"Gentle" = "Gentle";
+"Gradient" = "Gradient";
+"Hide ordinary typing, show key combinations" = "Hide ordinary typing, show key combinations";
+"Hide when idle" = "Hide when idle";
+"Hide while typing" = "Hide while typing";
+"Hold Focus" = "Hold Focus";
+"Idle delay" = "Idle delay";
+"Keystrokes" = "Keystrokes";
+"Keystrokes in this recording are part of the video pixels." = "Keystrokes in this recording are part of the video pixels.";
+"Light appearance" = "Light appearance";
+"Makes looping GIFs seamless" = "Makes looping GIFs seamless";
+"Mirror" = "Mirror";
+"Motion" = "Motion";
+"Motion blur" = "Motion blur";
+"Next edit" = "Next edit";
+"No clicks or typing found to zoom into" = "No clicks or typing found to zoom into";
+"No speech was recognized" = "No speech was recognized";
+"No system wallpapers were found. Choose an image instead." = "No system wallpapers were found. Choose an image instead.";
+"Off" = "Off";
+"On-device speech recognition isn't available for your language on this Mac." = "On-device speech recognition isn't available for your language on this Mac.";
+"Original" = "Original";
+"Outline color" = "Outline color";
+"Outline width" = "Outline width";
+"Overlays" = "Overlays";
+"Pan between zooms instead of zooming out" = "Pan between zooms instead of zooming out";
+"Pill" = "Pill";
+"Pointer" = "Pointer";
+"Press animation" = "Press animation";
+"Previous edit" = "Previous edit";
+"Regenerate Captions" = "Regenerate Captions";
+"Regular" = "Regular";
+"Remove Automatic Zooms" = "Remove Automatic Zooms";
+"Remove Captions" = "Remove Captions";
+"Removes %.1f seconds from the video. Drag its edges on the timeline to adjust." = "Removes %.1f seconds from the video. Drag its edges on the timeline to adjust.";
+"Return to start at the end" = "Return to start at the end";
+"Ring" = "Ring";
+"Ripple" = "Ripple";
+"Save As…" = "Save As…";
+"Shortcuts only" = "Shortcuts only";
+"Show camera" = "Show camera";
+"Show captions" = "Show captions";
+"Show keystrokes" = "Show keystrokes";
+"Show pointer" = "Show pointer";
+"Shrink during zooms" = "Shrink during zooms";
+"Smoothing" = "Smoothing";
+"Snappy" = "Snappy";
+"Speech recognition is turned off for macshot in System Settings › Privacy & Security." = "Speech recognition is turned off for macshot in System Settings › Privacy & Security.";
+"Speed" = "Speed";
+"Spotlight" = "Spotlight";
+"Square" = "Square";
+"Tall" = "Tall";
+"Text and blur" = "Text and blur";
+"The recording's audio could not be read." = "The recording's audio could not be read.";
+"This recording already shows the pointer in its pixels, so it can't be restyled. Zooms can still follow it." = "This recording already shows the pointer in its pixels, so it can't be restyled. Zooms can still follow it.";
+"This recording has no audio to transcribe." = "This recording has no audio to transcribe.";
+"This video has no recorded pointer data. Recordings made with macshot that open in the editor let you restyle, smooth and resize the pointer after recording." = "This video has no recorded pointer data. Recordings made with macshot that open in the editor let you restyle, smooth and resize the pointer after recording.";
+"Title" = "Title";
+"Transcribing…" = "Transcribing…";
+"Transition" = "Transition";
+"Turn on Show Keystrokes before recording. macshot then records them separately so you can style them here." = "Turn on Show Keystrokes before recording. macshot then records them separately so you can style them here.";
+"Turn on the camera before recording. macshot records it separately so you can move, resize, restyle or hide it here, and shrink it during zooms." = "Turn on the camera before recording. macshot records it separately so you can move, resize, restyle or hide it here, and shrink it during zooms.";
+"Use Solid to hide sensitive information: blur and pixelation can sometimes be reversed." = "Use Solid to hide sensitive information: blur and pixelation can sometimes be reversed.";
+"Visibility" = "Visibility";
+"Wallpaper" = "Wallpaper";
+"When recordings open in the editor, the pointer is recorded separately so you can smooth, resize, restyle or hide it, and add zooms that follow it." = "When recordings open in the editor, the pointer is recorded separately so you can smooth, resize, restyle or hide it, and add zooms that follow it.";
+"Wide" = "Wide";
+"Zoom in" = "Zoom in";
+"Zoom in timeline" = "Zoom in timeline";
+"Zoom level" = "Zoom level";
+"Zoom out" = "Zoom out";
+"Zoom out timeline" = "Zoom out timeline";
+"macOS" = "macOS";
+"Sway" = "Sway";
+
+"Snap webcam to corners when moved" = "Snap webcam to corners when moved";
+"Search emoji" = "Search emoji";
+"Hide the bottom toolbar" = "Hide the bottom toolbar";
+"Pick tools with their keyboard shortcuts instead." = "Pick tools with their keyboard shortcuts instead.";
+
+"Pin position:" = "Pin position:";
+"Center of screen" = "Center of screen";
+"Original capture position" = "Original capture position";
+
+"Default Colors" = "Default Colors";
+"The preset swatches in the color picker." = "The preset swatches in the color picker.";
+"Add Color" = "Add Color";
+"No default colors." = "No default colors.";
+
+/* Floating preview: click action & editor behavior */
+"Dismiss" = "Dismiss";
+"Copy & dismiss" = "Copy & dismiss";
+"Close preview" = "Close preview";
+"Keep in stack" = "Keep in stack";
+"Return to stack when editor closes" = "Return to stack when editor closes";
+"  Click on preview:" = "  Click on preview:";
+"  When opened in Editor:" = "  When opened in Editor:";
+
+/* Editable projects, Select tool, measure scale (#497) */
+"Centimeters (cm)" = "Centimeters (cm)";
+"Choose an image or macshot project to open in the editor" = "Choose an image or macshot project to open in the editor";
+"Could not open “%@”" = "Could not open “%@”";
+"Could not save the project: %@" = "Could not save the project: %@";
+"Current scale: 1 %@ = %@ px" = "Current scale: 1 %@ = %@ px";
+"Draw Reference Line" = "Draw Reference Line";
+"Draw a measure line along something whose length you know" = "Draw a measure line along something whose length you know";
+"Draw or select a measure line along something whose length you know, then enter that length." = "Draw or select a measure line along something whose length you know, then enter that length.";
+"Enter a length, like 90 mm, 3.5 in or 3 1/2 in." = "Enter a length, like 90 mm, 3.5 in or 3 1/2 in.";
+"Feet (ft)" = "Feet (ft)";
+"Inches (in)" = "Inches (in)";
+"Measure Scale" = "Measure Scale";
+"Measure in mm, cm, m, inches or feet using something of known length in the image" = "Measure in mm, cm, m, inches or feet using something of known length in the image";
+"Meters (m)" = "Meters (m)";
+"Millimeters (mm)" = "Millimeters (mm)";
+"Open..." = "Open...";
+"Real-world lengths are estimates. They are only reliable for things in the same plane as the reference line." = "Real-world lengths are estimates. They are only reliable for things in the same plane as the reference line.";
+"Remove Scale" = "Remove Scale";
+"Save Project" = "Save Project";
+"Save Project As..." = "Save Project As...";
+"Save as Editable Project (⇧⌘S)" = "Save as Editable Project (⇧⌘S)";
+"Saves the image with every annotation still editable. Open the file in macshot to keep editing." = "Saves the image with every annotation still editable. Open the file in macshot to keep editing.";
+"Scale: %@" = "Scale: %@";
+"Select & Move" = "Select & Move";
+"Set Scale" = "Set Scale";
+"Set Scale..." = "Set Scale...";
+"Show lengths in" = "Show lengths in";
+"Some annotations in this project could not be restored, so it opened flattened. The original file is unchanged." = "Some annotations in this project could not be restored, so it opened flattened. The original file is unchanged.";
+"The file is not a macshot project or is damaged." = "The file is not a macshot project or is damaged.";
+"The project could not be prepared for saving." = "The project could not be prepared for saving.";
+"The image is too large to save as an editable project." = "The image is too large to save as an editable project.";
+"The project file is too large to open." = "The project file is too large to open.";
+"The project's image could not be read." = "The project's image could not be read.";
+"This line is %d px long. How long is it in real life?" = "This line is %d px long. How long is it in real life?";
+"e.g. 90 mm or 3 1/2 in" = "e.g. 90 mm or 3 1/2 in";
+
+/* Kept from this fork (upstream reworded these) */
+"Screenshots only — captured window title (blank otherwise)" = "Screenshots only — captured window title (blank otherwise)";
+"A free, open-source screenshot & screen recording tool for macOS.\nFully native — built with Swift and AppKit." = "A free, open-source screenshot & screen recording tool for macOS.\nFully native — built with Swift and AppKit.";
+"A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support).";

@@ -10,6 +10,18 @@ final class GIFExporterTests: XCTestCase {
     }
     override func tearDownWithError() throws { try FileManager.default.removeItem(at: directory) }
 
+    func testRecordingHotkeyConverterUsesPointSizeAndPreservesDuration() async throws {
+        let movie = try await RecordingMediaFixture.mixedMovie(in: directory,
+            size: CGSize(width: 128, height: 64), frameCount: 60)
+        let output = directory.appendingPathComponent("hotkey.gif")
+        try await RecordingGIFConverter.convert(source: movie, to: output, fps: 15, scale: 0.5,
+            cancellation: MediaExportCancellation(), progress: { _ in })
+        let result = try GIFTestMedia.decode(output)
+        XCTAssertEqual(result.size, CGSize(width: 64, height: 32))
+        XCTAssertEqual(result.delays.reduce(0, +), 2, accuracy: 0.02)
+        XCTAssertEqual(result.loopCount, 0)
+    }
+
     private func request(_ built: VideoCompositionBuilder.Result, fps: Int = 30, custom: Bool = false,
                          censors: [VideoCensorSnapshot] = [], output: URL? = nil) throws -> GIFExporter.Request {
         let size = CGSize(width: 64, height: 64)

@@ -83,6 +83,26 @@
 "Censor (Pixelate / Blur / Solid)" = "Sensuroi (Pikseloi / Sumenna / Yhtenäinen)";
 "Measure" = "Mittaa";
 "Measure (px)" = "Mittaa (px)";
+"Measure Scale" = "Mittakaava";
+"Set Scale..." = "Aseta mittakaava...";
+"Set Scale" = "Aseta mittakaava";
+"Scale: %@" = "Mittakaava: %@";
+"Remove Scale" = "Poista mittakaava";
+"Show lengths in" = "Näytä pituudet yksikössä";
+"Current scale: 1 %@ = %@ px" = "Nykyinen mittakaava: 1 %@ = %@ px";
+"Draw Reference Line" = "Piirrä vertailuviiva";
+"Draw a measure line along something whose length you know" = "Piirrä mittaviiva sellaista kohdetta pitkin, jonka pituuden tiedät";
+"Draw or select a measure line along something whose length you know, then enter that length." = "Piirrä tai valitse mittaviiva sellaista kohdetta pitkin, jonka pituuden tiedät, ja syötä sitten pituus.";
+"This line is %d px long. How long is it in real life?" = "Tämä viiva on %d px pitkä. Kuinka pitkä se on todellisuudessa?";
+"e.g. 90 mm or 3 1/2 in" = "esim. 90 mm tai 3 1/2 in";
+"Enter a length, like 90 mm, 3.5 in or 3 1/2 in." = "Syötä pituus, esim. 90 mm, 3.5 in tai 3 1/2 in.";
+"Real-world lengths are estimates. They are only reliable for things in the same plane as the reference line." = "Todelliset pituudet ovat arvioita. Ne ovat luotettavia vain kohteille, jotka ovat samassa tasossa kuin vertailuviiva.";
+"Measure in mm, cm, m, inches or feet using something of known length in the image" = "Mittaa yksiköissä mm, cm, m, tuuma tai jalka kuvassa olevan tunnetun pituisen kohteen avulla";
+"Millimeters (mm)" = "Millimetrit (mm)";
+"Centimeters (cm)" = "Senttimetrit (cm)";
+"Meters (m)" = "Metrit (m)";
+"Inches (in)" = "Tuumat (in)";
+"Feet (ft)" = "Jalat (ft)";
 "Magnify (Loupe)" = "Suurenna (Luuppi)";
 "Highlight" = "Korosta";
 "Highlight (Spotlight)" = "Korosta (Kohdevalo)";
@@ -90,6 +110,7 @@
 "Color Sampler" = "Väripoimija";
 "Color Picker" = "Värivalitsin";
 "Select & Edit" = "Valitse ja muokkaa";
+"Select & Move" = "Valitse ja siirrä";
 "Color" = "Väri";
 
 /* Toolbar - Actions */
@@ -164,6 +185,7 @@
 "Smooth" = "Tasoita";
 "Refined" = "Hienosäädetty";
 "Smart" = "Älykäs";
+"Smart snaps the highlighter to lines of text. Hold Shift for a straight line." = "Älykäs kohdistaa korostuskynän tekstiriveihin. Pidä vaihtonäppäintä painettuna piirtääksesi suoran viivan.";
 "Padding" = "Reunus";
 "Shadow" = "Varjo";
 "Right-click to add points" = "Lisää pisteet hiiren oikealla painikkeella";
@@ -223,6 +245,7 @@
 "Play sound on capture" = "Toista ääni kaappauksessa";
 "Play sound on copy" = "Toista ääni kopioitaessa";
 "Remember last selected tool" = "Muista viimeksi valittu työkalu";
+"Start captures in move mode" = "Aloita kuvakaappaukset siirtotilassa";
 "Show floating thumbnail after capture" = "Näytä kelluva pienoiskuva kaappauksen jälkeen";
 "Launch at login" = "Käynnistä kirjautumisen yhteydessä";
 "Show snap alignment guides" = "Näytä kohdistusapuviivat";
@@ -267,6 +290,8 @@
 "Image format" = "Kuvamuoto";
 "Quality" = "Laatu";
 "Image format:" = "Kuvamuoto:";
+"Also copy to the clipboard in this format" = "Kopioi leikepöydälle myös tässä muodossa";
+"PNG is always included so every app can paste" = "PNG on aina mukana, jotta mikä tahansa sovellus voi liittää";
 "Quality:" = "Laatu:";
 "%d%%" = "%d%%";
 "Save at standard resolution (1x)" = "Tallenna vakiotarkkuudella (1x)";
@@ -440,7 +465,7 @@
 "Upload History" = "Lataushistoria";
 "No uploads yet." = "Ei latauksia vielä.";
 "Base URL for public access. If empty, the S3 endpoint URL is used (may not be publicly accessible)." = "Julkisen pääsyn perus-URL. Jos tyhjä, käytetään S3-päätepisteen URL-osoitetta (ei välttämättä julkisesti saatavilla).";
-"A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "Jaettu avain on mukana — hanki oma ilmainen avain osoitteesta imgbb.com/api, jos kohtaat nopeusrajoituksia. Vain kuvat (ei videotukea).";
+"A shared key is included. Get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "Jaettu avain on mukana, hanki oma ilmainen avain osoitteesta imgbb.com/api, jos kohtaat nopeusrajoituksia. Vain kuvat (ei videotukea).";
 "Works with AWS S3, Cloudflare R2, MinIO, DigitalOcean Spaces, Backblaze B2, and other S3-compatible services. Supports images and videos." = "Toimii AWS S3:n, Cloudflare R2:n, MinIO:n, DigitalOcean Spacesin, Backblaze B2:n ja muiden S3-yhteensopivien palveluiden kanssa. Tukee kuvia ja videoita.";
 "Configure S3 in Preferences" = "Määritä S3 asetuksissa";
 "Sign in to Google Drive in Preferences" = "Kirjaudu Google Driveen asetuksissa";
@@ -465,6 +490,7 @@
 "Licensed under GPLv3" = "Lisensoitu GPLv3-lisenssillä";
 "Copies display and capture diagnostics to the clipboard" = "Kopioi näytön ja kaappauksen diagnostiikan leikepöydälle";
 "A free, open-source screenshot & screen recording tool for macOS.\nFully native — built with Swift and AppKit." = "Ilmainen, avoimen lähdekoodin kuvakaappaus- ja ruudunnauhoitustyökalu macOS:lle.\nTäysin natiivi — rakennettu Swiftilla ja AppKitilla.";
+"A free, open-source screenshot & screen recording tool for macOS.\nFully native, built with Swift and AppKit." = "Ilmainen, avoimen lähdekoodin kuvakaappaus- ja ruudunnauhoitustyökalu macOS:lle.\nTäysin natiivi, rakennettu Swiftilla ja AppKitilla.";
 
 /* Alerts */
 "No Image on Clipboard" = "Ei kuvaa leikepöydällä";
@@ -486,11 +512,17 @@
 
 /* Permission Onboarding */
 "Welcome to macshot" = "Tervetuloa macshot-sovellukseen";
+"Welcome back to macshot" = "Tervetuloa takaisin macshotiin";
+"Turn Screen Recording back on" = "Ota näytön tallennus uudelleen käyttöön";
+"After some updates, macOS asks you to allow macshot again. Your settings and captures are safe. If macshot is already in the list, select it, click the minus button (−) to remove it, then click the plus button (+) and add macshot again." = "Joidenkin päivitysten jälkeen macOS pyytää sallimaan macshotin uudelleen. Asetuksesi ja kaappauksesi ovat tallessa. Jos macshot on jo luettelossa, valitse se, poista se miinuspainikkeella (−) ja lisää macshot sitten uudelleen pluspainikkeella (+).";
 "macshot needs one permission" = "macshot tarvitsee yhden luvan";
 "Screen Recording not yet granted" = "Ruudun nauhoituslupaa ei ole vielä myönnetty";
 "Screen Recording granted!" = "Ruudun nauhoituslupa myönnetty!";
 "Enable macshot, then try taking a screenshot" = "Ota macshot käyttöön ja kokeile kuvakaappausta";
 "Open Screen Recording Settings" = "Avaa ruudun nauhoitusasetukset";
+"Still not working? Run this command in Terminal, then restart macshot." = "Eikö toimi vieläkään? Suorita tämä komento Päätteessä ja käynnistä macshot sitten uudelleen.";
+"Copy Command" = "Kopioi komento";
+"Restart macshot" = "Käynnistä macshot uudelleen";
 "Continue" = "Jatka";
 
 /* OCR Window */
@@ -546,6 +578,20 @@
 "Save All to Folder…" = "Tallenna kaikki kansioon…";
 "Could not encode the screenshot." = "Kuvakaappausta ei voitu koodata.";
 "Could not save the screenshot: %@" = "Kuvakaappausta ei voitu tallentaa: %@";
+"Save Project" = "Tallenna projekti";
+"Save Project As..." = "Tallenna projekti nimellä...";
+"Save as Editable Project (⇧⌘S)" = "Tallenna muokattavana projektina (⇧⌘S)";
+"Saves the image with every annotation still editable. Open the file in macshot to keep editing." = "Tallentaa kuvan niin, että kaikki merkinnät pysyvät muokattavina. Jatka muokkaamista avaamalla tiedosto macshotissa.";
+"Open..." = "Avaa...";
+"Choose an image or macshot project to open in the editor" = "Valitse kuva tai macshot-projekti avattavaksi editorissa";
+"Could not open “%@”" = "Tiedostoa ”%@” ei voitu avata";
+"Could not save the project: %@" = "Projektia ei voitu tallentaa: %@";
+"Some annotations in this project could not be restored, so it opened flattened. The original file is unchanged." = "Joitakin tämän projektin merkintöjä ei voitu palauttaa, joten se avattiin litistettynä kuvana. Alkuperäistä tiedostoa ei ole muutettu.";
+"The file is not a macshot project or is damaged." = "Tiedosto ei ole macshot-projekti tai se on vioittunut.";
+"The project could not be prepared for saving." = "Projektia ei voitu valmistella tallennettavaksi.";
+"The image is too large to save as an editable project." = "Kuva on liian suuri tallennettavaksi muokattavana projektina.";
+"The project file is too large to open." = "Projektitiedosto on liian suuri avattavaksi.";
+"The project's image could not be read." = "Projektin kuvaa ei voitu lukea.";
 "Could not save the screenshot to history." = "Kuvakaappausta ei voitu tallentaa historiaan.";
 
 /* Scroll Capture HUD */
@@ -618,6 +664,7 @@
 "Settings..." = "Asetukset...";
 "macshot Settings" = "macshot-asetukset";
 "Also open in Editor" = "Avaa my\U00F6s editorissa";
+"Open in Editor right after selection" = "Avaa editorissa heti valinnan j\U00E4lkeen";
 "Close editor after copying" = "Sulje editori kopioinnin jälkeen";
 "Hide controls" = "Piilota ohjaimet";
 "Hide recording controls" = "Piilota nauhoitusohjaimet";
@@ -674,7 +721,7 @@
 "Clear History?" = "Tyhjennetäänkö historia?";
 "This will permanently delete all screenshots from history." = "Tämä poistaa kaikki kuvakaappaukset historiasta pysyvästi.";
 "Click \"Set\" and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧) to set a shortcut." = "Napsauta \"Aseta\" ja paina näppäinyhdistelmää, jossa on vähintään yksi muokkausnäppäin (⌘, ⌥, ⌃, ⇧) asettaaksesi pikakuvakkeen.";
-"Files are uploaded to this folder in your Google Drive. Leave empty to use \"macshot\". macshot can only use folders it created itself, so a folder you made in Drive with the same name won't be reused — a new one is created instead. Everything stays private — nothing is shared publicly." = "Tiedostot ladataan tähän kansioon Google Drivessasi. Jätä tyhjäksi, jos haluat käyttää kansiota \"macshot\". macshot voi käyttää vain itse luomiaan kansioita, joten Driveen itse tekemääsi samannimistä kansiota ei käytetä uudelleen — sen sijaan luodaan uusi. Kaikki pysyy yksityisenä — mitään ei jaeta julkisesti.";
+"Files are uploaded to this folder in your Google Drive. Leave empty to use \"macshot\". macshot can only use folders it created itself, so a folder you made in Drive with the same name won't be reused. A new one is created instead. Everything stays private and nothing is shared publicly." = "Tiedostot ladataan tähän kansioon Google Drivessasi. Jätä tyhjäksi, jos haluat käyttää kansiota \"macshot\". macshot voi käyttää vain itse luomiaan kansioita, joten Driveen itse tekemääsi samannimistä kansiota ei käytetä uudelleen, sen sijaan luodaan uusi. Kaikki pysyy yksityisenä, mitään ei jaeta julkisesti.";
 
 "Pressure" = "Paine";
 
@@ -732,6 +779,10 @@
 "Background" = "Tausta";
 "Custom" = "Mukautettu";
 "Theme:" = "Teema:";
+"Toolbar appearance:" = "Työkalupalkin ulkoasu:";
+"Dark" = "Tumma";
+"Light" = "Vaalea";
+"Follow System" = "Seuraa järjestelmää";
 "Application" = "Sovellus";
 "Capture area and extract text" = "Kaappaa alue ja poimi teksti";
 "Capture the full screen" = "Kaappaa koko ruutu";
@@ -745,7 +796,7 @@
 "Open this settings window" = "Avaa tämä asetusikkuna";
 "Quick capture (uses your Enter action)" = "Pikakaappaus (käyttää Enter-toimintoasi)";
 "Re-capture the last selected area" = "Kaappaa viimeksi valittu alue uudelleen";
-"Screenshots only — captured window title (blank otherwise)" = "Vain kuvakaappaukset — kaapatun ikkunan otsikko (muuten tyhjä)";
+"Captured window title (screenshots only, blank otherwise)" = "Vain kuvakaappaukset, kaapatun ikkunan otsikko (muuten tyhjä)";
 "Show available filename tokens" = "Näytä käytettävissä olevat tiedostonimen tunnukset";
 "Show supported URL scheme commands" = "Näytä tuetut URL-skeeman komennot";
 "Start area capture" = "Aloita aluekaappaus";
@@ -816,3 +867,162 @@
 "Play" = "Toista";
 "Mute" = "Mykistä";
 "Unmute" = "Poista mykistys";
+
+/* Video editor (Studio) */
+"%.1f× · follows pointer" = "%.1f× · seuraa osoitinta";
+"Add" = "Lisää";
+"Add Cut Here" = "Lisää leikkaus tähän";
+"Add Text Here" = "Lisää teksti tähän";
+"Add Zoom Here" = "Lisää zoomaus tähän";
+"Added %d captions" = "Lisättiin %d tekstitystä";
+"Added %d zooms" = "Lisättiin %d zoomausta";
+"Apply Default Zoom to All" = "Käytä oletuszoomausta kaikkiin";
+"Auto" = "Auto";
+"Auto Zoom" = "Automaattizoomaus";
+"Auto Zoom needs pointer data, which macshot records with every new recording. You can still add zooms by double-clicking the zoom lane." = "Automaattizoomaus tarvitsee osoitintietoja, jotka macshot tallentaa jokaisen uuden nauhoituksen yhteydessä. Voit silti lisätä zoomauksia kaksoisnapsauttamalla zoomausraitaa.";
+"Background color" = "Taustaväri";
+"Background, padding, rounded corners and shadow" = "Tausta, reunus, pyöristetyt kulmat ja varjo";
+"Bold Italic" = "Lihavoitu kursiivi";
+"Box" = "Laatikko";
+"Camera" = "Kamera";
+"Caption" = "Tekstitys";
+"Captions" = "Tekstitykset";
+"Captions are transcribed on this Mac. Nothing is uploaded." = "Tekstitykset litteroidaan tällä Macilla. Mitään ei ladata verkkoon.";
+"Choose Image…" = "Valitse kuva…";
+"Click color" = "Napsautuksen väri";
+"Clicks" = "Napsautukset";
+"Clip" = "Leike";
+"Colors" = "Värit";
+"Connect nearby zooms" = "Yhdistä lähekkäiset zoomaukset";
+"Copy the edited video to the clipboard" = "Kopioi muokattu video leikepöydälle";
+"Creates zooms that follow the pointer wherever you click or type. Adjust or delete them on the timeline." = "Luo zoomauksia, jotka seuraavat osoitinta aina, kun napsautat tai kirjoitat. Säädä tai poista niitä aikajanalla.";
+"Custom color" = "Mukautettu väri";
+"Cut" = "Leikkaus";
+"Cuts, speed and freeze frames" = "Leikkaukset, nopeus ja pysäytyskuvat";
+"Default zoom" = "Oletuszoomaus";
+"Dot" = "Piste";
+"Double-click the text on the preview to edit it." = "Muokkaa tekstiä kaksoisnapsauttamalla sitä esikatselussa.";
+"Double-click to add a zoom" = "Lisää zoomaus kaksoisnapsauttamalla";
+"Double-click to add a zoom, or use Auto Zoom" = "Lisää zoomaus kaksoisnapsauttamalla, tai käytä automaattizoomausta";
+"Drag the frame on the preview to choose where the zoom looks." = "Valitse zoomauksen kohde vetämällä kehystä esikatselussa.";
+"Duration" = "Kesto";
+"Edge highlight" = "Reunan korostus";
+"Edit Text" = "Muokkaa tekstiä";
+"Editable pointer, clicks and keystrokes" = "Muokattava osoitin, napsautukset ja näppäinpainallukset";
+"Edits" = "Muokkaukset";
+"Export" = "Vie";
+"Export Subtitles (.srt)…" = "Vie tekstitykset (.srt)…";
+"Fade in" = "Häivytys sisään";
+"Fade out" = "Häivytys ulos";
+"Fit" = "Sovita";
+"Fixed" = "Kiinteä";
+"Fixed point" = "Kiinteä piste";
+"Focus" = "Kohdistus";
+"Follow" = "Seuraa";
+"Follow Pointer" = "Seuraa osoitinta";
+"Follow pointer" = "Seuraa osoitinta";
+"Follow tightness" = "Seurannan tiukkuus";
+"Format" = "Muoto";
+"Frame the recording" = "Kehystä nauhoitus";
+"Freeze Frame" = "Pysäytyskuva";
+"Generate Captions" = "Luo tekstitykset";
+"Gentle" = "Pehmeä";
+"Gradient" = "Liukuväri";
+"Hide ordinary typing, show key combinations" = "Piilota tavallinen kirjoitus, näytä näppäinyhdistelmät";
+"Hide when idle" = "Piilota, kun ei käytössä";
+"Hide while typing" = "Piilota kirjoitettaessa";
+"Hold Focus" = "Pidä kohdistus";
+"Idle delay" = "Joutoviive";
+"Keystrokes" = "Näppäinpainallukset";
+"Keystrokes in this recording are part of the video pixels." = "Tämän nauhoituksen näppäinpainallukset ovat osa videon pikseleitä.";
+"Light appearance" = "Vaalea ulkoasu";
+"Makes looping GIFs seamless" = "Tekee toistuvista GIF-kuvista saumattomia";
+"Mirror" = "Peilaa";
+"Motion" = "Liike";
+"Motion blur" = "Liikesumennus";
+"Next edit" = "Seuraava muokkaus";
+"No clicks or typing found to zoom into" = "Zoomattavia napsautuksia tai kirjoitusta ei löytynyt";
+"No speech was recognized" = "Puhetta ei tunnistettu";
+"No system wallpapers were found. Choose an image instead." = "Järjestelmän taustakuvia ei löytynyt. Valitse sen sijaan kuva.";
+"Off" = "Pois";
+"On-device speech recognition isn't available for your language on this Mac." = "Laitteella tapahtuva puheentunnistus ei ole saatavilla kielellesi tässä Macissa.";
+"Original" = "Alkuperäinen";
+"Outline color" = "Reunaviivan väri";
+"Outline width" = "Reunaviivan leveys";
+"Overlays" = "Päällykset";
+"Pan between zooms instead of zooming out" = "Panoroi zoomausten välillä loitontamisen sijaan";
+"Pill" = "Kapseli";
+"Pointer" = "Osoitin";
+"Press animation" = "Painallusanimaatio";
+"Previous edit" = "Edellinen muokkaus";
+"Regenerate Captions" = "Luo tekstitykset uudelleen";
+"Regular" = "Normaali";
+"Remove Automatic Zooms" = "Poista automaattiset zoomaukset";
+"Remove Captions" = "Poista tekstitykset";
+"Removes %.1f seconds from the video. Drag its edges on the timeline to adjust." = "Poistaa videosta %.1f sekuntia. Säädä vetämällä sen reunoja aikajanalla.";
+"Return to start at the end" = "Palaa alkuun lopussa";
+"Ring" = "Rengas";
+"Ripple" = "Aalto";
+"Save As…" = "Tallenna nimellä…";
+"Shortcuts only" = "Vain pikanäppäimet";
+"Show camera" = "Näytä kamera";
+"Show captions" = "Näytä tekstitykset";
+"Show keystrokes" = "Näytä näppäinpainallukset";
+"Show pointer" = "Näytä osoitin";
+"Shrink during zooms" = "Pienennä zoomausten aikana";
+"Smoothing" = "Tasoitus";
+"Snappy" = "Napakka";
+"Speech recognition is turned off for macshot in System Settings › Privacy & Security." = "Puheentunnistus on poistettu käytöstä macshotilta kohdassa Järjestelmäasetukset › Tietosuoja ja turvallisuus.";
+"Speed" = "Nopeus";
+"Spotlight" = "Valokeila";
+"Square" = "Neliö";
+"Tall" = "Korkea";
+"Text and blur" = "Teksti ja sumennus";
+"The recording's audio could not be read." = "Nauhoituksen ääntä ei voitu lukea.";
+"This recording already shows the pointer in its pixels, so it can't be restyled. Zooms can still follow it." = "Tämän nauhoituksen pikseleissä näkyy jo osoitin, joten sen tyyliä ei voi muuttaa. Zoomaukset voivat silti seurata sitä.";
+"This recording has no audio to transcribe." = "Tässä nauhoituksessa ei ole litteroitavaa ääntä.";
+"This video has no recorded pointer data. Recordings made with macshot that open in the editor let you restyle, smooth and resize the pointer after recording." = "Tässä videossa ei ole tallennettuja osoitintietoja. Kun macshotilla tehty nauhoitus avautuu editorissa, voit muuttaa osoittimen tyyliä, tasoittaa sen liikettä ja muuttaa sen kokoa nauhoituksen jälkeen.";
+"Title" = "Otsikko";
+"Transcribing…" = "Litteroidaan…";
+"Transition" = "Siirtymä";
+"Turn on Show Keystrokes before recording. macshot then records them separately so you can style them here." = "Ota Näytä näppäinpainallukset käyttöön ennen nauhoitusta. macshot tallentaa ne silloin erikseen, jotta voit muotoilla ne täällä.";
+"Turn on the camera before recording. macshot records it separately so you can move, resize, restyle or hide it here, and shrink it during zooms." = "Ota kamera käyttöön ennen nauhoitusta. macshot tallentaa sen erikseen, jotta voit siirtää, muuttaa kokoa, muuttaa tyyliä tai piilottaa sen täällä, ja pienentää sen zoomausten aikana.";
+"Use Solid to hide sensitive information: blur and pixelation can sometimes be reversed." = "Käytä Yhtenäinen-tyyliä arkaluontoisten tietojen piilottamiseen: sumennus ja pikselöinti voidaan joskus kumota.";
+"Visibility" = "Näkyvyys";
+"Wallpaper" = "Taustakuva";
+"When recordings open in the editor, the pointer is recorded separately so you can smooth, resize, restyle or hide it, and add zooms that follow it." = "Kun nauhoitukset avautuvat editorissa, osoitin tallennetaan erikseen, jotta voit tasoittaa sitä, muuttaa sen kokoa tai tyyliä tai piilottaa sen sekä lisätä sitä seuraavia zoomauksia.";
+"Wide" = "Leveä";
+"Zoom in" = "Lähennys";
+"Zoom in timeline" = "Lähennä aikajanaa";
+"Zoom level" = "Zoomaustaso";
+"Zoom out" = "Loitonnus";
+"Zoom out timeline" = "Loitonna aikajanaa";
+"macOS" = "macOS";
+"Sway" = "Heilunta";
+
+"Snap webcam to corners when moved" = "Kohdista verkkokamera kulmiin siirrettäessä";
+"Search emoji" = "Hae emojia";
+"Hide the bottom toolbar" = "Piilota alapalkki";
+"Pick tools with their keyboard shortcuts instead." = "Valitse työkalut niiden pikanäppäimillä.";
+
+"Pin position:" = "Kiinnityksen sijainti:";
+"Center of screen" = "Näytön keskellä";
+"Original capture position" = "Alkuperäinen kaappauskohta";
+
+"Default Colors" = "Oletusvärit";
+"The preset swatches in the color picker." = "Värien esiasetukset värinvalitsimessa.";
+"Add Color" = "Lisää väri";
+"No default colors." = "Ei oletusvärejä.";
+
+/* Floating preview: click action & editor behavior */
+"Dismiss" = "Sulje";
+"Copy & dismiss" = "Kopioi ja sulje";
+"Close preview" = "Sulje esikatselu";
+"Keep in stack" = "Pidä pinossa";
+"Return to stack when editor closes" = "Palauta pinoon, kun editori suljetaan";
+"  Click on preview:" = "  Esikatselun napsautus:";
+"  When opened in Editor:" = "  Kun avataan editorissa:";
+
+/* Kept from this fork (upstream reworded these) */
+"Screenshots only — captured window title (blank otherwise)" = "Vain kuvakaappaukset — kaapatun ikkunan otsikko (muuten tyhjä)";
+"A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "Jaettu avain on mukana — hanki oma ilmainen avain osoitteesta imgbb.com/api, jos kohtaat nopeusrajoituksia. Vain kuvat (ei videotukea).";

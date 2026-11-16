@@ -4,7 +4,7 @@ import Darwin
 // Real-time production-writer endurance probe. No screen/microphone permission,
 // user defaults, user captures or network access. The output directory must be new.
 // Build from the repository root:
-// swiftc -O -swift-version 5 -default-isolation MainActor -parse-as-library macshot/Capture/{MP4WriterSession,RecordingSampleValidation,SampleBufferTiming,VideoEncodingSettings,VideoFrameCadence}.swift scripts/stress-recording.swift -o /tmp/macshot-recording-stress
+// swiftc -O -swift-version 5 -default-isolation MainActor -parse-as-library macshot/Capture/{MP4WriterSession,RecordingAudioSilence,RecordingSampleValidation,SampleBufferTiming,VideoEncodingSettings,VideoFrameCadence}.swift scripts/stress-recording.swift -o /tmp/macshot-recording-stress
 // Run: /tmp/macshot-recording-stress 1200 /new/output-directory > /path/to/metrics.jsonl
 // Seconds: 30...28800. 1920x1080 at 30 fps for one minute, then a minute with no
 // source video frames (the production heartbeat holds the last image). Two

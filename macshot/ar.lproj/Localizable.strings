@@ -92,7 +92,30 @@
 "Color Sampler" = "أداة اختيار اللون";
 "Color Picker" = "منتقي الألوان";
 "Select & Edit" = "تحديد وتعديل";
+"Select & Move" = "تحديد ونقل";
 "Color" = "اللون";
+
+/* Measure Scale */
+"Measure Scale" = "مقياس القياس";
+"Set Scale..." = "تعيين المقياس...";
+"Set Scale" = "تعيين المقياس";
+"Scale: %@" = "المقياس: %@";
+"Remove Scale" = "إزالة المقياس";
+"Show lengths in" = "عرض الأطوال بوحدة";
+"Current scale: 1 %@ = %@ px" = "المقياس الحالي: 1 %@ = %@ px";
+"Draw Reference Line" = "رسم خط مرجعي";
+"Draw a measure line along something whose length you know" = "ارسم خط قياس على طول شيء تعرف طوله";
+"Draw or select a measure line along something whose length you know, then enter that length." = "ارسم خط قياس أو حدّده على طول شيء تعرف طوله، ثم أدخل ذلك الطول.";
+"This line is %d px long. How long is it in real life?" = "طول هذا الخط %d px. كم طوله في الواقع؟";
+"e.g. 90 mm or 3 1/2 in" = "مثال: 90 mm أو 3 1/2 in";
+"Enter a length, like 90 mm, 3.5 in or 3 1/2 in." = "أدخل طولًا، مثل 90 mm أو 3.5 in أو 3 1/2 in.";
+"Real-world lengths are estimates. They are only reliable for things in the same plane as the reference line." = "الأطوال الحقيقية تقديرية. ولا يمكن الاعتماد عليها إلا للأشياء الواقعة في نفس مستوى الخط المرجعي.";
+"Measure in mm, cm, m, inches or feet using something of known length in the image" = "القياس بـ mm أو cm أو m أو البوصة أو القدم باستخدام شيء معروف الطول في الصورة";
+"Millimeters (mm)" = "مليمترات (mm)";
+"Centimeters (cm)" = "سنتيمترات (cm)";
+"Meters (m)" = "أمتار (m)";
+"Inches (in)" = "بوصات (in)";
+"Feet (ft)" = "أقدام (ft)";
 
 /* Toolbar - Actions */
 "Copy to Clipboard" = "نسخ إلى الحافظة";
@@ -153,6 +176,7 @@
 "Smooth" = "تنعيم";
 "Refined" = "محسّن";
 "Smart" = "ذكي";
+"Smart snaps the highlighter to lines of text. Hold Shift for a straight line." = "يعمل الوضع الذكي على محاذاة القلم المميز مع أسطر النص. اضغط مع الاستمرار على Shift لرسم خط مستقيم.";
 "Padding" = "حشوة";
 "Shadow" = "ظل";
 "Right-click to add points" = "انقر بزر الفأرة الأيمن لإضافة نقاط";
@@ -210,6 +234,7 @@
 "Play sound on capture" = "تشغيل صوت عند الالتقاط";
 "Play sound on copy" = "تشغيل صوت عند النسخ";
 "Remember last selected tool" = "تذكّر آخر أداة محددة";
+"Start captures in move mode" = "بدء لقطات الشاشة في وضع التحريك";
 "Show floating thumbnail after capture" = "عرض الصورة المصغرة العائمة بعد الالتقاط";
 "Launch at login" = "التشغيل عند تسجيل الدخول";
 "Show snap alignment guides" = "عرض خطوط المحاذاة";
@@ -264,6 +289,8 @@
 "Move down" = "نقل للأسفل";
 "Output" = "الإخراج";
 "Image format:" = "صيغة الصورة:";
+"Also copy to the clipboard in this format" = "انسخ أيضًا إلى الحافظة بهذه الصيغة";
+"PNG is always included so every app can paste" = "يتم تضمين PNG دائمًا ليتمكن أي تطبيق من اللصق";
 "Quality:" = "الجودة:";
 "Image" = "الصورة";
 "Image format" = "صيغة الصورة";
@@ -432,7 +459,7 @@
 "Upload History" = "سجل الرفع";
 "No uploads yet." = "لا توجد عمليات رفع بعد.";
 "Base URL for public access. If empty, the S3 endpoint URL is used (may not be publicly accessible)." = "الرابط الأساسي للوصول العام. إذا كان فارغًا، يُستخدم رابط نقطة نهاية S3 (قد لا يكون متاحًا للعامة).";
-"A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "مفتاح مشترك مُضمّن — احصل على مفتاحك المجاني من imgbb.com/api إذا واجهت حدود الاستخدام. صور فقط (بدون دعم للفيديو).";
+"A shared key is included. Get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "مفتاح مشترك مُضمّن, احصل على مفتاحك المجاني من imgbb.com/api إذا واجهت حدود الاستخدام. صور فقط (بدون دعم للفيديو).";
 "Works with AWS S3, Cloudflare R2, MinIO, DigitalOcean Spaces, Backblaze B2, and other S3-compatible services. Supports images and videos." = "يعمل مع AWS S3 وCloudflare R2 وMinIO وDigitalOcean Spaces وBackblaze B2 وخدمات أخرى متوافقة مع S3. يدعم الصور والفيديوهات.";
 "Configure S3 in Preferences" = "إعداد S3 في التفضيلات";
 "Sign in to Google Drive in Preferences" = "تسجيل الدخول إلى Google Drive في التفضيلات";
@@ -458,6 +485,7 @@
 "Licensed under the GPLv3" = "مرخّص بموجب GPLv3";
 "Licensed under GPLv3" = "مرخّص بموجب GPLv3";
 "A free, open-source screenshot & screen recording tool for macOS.\nFully native — built with Swift and AppKit." = "أداة مجانية ومفتوحة المصدر لالتقاط الشاشة وتسجيلها على macOS.\nأصلية بالكامل — مبنية بـ Swift وAppKit.";
+"A free, open-source screenshot & screen recording tool for macOS.\nFully native, built with Swift and AppKit." = "أداة مجانية ومفتوحة المصدر لالتقاط الشاشة وتسجيلها على macOS.\nأصلية بالكامل, مبنية بـ Swift وAppKit.";
 
 /* Alerts */
 "No Image on Clipboard" = "لا توجد صورة في الحافظة";
@@ -479,11 +507,17 @@
 
 /* Permission Onboarding */
 "Welcome to macshot" = "مرحبًا بك في macshot";
+"Welcome back to macshot" = "مرحبًا بعودتك إلى macshot";
+"Turn Screen Recording back on" = "أعد تشغيل تسجيل الشاشة";
+"After some updates, macOS asks you to allow macshot again. Your settings and captures are safe. If macshot is already in the list, select it, click the minus button (−) to remove it, then click the plus button (+) and add macshot again." = "بعد بعض التحديثات، يطلب منك macOS السماح لـ macshot مرة أخرى. إعداداتك ولقطاتك آمنة. إذا كان macshot موجودًا بالفعل في القائمة، فحدّده وانقر زر الطرح (−) لإزالته، ثم انقر زر الإضافة (+) وأضف macshot مجددًا.";
 "macshot needs one permission" = "يحتاج macshot إلى إذن واحد";
 "Screen Recording not yet granted" = "لم يتم منح إذن تسجيل الشاشة بعد";
 "Screen Recording granted!" = "تم منح إذن تسجيل الشاشة!";
 "Enable macshot, then try taking a screenshot" = "فعّل macshot، ثم حاول التقاط الشاشة";
 "Open Screen Recording Settings" = "فتح إعدادات تسجيل الشاشة";
+"Still not working? Run this command in Terminal, then restart macshot." = "هل لا تزال المشكلة قائمة؟ شغّل هذا الأمر في الوحدة الطرفية، ثم أعد تشغيل macshot.";
+"Copy Command" = "نسخ الأمر";
+"Restart macshot" = "إعادة تشغيل macshot";
 "Continue" = "متابعة";
 
 /* OCR Window */
@@ -542,6 +576,22 @@
 "Could not encode the image." = "تعذّر ترميز الصورة.";
 "Could not save the screenshot: %@" = "تعذّر حفظ لقطة الشاشة: %@";
 "Could not save the screenshot to history." = "تعذّر حفظ لقطة الشاشة في السجل.";
+
+/* Project Files */
+"Save Project" = "حفظ المشروع";
+"Save Project As..." = "حفظ المشروع باسم...";
+"Save as Editable Project (⇧⌘S)" = "حفظ كمشروع قابل للتحرير (⇧⌘S)";
+"Saves the image with every annotation still editable. Open the file in macshot to keep editing." = "يحفظ الصورة مع إبقاء كل التعليقات التوضيحية قابلة للتحرير. افتح الملف في macshot لمتابعة التحرير.";
+"Open..." = "فتح...";
+"Choose an image or macshot project to open in the editor" = "اختر صورة أو مشروع macshot لفتحه في المحرر";
+"Could not open “%@”" = "تعذّر فتح «%@»";
+"Could not save the project: %@" = "تعذّر حفظ المشروع: %@";
+"Some annotations in this project could not be restored, so it opened flattened. The original file is unchanged." = "تعذّرت استعادة بعض التعليقات التوضيحية في هذا المشروع، لذا فُتح كصورة مسطّحة. الملف الأصلي لم يتغير.";
+"The file is not a macshot project or is damaged." = "الملف ليس مشروع macshot أو أنه تالف.";
+"The project could not be prepared for saving." = "تعذّر تجهيز المشروع للحفظ.";
+"The image is too large to save as an editable project." = "الصورة كبيرة جدًا لحفظها كمشروع قابل للتحرير.";
+"The project file is too large to open." = "ملف المشروع كبير جدًا بحيث يتعذّر فتحه.";
+"The project's image could not be read." = "تعذّرت قراءة صورة المشروع.";
 
 /* Scroll Capture HUD */
 "Auto Scroll" = "تمرير تلقائي";
@@ -613,6 +663,7 @@
 "Settings..." = "الإعدادات...";
 "macshot Settings" = "إعدادات macshot";
 "Also open in Editor" = "فتح في المحرر أيضًا";
+"Open in Editor right after selection" = "فتح في المحرر فور التحديد";
 "Close editor after copying" = "إغلاق المحرر بعد النسخ";
 "Hide controls" = "إخفاء عناصر التحكم";
 "Hide recording controls" = "إخفاء عناصر تحكم التسجيل";
@@ -671,7 +722,7 @@
 "Clear History?" = "مسح السجل؟";
 "This will permanently delete all screenshots from history." = "سيؤدي هذا إلى حذف جميع لقطات الشاشة من السجل نهائيًا.";
 "Click \"Set\" and press a key combination with at least one modifier (⌘, ⌥, ⌃, ⇧) to set a shortcut." = "انقر على \"تعيين\" واضغط على مجموعة مفاتيح تحتوي على معدِّل واحد على الأقل (⌘, ⌥, ⌃, ⇧) لتعيين اختصار.";
-"Files are uploaded to this folder in your Google Drive. Leave empty to use \"macshot\". macshot can only use folders it created itself, so a folder you made in Drive with the same name won't be reused — a new one is created instead. Everything stays private — nothing is shared publicly." = "يتم تحميل الملفات إلى هذا المجلد في Google Drive الخاص بك. اتركه فارغًا لاستخدام \"macshot\". لا يمكن لـ macshot استخدام سوى المجلدات التي أنشأها بنفسه، لذلك لن يُعاد استخدام مجلد أنشأته في Drive بالاسم نفسه — بل سيُنشأ مجلد جديد بدلًا منه. كل شيء يبقى خاصًا — لا يُشارك أي شيء بشكل عام.";
+"Files are uploaded to this folder in your Google Drive. Leave empty to use \"macshot\". macshot can only use folders it created itself, so a folder you made in Drive with the same name won't be reused. A new one is created instead. Everything stays private and nothing is shared publicly." = "يتم تحميل الملفات إلى هذا المجلد في Google Drive الخاص بك. اتركه فارغًا لاستخدام \"macshot\". لا يمكن لـ macshot استخدام سوى المجلدات التي أنشأها بنفسه، لذلك لن يُعاد استخدام مجلد أنشأته في Drive بالاسم نفسه, بل سيُنشأ مجلد جديد بدلًا منه. كل شيء يبقى خاصًا, لا يُشارك أي شيء بشكل عام.";
 
 "Pressure" = "الضغط";
 
@@ -738,6 +789,10 @@
 "Background" = "الخلفية";
 "Custom" = "مخصص";
 "Theme:" = "السمة:";
+"Toolbar appearance:" = "مظهر شريط الأدوات:";
+"Dark" = "داكن";
+"Light" = "فاتح";
+"Follow System" = "اتباع النظام";
 "Application" = "التطبيق";
 "Capture area and extract text" = "التقاط منطقة واستخراج النص";
 "Capture the full screen" = "التقاط الشاشة بالكامل";
@@ -751,7 +806,7 @@
 "Open this settings window" = "فتح نافذة الإعدادات هذه";
 "Quick capture (uses your Enter action)" = "التقاط سريع (يستخدم إجراء Enter الخاص بك)";
 "Re-capture the last selected area" = "إعادة التقاط آخر منطقة محددة";
-"Screenshots only — captured window title (blank otherwise)" = "لقطات الشاشة فقط — عنوان النافذة الملتقطة (فارغ خلاف ذلك)";
+"Captured window title (screenshots only, blank otherwise)" = "لقطات الشاشة فقط, عنوان النافذة الملتقطة (فارغ خلاف ذلك)";
 "Show available filename tokens" = "عرض رموز اسم الملف المتاحة";
 "Enable macshot:// URL scheme" = "تفعيل مخطط URL الخاص بـ macshot://";
 "Show supported URL scheme commands" = "عرض أوامر مخطط URL المدعومة";
@@ -820,3 +875,162 @@
 "Play" = "تشغيل";
 "Mute" = "كتم الصوت";
 "Unmute" = "إلغاء كتم الصوت";
+
+/* Video editor (Studio) */
+"%.1f× · follows pointer" = "%.1f× · يتبع المؤشر";
+"Add" = "إضافة";
+"Add Cut Here" = "إضافة قطع هنا";
+"Add Text Here" = "إضافة نص هنا";
+"Add Zoom Here" = "إضافة تكبير هنا";
+"Added %d captions" = "تمت إضافة %d من الترجمات النصية";
+"Added %d zooms" = "تمت إضافة %d من التكبيرات";
+"Apply Default Zoom to All" = "تطبيق التكبير الافتراضي على الكل";
+"Auto" = "تلقائي";
+"Auto Zoom" = "تكبير تلقائي";
+"Auto Zoom needs pointer data, which macshot records with every new recording. You can still add zooms by double-clicking the zoom lane." = "يحتاج التكبير التلقائي إلى بيانات المؤشر، التي يسجّلها macshot مع كل تسجيل جديد. لا يزال بإمكانك إضافة التكبيرات بالنقر المزدوج على مسار التكبير.";
+"Background color" = "لون الخلفية";
+"Background, padding, rounded corners and shadow" = "خلفية وحشوة وزوايا مستديرة وظل";
+"Bold Italic" = "عريض مائل";
+"Box" = "مستطيل";
+"Camera" = "الكاميرا";
+"Caption" = "ترجمة نصية";
+"Captions" = "الترجمات النصية";
+"Captions are transcribed on this Mac. Nothing is uploaded." = "يتم تفريغ الترجمات النصية على هذا الـMac. لا يُرفع أي شيء.";
+"Choose Image…" = "اختيار صورة…";
+"Click color" = "لون النقر";
+"Clicks" = "النقرات";
+"Clip" = "المقطع";
+"Colors" = "الألوان";
+"Connect nearby zooms" = "وصل التكبيرات المتقاربة";
+"Copy the edited video to the clipboard" = "نسخ الفيديو المحرَّر إلى الحافظة";
+"Creates zooms that follow the pointer wherever you click or type. Adjust or delete them on the timeline." = "ينشئ تكبيرات تتبع المؤشر أينما تنقر أو تكتب. عدّلها أو احذفها على المخطط الزمني.";
+"Custom color" = "لون مخصص";
+"Cut" = "قطع";
+"Cuts, speed and freeze frames" = "القطع والسرعة والإطارات المجمّدة";
+"Default zoom" = "التكبير الافتراضي";
+"Dot" = "نقطة";
+"Double-click the text on the preview to edit it." = "انقر نقرًا مزدوجًا على النص في المعاينة لتحريره.";
+"Double-click to add a zoom" = "انقر نقرًا مزدوجًا لإضافة تكبير";
+"Double-click to add a zoom, or use Auto Zoom" = "انقر نقرًا مزدوجًا لإضافة تكبير, أو استخدم التكبير التلقائي";
+"Drag the frame on the preview to choose where the zoom looks." = "اسحب الإطار في المعاينة لاختيار المكان الذي يركّز عليه التكبير.";
+"Duration" = "المدة";
+"Edge highlight" = "إبراز الحواف";
+"Edit Text" = "تحرير النص";
+"Editable pointer, clicks and keystrokes" = "مؤشر ونقرات وضغطات مفاتيح قابلة للتحرير";
+"Edits" = "التعديلات";
+"Export" = "تصدير";
+"Export Subtitles (.srt)…" = "تصدير الترجمات (.srt)…";
+"Fade in" = "ظهور تدريجي";
+"Fade out" = "اختفاء تدريجي";
+"Fit" = "ملاءمة";
+"Fixed" = "ثابت";
+"Fixed point" = "نقطة ثابتة";
+"Focus" = "التركيز";
+"Follow" = "تتبّع";
+"Follow Pointer" = "تتبّع المؤشر";
+"Follow pointer" = "تتبّع المؤشر";
+"Follow tightness" = "دقة التتبّع";
+"Format" = "التنسيق";
+"Frame the recording" = "تأطير التسجيل";
+"Freeze Frame" = "تجميد الإطار";
+"Generate Captions" = "إنشاء الترجمات النصية";
+"Gentle" = "هادئ";
+"Gradient" = "تدرّج";
+"Hide ordinary typing, show key combinations" = "إخفاء الكتابة العادية وعرض اختصارات المفاتيح";
+"Hide when idle" = "إخفاء عند الخمول";
+"Hide while typing" = "إخفاء أثناء الكتابة";
+"Hold Focus" = "تثبيت التركيز";
+"Idle delay" = "مهلة الخمول";
+"Keystrokes" = "ضغطات المفاتيح";
+"Keystrokes in this recording are part of the video pixels." = "ضغطات المفاتيح في هذا التسجيل جزء من بكسلات الفيديو.";
+"Light appearance" = "مظهر فاتح";
+"Makes looping GIFs seamless" = "يجعل تكرار ملفات GIF سلسًا";
+"Mirror" = "عكس";
+"Motion" = "الحركة";
+"Motion blur" = "ضبابية الحركة";
+"Next edit" = "التعديل التالي";
+"No clicks or typing found to zoom into" = "لم يُعثر على نقرات أو كتابة للتكبير عليها";
+"No speech was recognized" = "لم يتم التعرّف على أي كلام";
+"No system wallpapers were found. Choose an image instead." = "لم يُعثر على خلفيات للنظام. اختر صورة بدلًا من ذلك.";
+"Off" = "إيقاف";
+"On-device speech recognition isn't available for your language on this Mac." = "التعرّف على الكلام على الجهاز غير متاح للغتك على هذا الـMac.";
+"Original" = "الأصلي";
+"Outline color" = "لون الحدود";
+"Outline width" = "عرض الحدود";
+"Overlays" = "الطبقات";
+"Pan between zooms instead of zooming out" = "التنقّل بين التكبيرات بدلًا من التصغير";
+"Pill" = "كبسولة";
+"Pointer" = "المؤشر";
+"Press animation" = "حركة الضغط";
+"Previous edit" = "التعديل السابق";
+"Regenerate Captions" = "إعادة إنشاء الترجمات النصية";
+"Regular" = "عادي";
+"Remove Automatic Zooms" = "إزالة التكبيرات التلقائية";
+"Remove Captions" = "إزالة الترجمات النصية";
+"Removes %.1f seconds from the video. Drag its edges on the timeline to adjust." = "يزيل %.1f ثانية من الفيديو. اسحب حوافه على المخطط الزمني لضبطه.";
+"Return to start at the end" = "العودة إلى البداية في النهاية";
+"Ring" = "حلقة";
+"Ripple" = "تموّج";
+"Save As…" = "حفظ باسم…";
+"Shortcuts only" = "الاختصارات فقط";
+"Show camera" = "عرض الكاميرا";
+"Show captions" = "عرض الترجمات النصية";
+"Show keystrokes" = "عرض ضغطات المفاتيح";
+"Show pointer" = "عرض المؤشر";
+"Shrink during zooms" = "تصغير أثناء التكبير";
+"Smoothing" = "التنعيم";
+"Snappy" = "سريع";
+"Speech recognition is turned off for macshot in System Settings › Privacy & Security." = "تم إيقاف التعرّف على الكلام لـ macshot في إعدادات النظام › الخصوصية والأمن.";
+"Speed" = "السرعة";
+"Spotlight" = "بقعة ضوء";
+"Square" = "مربع";
+"Tall" = "عمودي";
+"Text and blur" = "نص وضبابية";
+"The recording's audio could not be read." = "تعذّرت قراءة صوت التسجيل.";
+"This recording already shows the pointer in its pixels, so it can't be restyled. Zooms can still follow it." = "يعرض هذا التسجيل المؤشر ضمن بكسلاته بالفعل، لذا لا يمكن تغيير نمطه. لا يزال بإمكان التكبيرات تتبّعه.";
+"This recording has no audio to transcribe." = "لا يحتوي هذا التسجيل على صوت لتفريغه.";
+"This video has no recorded pointer data. Recordings made with macshot that open in the editor let you restyle, smooth and resize the pointer after recording." = "لا يحتوي هذا الفيديو على بيانات مؤشر مسجّلة. تتيح لك التسجيلات التي يُنشئها macshot وتُفتح في المحرر تغيير نمط المؤشر وتنعيمه وتغيير حجمه بعد التسجيل.";
+"Title" = "عنوان";
+"Transcribing…" = "جارٍ التفريغ…";
+"Transition" = "الانتقال";
+"Turn on Show Keystrokes before recording. macshot then records them separately so you can style them here." = "فعّل «عرض ضغطات المفاتيح» قبل التسجيل. سيسجّلها macshot حينها بشكل منفصل لتتمكن من تنسيقها هنا.";
+"Turn on the camera before recording. macshot records it separately so you can move, resize, restyle or hide it here, and shrink it during zooms." = "شغّل الكاميرا قبل التسجيل. يسجّلها macshot بشكل منفصل لتتمكن من نقلها أو تغيير حجمها أو نمطها أو إخفائها هنا, وتصغيرها أثناء التكبير.";
+"Use Solid to hide sensitive information: blur and pixelation can sometimes be reversed." = "استخدم «صلب» لإخفاء المعلومات الحساسة: يمكن أحيانًا عكس الضبابية والبكسلة.";
+"Visibility" = "الظهور";
+"Wallpaper" = "خلفية الشاشة";
+"When recordings open in the editor, the pointer is recorded separately so you can smooth, resize, restyle or hide it, and add zooms that follow it." = "عندما تُفتح التسجيلات في المحرر، يُسجَّل المؤشر بشكل منفصل لتتمكن من تنعيمه أو تغيير حجمه أو نمطه أو إخفائه، وإضافة تكبيرات تتبعه.";
+"Wide" = "أفقي";
+"Zoom in" = "تكبير";
+"Zoom in timeline" = "تكبير المخطط الزمني";
+"Zoom level" = "مستوى التكبير";
+"Zoom out" = "تصغير";
+"Zoom out timeline" = "تصغير المخطط الزمني";
+"macOS" = "macOS";
+"Sway" = "تمايل";
+
+"Snap webcam to corners when moved" = "محاذاة كاميرا الويب إلى الزوايا عند تحريكها";
+"Search emoji" = "ابحث عن رمز تعبيري";
+"Hide the bottom toolbar" = "إخفاء شريط الأدوات السفلي";
+"Pick tools with their keyboard shortcuts instead." = "اختر الأدوات باستخدام اختصارات لوحة المفاتيح بدلاً من ذلك.";
+
+"Pin position:" = "موضع التثبيت:";
+"Center of screen" = "وسط الشاشة";
+"Original capture position" = "موضع الالتقاط الأصلي";
+
+"Default Colors" = "الألوان الافتراضية";
+"The preset swatches in the color picker." = "التبديلات المسبقة في منتقي الألوان.";
+"Add Color" = "إضافة لون";
+"No default colors." = "لا توجد ألوان افتراضية.";
+
+/* Floating preview: click action & editor behavior */
+"Dismiss" = "إغلاق";
+"Copy & dismiss" = "نسخ وإغلاق";
+"Close preview" = "إغلاق المعاينة";
+"Keep in stack" = "إبقاء في المكدس";
+"Return to stack when editor closes" = "إعادة إلى المكدس عند إغلاق المحرر";
+"  Click on preview:" = "  النقر على المعاينة:";
+"  When opened in Editor:" = "  عند الفتح في المحرر:";
+
+/* Kept from this fork (upstream reworded these) */
+"Screenshots only — captured window title (blank otherwise)" = "لقطات الشاشة فقط — عنوان النافذة الملتقطة (فارغ خلاف ذلك)";
+"A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "مفتاح مشترك مُضمّن — احصل على مفتاحك المجاني من imgbb.com/api إذا واجهت حدود الاستخدام. صور فقط (بدون دعم للفيديو).";

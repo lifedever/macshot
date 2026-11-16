@@ -1,5 +1,6 @@
 import Foundation
 import AVFoundation
+import os
 
 // MARK: - MP4 writer session (queue-confined)
 
@@ -29,6 +30,8 @@ final class MP4WriterSession: @unchecked Sendable {
     private var finishWritingStarted = false
     private var maintenanceTimer: DispatchSourceTimer?
     private var startupDeadline: TimeInterval?
+    /// Called once, on the writer queue, with the first frame's time.
+    private let onSessionStart: ((CMTime) -> Void)?
 
     private var assetWriter: AVAssetWriter?
     private var videoInput: AVAssetWriterInput?
@@ -44,6 +47,8 @@ final class MP4WriterSession: @unchecked Sendable {
     private var lastMicEnd: CMTime = .invalid
     private var systemAudioFormat: CMAudioFormatDescription?
     private var microphoneFormat: CMAudioFormatDescription?
+    private var silenceFormat: CMAudioFormatDescription?
+    private var systemAudioFinished = false
     private(set) var frameCount: Int64 = 0
     private(set) var droppedVideoFrames: Int64 = 0
     private var pendingAudioSamples = RecordingAudioQueue()
@@ -65,22 +70,26 @@ final class MP4WriterSession: @unchecked Sendable {
     /// Build on `queue` so the writer/inputs are created where they're used.
     static func make(queue: DispatchQueue, url: URL, width: Int, height: Int, fps: Int,
                      recordSystemAudio: Bool, recordMicAudio: Bool,
-                     onFailure: @escaping (Error) -> Void = { _ in }) throws -> MP4WriterSession {
+                     onFailure: @escaping (Error) -> Void = { _ in },
+                     onSessionStart: ((CMTime) -> Void)? = nil) throws -> MP4WriterSession {
         var result: Result<MP4WriterSession, Error>!
         queue.sync {
             result = Result {
                 try MP4WriterSession(queue: queue, url: url, width: width, height: height,
                                      fps: fps, recordSystemAudio: recordSystemAudio,
-                                     recordMicAudio: recordMicAudio, onFailure: onFailure)
+                                     recordMicAudio: recordMicAudio, onFailure: onFailure,
+                                     onSessionStart: onSessionStart)
             }
         }
         return try result.get()
     }
 
     private init(queue: DispatchQueue, url: URL, width: Int, height: Int, fps: Int,
-                 recordSystemAudio: Bool, recordMicAudio: Bool, onFailure: @escaping (Error) -> Void) throws {
+                 recordSystemAudio: Bool, recordMicAudio: Bool, onFailure: @escaping (Error) -> Void,
+                 onSessionStart: ((CMTime) -> Void)?) throws {
         self.queue = queue
         self.onFailure = onFailure
+        self.onSessionStart = onSessionStart
         self.frameDuration = CMTime(value: 1, timescale: CMTimeScale(fps))
         dispatchPrecondition(condition: .onQueue(queue))
 
@@ -90,6 +99,10 @@ final class MP4WriterSession: @unchecked Sendable {
         // retain completed fragments, and finalization need not build one
         // ever-growing sample table for a multi-hour recording.
         writer.movieFragmentInterval = CMTime(value: 10, timescale: 1)
+        // Not `shouldOptimizeForNetworkUse`: with it AVFoundation writes the
+        // take somewhere else and moves it here only when finishing, so a
+        // crash mid-recording would leave nothing at all. Fast start is applied
+        // to exports instead (#452).
         let settings = VideoEncodingSettings.outputSettings(
             width: width, height: height, fps: fps, codec: .h264, quality: .high)
         let input = AVAssetWriterInput(mediaType: .video, outputSettings: settings)
@@ -280,9 +293,10 @@ final class MP4WriterSession: @unchecked Sendable {
             input.requestMediaDataWhenReady(on: queue) { [weak self] in
                 guard let self = self, !done, self.finalResult == nil else { return }
                 self.drainAudio(isMic: isMic)
-                let empty = isMic ? self.pendingMicSamples.samples.isEmpty : self.pendingAudioSamples.samples.isEmpty
+                let empty = isMic ? self.pendingMicSamples.isEmpty : self.pendingAudioSamples.isEmpty
                 guard empty || self.firstError != nil else { return }
                 done = true
+                if !isMic { self.systemAudioFinished = true }
                 input.markAsFinished()
                 finishedInput()
             }
@@ -304,6 +318,7 @@ final class MP4WriterSession: @unchecked Sendable {
     private func complete(_ result: Result<Void, Error>) {
         guard finalResult == nil else { return }
         finalResult = result
+        Self.log.notice("Recording audio: trimmed=\(self.audioStats.trimmed, privacy: .public) retimed=\(self.audioStats.retimed, privacy: .public) dropped=\(self.audioStats.droppedBeforeBoundary, privacy: .public) invalid=\(self.audioStats.invalid, privacy: .public) ignored=\(self.audioStats.ignored, privacy: .public) received=\(self.audioStats.received, privacy: .public) overflowSeconds=\(self.audioStats.overflowSeconds, privacy: .public) systemEnd=\(self.lastAudioEnd.seconds - self.startTime.seconds, privacy: .public) micEnd=\(self.lastMicEnd.seconds - self.startTime.seconds, privacy: .public)")
         mode = .finished
         maintenanceTimer?.cancel()
         maintenanceTimer = nil
@@ -368,6 +383,12 @@ final class MP4WriterSession: @unchecked Sendable {
             startTime = time
             writer.startSession(atSourceTime: time)
             sessionStarted = true
+            // Pre-roll that ends before the first frame would only be trimmed.
+            pendingAudioSamples.removeSamples(endingBefore: time)
+            pendingMicSamples.removeSamples(endingBefore: time)
+            // Host time of media zero: the adjusted time plus any pause
+            // offset accumulated before the first frame.
+            onSessionStart?(CMTimeAdd(time, pauseOffset))
         }
         guard adaptor.append(pixelBuffer, withPresentationTime: time) else {
             fail(writer.error ?? WriterError.appendFailed); return false
@@ -385,9 +406,22 @@ final class MP4WriterSession: @unchecked Sendable {
     private func handleAudio(_ sample: CMSampleBuffer, isMic: Bool) {
         dispatchPrecondition(condition: .onQueue(queue))
         guard mode == .recording, firstError == nil,
-              (isMic ? micAudioInput : audioInput) != nil,
-              RecordingSampleValidation.isValidAudio(sample),
-              let adjusted = SampleBufferTiming.shifted(sample, by: CMTimeMultiply(pauseOffset, multiplier: -1)) else { return }
+              (isMic ? micAudioInput : audioInput) != nil else {
+            // Expected during stop and after a reported failure; counted only.
+            audioStats.ignored += 1
+            return
+        }
+        audioStats.received += 1
+        guard RecordingSampleValidation.isValidAudio(sample),
+              let owned = RecordingSampleValidation.ownedCopy(sample),
+              let adjusted = SampleBufferTiming.shifted(owned, by: CMTimeMultiply(pauseOffset, multiplier: -1)) else {
+            audioStats.invalid += 1
+            if !audioStats.loggedInvalid {
+                audioStats.loggedInvalid = true
+                Self.log.error("Audio sample rejected (\(isMic ? "mic" : "system", privacy: .public)): \(RecordingSampleValidation.describe(sample), privacy: .public)")
+            }
+            return
+        }
         let format = CMSampleBufferGetFormatDescription(sample)
         if let previous = isMic ? microphoneFormat : systemAudioFormat, let format = format,
            !CMFormatDescriptionEqual(previous, otherFormatDescription: format) {
@@ -395,22 +429,75 @@ final class MP4WriterSession: @unchecked Sendable {
             return
         }
         if isMic { microphoneFormat = format } else { systemAudioFormat = format }
-        var pending = isMic ? pendingMicSamples : pendingAudioSamples
-        if !pending.append(adjusted) {
-            if sessionStarted {
-                fail(WriterError.audioOverload)
-                return
+        if sessionStarted {
+            if !appendPending(adjusted, isMic: isMic) {
+                // Queue incoming system audio before inferring a silence gap;
+                // otherwise the silence pump could overwrite this real buffer.
+                drainAudio(isMic: isMic)
+                if appendPending(adjusted, isMic: isMic) {
+                    drainAudio(isMic: isMic)
+                    return
+                }
+                // The encoder is not accepting audio (interleaving against a
+                // stalled video track, disk or AAC backpressure). Losing the
+                // oldest queued audio keeps the take; abort only if the
+                // stall persists.
+                if !makeRoomForAudio(adjusted, isMic: isMic) { return }
             }
+        } else {
             // Pre-roll is useful only near the first complete video frame.
-            // Keep the newest bounded window even if video never arrives.
-            while !pending.samples.isEmpty {
-                pending.removeFirst()
-                if pending.append(adjusted) { break }
-            }
+            // Keep the newest short window even if video never arrives.
+            while !appendPending(adjusted, isMic: isMic), removeOldestPending(isMic: isMic) != nil {}
+            trimPreRoll(isMic: isMic)
         }
-        if isMic { pendingMicSamples = pending } else { pendingAudioSamples = pending }
         if sessionStarted { drainAudio(isMic: isMic) }
     }
+
+    private func appendPending(_ sample: CMSampleBuffer, isMic: Bool) -> Bool {
+        isMic ? pendingMicSamples.append(sample) : pendingAudioSamples.append(sample)
+    }
+
+    private func removeOldestPending(isMic: Bool) -> CMSampleBuffer? {
+        isMic ? pendingMicSamples.removeFirst() : pendingAudioSamples.removeFirst()
+    }
+
+    private func trimPreRoll(isMic: Bool) {
+        while (isMic ? pendingMicSamples.count : pendingAudioSamples.count) > 1,
+              (isMic ? pendingMicSamples.bufferedSeconds : pendingAudioSamples.bufferedSeconds) > Self.preRollSeconds {
+            _ = removeOldestPending(isMic: isMic)
+        }
+    }
+
+    /// Drops the oldest queued audio to admit `sample`. Returns false (after
+    /// failing the take) once more than `maximumDroppedSeconds` were dropped.
+    private func makeRoomForAudio(_ sample: CMSampleBuffer, isMic: Bool) -> Bool {
+        if !audioStats.loggedOverflow {
+            audioStats.loggedOverflow = true
+            let video = videoInput?.isReadyForMoreMediaData ?? false
+            let audio = (isMic ? micAudioInput : audioInput)?.isReadyForMoreMediaData ?? false
+            let lead = CMTimeSubtract(CMSampleBufferGetPresentationTimeStamp(sample), lastVideoTime).seconds
+            Self.log.error("Audio queue full (\(isMic ? "mic" : "system", privacy: .public)): writer=\(self.assetWriter?.status.rawValue ?? -1, privacy: .public) videoReady=\(video, privacy: .public) audioReady=\(audio, privacy: .public) audioLeadsVideo=\(lead, privacy: .public)s droppedVideoFrames=\(self.droppedVideoFrames, privacy: .public) frames=\(self.frameCount, privacy: .public)")
+        }
+        while !appendPending(sample, isMic: isMic) {
+            guard let oldest = removeOldestPending(isMic: isMic) else { return true }
+            let seconds = max(0, CMSampleBufferGetDuration(oldest).seconds)
+            audioStats.overflowSeconds += seconds
+            if audioStats.overflowSeconds > Self.maximumDroppedAudioSeconds {
+                fail(WriterError.audioOverload)
+                return false
+            }
+        }
+        return true
+    }
+
+    /// Total queued audio that may be dropped over one take before the
+    /// recording is stopped.
+    private static let maximumDroppedAudioSeconds = 30.0
+
+    /// Audio kept before the first video frame. Generous because a first frame
+    /// can arrive late with an earlier capture time than audio already queued;
+    /// whatever ends before that frame is dropped once it arrives.
+    private static let preRollSeconds = 5.0
 
     private func drainAudio() {
         drainAudio(isMic: false)
@@ -418,14 +505,30 @@ final class MP4WriterSession: @unchecked Sendable {
     }
 
     private func drainAudio(isMic: Bool) {
+        if isMic { drainAudio(isMic: false) }
         guard sessionStarted, firstError == nil,
+              isMic || !systemAudioFinished,
               let input = isMic ? micAudioInput : audioInput else { return }
+        var silenceBuffers = 0
         while input.isReadyForMoreMediaData {
+            if !isMic, let target = systemSilenceTarget() {
+                // Yield after ten small buffers. The maintenance timer or
+                // next captured sample continues on the next turn.
+                guard silenceBuffers < 10 else { return }
+                if silenceFormat == nil { silenceFormat = RecordingAudioSilence.systemFormat() }
+                guard let format = systemAudioFormat ?? silenceFormat,
+                      let silence = RecordingAudioSilence.buffer(from: systemAudioBoundary, to: target, format: format)
+                else { fail(WriterError.appendFailed); return }
+                guard input.append(silence) else { fail(assetWriter?.error ?? WriterError.appendFailed); return }
+                lastAudioEnd = CMTimeAdd(silence.presentationTimeStamp, silence.duration)
+                silenceBuffers += 1
+                continue // Recheck readiness before appending real audio.
+            }
             let sample = isMic ? pendingMicSamples.removeFirst() : pendingAudioSamples.removeFirst()
             guard let sample = sample else { break }
             let lastEnd = isMic ? lastMicEnd : lastAudioEnd
             let boundary = lastEnd.isNumeric ? CMTimeMaximum(startTime, lastEnd) : startTime
-            guard let clipped = RecordingSampleValidation.audio(sample, startingAt: boundary) else { continue }
+            guard let clipped = alignedAudio(sample, startingAt: boundary, isMic: isMic) else { continue }
             guard input.append(clipped) else {
                 fail(assetWriter?.error ?? WriterError.appendFailed); return
             }
@@ -433,6 +536,56 @@ final class MP4WriterSession: @unchecked Sendable {
             if isMic { lastMicEnd = end } else { lastAudioEnd = end }
         }
     }
+
+    private var systemAudioBoundary: CMTime {
+        lastAudioEnd.isNumeric ? CMTimeMaximum(startTime, lastAudioEnd) : startTime
+    }
+
+    /// Only the system track is sparse. Fill it only when a sibling input is
+    /// blocked, with no real system samples waiting. Once finishing, marking
+    /// an empty input finished releases interleaving without manufacturing a
+    /// potentially hours-long silent tail.
+    private func systemSilenceTarget() -> CMTime? {
+        guard sessionStarted, audioInput != nil, let microphone = micAudioInput,
+              !systemAudioFinished, mode == .recording else { return nil }
+        let progress = lastMicEnd
+        let stalled = !microphone.isReadyForMoreMediaData
+        return RecordingAudioSilence.target(boundary: systemAudioBoundary, progress: progress,
+            hasQueuedAudio: !pendingAudioSamples.isEmpty, siblingStalled: stalled)
+    }
+
+    /// Aligns a queued buffer to the end of the audio already written.
+    /// Capture clocks drift against the sample count, so after a second or so
+    /// every buffer overlaps its predecessor by a sample or two; trimming keeps
+    /// sync. If a buffer can't be trimmed it is moved to the boundary instead:
+    /// silently dropping it would lose all audio from that point on.
+    private func alignedAudio(_ sample: CMSampleBuffer, startingAt boundary: CMTime, isMic: Bool) -> CMSampleBuffer? {
+        let pts = CMSampleBufferGetPresentationTimeStamp(sample)
+        guard CMTimeCompare(pts, boundary) < 0 else { return sample }
+        let end = CMTimeAdd(pts, CMSampleBufferGetDuration(sample))
+        guard CMTimeCompare(end, boundary) > 0 else {
+            audioStats.droppedBeforeBoundary += 1
+            return nil
+        }
+        if let trimmed = RecordingSampleValidation.audio(sample, startingAt: boundary) {
+            audioStats.trimmed += 1
+            return trimmed
+        }
+        audioStats.retimed += 1
+        if !audioStats.loggedTrimFailure {
+            audioStats.loggedTrimFailure = true
+            Self.log.error("Audio trim failed (\(isMic ? "mic" : "system", privacy: .public)): \(RecordingSampleValidation.describe(sample), privacy: .public) overlap=\(CMTimeSubtract(boundary, pts).seconds, privacy: .public)")
+        }
+        return SampleBufferTiming.retimed(sample, to: boundary)
+    }
+
+    private struct AudioStats {
+        var trimmed = 0, retimed = 0, droppedBeforeBoundary = 0, invalid = 0, ignored = 0, received = 0
+        var loggedTrimFailure = false, loggedInvalid = false, loggedOverflow = false
+        var overflowSeconds = 0.0
+    }
+    private var audioStats = AudioStats()
+    private static let log = Logger(subsystem: "com.sw33tlie.macshot", category: "RecordingWriter")
 
     private func adjustedTime(_ time: CMTime) -> CMTime { CMTimeSubtract(time, pauseOffset) }
 }

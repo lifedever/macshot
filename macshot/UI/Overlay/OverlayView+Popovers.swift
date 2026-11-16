@@ -344,7 +344,9 @@ extension OverlayView {
                 init(overlayView: OverlayView?) { self.overlayView = overlayView; super.init() }
                 @objc func changed(_ sender: NSSegmentedControl) {
                     let values = ["bottomLeft", "bottomRight", "topLeft", "topRight"]
-                    UserDefaults.standard.set(values[sender.selectedSegment], forKey: "webcamPosition")
+                    if let position = WebcamPosition(rawValue: values[sender.selectedSegment]) {
+                        WebcamPlacement.saveCorner(position)
+                    }
                     overlayView?.updateWebcamSetupPreview()
                 }
             }
@@ -412,6 +414,8 @@ extension OverlayView {
         // pop-up buttons whose native menus sat oddly beside the toolbar. The
         // choices apply to this session only (see the session overrides).
         let fpsOptions = [15, 30, 60, 120]
+        // Every take is published to the save folder, so there is no separate
+        // "Save + copy": copying already comes with a saved file.
         let onStopOptions = ["editor", "finder", "clipboard"]
         let onStopTitles = [L("Open editor"), L("Show in Finder"), L("Copy to clipboard")]
         let delayOptions = [0, 3, 5, 10, 30]
