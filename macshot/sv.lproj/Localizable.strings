@@ -1026,3 +1026,19 @@
 /* Kept from this fork (upstream reworded these) */
 "Screenshots only — captured window title (blank otherwise)" = "Endast skärmbilder — fångad fönstertitel (tomt annars)";
 "A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "En delad nyckel ingår — skaffa din egen gratis nyckel på imgbb.com/api om du når hastighetsgränsen. Endast bilder (inget videostöd).";
+
+/* Recording library location */
+"%d recordings are in the previous location." = "Det finns %d inspelningar på den tidigare platsen.";
+"%d recordings couldn't be moved and stay in the previous location." = "%d inspelningar kunde inte flyttas och ligger kvar på den tidigare platsen.";
+"Change…" = "Ändra…";
+"Choose" = "Välj";
+"Leave Them" = "Låt dem ligga";
+"Location" = "Plats";
+"Move Recordings" = "Flytta inspelningar";
+"Move existing recordings?" = "Flytta befintliga inspelningar?";
+"Moved %d recordings" = "%d inspelningar flyttade";
+"Moving recordings…" = "Flyttar inspelningar…";
+"Not connected. New recordings are saved to the default location." = "Inte ansluten. Nya inspelningar sparas på standardplatsen.";
+"Recording Library" = "Inspelningsbibliotek";
+"Stop the recording and close the video editor before moving recordings." = "Stoppa inspelningen och stäng videoredigeraren innan du flyttar inspelningar.";
+"The recording library isn't available. New recordings are saved to the default location." = "Inspelningsbiblioteket är inte tillgängligt. Nya inspelningar sparas på standardplatsen.";

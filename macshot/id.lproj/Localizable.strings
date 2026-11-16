@@ -1026,3 +1026,19 @@
 /* Kept from this fork (upstream reworded these) */
 "Screenshots only — captured window title (blank otherwise)" = "Tangkapan layar saja — judul jendela yang ditangkap (kosong jika tidak)";
 "A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "Kunci bersama sudah disertakan — dapatkan kunci gratis Anda sendiri di imgbb.com/api jika mencapai batas penggunaan. Gambar saja (tidak mendukung video).";
+
+/* Recording library location */
+"%d recordings are in the previous location." = "Ada %d rekaman di lokasi sebelumnya.";
+"%d recordings couldn't be moved and stay in the previous location." = "%d rekaman tidak dapat dipindahkan dan tetap di lokasi sebelumnya.";
+"Change…" = "Ubah…";
+"Choose" = "Pilih";
+"Leave Them" = "Biarkan";
+"Location" = "Lokasi";
+"Move Recordings" = "Pindahkan Rekaman";
+"Move existing recordings?" = "Pindahkan rekaman yang ada?";
+"Moved %d recordings" = "%d rekaman dipindahkan";
+"Moving recordings…" = "Memindahkan rekaman…";
+"Not connected. New recordings are saved to the default location." = "Tidak terhubung. Rekaman baru disimpan di lokasi default.";
+"Recording Library" = "Pustaka Rekaman";
+"Stop the recording and close the video editor before moving recordings." = "Hentikan perekaman dan tutup editor video sebelum memindahkan rekaman.";
+"The recording library isn't available. New recordings are saved to the default location." = "Pustaka rekaman tidak tersedia. Rekaman baru disimpan di lokasi default.";

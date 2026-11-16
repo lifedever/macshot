@@ -34,6 +34,31 @@ struct RecordingSettingsView: View {
                 }
             }
 
+            Section {
+                LabeledContent(L("Location")) {
+                    HStack(spacing: 8) {
+                        Text(model.libraryPath)
+                            .truncationMode(.middle)
+                            .lineLimit(1)
+                            .foregroundStyle(.secondary)
+                        Button(L("Change…")) { model.chooseLibraryLocation() }
+                    }
+                }
+                if model.libraryUnavailable {
+                    Text(L("Not connected. New recordings are saved to the default location."))
+                        .font(.caption)
+                        .foregroundStyle(.orange)
+                }
+                HStack {
+                    Button(L("Show in Finder")) { model.showLibraryInFinder() }
+                    Spacer()
+                    Button(L("Reset to default")) { model.useDefaultLibraryLocation() }
+                        .disabled(model.libraryIsDefault)
+                }
+            } header: {
+                Text(L("Recording Library"))
+            }
+
             Section(L("Webcam")) {
                 Picker(L("Position"), selection: $model.webcamPosition) {
                     Text(L("Bottom Right")).tag("bottomRight")

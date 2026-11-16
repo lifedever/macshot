@@ -1026,3 +1026,19 @@
 /* Kept from this fork (upstream reworded these) */
 "Screenshots only — captured window title (blank otherwise)" = "スクリーンショットのみ — キャプチャしたウインドウのタイトル (それ以外は空白)";
 "A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "共有キーが含まれています — レート制限に達した場合は imgbb.com/api で無料キーを取得してください。画像のみ (動画は非対応)。";
+
+/* Recording library location */
+"%d recordings are in the previous location." = "%d 件の録画が以前の場所にあります。";
+"%d recordings couldn't be moved and stay in the previous location." = "%d 件の録画を移動できず、以前の場所に残っています。";
+"Change…" = "変更…";
+"Choose" = "選択";
+"Leave Them" = "そのままにする";
+"Location" = "場所";
+"Move Recordings" = "録画を移動";
+"Move existing recordings?" = "既存の録画を移動しますか？";
+"Moved %d recordings" = "%d 件の録画を移動しました";
+"Moving recordings…" = "録画を移動中…";
+"Not connected. New recordings are saved to the default location." = "接続されていません。新しい録画はデフォルトの場所に保存されます。";
+"Recording Library" = "録画ライブラリ";
+"Stop the recording and close the video editor before moving recordings." = "録画を移動する前に、録画を停止してビデオエディタを閉じてください。";
+"The recording library isn't available. New recordings are saved to the default location." = "録画ライブラリを使用できません。新しい録画はデフォルトの場所に保存されます。";

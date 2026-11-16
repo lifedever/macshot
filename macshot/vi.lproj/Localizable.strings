@@ -1026,3 +1026,19 @@
 /* Kept from this fork (upstream reworded these) */
 "Screenshots only — captured window title (blank otherwise)" = "Chỉ ảnh chụp — tiêu đề cửa sổ đã chụp (trống nếu khác)";
 "A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "Đã bao gồm khóa dùng chung — lấy khóa miễn phí riêng tại imgbb.com/api nếu bạn bị giới hạn tốc độ. Chỉ hỗ trợ ảnh (không hỗ trợ video).";
+
+/* Recording library location */
+"%d recordings are in the previous location." = "Có %d bản ghi ở vị trí trước đây.";
+"%d recordings couldn't be moved and stay in the previous location." = "Không thể di chuyển %d bản ghi, chúng vẫn ở vị trí trước đây.";
+"Change…" = "Thay đổi…";
+"Choose" = "Chọn";
+"Leave Them" = "Để nguyên";
+"Location" = "Vị trí";
+"Move Recordings" = "Di chuyển bản ghi";
+"Move existing recordings?" = "Di chuyển các bản ghi hiện có?";
+"Moved %d recordings" = "Đã di chuyển %d bản ghi";
+"Moving recordings…" = "Đang di chuyển bản ghi…";
+"Not connected. New recordings are saved to the default location." = "Chưa kết nối. Bản ghi mới được lưu vào vị trí mặc định.";
+"Recording Library" = "Thư viện bản ghi";
+"Stop the recording and close the video editor before moving recordings." = "Hãy dừng ghi và đóng trình chỉnh sửa video trước khi di chuyển bản ghi.";
+"The recording library isn't available. New recordings are saved to the default location." = "Thư viện bản ghi không khả dụng. Bản ghi mới được lưu vào vị trí mặc định.";

@@ -1034,3 +1034,19 @@
 /* Kept from this fork (upstream reworded these) */
 "Screenshots only — captured window title (blank otherwise)" = "צילומי מסך בלבד — כותרת החלון שנלכד (ריק אחרת)";
 "A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "מפתח משותף כלול — קבל מפתח חינמי משלך ב-imgbb.com/api אם הגעת למגבלת קצב. תמונות בלבד (ללא תמיכה בווידאו).";
+
+/* Recording library location */
+"%d recordings are in the previous location." = "יש %d הקלטות במיקום הקודם.";
+"%d recordings couldn't be moved and stay in the previous location." = "לא ניתן היה להעביר %d הקלטות, והן נשארות במיקום הקודם.";
+"Change…" = "שינוי…";
+"Choose" = "בחירה";
+"Leave Them" = "להשאיר";
+"Location" = "מיקום";
+"Move Recordings" = "העברת הקלטות";
+"Move existing recordings?" = "להעביר את ההקלטות הקיימות?";
+"Moved %d recordings" = "הועברו %d הקלטות";
+"Moving recordings…" = "מעביר הקלטות…";
+"Not connected. New recordings are saved to the default location." = "לא מחובר. הקלטות חדשות נשמרות במיקום ברירת המחדל.";
+"Recording Library" = "ספריית הקלטות";
+"Stop the recording and close the video editor before moving recordings." = "יש לעצור את ההקלטה ולסגור את עורך הווידאו לפני העברת הקלטות.";
+"The recording library isn't available. New recordings are saved to the default location." = "ספריית ההקלטות אינה זמינה. הקלטות חדשות נשמרות במיקום ברירת המחדל.";

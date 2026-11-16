@@ -1027,3 +1027,19 @@
 /* Kept from this fork (upstream reworded these) */
 "Screenshots only — captured window title (blank otherwise)" = "Samo snimke zaslona — naslov snimljenog prozora (inače prazno)";
 "A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "Dijeljeni ključ je uključen — nabavite vlastiti besplatni ključ na imgbb.com/api ako dosegnete ograničenje. Samo slike (bez podrške za video).";
+
+/* Recording library location */
+"%d recordings are in the previous location." = "Na prethodnoj lokaciji nalazi se snimaka: %d.";
+"%d recordings couldn't be moved and stay in the previous location." = "Snimke (%d) nije bilo moguće premjestiti i ostaju na prethodnoj lokaciji.";
+"Change…" = "Promijeni…";
+"Choose" = "Odaberi";
+"Leave Them" = "Ostavi";
+"Location" = "Lokacija";
+"Move Recordings" = "Premjesti snimke";
+"Move existing recordings?" = "Premjestiti postojeće snimke?";
+"Moved %d recordings" = "Premješteno snimaka: %d";
+"Moving recordings…" = "Premještanje snimaka…";
+"Not connected. New recordings are saved to the default location." = "Nije povezano. Nove snimke spremaju se na zadanu lokaciju.";
+"Recording Library" = "Knjižnica snimaka";
+"Stop the recording and close the video editor before moving recordings." = "Zaustavite snimanje i zatvorite uređivač videozapisa prije premještanja snimaka.";
+"The recording library isn't available. New recordings are saved to the default location." = "Knjižnica snimaka nije dostupna. Nove snimke spremaju se na zadanu lokaciju.";

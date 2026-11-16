@@ -1026,3 +1026,19 @@
 /* Kept from this fork (upstream reworded these) */
 "Screenshots only — captured window title (blank otherwise)" = "Kun sk\U00E6rmbilleder — titel p\U00E5 optaget vindue (ellers tom)";
 "A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "En delt nøgle er inkluderet — få din egen gratis nøgle på imgbb.com/api, hvis du rammer hastighedsgrænser. Kun billeder (ingen videounderstøttelse).";
+
+/* Recording library location */
+"%d recordings are in the previous location." = "Der er %d optagelser på den tidligere placering.";
+"%d recordings couldn't be moved and stay in the previous location." = "%d optagelser kunne ikke flyttes og bliver på den tidligere placering.";
+"Change…" = "Skift…";
+"Choose" = "Vælg";
+"Leave Them" = "Lad dem blive";
+"Location" = "Placering";
+"Move Recordings" = "Flyt optagelser";
+"Move existing recordings?" = "Flyt eksisterende optagelser?";
+"Moved %d recordings" = "%d optagelser flyttet";
+"Moving recordings…" = "Flytter optagelser…";
+"Not connected. New recordings are saved to the default location." = "Ikke tilsluttet. Nye optagelser gemmes på standardplaceringen.";
+"Recording Library" = "Optagelsesbibliotek";
+"Stop the recording and close the video editor before moving recordings." = "Stop optagelsen, og luk videoeditoren, før du flytter optagelser.";
+"The recording library isn't available. New recordings are saved to the default location." = "Optagelsesbiblioteket er ikke tilgængeligt. Nye optagelser gemmes på standardplaceringen.";

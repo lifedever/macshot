@@ -12,16 +12,29 @@ struct RecordingSessionStore: Sendable {
     nonisolated(unsafe) static var probeRoot: URL?
     #endif
 
+    /// Where new takes are written (see `RecordingLibrary`).
     nonisolated static var rootURL: URL {
         #if VIDEO_EDITOR_PROBE
         if let probeRoot { return probeRoot }
         #endif
-        let support = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
-            ?? FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Library/Application Support")
-        return support.appendingPathComponent("com.sw33tlie.macshot/Recordings", isDirectory: true)
+        return RecordingLibrary.currentRoot
     }
 
-    nonisolated static func owns(_ url: URL, root: URL = Self.rootURL) -> Bool {
+    /// Every folder that holds takes: the current location plus the default
+    /// and earlier ones whose takes have not been moved.
+    nonisolated static var allRootURLs: [URL] {
+        #if VIDEO_EDITOR_PROBE
+        if let probeRoot { return [probeRoot] }
+        #endif
+        return RecordingLibrary.allRoots
+    }
+
+    /// A take in any library location — a durable original, never a temporary file.
+    nonisolated static func owns(_ url: URL) -> Bool {
+        allRootURLs.contains { owns(url, root: $0) }
+    }
+
+    nonisolated static func owns(_ url: URL, root: URL) -> Bool {
         url.resolvingSymlinksInPath().standardizedFileURL.path.hasPrefix(
             root.resolvingSymlinksInPath().standardizedFileURL.path + "/")
     }

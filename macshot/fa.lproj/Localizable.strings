@@ -1034,3 +1034,19 @@
 /* Kept from this fork (upstream reworded these) */
 "Screenshots only — captured window title (blank otherwise)" = "فقط اسکرین‌شات — عنوان پنجره ضبط‌شده (در غیر این صورت خالی)";
 "A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "یک کلید مشترک موجود است — اگر به محدودیت نرخ رسیدید، کلید رایگان خود را از imgbb.com/api دریافت کنید. فقط تصاویر (بدون پشتیبانی ویدیو).";
+
+/* Recording library location */
+"%d recordings are in the previous location." = "%d ضبط در مکان قبلی وجود دارد.";
+"%d recordings couldn't be moved and stay in the previous location." = "%d ضبط منتقل نشد و در مکان قبلی می‌ماند.";
+"Change…" = "تغییر…";
+"Choose" = "انتخاب";
+"Leave Them" = "همان‌جا بماند";
+"Location" = "مکان";
+"Move Recordings" = "انتقال ضبط‌ها";
+"Move existing recordings?" = "ضبط‌های موجود منتقل شوند؟";
+"Moved %d recordings" = "%d ضبط منتقل شد";
+"Moving recordings…" = "در حال انتقال ضبط‌ها…";
+"Not connected. New recordings are saved to the default location." = "متصل نیست. ضبط‌های جدید در مکان پیش‌فرض ذخیره می‌شوند.";
+"Recording Library" = "کتابخانه ضبط‌ها";
+"Stop the recording and close the video editor before moving recordings." = "پیش از انتقال ضبط‌ها، ضبط را متوقف کنید و ویرایشگر ویدیو را ببندید.";
+"The recording library isn't available. New recordings are saved to the default location." = "کتابخانه ضبط‌ها در دسترس نیست. ضبط‌های جدید در مکان پیش‌فرض ذخیره می‌شوند.";

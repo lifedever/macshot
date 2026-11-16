@@ -1032,3 +1032,19 @@
 /* Kept from this fork (upstream reworded these) */
 "Screenshots only — captured window title (blank otherwise)" = "केवल स्क्रीनशॉट — कैप्चर किए गए विंडो का शीर्षक (अन्यथा खाली)";
 "A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "एक साझा कुंजी शामिल है — यदि दर सीमा तक पहुँचें तो imgbb.com/api पर अपनी मुफ़्त कुंजी प्राप्त करें। केवल चित्र (वीडियो समर्थन नहीं)।";
+
+/* Recording library location */
+"%d recordings are in the previous location." = "पिछले स्थान पर %d रिकॉर्डिंग हैं।";
+"%d recordings couldn't be moved and stay in the previous location." = "%d रिकॉर्डिंग नहीं ले जाई जा सकीं और पिछले स्थान पर ही हैं।";
+"Change…" = "बदलें…";
+"Choose" = "चुनें";
+"Leave Them" = "वहीं रहने दें";
+"Location" = "स्थान";
+"Move Recordings" = "रिकॉर्डिंग ले जाएँ";
+"Move existing recordings?" = "मौजूदा रिकॉर्डिंग ले जाएँ?";
+"Moved %d recordings" = "%d रिकॉर्डिंग ले जाई गईं";
+"Moving recordings…" = "रिकॉर्डिंग ले जाई जा रही हैं…";
+"Not connected. New recordings are saved to the default location." = "कनेक्ट नहीं है। नई रिकॉर्डिंग डिफ़ॉल्ट स्थान पर सहेजी जाती हैं।";
+"Recording Library" = "रिकॉर्डिंग लाइब्रेरी";
+"Stop the recording and close the video editor before moving recordings." = "रिकॉर्डिंग ले जाने से पहले रिकॉर्डिंग रोकें और वीडियो एडिटर बंद करें।";
+"The recording library isn't available. New recordings are saved to the default location." = "रिकॉर्डिंग लाइब्रेरी उपलब्ध नहीं है। नई रिकॉर्डिंग डिफ़ॉल्ट स्थान पर सहेजी जाती हैं।";

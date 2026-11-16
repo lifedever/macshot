@@ -1032,3 +1032,19 @@
 /* Kept from this fork (upstream reworded these) */
 "Screenshots only — captured window title (blank otherwise)" = "Μόνο στιγμιότυπα — τίτλος παραθύρου λήψης (κενό διαφορετικά)";
 "A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "Περιλαμβάνεται κοινόχρηστο κλειδί — αποκτήστε το δικό σας δωρεάν κλειδί στο imgbb.com/api αν φτάσετε τα όρια. Μόνο εικόνες (χωρίς υποστήριξη βίντεο).";
+
+/* Recording library location */
+"%d recordings are in the previous location." = "Υπάρχουν %d εγγραφές στην προηγούμενη θέση.";
+"%d recordings couldn't be moved and stay in the previous location." = "%d εγγραφές δεν μετακινήθηκαν και παραμένουν στην προηγούμενη θέση.";
+"Change…" = "Αλλαγή…";
+"Choose" = "Επιλογή";
+"Leave Them" = "Άφησέ τες";
+"Location" = "Θέση";
+"Move Recordings" = "Μετακίνηση εγγραφών";
+"Move existing recordings?" = "Μετακίνηση των υπαρχουσών εγγραφών;";
+"Moved %d recordings" = "Μετακινήθηκαν %d εγγραφές";
+"Moving recordings…" = "Μετακίνηση εγγραφών…";
+"Not connected. New recordings are saved to the default location." = "Δεν είναι συνδεδεμένο. Οι νέες εγγραφές αποθηκεύονται στην προεπιλεγμένη θέση.";
+"Recording Library" = "Βιβλιοθήκη εγγραφών";
+"Stop the recording and close the video editor before moving recordings." = "Σταματήστε την εγγραφή και κλείστε το πρόγραμμα επεξεργασίας βίντεο πριν μετακινήσετε εγγραφές.";
+"The recording library isn't available. New recordings are saved to the default location." = "Η βιβλιοθήκη εγγραφών δεν είναι διαθέσιμη. Οι νέες εγγραφές αποθηκεύονται στην προεπιλεγμένη θέση.";

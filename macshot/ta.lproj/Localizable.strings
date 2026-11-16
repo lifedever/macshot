@@ -1032,3 +1032,19 @@
 /* Kept from this fork (upstream reworded these) */
 "Screenshots only — captured window title (blank otherwise)" = "திரைப்பிடிப்புகள் மட்டும் — பிடிக்கப்பட்ட சாளரத் தலைப்பு (இல்லையெனில் காலி)";
 "A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "பகிரப்பட்ட விசை சேர்க்கப்பட்டுள்ளது — வீத வரம்புகளை அடைந்தால் imgbb.com/api இல் உங்கள் சொந்த இலவச விசையைப் பெறுங்கள். படங்கள் மட்டும் (காணொளி ஆதரவு இல்லை).";
+
+/* Recording library location */
+"%d recordings are in the previous location." = "முந்தைய இடத்தில் %d பதிவுகள் உள்ளன.";
+"%d recordings couldn't be moved and stay in the previous location." = "%d பதிவுகளை நகர்த்த முடியவில்லை; அவை முந்தைய இடத்திலேயே உள்ளன.";
+"Change…" = "மாற்று…";
+"Choose" = "தேர்ந்தெடு";
+"Leave Them" = "அப்படியே விடு";
+"Location" = "இடம்";
+"Move Recordings" = "பதிவுகளை நகர்த்து";
+"Move existing recordings?" = "இருக்கும் பதிவுகளை நகர்த்தவா?";
+"Moved %d recordings" = "%d பதிவுகள் நகர்த்தப்பட்டன";
+"Moving recordings…" = "பதிவுகள் நகர்த்தப்படுகின்றன…";
+"Not connected. New recordings are saved to the default location." = "இணைக்கப்படவில்லை. புதிய பதிவுகள் இயல்புநிலை இடத்தில் சேமிக்கப்படும்.";
+"Recording Library" = "பதிவு நூலகம்";
+"Stop the recording and close the video editor before moving recordings." = "பதிவுகளை நகர்த்தும் முன் பதிவை நிறுத்தி வீடியோ எடிட்டரை மூடவும்.";
+"The recording library isn't available. New recordings are saved to the default location." = "பதிவு நூலகம் கிடைக்கவில்லை. புதிய பதிவுகள் இயல்புநிலை இடத்தில் சேமிக்கப்படும்.";

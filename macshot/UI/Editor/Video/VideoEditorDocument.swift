@@ -153,7 +153,8 @@ final class VideoEditorDocument {
     private static func externalProjectDirectory(for url: URL) -> URL? {
         let digest = SHA256.hash(data: Data(url.standardizedFileURL.path.utf8))
         let key = digest.prefix(12).map { String(format: "%02x", $0) }.joined()
-        let root = RecordingSessionStore.rootURL.deletingLastPathComponent()
+        // In the container, whichever disk the recording library is on.
+        let root = RecordingLibrary.defaultRoot.deletingLastPathComponent()
             .appendingPathComponent("VideoProjects", isDirectory: true)
         return root.appendingPathComponent(key, isDirectory: true)
     }

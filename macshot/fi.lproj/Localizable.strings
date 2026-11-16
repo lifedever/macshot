@@ -1026,3 +1026,19 @@
 /* Kept from this fork (upstream reworded these) */
 "Screenshots only — captured window title (blank otherwise)" = "Vain kuvakaappaukset — kaapatun ikkunan otsikko (muuten tyhjä)";
 "A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "Jaettu avain on mukana — hanki oma ilmainen avain osoitteesta imgbb.com/api, jos kohtaat nopeusrajoituksia. Vain kuvat (ei videotukea).";
+
+/* Recording library location */
+"%d recordings are in the previous location." = "Edellisessä sijainnissa on %d tallennetta.";
+"%d recordings couldn't be moved and stay in the previous location." = "%d tallennetta ei voitu siirtää, ja ne jäävät edelliseen sijaintiin.";
+"Change…" = "Muuta…";
+"Choose" = "Valitse";
+"Leave Them" = "Jätä ne";
+"Location" = "Sijainti";
+"Move Recordings" = "Siirrä tallenteet";
+"Move existing recordings?" = "Siirretäänkö olemassa olevat tallenteet?";
+"Moved %d recordings" = "%d tallennetta siirretty";
+"Moving recordings…" = "Siirretään tallenteita…";
+"Not connected. New recordings are saved to the default location." = "Ei yhteyttä. Uudet tallenteet tallennetaan oletussijaintiin.";
+"Recording Library" = "Tallennekirjasto";
+"Stop the recording and close the video editor before moving recordings." = "Lopeta tallennus ja sulje videoeditori ennen tallenteiden siirtämistä.";
+"The recording library isn't available. New recordings are saved to the default location." = "Tallennekirjasto ei ole käytettävissä. Uudet tallenteet tallennetaan oletussijaintiin.";

@@ -26,7 +26,7 @@ final class VideoSourceSnapshot: @unchecked Sendable {
     /// filesystem tests without touching the user's recording library.
     nonisolated static func prepare(url: URL, deleteOnClose: Bool,
                                     workspaceRoot: URL? = nil, allowClone: Bool = true,
-                                    recordingRoot: URL = RecordingSessionStore.rootURL,
+                                    recordingRoot: URL? = nil,
                                     cleanupQueue: DispatchQueue = .global(qos: .utility),
                                     cancellation: MediaExportCancellation = MediaExportCancellation(),
                                     progress: @Sendable (Double) -> Void = { _ in }) throws -> VideoSourceSnapshot {
@@ -34,7 +34,8 @@ final class VideoSourceSnapshot: @unchecked Sendable {
         guard url.isFileURL else { throw CocoaError(.fileReadUnsupportedScheme) }
         let accessingSource = url.startAccessingSecurityScopedResource()
         defer { if accessingSource { url.stopAccessingSecurityScopedResource() } }
-        let durable = RecordingSessionStore.owns(url, root: recordingRoot)
+        let durable = recordingRoot.map { RecordingSessionStore.owns(url, root: $0) }
+            ?? RecordingSessionStore.owns(url)
         // A durable take's backup must survive if Save As explicitly replaces
         // that take. Temporary working copies are removed after their readers
         // finish; a preserved backup stays beside its recording session.

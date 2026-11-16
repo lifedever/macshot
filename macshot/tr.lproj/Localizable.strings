@@ -1034,3 +1034,19 @@
 /* Kept from this fork (upstream reworded these) */
 "Screenshots only — captured window title (blank otherwise)" = "Yalnızca ekran görüntüleri — yakalanan pencere başlığı (aksi halde boş)";
 "A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "Paylaşımlı bir anahtar dahildir — hız sınırına ulaşırsanız imgbb.com/api adresinden kendi ücretsiz anahtarınızı alın. Yalnızca görseller (video desteği yok).";
+
+/* Recording library location */
+"%d recordings are in the previous location." = "Önceki konumda %d kayıt var.";
+"%d recordings couldn't be moved and stay in the previous location." = "%d kayıt taşınamadı ve önceki konumda kaldı.";
+"Change…" = "Değiştir…";
+"Choose" = "Seç";
+"Leave Them" = "Olduğu yerde bırak";
+"Location" = "Konum";
+"Move Recordings" = "Kayıtları taşı";
+"Move existing recordings?" = "Mevcut kayıtlar taşınsın mı?";
+"Moved %d recordings" = "%d kayıt taşındı";
+"Moving recordings…" = "Kayıtlar taşınıyor…";
+"Not connected. New recordings are saved to the default location." = "Bağlı değil. Yeni kayıtlar varsayılan konuma kaydedilir.";
+"Recording Library" = "Kayıt kitaplığı";
+"Stop the recording and close the video editor before moving recordings." = "Kayıtları taşımadan önce kaydı durdurun ve video düzenleyiciyi kapatın.";
+"The recording library isn't available. New recordings are saved to the default location." = "Kayıt kitaplığı kullanılamıyor. Yeni kayıtlar varsayılan konuma kaydedilir.";

@@ -1025,3 +1025,19 @@
 "Screenshots only — captured window title (blank otherwise)" = "仅截图 — 捕获的窗口标题（否则为空）";
 "A free, open-source screenshot & screen recording tool for macOS.\nFully native — built with Swift and AppKit." = "一款免费、开源的 macOS 截图与录屏工具。\n完全原生 - 使用 Swift 和 AppKit 构建。";
 "A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "已内置共享密钥 - 如遇到频率限制，请在 imgbb.com/api 获取免费密钥。仅支持图片（不支持视频）。";
+
+/* Recording library location */
+"%d recordings are in the previous location." = "有 %d 个录制文件在原来的位置。";
+"%d recordings couldn't be moved and stay in the previous location." = "%d 个录制文件没能移动，仍在原来的位置。";
+"Change…" = "更改…";
+"Choose" = "选择";
+"Leave Them" = "留在原处";
+"Location" = "位置";
+"Move Recordings" = "移动录制文件";
+"Move existing recordings?" = "移动已有的录制文件？";
+"Moved %d recordings" = "已移动 %d 个录制文件";
+"Moving recordings…" = "正在移动录制文件…";
+"Not connected. New recordings are saved to the default location." = "未连接。新的录制会保存到默认位置。";
+"Recording Library" = "录制文件库";
+"Stop the recording and close the video editor before moving recordings." = "先停止录制并关闭视频编辑器，再移动录制文件。";
+"The recording library isn't available. New recordings are saved to the default location." = "录制文件库不可用，新的录制会保存到默认位置。";

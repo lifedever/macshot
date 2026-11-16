@@ -1026,3 +1026,19 @@
 /* Kept from this fork (upstream reworded these) */
 "Screenshots only — captured window title (blank otherwise)" = "เฉพาะภาพหน้าจอ — ชื่อหน้าต่างที่จับภาพ (ว่างในกรณีอื่น)";
 "A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "มีคีย์สาธารณะให้ใช้ — รับคีย์ฟรีของคุณเองที่ imgbb.com/api หากถึงขีดจำกัดอัตรา รองรับเฉพาะรูปภาพ (ไม่รองรับวิดีโอ)";
+
+/* Recording library location */
+"%d recordings are in the previous location." = "มีวิดีโอบันทึก %d รายการอยู่ในตำแหน่งเดิม";
+"%d recordings couldn't be moved and stay in the previous location." = "ย้ายวิดีโอบันทึก %d รายการไม่สำเร็จ และยังคงอยู่ในตำแหน่งเดิม";
+"Change…" = "เปลี่ยน…";
+"Choose" = "เลือก";
+"Leave Them" = "เก็บไว้ที่เดิม";
+"Location" = "ตำแหน่ง";
+"Move Recordings" = "ย้ายวิดีโอบันทึก";
+"Move existing recordings?" = "ย้ายวิดีโอบันทึกที่มีอยู่หรือไม่";
+"Moved %d recordings" = "ย้ายวิดีโอบันทึกแล้ว %d รายการ";
+"Moving recordings…" = "กำลังย้ายวิดีโอบันทึก…";
+"Not connected. New recordings are saved to the default location." = "ไม่ได้เชื่อมต่อ วิดีโอบันทึกใหม่จะบันทึกไว้ในตำแหน่งเริ่มต้น";
+"Recording Library" = "คลังวิดีโอบันทึก";
+"Stop the recording and close the video editor before moving recordings." = "หยุดการบันทึกและปิดตัวแก้ไขวิดีโอก่อนย้ายวิดีโอบันทึก";
+"The recording library isn't available. New recordings are saved to the default location." = "คลังวิดีโอบันทึกใช้งานไม่ได้ วิดีโอบันทึกใหม่จะบันทึกไว้ในตำแหน่งเริ่มต้น";

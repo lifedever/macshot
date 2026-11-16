@@ -1027,3 +1027,19 @@
 /* Kept from this fork (upstream reworded these) */
 "Screenshots only — captured window title (blank otherwise)" = "Само за екранни снимки — заглавие на заснетия прозорец (в противен случай празно)";
 "A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "Включен е споделен ключ — вземете собствен безплатен ключ от imgbb.com/api, ако достигнете лимита. Само изображения (без поддръжка на видео).";
+
+/* Recording library location */
+"%d recordings are in the previous location." = "На предишното място има записи: %d.";
+"%d recordings couldn't be moved and stay in the previous location." = "Записите (%d) не можаха да бъдат преместени и остават на предишното място.";
+"Change…" = "Промяна…";
+"Choose" = "Избор";
+"Leave Them" = "Остави ги";
+"Location" = "Местоположение";
+"Move Recordings" = "Премести записите";
+"Move existing recordings?" = "Да се преместят ли съществуващите записи?";
+"Moved %d recordings" = "Преместени записи: %d";
+"Moving recordings…" = "Преместване на записите…";
+"Not connected. New recordings are saved to the default location." = "Не е свързано. Новите записи се запазват на мястото по подразбиране.";
+"Recording Library" = "Библиотека със записи";
+"Stop the recording and close the video editor before moving recordings." = "Спрете записа и затворете видео редактора, преди да местите записи.";
+"The recording library isn't available. New recordings are saved to the default location." = "Библиотеката със записи не е достъпна. Новите записи се запазват на мястото по подразбиране.";

@@ -215,6 +215,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
     private var delayTimer: Timer?
     private var delayEscMonitor: Any?
     private var recordingEngine: RecordingEngine?
+    /// A take is being written (or finishing): its library folder is in use.
+    var isRecordingInProgress: Bool { recordingEngine != nil }
     private var terminatingAfterRecording = false
     private let terminationCoordinator = ApplicationTerminationCoordinator()
     private var recordingTerminationWaiter: CheckedContinuation<Void, Never>?
@@ -276,6 +278,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
         // Clear image-effect state written by a pre-June-2026 build, which
         // otherwise leaves Vivid silently applied to every capture (#345).
         EffectsMigration.runIfNeeded()
+        // Before anything records or opens a take.
+        RecordingLibrary.activate()
+        if RecordingLibrary.isConfiguredLocationUnavailable {
+            showFailureToast(L("The recording library isn't available. New recordings are saved to the default location."))
+        }
         ToolbarLayout.migrateStoredDefaultTheme()
         MicrophoneDeviceSelection.repairLegacyPreference()
 
@@ -2985,7 +2992,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
     }
 
     @objc private func showRecordingsInFinder() {
-        let folder = RecordingSessionStore.rootURL
+        let folder = RecordingLibrary.currentRoot
         do {
             try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
             NSWorkspace.shared.open(folder)

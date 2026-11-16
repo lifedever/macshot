@@ -1028,3 +1028,19 @@
 /* Kept from this fork (upstream reworded these) */
 "Screenshots only — captured window title (blank otherwise)" = "Mga screenshot lamang — pamagat ng nakunang window (blangko kung hindi)";
 "A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "May kasamang shared key — kumuha ng sariling libreng key sa imgbb.com/api kung naabot ang rate limit. Mga larawan lamang (walang suporta sa video).";
+
+/* Recording library location */
+"%d recordings are in the previous location." = "May %d recording sa dating lokasyon.";
+"%d recordings couldn't be moved and stay in the previous location." = "Hindi nailipat ang %d recording at nananatili ang mga ito sa dating lokasyon.";
+"Change…" = "Baguhin…";
+"Choose" = "Pumili";
+"Leave Them" = "Iwanan";
+"Location" = "Lokasyon";
+"Move Recordings" = "Ilipat ang mga Recording";
+"Move existing recordings?" = "Ilipat ang mga kasalukuyang recording?";
+"Moved %d recordings" = "Nailipat ang %d recording";
+"Moving recordings…" = "Inililipat ang mga recording…";
+"Not connected. New recordings are saved to the default location." = "Hindi nakakonekta. Sine-save ang mga bagong recording sa default na lokasyon.";
+"Recording Library" = "Library ng Recording";
+"Stop the recording and close the video editor before moving recordings." = "Ihinto ang pag-record at isara ang video editor bago ilipat ang mga recording.";
+"The recording library isn't available. New recordings are saved to the default location." = "Hindi available ang library ng recording. Sine-save ang mga bagong recording sa default na lokasyon.";

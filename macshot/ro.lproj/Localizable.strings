@@ -1030,3 +1030,19 @@
 /* Kept from this fork (upstream reworded these) */
 "Screenshots only — captured window title (blank otherwise)" = "Doar capturi de ecran — titlul ferestrei capturate (gol altfel)";
 "A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "O cheie partajată este inclusă — obține propria cheie gratuită la imgbb.com/api dacă atingi limitele de rată. Doar imagini (fără suport video).";
+
+/* Recording library location */
+"%d recordings are in the previous location." = "Există %d înregistrări în locația anterioară.";
+"%d recordings couldn't be moved and stay in the previous location." = "%d înregistrări nu au putut fi mutate și rămân în locația anterioară.";
+"Change…" = "Schimbă…";
+"Choose" = "Alege";
+"Leave Them" = "Lasă-le";
+"Location" = "Locație";
+"Move Recordings" = "Mută înregistrările";
+"Move existing recordings?" = "Muți înregistrările existente?";
+"Moved %d recordings" = "%d înregistrări mutate";
+"Moving recordings…" = "Se mută înregistrările…";
+"Not connected. New recordings are saved to the default location." = "Neconectat. Înregistrările noi se salvează în locația implicită.";
+"Recording Library" = "Bibliotecă de înregistrări";
+"Stop the recording and close the video editor before moving recordings." = "Oprește înregistrarea și închide editorul video înainte de a muta înregistrările.";
+"The recording library isn't available. New recordings are saved to the default location." = "Biblioteca de înregistrări nu este disponibilă. Înregistrările noi se salvează în locația implicită.";

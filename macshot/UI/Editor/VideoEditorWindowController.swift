@@ -7,6 +7,8 @@ import UniformTypeIdentifiers
 final class VideoEditorWindowController: NSWindowController, NSWindowDelegate {
 
     private static var activeControllers: [VideoEditorWindowController] = []
+    /// Any video editor is open or preparing — its take must not be moved.
+    static var hasOpenEditors: Bool { !activeControllers.isEmpty }
     private var preparationJob: MediaExportCoordinator.Job?
     /// The URL this editor was opened for, so a second request for the same
     /// take raises this window instead of building another one.

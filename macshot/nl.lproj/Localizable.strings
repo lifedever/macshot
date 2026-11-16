@@ -1030,3 +1030,19 @@
 /* Kept from this fork (upstream reworded these) */
 "Screenshots only — captured window title (blank otherwise)" = "Alleen schermafbeeldingen — titel van het vastgelegde venster (anders leeg)";
 "A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "Een gedeelde sleutel is inbegrepen — haal je eigen gratis sleutel op imgbb.com/api als je limieten bereikt. Alleen afbeeldingen (geen video-ondersteuning).";
+
+/* Recording library location */
+"%d recordings are in the previous location." = "Er staan %d opnamen op de vorige locatie.";
+"%d recordings couldn't be moved and stay in the previous location." = "%d opnamen konden niet worden verplaatst en blijven op de vorige locatie.";
+"Change…" = "Wijzig…";
+"Choose" = "Kies";
+"Leave Them" = "Laat staan";
+"Location" = "Locatie";
+"Move Recordings" = "Verplaats opnamen";
+"Move existing recordings?" = "Bestaande opnamen verplaatsen?";
+"Moved %d recordings" = "%d opnamen verplaatst";
+"Moving recordings…" = "Opnamen verplaatsen…";
+"Not connected. New recordings are saved to the default location." = "Niet verbonden. Nieuwe opnamen worden op de standaardlocatie bewaard.";
+"Recording Library" = "Opnamebibliotheek";
+"Stop the recording and close the video editor before moving recordings." = "Stop de opname en sluit de video-editor voordat je opnamen verplaatst.";
+"The recording library isn't available. New recordings are saved to the default location." = "De opnamebibliotheek is niet beschikbaar. Nieuwe opnamen worden op de standaardlocatie bewaard.";

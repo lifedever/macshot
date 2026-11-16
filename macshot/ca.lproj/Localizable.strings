@@ -1032,3 +1032,19 @@
 /* Kept from this fork (upstream reworded these) */
 "Screenshots only — captured window title (blank otherwise)" = "Només captures de pantalla — títol de la finestra capturada (en blanc en cas contrari)";
 "A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "S'inclou una clau compartida — obteniu la vostra pròpia clau gratuïta a imgbb.com/api si arribeu als límits de velocitat. Només imatges (sense suport de vídeo).";
+
+/* Recording library location */
+"%d recordings are in the previous location." = "Hi ha %d enregistraments a la ubicació anterior.";
+"%d recordings couldn't be moved and stay in the previous location." = "No s’han pogut moure %d enregistraments; continuen a la ubicació anterior.";
+"Change…" = "Canvia…";
+"Choose" = "Tria";
+"Leave Them" = "Deixa’ls";
+"Location" = "Ubicació";
+"Move Recordings" = "Mou els enregistraments";
+"Move existing recordings?" = "Vols moure els enregistraments existents?";
+"Moved %d recordings" = "%d enregistraments moguts";
+"Moving recordings…" = "S’estan movent els enregistraments…";
+"Not connected. New recordings are saved to the default location." = "No connectat. Els enregistraments nous es desen a la ubicació predeterminada.";
+"Recording Library" = "Biblioteca d’enregistraments";
+"Stop the recording and close the video editor before moving recordings." = "Atura l’enregistrament i tanca l’editor de vídeo abans de moure els enregistraments.";
+"The recording library isn't available. New recordings are saved to the default location." = "La biblioteca d’enregistraments no està disponible. Els enregistraments nous es desen a la ubicació predeterminada.";

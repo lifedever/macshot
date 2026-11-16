@@ -1032,3 +1032,19 @@
 /* Kept from this fork (upstream reworded these) */
 "Screenshots only — captured window title (blank otherwise)" = "শুধু স্ক্রিনশট — ক্যাপচার করা উইন্ডো শিরোনাম (অন্যথায় খালি)";
 "A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "একটি শেয়ার করা কী অন্তর্ভুক্ত — রেট লিমিটে পড়লে imgbb.com/api থেকে আপনার নিজের বিনামূল্যে কী পান। শুধু ছবি (ভিডিও সমর্থন নেই)।";
+
+/* Recording library location */
+"%d recordings are in the previous location." = "আগের অবস্থানে %dটি রেকর্ডিং আছে।";
+"%d recordings couldn't be moved and stay in the previous location." = "%dটি রেকর্ডিং সরানো যায়নি, সেগুলো আগের অবস্থানেই আছে।";
+"Change…" = "পরিবর্তন…";
+"Choose" = "বেছে নিন";
+"Leave Them" = "যেখানে আছে থাক";
+"Location" = "অবস্থান";
+"Move Recordings" = "রেকর্ডিং সরান";
+"Move existing recordings?" = "বিদ্যমান রেকর্ডিং সরাবেন?";
+"Moved %d recordings" = "%dটি রেকর্ডিং সরানো হয়েছে";
+"Moving recordings…" = "রেকর্ডিং সরানো হচ্ছে…";
+"Not connected. New recordings are saved to the default location." = "সংযুক্ত নয়। নতুন রেকর্ডিং ডিফল্ট অবস্থানে সংরক্ষিত হয়।";
+"Recording Library" = "রেকর্ডিং লাইব্রেরি";
+"Stop the recording and close the video editor before moving recordings." = "রেকর্ডিং সরানোর আগে রেকর্ডিং থামান এবং ভিডিও এডিটর বন্ধ করুন।";
+"The recording library isn't available. New recordings are saved to the default location." = "রেকর্ডিং লাইব্রেরি পাওয়া যাচ্ছে না। নতুন রেকর্ডিং ডিফল্ট অবস্থানে সংরক্ষিত হয়।";

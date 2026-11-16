@@ -1030,3 +1030,19 @@
 /* Kept from this fork (upstream reworded these) */
 "Screenshots only — captured window title (blank otherwise)" = "Csak képernyőképeknél — rögzített ablak címe (egyébként üres)";
 "A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "Egy megosztott kulcs már benne van — szerezd be a saját ingyenes kulcsodat az imgbb.com/api oldalon, ha eléred a sebességkorlátot. Csak képek (nincs videó támogatás).";
+
+/* Recording library location */
+"%d recordings are in the previous location." = "%d felvétel van az előző helyen.";
+"%d recordings couldn't be moved and stay in the previous location." = "%d felvételt nem sikerült áthelyezni, ezek az előző helyen maradnak.";
+"Change…" = "Módosítás…";
+"Choose" = "Kiválasztás";
+"Leave Them" = "Maradjanak";
+"Location" = "Hely";
+"Move Recordings" = "Felvételek áthelyezése";
+"Move existing recordings?" = "Áthelyezi a meglévő felvételeket?";
+"Moved %d recordings" = "%d felvétel áthelyezve";
+"Moving recordings…" = "Felvételek áthelyezése…";
+"Not connected. New recordings are saved to the default location." = "Nincs csatlakoztatva. Az új felvételek az alapértelmezett helyre kerülnek.";
+"Recording Library" = "Felvételtár";
+"Stop the recording and close the video editor before moving recordings." = "Állítsa le a felvételt, és zárja be a videószerkesztőt a felvételek áthelyezése előtt.";
+"The recording library isn't available. New recordings are saved to the default location." = "A felvételtár nem érhető el. Az új felvételek az alapértelmezett helyre kerülnek.";

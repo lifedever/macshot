@@ -1028,3 +1028,19 @@
 /* Kept from this fork (upstream reworded these) */
 "Screenshots only — captured window title (blank otherwise)" = "스크린샷 전용 — 캡처된 윈도우 제목 (그 외에는 비어 있음)";
 "A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "공유 키가 포함되어 있습니다. 요청 제한에 도달하면 imgbb.com/api에서 무료 키를 받으세요. 이미지만 지원됩니다 (동영상 미지원).";
+
+/* Recording library location */
+"%d recordings are in the previous location." = "이전 위치에 녹화 %d개가 있습니다.";
+"%d recordings couldn't be moved and stay in the previous location." = "녹화 %d개를 이동하지 못해 이전 위치에 남아 있습니다.";
+"Change…" = "변경…";
+"Choose" = "선택";
+"Leave Them" = "그대로 두기";
+"Location" = "위치";
+"Move Recordings" = "녹화 이동";
+"Move existing recordings?" = "기존 녹화를 이동할까요?";
+"Moved %d recordings" = "녹화 %d개를 이동했습니다";
+"Moving recordings…" = "녹화 이동 중…";
+"Not connected. New recordings are saved to the default location." = "연결되지 않았습니다. 새 녹화는 기본 위치에 저장됩니다.";
+"Recording Library" = "녹화 보관함";
+"Stop the recording and close the video editor before moving recordings." = "녹화를 이동하기 전에 녹화를 중지하고 비디오 편집기를 닫으세요.";
+"The recording library isn't available. New recordings are saved to the default location." = "녹화 보관함을 사용할 수 없습니다. 새 녹화는 기본 위치에 저장됩니다.";

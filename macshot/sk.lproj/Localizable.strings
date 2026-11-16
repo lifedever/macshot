@@ -1027,3 +1027,19 @@
 /* Kept from this fork (upstream reworded these) */
 "Screenshots only — captured window title (blank otherwise)" = "Len snímky obrazovky — zachytený názov okna (inak prázdne)";
 "A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "Zdieľaný kľúč je zahrnutý — získajte vlastný bezplatný kľúč na imgbb.com/api, ak narazíte na limity. Len obrázky (bez podpory videa).";
+
+/* Recording library location */
+"%d recordings are in the previous location." = "V predchádzajúcom umiestnení je nahrávok: %d.";
+"%d recordings couldn't be moved and stay in the previous location." = "Nahrávky (%d) sa nepodarilo presunúť a zostávajú v predchádzajúcom umiestnení.";
+"Change…" = "Zmeniť…";
+"Choose" = "Vybrať";
+"Leave Them" = "Ponechať";
+"Location" = "Umiestnenie";
+"Move Recordings" = "Presunúť nahrávky";
+"Move existing recordings?" = "Presunúť existujúce nahrávky?";
+"Moved %d recordings" = "Presunuté nahrávky: %d";
+"Moving recordings…" = "Presúvajú sa nahrávky…";
+"Not connected. New recordings are saved to the default location." = "Nepripojené. Nové nahrávky sa ukladajú do predvoleného umiestnenia.";
+"Recording Library" = "Knižnica nahrávok";
+"Stop the recording and close the video editor before moving recordings." = "Pred presunom nahrávok zastavte nahrávanie a zatvorte editor videa.";
+"The recording library isn't available. New recordings are saved to the default location." = "Knižnica nahrávok nie je dostupná. Nové nahrávky sa ukladajú do predvoleného umiestnenia.";

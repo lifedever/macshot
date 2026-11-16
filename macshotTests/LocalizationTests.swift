@@ -216,7 +216,7 @@ final class LocalizationTests: XCTestCase {
     /// re-damaged; the fix is to repair the strings, not to raise the number.
     private static let diacriticSuspectBudget: [String: Int] = [
         "ca": 2, "cs": 7, "es": 0, "fr": 4, "hr": 1, "pl": 0,
-        "pt": 0, "pt-BR": 1, "ro": 25, "sk": 3, "sv": 1, "tr": 2, "vi": 11,
+        "pt": 0, "pt-BR": 1, "ro": 22, "sk": 3, "sv": 1, "tr": 2, "vi": 11,
     ]
 
     private static func deaccented(_ word: String) -> String {
@@ -278,9 +278,9 @@ final class LocalizationTests: XCTestCase {
         case "hu": validPlainWords = ["nevet"]
         // "comanda" (the command) vs "comandă" (a command); "scara" (the
         // scale) vs "scară" (a scale); "a continua" (to continue) vs
-        // "continuă" (continues).
+        // "continuă" (continues); "a muta" (to move) vs "mută" (move!).
         case "ro": validPlainWords = ["captura", "bara", "fereastra", "rata",
-                                      "viteza", "ramura", "aplica", "comanda", "scara", "continua"]
+                                      "viteza", "ramura", "aplica", "comanda", "scara", "continua", "muta"]
         // "andra" (other) vs "ändra" (change); "fast" (fixed) vs "fäst" (attach).
         case "sv": validPlainWords = ["andra", "fast"]
         default: validPlainWords = []

@@ -1027,3 +1027,19 @@
 /* Kept from this fork (upstream reworded these) */
 "Screenshots only — captured window title (blank otherwise)" = "Только для скриншотов — заголовок захваченного окна (иначе пусто)";
 "A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "Используется общий ключ — получите свой бесплатный ключ на imgbb.com/api при превышении лимитов. Только изображения (видео не поддерживается).";
+
+/* Recording library location */
+"%d recordings are in the previous location." = "В прежнем месте осталось записей: %d.";
+"%d recordings couldn't be moved and stay in the previous location." = "Не удалось переместить записей: %d. Они остаются в прежнем месте.";
+"Change…" = "Изменить…";
+"Choose" = "Выбрать";
+"Leave Them" = "Оставить";
+"Location" = "Расположение";
+"Move Recordings" = "Переместить записи";
+"Move existing recordings?" = "Переместить существующие записи?";
+"Moved %d recordings" = "Перемещено записей: %d";
+"Moving recordings…" = "Перемещение записей…";
+"Not connected. New recordings are saved to the default location." = "Не подключено. Новые записи сохраняются в место по умолчанию.";
+"Recording Library" = "Библиотека записей";
+"Stop the recording and close the video editor before moving recordings." = "Остановите запись и закройте видеоредактор, прежде чем перемещать записи.";
+"The recording library isn't available. New recordings are saved to the default location." = "Библиотека записей недоступна. Новые записи сохраняются в место по умолчанию.";

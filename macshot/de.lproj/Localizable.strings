@@ -1026,3 +1026,19 @@
 /* Kept from this fork (upstream reworded these) */
 "Screenshots only — captured window title (blank otherwise)" = "Nur Screenshots — Titel des aufgenommenen Fensters (sonst leer)";
 "A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "Ein gemeinsamer Schlüssel ist enthalten — holen Sie sich einen eigenen kostenlosen Schlüssel auf imgbb.com/api, falls Sie Ratenlimits erreichen. Nur Bilder (keine Videounterstützung).";
+
+/* Recording library location */
+"%d recordings are in the previous location." = "%d Aufnahmen liegen noch am vorherigen Ort.";
+"%d recordings couldn't be moved and stay in the previous location." = "%d Aufnahmen konnten nicht verschoben werden und bleiben am vorherigen Ort.";
+"Change…" = "Ändern …";
+"Choose" = "Auswählen";
+"Leave Them" = "Belassen";
+"Location" = "Ort";
+"Move Recordings" = "Aufnahmen verschieben";
+"Move existing recordings?" = "Vorhandene Aufnahmen verschieben?";
+"Moved %d recordings" = "%d Aufnahmen verschoben";
+"Moving recordings…" = "Aufnahmen werden verschoben …";
+"Not connected. New recordings are saved to the default location." = "Nicht verbunden. Neue Aufnahmen werden am Standardort gespeichert.";
+"Recording Library" = "Aufnahmebibliothek";
+"Stop the recording and close the video editor before moving recordings." = "Beende die Aufnahme und schließe den Video-Editor, bevor du Aufnahmen verschiebst.";
+"The recording library isn't available. New recordings are saved to the default location." = "Die Aufnahmebibliothek ist nicht verfügbar. Neue Aufnahmen werden am Standardort gespeichert.";

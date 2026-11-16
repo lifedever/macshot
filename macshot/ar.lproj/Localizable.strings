@@ -1034,3 +1034,19 @@
 /* Kept from this fork (upstream reworded these) */
 "Screenshots only — captured window title (blank otherwise)" = "لقطات الشاشة فقط — عنوان النافذة الملتقطة (فارغ خلاف ذلك)";
 "A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "مفتاح مشترك مُضمّن — احصل على مفتاحك المجاني من imgbb.com/api إذا واجهت حدود الاستخدام. صور فقط (بدون دعم للفيديو).";
+
+/* Recording library location */
+"%d recordings are in the previous location." = "توجد %d تسجيلات في الموقع السابق.";
+"%d recordings couldn't be moved and stay in the previous location." = "تعذّر نقل %d تسجيلات، وستبقى في الموقع السابق.";
+"Change…" = "تغيير…";
+"Choose" = "اختيار";
+"Leave Them" = "إبقاؤها";
+"Location" = "الموقع";
+"Move Recordings" = "نقل التسجيلات";
+"Move existing recordings?" = "هل تريد نقل التسجيلات الموجودة؟";
+"Moved %d recordings" = "تم نقل %d تسجيلات";
+"Moving recordings…" = "جارٍ نقل التسجيلات…";
+"Not connected. New recordings are saved to the default location." = "غير متصل. تُحفظ التسجيلات الجديدة في الموقع الافتراضي.";
+"Recording Library" = "مكتبة التسجيلات";
+"Stop the recording and close the video editor before moving recordings." = "أوقف التسجيل وأغلق محرر الفيديو قبل نقل التسجيلات.";
+"The recording library isn't available. New recordings are saved to the default location." = "مكتبة التسجيلات غير متاحة. تُحفظ التسجيلات الجديدة في الموقع الافتراضي.";

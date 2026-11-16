@@ -1025,3 +1025,19 @@
 "Screenshots only — captured window title (blank otherwise)" = "Screenshots only — captured window title (blank otherwise)";
 "A free, open-source screenshot & screen recording tool for macOS.\nFully native — built with Swift and AppKit." = "A free, open-source screenshot & screen recording tool for macOS.\nFully native — built with Swift and AppKit.";
 "A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support)." = "A shared key is included — get your own free key at imgbb.com/api if you hit rate limits. Images only (no video support).";
+
+/* Recording library location */
+"%d recordings are in the previous location." = "%d recordings are in the previous location.";
+"%d recordings couldn't be moved and stay in the previous location." = "%d recordings couldn't be moved and stay in the previous location.";
+"Change…" = "Change…";
+"Choose" = "Choose";
+"Leave Them" = "Leave Them";
+"Location" = "Location";
+"Move Recordings" = "Move Recordings";
+"Move existing recordings?" = "Move existing recordings?";
+"Moved %d recordings" = "Moved %d recordings";
+"Moving recordings…" = "Moving recordings…";
+"Not connected. New recordings are saved to the default location." = "Not connected. New recordings are saved to the default location.";
+"Recording Library" = "Recording Library";
+"Stop the recording and close the video editor before moving recordings." = "Stop the recording and close the video editor before moving recordings.";
+"The recording library isn't available. New recordings are saved to the default location." = "The recording library isn't available. New recordings are saved to the default location.";
