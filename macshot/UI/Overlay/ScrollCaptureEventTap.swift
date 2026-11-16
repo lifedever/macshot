@@ -21,21 +21,25 @@ import Cocoa
 /// location of its own moves the pointer there, from either tap. All of this
 /// was measured on macOS 27 with a list of tracking areas in one process and
 /// a panel over it in another.
+///
+/// The tap runs on a thread of its own. Every scroll the user makes passes
+/// through it, and the main thread is busy for tens of milliseconds at each
+/// strip of a capture (grab, registration, stitching); a tap on the main run
+/// loop held each scroll for that long, and the page moved in jerks.
 final class ScrollCaptureEventTap {
 
-    /// The capture region, in global display coordinates (y down).
-    private let region: CGRect
+    private let router: Router
+
     /// Where a macshot window that takes the mouse lies over the screen, in
     /// the same coordinates: the HUD. A scroll there never reaches the page.
-    var covered: [CGRect]
-
-    private var port: CFMachPort?
-    private var source: CFRunLoopSource?
+    var covered: [CGRect] {
+        get { router.covered }
+        set { router.covered = newValue }
+    }
 
     /// Nil when the tap can't be created, which takes Accessibility access.
     init?(region: CGRect, covered: [CGRect]) {
-        self.region = region
-        self.covered = covered
+        let router = Router(region: region, covered: covered)
         let events = CGEventMask(1 << CGEventType.mouseMoved.rawValue)
             | CGEventMask(1 << CGEventType.scrollWheel.rawValue)
         guard let port = CGEvent.tapCreate(
@@ -43,47 +47,23 @@ final class ScrollCaptureEventTap {
             eventsOfInterest: events,
             callback: { _, type, event, userInfo in
                 guard let userInfo else { return Unmanaged.passUnretained(event) }
-                return Unmanaged<ScrollCaptureEventTap>.fromOpaque(userInfo).takeUnretainedValue()
+                return Unmanaged<Router>.fromOpaque(userInfo).takeUnretainedValue()
                     .handle(type, event)
             },
-            userInfo: Unmanaged.passUnretained(self).toOpaque())
+            userInfo: Unmanaged.passUnretained(router).toOpaque())
         else { return nil }
-        let source = CFMachPortCreateRunLoopSource(nil, port, 0)
-        CFRunLoopAddSource(CFRunLoopGetMain(), source, .commonModes)
-        CGEvent.tapEnable(tap: port, enable: true)
-        self.port = port
-        self.source = source
-    }
-
-    deinit { stop() }
-
-    /// Ends the tap. Nothing calls back into this object afterwards.
-    func stop() {
-        guard let port else { return }
-        CGEvent.tapEnable(tap: port, enable: false)
-        if let source { CFRunLoopRemoveSource(CFRunLoopGetMain(), source, .commonModes) }
-        CFMachPortInvalidate(port)
-        self.port = nil
-        self.source = nil
-    }
-
-    private func handle(_ type: CGEventType, _ event: CGEvent) -> Unmanaged<CGEvent>? {
-        switch type {
-        case .mouseMoved:
+        guard router.start(port) else {
+            CFMachPortInvalidate(port)
             return nil
-        case .scrollWheel:
-            if let destination = Self.destination(ofScrollAt: event.location, region: region, covered: covered) {
-                event.location = destination
-            }
-        case .tapDisabledByTimeout:
-            // The system switches off a tap that was slow to answer. Left
-            // off, scrolling would go back to whatever is under the pointer:
-            // the HUD.
-            if let port { CGEvent.tapEnable(tap: port, enable: true) }
-        default:
-            break
         }
-        return Unmanaged.passUnretained(event)
+        self.router = router
+    }
+
+    deinit { router.stop() }
+
+    /// Ends the tap. No event reaches this tap afterwards.
+    func stop() {
+        router.stop()
     }
 
     /// Where a scroll at `location` is sent instead, or nil to leave it
@@ -93,7 +73,7 @@ final class ScrollCaptureEventTap {
     /// Anything else goes to the middle of the region — or, when the HUD is
     /// there, as it can be in a region the height of the screen, to the
     /// middle of one of its halves.
-    static func destination(ofScrollAt location: CGPoint, region: CGRect, covered: [CGRect]) -> CGPoint? {
+    nonisolated static func destination(ofScrollAt location: CGPoint, region: CGRect, covered: [CGRect]) -> CGPoint? {
         guard region.width > 0, region.height > 0 else { return nil }
         let isCovered = { (point: CGPoint) in covered.contains { $0.contains(point) } }
         if region.contains(location), !isCovered(location) { return nil }
@@ -101,5 +81,99 @@ final class ScrollCaptureEventTap {
             CGPoint(x: region.midX, y: region.minY + region.height * $0)
         }
         return candidates.first { !isCovered($0) } ?? candidates[0]
+    }
+}
+
+/// The tap's state and the thread its events arrive on. The callback holds an
+/// unretained pointer to this; the thread keeps it alive until its run loop
+/// ends, and nothing calls back once the port is invalidated.
+nonisolated private final class Router: @unchecked Sendable {
+
+    let region: CGRect
+    private let lock = NSLock()
+    private var coveredRects: [CGRect]
+    private var port: CFMachPort?
+    private var source: CFRunLoopSource?
+    private var runLoop: CFRunLoop?
+
+    init(region: CGRect, covered: [CGRect]) {
+        self.region = region
+        self.coveredRects = covered
+    }
+
+    var covered: [CGRect] {
+        get { locked { coveredRects } }
+        set { locked { coveredRects = newValue } }
+    }
+
+    private func locked<T>(_ body: () -> T) -> T {
+        lock.lock()
+        defer { lock.unlock() }
+        return body()
+    }
+
+    /// Starts the tap's thread and returns once events can arrive on it.
+    func start(_ port: CFMachPort) -> Bool {
+        guard let source = CFMachPortCreateRunLoopSource(nil, port, 0) else { return false }
+        locked {
+            self.port = port
+            self.source = source
+        }
+        let ready = DispatchSemaphore(value: 0)
+        let thread = Thread { [self] in
+            let loop = CFRunLoopGetCurrent()
+            let (port, source) = self.locked { () -> (CFMachPort?, CFRunLoopSource?) in
+                self.runLoop = loop
+                return (self.port, self.source)
+            }
+            if let port, let source {
+                CFRunLoopAddSource(loop, source, .commonModes)
+                CGEvent.tapEnable(tap: port, enable: true)
+            }
+            ready.signal()
+            // Returns once stop() has invalidated the port (which removes its
+            // source, leaving the loop nothing to run) or stopped the loop.
+            CFRunLoopRun()
+        }
+        thread.name = "macshot.scrollcapture.eventtap"
+        thread.qualityOfService = .userInteractive
+        thread.start()
+        ready.wait()
+        return true
+    }
+
+    func stop() {
+        let (port, loop) = locked { () -> (CFMachPort?, CFRunLoop?) in
+            defer {
+                self.port = nil
+                self.source = nil
+                self.runLoop = nil
+            }
+            return (self.port, self.runLoop)
+        }
+        guard let port else { return }
+        CGEvent.tapEnable(tap: port, enable: false)
+        CFMachPortInvalidate(port)
+        if let loop { CFRunLoopStop(loop) }
+    }
+
+    func handle(_ type: CGEventType, _ event: CGEvent) -> Unmanaged<CGEvent>? {
+        switch type {
+        case .mouseMoved:
+            return nil
+        case .scrollWheel:
+            if let destination = ScrollCaptureEventTap.destination(
+                ofScrollAt: event.location, region: region, covered: covered) {
+                event.location = destination
+            }
+        case .tapDisabledByTimeout:
+            // The system switches off a tap that was slow to answer. Left
+            // off, scrolling would go back to whatever is under the pointer:
+            // the HUD.
+            if let port = locked({ self.port }) { CGEvent.tapEnable(tap: port, enable: true) }
+        default:
+            break
+        }
+        return Unmanaged.passUnretained(event)
     }
 }
