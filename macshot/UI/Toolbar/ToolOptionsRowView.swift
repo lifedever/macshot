@@ -329,7 +329,7 @@ class ToolOptionsRowView: NSView {
         let valStr = tool == .loupe ? "\(val)" : "\(val)px"
         let labelW: CGFloat = tool == .loupe ? 32 : 28
         let label = NSTextField(labelWithString: valStr)
-        label.font = NSFont.monospacedDigitSystemFont(ofSize: 10, weight: .medium)
+        label.font = UIFonts.monospacedDigit(ofSize: 10, weight: .medium)
         label.textColor = ToolbarLayout.iconColor.withAlphaComponent(0.6)
         label.alignment = .right
         label.frame = NSRect(x: curX, y: (rowHeight - 14) / 2, width: labelW, height: 14)
@@ -362,7 +362,7 @@ class ToolOptionsRowView: NSView {
         curX += sliderW + 4
 
         let label = NSTextField(labelWithString: String(format: "%.1fx", currentVal))
-        label.font = NSFont.monospacedDigitSystemFont(ofSize: 10, weight: .medium)
+        label.font = UIFonts.monospacedDigit(ofSize: 10, weight: .medium)
         label.textColor = ToolbarLayout.iconColor.withAlphaComponent(0.6)
         label.alignment = .right
         label.frame = NSRect(x: curX, y: (rowHeight - 14) / 2, width: 38, height: 14)
@@ -396,7 +396,7 @@ class ToolOptionsRowView: NSView {
         curX += sliderW + 4
 
         let label = NSTextField(labelWithString: "\(Int((currentVal * 100).rounded()))%")
-        label.font = NSFont.monospacedDigitSystemFont(ofSize: 10, weight: .medium)
+        label.font = UIFonts.monospacedDigit(ofSize: 10, weight: .medium)
         label.textColor = ToolbarLayout.iconColor.withAlphaComponent(0.6)
         label.alignment = .right
         label.frame = NSRect(x: curX, y: (rowHeight - 14) / 2, width: 38, height: 14)
@@ -771,7 +771,7 @@ class ToolOptionsRowView: NSView {
         curX += 80 + 4
 
         let valLabel = NSTextField(labelWithString: "\(Int(radiusVal))px")
-        valLabel.font = NSFont.monospacedDigitSystemFont(ofSize: 10, weight: .medium)
+        valLabel.font = UIFonts.monospacedDigit(ofSize: 10, weight: .medium)
         valLabel.textColor = ToolbarLayout.iconColor.withAlphaComponent(0.6)
         valLabel.alignment = .right
         valLabel.frame = NSRect(x: curX, y: (rowHeight - 14) / 2, width: 28, height: 14)
@@ -840,7 +840,7 @@ class ToolOptionsRowView: NSView {
         addSubview(stepper)
 
         let valLabel = NSTextField(labelWithString: ov.currentNumberFormat.format(ov.numberStartAt))
-        valLabel.font = NSFont.monospacedDigitSystemFont(ofSize: 11, weight: .medium)
+        valLabel.font = UIFonts.monospacedDigit(ofSize: 11, weight: .medium)
         valLabel.textColor = ToolbarLayout.iconColor.withAlphaComponent(0.85)
         valLabel.tag = 999  // tag for finding later
         valLabel.sizeToFit()
@@ -928,7 +928,7 @@ class ToolOptionsRowView: NSView {
         curX += 20
 
         let sizeLabel = NSTextField(labelWithString: "\(Int(ov.textEditor.fontSize))")
-        sizeLabel.font = NSFont.monospacedDigitSystemFont(ofSize: 10, weight: .medium)
+        sizeLabel.font = UIFonts.monospacedDigit(ofSize: 10, weight: .medium)
         sizeLabel.textColor = ToolbarLayout.iconColor.withAlphaComponent(0.7)
         sizeLabel.alignment = .center
         sizeLabel.tag = 998
@@ -1146,7 +1146,7 @@ class ToolOptionsRowView: NSView {
             curX += 80 + 4
 
             let sizeValLabel = NSTextField(labelWithString: "\(Int(currentSize))px")
-            sizeValLabel.font = NSFont.monospacedDigitSystemFont(ofSize: 10, weight: .medium)
+            sizeValLabel.font = UIFonts.monospacedDigit(ofSize: 10, weight: .medium)
             sizeValLabel.textColor = ToolbarLayout.iconColor.withAlphaComponent(0.6)
             sizeValLabel.alignment = .right
             sizeValLabel.frame = NSRect(x: curX, y: (rowHeight - 14) / 2, width: 34, height: 14)

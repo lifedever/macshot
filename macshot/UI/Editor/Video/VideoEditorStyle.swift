@@ -30,7 +30,7 @@ enum VideoEditorStyle {
     }
 
     static func mono(_ size: CGFloat, _ weight: NSFont.Weight = .medium) -> NSFont {
-        .monospacedDigitSystemFont(ofSize: size, weight: weight)
+        UIFonts.monospacedDigit(ofSize: size, weight: weight)
     }
 
     static func label(_ text: String, size: CGFloat = 12, weight: NSFont.Weight = .regular,

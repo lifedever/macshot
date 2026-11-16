@@ -21,7 +21,7 @@ class CountdownView: NSView {
         // Number
         let text = "\(remaining)" as NSString
         let attrs: [NSAttributedString.Key: Any] = [
-            .font: NSFont.monospacedDigitSystemFont(ofSize: 52, weight: .bold),
+            .font: UIFonts.monospacedDigit(ofSize: 52, weight: .bold),
             .foregroundColor: NSColor.white,
         ]
         let size = text.size(withAttributes: attrs)

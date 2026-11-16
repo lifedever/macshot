@@ -3,7 +3,7 @@ import AppKit
 enum ClipboardTextPinRenderer {
 
     private static let padding = NSEdgeInsets(top: 22, left: 24, bottom: 22, right: 24)
-    private static let plainFont = NSFont.monospacedSystemFont(ofSize: 18, weight: .regular)
+    private static let plainFont = UIFonts.monospaced(ofSize: 18, weight: .regular)
     private static let maxPointArea: CGFloat = 24_000_000
     private static let importedListBlockSpacing: CGFloat = 12
     private static let importedTableBlockSpacing: CGFloat = 8

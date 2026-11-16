@@ -114,7 +114,7 @@ class ColorPickerView: NSView, NSTextFieldDelegate {
         let size = preferredSize
         frame.size = size
 
-        hexField.font = NSFont.monospacedSystemFont(ofSize: 11, weight: .medium)
+        hexField.font = UIFonts.monospaced(ofSize: 11, weight: .medium)
         hexField.isBordered = false
         hexField.drawsBackground = false
         // The field (text, caret, selection, placeholder) follows the toolbar
@@ -325,7 +325,7 @@ class ColorPickerView: NSView, NSTextFieldDelegate {
         // Label, on the side away from the thumb so the thumb never covers it.
         let label = "\(Int(opacity * 100))%" as NSString
         let attrs: [NSAttributedString.Key: Any] = [
-            .font: NSFont.monospacedDigitSystemFont(ofSize: 8, weight: .semibold),
+            .font: UIFonts.monospacedDigit(ofSize: 8, weight: .semibold),
             .foregroundColor: NSColor.white,
             .shadow: Self.labelShadow,
         ]

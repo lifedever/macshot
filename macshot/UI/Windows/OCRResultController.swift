@@ -219,7 +219,7 @@ class OCRResultController: NSObject {
         tv.isSelectable = true
         tv.isRichText = false
         tv.allowsUndo = true
-        tv.font = NSFont.monospacedSystemFont(ofSize: 13, weight: .regular)
+        tv.font = UIFonts.monospaced(ofSize: 13, weight: .regular)
         tv.textContainerInset = NSSize(width: 14, height: 14)
         tv.isVerticallyResizable = true
         tv.isHorizontallyResizable = false
@@ -277,7 +277,7 @@ class OCRResultController: NSObject {
 
             let valueField = NSTextField(frame: NSRect(x: 14, y: rowY + 4, width: frame.width - 28 - buttonsW, height: 22))
             valueField.stringValue = qrCode.value
-            valueField.font = NSFont.monospacedSystemFont(ofSize: 12, weight: .regular)
+            valueField.font = UIFonts.monospaced(ofSize: 12, weight: .regular)
             valueField.textColor = .labelColor
             valueField.isEditable = false
             valueField.isSelectable = true

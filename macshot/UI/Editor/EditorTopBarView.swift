@@ -30,7 +30,7 @@ class EditorTopBarView: NSView {
         layer?.backgroundColor = ToolbarLayout.bgColor.cgColor
 
         sizeLabel = makeLabel("")
-        sizeLabel.font = NSFont.monospacedDigitSystemFont(ofSize: 11, weight: .medium)
+        sizeLabel.font = UIFonts.monospacedDigit(ofSize: 11, weight: .medium)
         sizeLabel.textColor = ToolbarLayout.iconColor.withAlphaComponent(0.45)
 
         let cropBtn = makeButton("crop", tooltip: L("Crop"), action: #selector(cropClicked))
@@ -46,7 +46,7 @@ class EditorTopBarView: NSView {
         zoomButton.bezelStyle = .recessed
         zoomButton.isBordered = false
         zoomButton.title = "100% ▾"
-        zoomButton.font = NSFont.monospacedDigitSystemFont(ofSize: 11, weight: .medium)
+        zoomButton.font = UIFonts.monospacedDigit(ofSize: 11, weight: .medium)
         zoomButton.contentTintColor = ToolbarLayout.iconColor.withAlphaComponent(0.45)
         zoomButton.target = self
         zoomButton.action = #selector(zoomButtonClicked)

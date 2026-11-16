@@ -1010,7 +1010,7 @@ class SettingsWindowController: NSWindowController, NSToolbarDelegate, NSWindowD
         tagLbl.translatesAutoresizingMaskIntoConstraints = false
 
         let field = NSTextField(labelWithString: value)
-        field.font = NSFont.monospacedSystemFont(ofSize: 11, weight: .regular)
+        field.font = UIFonts.monospaced(ofSize: 11, weight: .regular)
         field.textColor = tag == "URL" ? .labelColor : .secondaryLabelColor
         field.lineBreakMode = .byTruncatingMiddle
         field.isSelectable = true
@@ -1636,7 +1636,7 @@ class SettingsWindowController: NSWindowController, NSToolbarDelegate, NSWindowD
 
         for (i, entry) in commands.enumerated() {
             let cmdLabel = NSTextField(labelWithString: entry.0)
-            cmdLabel.font = NSFont.monospacedSystemFont(ofSize: 11, weight: .regular)
+            cmdLabel.font = UIFonts.monospaced(ofSize: 11, weight: .regular)
             cmdLabel.textColor = .labelColor
             cmdLabel.isSelectable = true
 
@@ -1836,7 +1836,7 @@ extension SettingsWindowController {
 
         for (i, entry) in tokens.enumerated() {
             let tok = NSTextField(labelWithString: entry.0)
-            tok.font = NSFont.monospacedSystemFont(ofSize: 11, weight: .regular)
+            tok.font = UIFonts.monospaced(ofSize: 11, weight: .regular)
             tok.textColor = .labelColor
             tok.isSelectable = true
 

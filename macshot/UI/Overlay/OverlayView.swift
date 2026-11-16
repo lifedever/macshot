@@ -3030,7 +3030,7 @@ class OverlayView: NSView {
             withAttributes: attrs)
     }
 
-    private static let sizeLabelFont = NSFont.monospacedDigitSystemFont(ofSize: 11, weight: .medium)
+    private static let sizeLabelFont = UIFonts.monospacedDigit(ofSize: 11, weight: .medium)
 
     /// Compute where the resolution box sits relative to the selection. Aligns
     /// the box's W↔H midpoint (the "×") with the selection's horizontal center,
@@ -4310,8 +4310,8 @@ class OverlayView: NSView {
         let infoH: CGFloat = 54
 
         // Measured before the panel is sized.
-        let hexFont = NSFont.monospacedSystemFont(ofSize: 12, weight: .semibold)
-        let subFont = NSFont.monospacedSystemFont(ofSize: 10, weight: .regular)
+        let hexFont = UIFonts.monospaced(ofSize: 12, weight: .semibold)
+        let subFont = UIFonts.monospaced(ofSize: 10, weight: .regular)
         let hexAttrs: [NSAttributedString.Key: Any] = [
             .font: hexFont, .foregroundColor: NSColor.white,
         ]
@@ -4428,7 +4428,7 @@ class OverlayView: NSView {
         guard let context = NSGraphicsContext.current else { return }
         context.saveGraphicsState()
 
-        let font = NSFont.monospacedSystemFont(ofSize: 12, weight: .medium)
+        let font = UIFonts.monospaced(ofSize: 12, weight: .medium)
         let copyFont = NSFont.systemFont(ofSize: 10, weight: .regular)
         let hexAttrs: [NSAttributedString.Key: Any] = [
             .font: font, .foregroundColor: NSColor.white,

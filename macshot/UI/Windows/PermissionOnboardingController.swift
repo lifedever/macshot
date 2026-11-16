@@ -210,7 +210,7 @@ class PermissionOnboardingController: NSWindowController {
         commandBox.translatesAutoresizingMaskIntoConstraints = false
 
         let commandField = NSTextField(labelWithString: resetCommand)
-        commandField.font = NSFont.monospacedSystemFont(ofSize: 11, weight: .regular)
+        commandField.font = UIFonts.monospaced(ofSize: 11, weight: .regular)
         commandField.textColor = .labelColor
         commandField.isSelectable = true
         commandField.alignment = .center

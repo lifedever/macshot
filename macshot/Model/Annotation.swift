@@ -1966,7 +1966,7 @@ class Annotation {
 
         let fontSize: CGFloat = 11
         let attrs: [NSAttributedString.Key: Any] = [
-            .font: NSFont.monospacedDigitSystemFont(ofSize: fontSize, weight: .semibold),
+            .font: UIFonts.monospacedDigit(ofSize: fontSize, weight: .semibold),
             .foregroundColor: NSColor.white,
         ]
         let str = labelText as NSString

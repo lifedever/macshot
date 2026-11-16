@@ -108,7 +108,7 @@ class RecordingHUDPanel: NSPanel {
         recordDot.isEditable = false
         containerView.addSubview(recordDot)
 
-        timeLabel.font = .monospacedDigitSystemFont(ofSize: 13, weight: .semibold)
+        timeLabel.font = UIFonts.monospacedDigit(ofSize: 13, weight: .semibold)
         timeLabel.textColor = ToolbarLayout.iconColor
         timeLabel.isBezeled = false
         timeLabel.drawsBackground = false

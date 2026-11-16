@@ -325,7 +325,7 @@ private class PinView: NSView {
         closeButton = close
 
         let label = VerticallyCenteredTextField(labelWithString: "100%")
-        label.font = NSFont.monospacedDigitSystemFont(ofSize: 11, weight: .medium)
+        label.font = UIFonts.monospacedDigit(ofSize: 11, weight: .medium)
         label.textColor = .white
         label.isBezeled = false
         label.drawsBackground = false

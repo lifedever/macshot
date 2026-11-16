@@ -97,7 +97,7 @@ final class ResolutionBoxView: NSView, NSTextFieldDelegate {
     }
 
     private func configureField(_ f: NSTextField) {
-        f.font = NSFont.monospacedDigitSystemFont(ofSize: 12, weight: .medium)
+        f.font = UIFonts.monospacedDigit(ofSize: 12, weight: .medium)
         f.alignment = .center
         f.textColor = ToolbarLayout.iconColor
         f.delegate = self
