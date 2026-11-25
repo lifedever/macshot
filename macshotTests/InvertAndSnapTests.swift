@@ -82,7 +82,11 @@ final class InvertAndSnapTests: XCTestCase {
                 overlay.draw(overlay.bounds)
                 NSGraphicsContext.restoreGraphicsState()
             }
-            let actual = try XCTUnwrap(ImageProbe.pixelColor(preview, x: 70, y: 100))
+            // The middle of the window as drawn. The beautify fit zoom scales the canvas here,
+            // and a fixed probe on the window's edge lands on its corner bracket.
+            let drawn = overlay.selectionViewRect
+            let actual = try XCTUnwrap(ImageProbe.pixelColor(
+                preview, x: Int(drawn.midX), y: 160 - 1 - Int(drawn.midY)))
             let expected = try XCTUnwrap(ImageProbe.pixelColor(
                 ImageEffects.apply(to: windowImage, config: overlay.effectsConfig), x: 50, y: 40))
             XCTAssertEqual(actual.redComponent, expected.redComponent, accuracy: 0.03, "shadow \(shadow)")

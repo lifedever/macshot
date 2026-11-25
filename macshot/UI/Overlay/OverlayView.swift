@@ -547,7 +547,7 @@ class OverlayView: NSView {
     private var resolutionBox: ResolutionBoxView?
     /// Overlay-space frame of the resolution box (for chrome hit-test / cursor /
     /// zoom-badge anchoring). .zero when not shown.
-    private var resolutionBoxRect: NSRect = .zero
+    private(set) var resolutionBoxRect: NSRect = .zero
     private var preSelectionPresetButton: PreSelectionPresetButton?
     private var preSelectionPresetButtonRect: NSRect = .zero
 
@@ -2056,15 +2056,14 @@ class OverlayView: NSView {
 
     /// Returns the appropriate resize cursor if the point is on a selection handle, nil otherwise.
     private func resizeHandleCursor(at viewPoint: NSPoint) -> NSCursor? {
-        // Mirrors hitTestHandle: rects are canvas space, slop is screen space.
-        let point = viewToCanvas(viewPoint)
-        let zoomCompensation = zoomLevel > 0 ? 1 / zoomLevel : 1
-        let r = selectionRect
-        let hs = handleSize + 4 * zoomCompensation
-        let edgeT: CGFloat = 6 * zoomCompensation
+        // Mirrors hitTestHandle: the handles as drawn, in view space (`selectionViewRect`).
+        let point = viewPoint
+        let r = selectionViewRect
+        let hs = handleSize + 4
+        let edgeT: CGFloat = 6
         // Corner handles — same boxes the click path uses, so the cursor never
         // promises a resize the click then interprets differently.
-        let (thickness, arm, _) = handleGeometry
+        let (thickness, arm, _) = handleGeometry(for: r)
         let half = thickness / 2
         let topLeft = NSRect(x: r.minX - half, y: r.maxY + half - arm, width: arm, height: arm)
         let topRight = NSRect(x: r.maxX + half - arm, y: r.maxY + half - arm, width: arm, height: arm)
@@ -2274,15 +2273,10 @@ class OverlayView: NSView {
             context.cgContext.clear(bounds)
             fillScrimOutsideSelection()
         } else if !isRecording {
-            if let image = screenshotImage {
-                // Screenshot ready — draw it with dark overlay
-                if !usesExternalScreenshotPreview {
-                    image.draw(in: bounds, from: .zero, operation: .copy, fraction: 1.0)
-                }
-                if !selectionOutsideShadowDisabled {
-                    NSColor.black.withAlphaComponent(Self.selectionScrimAlpha).setFill()
-                    NSBezierPath(rect: bounds).fill()
-                }
+            if screenshotImage != nil {
+                // Screenshot ready — the frozen screen with the dark overlay (black while
+                // the beautify fit zoom scales the canvas; see `drawBackdrop`).
+                drawBackdrop(in: bounds, dimmed: true, context: context)
             } else {
                 // No screenshot yet — fully transparent. User sees live desktop
                 // through the overlay and can start selecting immediately.
@@ -2583,6 +2577,7 @@ class OverlayView: NSView {
 
             if showBeautifyPreview {
                 context.saveGraphicsState()
+                drawBeautifyBackdrop(context: context)  // view space, before the transform
                 applyCanvasTransform(to: context)
                 drawBeautifyPreview(context: context)
                 context.restoreGraphicsState()
@@ -2734,7 +2729,7 @@ class OverlayView: NSView {
             // Resize handles (drawn even in recording setup mode, but not during scroll capture).
             // Not while the selection is being dragged out: there is nothing to grab yet.
             if state == .selected && !isEditorMode && !isScrollCapturing {
-                drawResizeHandles(for: selectionRect)
+                drawResizeHandles(for: selectionViewRect)
             }
 
             // Boundary-snap guide line(s) — while drawing a new selection,
@@ -3040,11 +3035,13 @@ class OverlayView: NSView {
     /// so the dimensions read as centered on the selection — the trailing presets
     /// button just overhangs to the right (not counted in the centering).
     private func resolutionBoxFrame(size: NSSize, dimsCenterX: CGFloat) -> NSRect {
-        let x = selectionRect.midX - dimsCenterX
+        // On the selection as drawn: the box is a view, placed in view space.
+        let selection = selectionViewRect
+        let x = selection.midX - dimsCenterX
         let clampedX = max(bounds.minX + 2, min(x, bounds.maxX - size.width - 2))
         let edgeGap = handleSize / 2 + 3
-        let above = selectionRect.maxY + edgeGap
-        let below = selectionRect.minY - size.height - edgeGap
+        let above = selection.maxY + edgeGap
+        let below = selection.minY - size.height - edgeGap
         let minY = bounds.minY + 2
         let maxY = bounds.maxY - 2
 
@@ -3079,10 +3076,10 @@ class OverlayView: NSView {
             return clear
         }
 
-        let insideTop = loweredBelowTopObstructions(rect(at: selectionRect.maxY - size.height - edgeGap))
-        let insideBottom = loweredBelowTopObstructions(rect(at: selectionRect.minY + edgeGap))
+        let insideTop = loweredBelowTopObstructions(rect(at: selection.maxY - size.height - edgeGap))
+        let insideBottom = loweredBelowTopObstructions(rect(at: selection.minY + edgeGap))
         func fitsInsideSelection(_ rect: NSRect) -> Bool {
-            rect.minY >= selectionRect.minY + 2 && rect.maxY <= selectionRect.maxY - 2
+            rect.minY >= selection.minY + 2 && rect.maxY <= selection.maxY - 2
         }
         let insideCandidates: [NSRect]
         if !fits(aboveRect) && fits(belowRect) {
@@ -3879,6 +3876,38 @@ class OverlayView: NSView {
             height: selectionRect.height + m.titleBarHeight + reserved * 2)
     }
 
+    /// The beautify preview's two outer frames, canvas space: `background` is the padded box
+    /// the export fills with the background, `bleed` adds the room its drop shadow takes.
+    var beautifyPreviewFrames: (background: NSRect, bleed: NSRect) {
+        let config = beautifyConfig
+        let m = beautifyMetrics
+        let shadowRadius = config.shadowRadius * m.scale
+        let shadowBleed = shadowRadius + BeautifyRenderer.shadowOffset(for: shadowRadius)
+        let titleBar: CGFloat = (config.mode == .window && !config.isWindowSnap) ? 28 * m.scale : 0
+        let background = NSRect(
+            x: selectionRect.minX - m.padding, y: selectionRect.minY - m.padding,
+            width: selectionRect.width + m.padding * 2,
+            height: selectionRect.height + titleBar + m.padding * 2)
+        return (background, background.insetBy(dx: -shadowBleed, dy: -shadowBleed))
+    }
+
+    /// Repaint the backdrop under the beautify preview, in view space, before the preview is
+    /// drawn over it. Earlier passes lit the selection and drew annotations there; the
+    /// preview's frame has to start from the plain backdrop instead. With a background, the
+    /// shadow's bleed outside the padded box is not part of the result and shows the dimmed
+    /// backdrop like the rest of the screen. Without one the padding is transparent in the
+    /// result and shows what is behind it, undimmed. Both go through `drawBackdrop`, so while
+    /// the canvas is scaled neither paints a miniature of the screen around the preview.
+    private func drawBeautifyBackdrop(context: NSGraphicsContext) {
+        guard !isEditorMode else { return }
+        let frames = beautifyPreviewFrames
+        if beautifyConfig.backgroundEnabled {
+            drawBackdrop(in: canvasToView(frames.bleed), dimmed: true, context: context)
+        } else {
+            drawBackdrop(in: canvasToView(frames.background), dimmed: false, context: context)
+        }
+    }
+
     private func drawBeautifyPreview(context: NSGraphicsContext) {
         let config = beautifyConfig
         let m = beautifyMetrics
@@ -3891,58 +3920,15 @@ class OverlayView: NSView {
         let titleBarH: CGFloat = 28 * scale
         let shadowOffset = BeautifyRenderer.shadowOffset(for: shadowRadius)
 
-        // Compute the expanded frame around the selection.
-        // Shadow extends downward (negative Y in AppKit), so expand the origin down.
-        let shadowBleed = shadowRadius + shadowOffset
-        let expandedRect: NSRect
-        if config.mode == .window && !config.isWindowSnap {
-            expandedRect = NSRect(
-                x: selectionRect.minX - pad - shadowBleed,
-                y: selectionRect.minY - pad - shadowBleed,
-                width: selectionRect.width + pad * 2 + shadowBleed * 2,
-                height: selectionRect.height + titleBarH + pad * 2 + shadowBleed * 2
-            )
-        } else {
-            expandedRect = NSRect(
-                x: selectionRect.minX - pad - shadowBleed,
-                y: selectionRect.minY - pad - shadowBleed,
-                width: selectionRect.width + pad * 2 + shadowBleed * 2,
-                height: selectionRect.height + pad * 2 + shadowBleed * 2
-            )
-        }
-
-        // Clear the dark overlay for the expanded area to make the preview visible.
-        // With no background, the saved image is only the padding box, so the
-        // preview must not grow with the shadow radius.
+        // The backdrop under the preview was repainted by `drawBeautifyBackdrop`.
         context.saveGraphicsState()
-        if !isEditorMode && config.backgroundEnabled {
-            // Overlay: re-draw the screenshot in the expanded area to erase the dark overlay,
-            // then draw the dark overlay back so we have a clean base for the gradient.
-            context.cgContext.saveGState()
-            NSBezierPath(rect: expandedRect).addClip()
-            if let image = screenshotImage {
-                image.draw(in: bounds, from: .zero, operation: .copy, fraction: 1.0)
-            }
-            NSColor.black.withAlphaComponent(0.45).setFill()
-            NSBezierPath(rect: expandedRect).fill()
-            context.cgContext.restoreGState()
-        }
 
         // Position the image/window centered within the expanded rect (not affected by shadow bleed)
         let innerX = selectionRect.minX - pad
         let innerY = selectionRect.minY - pad
 
         // Draw gradient background (inner rect without shadow bleed)
-        let bgRect: NSRect
-        if config.mode == .window && !config.isWindowSnap {
-            bgRect = NSRect(
-                x: innerX, y: innerY, width: selectionRect.width + pad * 2,
-                height: selectionRect.height + titleBarH + pad * 2)
-        } else {
-            bgRect = NSRect(
-                x: innerX, y: innerY, width: selectionRect.width + pad * 2,
-                height: selectionRect.height + pad * 2)
-        }
+        let bgRect = beautifyPreviewFrames.background
         if config.backgroundEnabled {
             context.cgContext.saveGState()
             let bgPath = NSBezierPath(
@@ -3952,12 +3938,6 @@ class OverlayView: NSView {
                 in: bgRect, config: config, context: context.cgContext)
             context.cgContext.restoreGState()
         } else {
-            if !isEditorMode, let image = screenshotImage {
-                context.cgContext.saveGState()
-                NSBezierPath(rect: bgRect).addClip()
-                image.draw(in: bounds, from: .zero, operation: .copy, fraction: 1.0)
-                context.cgContext.restoreGState()
-            }
             // The shadow stays inside the padding, matching the saved image.
             NSBezierPath(rect: bgRect).addClip()
         }
@@ -5176,15 +5156,19 @@ class OverlayView: NSView {
     /// Drawn only while resizing with an active snap.
     private func drawBoundarySnapGuides() {
         guard boundarySnapGuideX != nil || boundarySnapGuideY != nil else { return }
+        // The guide positions are canvas space (selection edges, screenshot edges); the lines
+        // run across the whole view, so place them in view space.
         if let gx = boundarySnapGuideX {
+            let x = canvasToView(NSPoint(x: gx, y: 0)).x
             strokeSnapGuide(
-                from: NSPoint(x: gx, y: bounds.minY),
-                to: NSPoint(x: gx, y: bounds.maxY))
+                from: NSPoint(x: x, y: bounds.minY),
+                to: NSPoint(x: x, y: bounds.maxY))
         }
         if let gy = boundarySnapGuideY {
+            let y = canvasToView(NSPoint(x: 0, y: gy)).y
             strokeSnapGuide(
-                from: NSPoint(x: bounds.minX, y: gy),
-                to: NSPoint(x: bounds.maxX, y: gy))
+                from: NSPoint(x: bounds.minX, y: y),
+                to: NSPoint(x: bounds.maxX, y: y))
         }
     }
 
@@ -5212,11 +5196,16 @@ class OverlayView: NSView {
         let offset: CGFloat = 24
         let avoid: NSRect? = state == .idle
             ? colorPickerPanelRect
-            : (selectionRect.width >= 1 && selectionRect.height >= 1 ? selectionRect : nil)
+            : (selectionRect.width >= 1 && selectionRect.height >= 1 ? selectionViewRect : nil)
         let area = bounds.insetBy(dx: 4, dy: 4)
-        if let x = boundarySnapGuideX,
+        // Guides are canvas space and so is the lookup of what an edge lies on; the labels
+        // are placed in view space, beside the pointer.
+        let pointerCanvas = viewToCanvas(pointer)
+        if let guideX = boundarySnapGuideX,
            let label = snapGuideLabel(for: boundarySnapGuideSourceX,
-                                      edgeAt: [NSPoint(x: x - 0.5, y: pointer.y), NSPoint(x: x + 0.5, y: pointer.y)]) {
+                                      edgeAt: [NSPoint(x: guideX - 0.5, y: pointerCanvas.y),
+                                               NSPoint(x: guideX + 0.5, y: pointerCanvas.y)]) {
+            let x = canvasToView(NSPoint(x: guideX, y: 0)).x
             let size = SnapGuideLabelsView.size(icon: label.icon, text: label.text)
             let above = pointer.y + offset, below = pointer.y - offset - size.height
             let preferAbove = avoid.map { $0.midY < pointer.y } ?? true
@@ -5231,9 +5220,11 @@ class OverlayView: NSView {
                                     icon: label.icon, text: label.text))
             }
         }
-        if let y = boundarySnapGuideY,
+        if let guideY = boundarySnapGuideY,
            let label = snapGuideLabel(for: boundarySnapGuideSourceY,
-                                      edgeAt: [NSPoint(x: pointer.x, y: y - 0.5), NSPoint(x: pointer.x, y: y + 0.5)]) {
+                                      edgeAt: [NSPoint(x: pointerCanvas.x, y: guideY - 0.5),
+                                               NSPoint(x: pointerCanvas.x, y: guideY + 0.5)]) {
+            let y = canvasToView(NSPoint(x: 0, y: guideY)).y
             let size = SnapGuideLabelsView.size(icon: label.icon, text: label.text)
             let left = pointer.x - offset - size.width, right = pointer.x + offset
             let preferLeft = avoid.map { $0.midX > pointer.x } ?? true
@@ -5634,7 +5625,8 @@ class OverlayView: NSView {
                                            y: (reference.startPoint.y + reference.endPoint.y) / 2))
             PopoverHelper.showAtPoint(content, size: size, at: mid, in: self, preferredEdge: .minY)
         } else {
-            PopoverHelper.showAtPoint(content, size: size, at: NSPoint(x: selectionRect.midX, y: selectionRect.midY),
+            let selection = selectionViewRect
+            PopoverHelper.showAtPoint(content, size: size, at: NSPoint(x: selection.midX, y: selection.midY),
                                       in: self, preferredEdge: .minY)
         }
     }
@@ -5799,13 +5791,15 @@ class OverlayView: NSView {
         applyZoomTransform(to: context)
     }
 
-    /// Set zoom level, pinning the given view-space cursor point in place.
-    /// Reset zoom to 1× (no transform). Retained because crop/undo/redo call it;
-    /// the overlay no longer zooms, so this just affirms the identity state.
+    /// Reset zoom to 1× (no transform). The overlay zooms only for the beautify fit
+    /// (`updateBeautifyFitZoom`); crop, undo/redo and capture teardown come back here.
     private func resetZoom() {
         zoomLevel = 1.0
         zoomAnchorCanvas = .zero
         zoomAnchorView = .zero
+        // The preview layer is hidden only while the canvas is scaled. Every way back to 1×
+        // shows it again: left hidden, the overlay's backdrop is black (`drawBackdrop`).
+        externalScreenshotPreviewVisibilitySetter?(true)
     }
 
     /// Enabling this required the overlay's hit-testing to stop assuming an unscaled canvas:
@@ -5838,13 +5832,20 @@ class OverlayView: NSView {
 
         let active = beautifyEnabled && state == .selected && !isScrollCapturing && !isRecording
         guard active, selectionRect.width > 0, selectionRect.height > 0 else {
+            // Nothing to fit: always back to 1×, whatever gesture flags say. A flag a capture
+            // left set must not carry its scale into the next one (see the hold below).
             if zoomLevel != 1.0 {
                 resetZoom()
-                externalScreenshotPreviewVisibilitySetter?(true)
                 rebuildToolbarLayout()
             }
             return
         }
+
+        // Hold the zoom still while the selection is being moved or resized. Re-fitting on
+        // every step moved the canvas under the pointer mid-gesture, so the grabbed corner
+        // drifted away from it; the composition is fitted again once the gesture ends.
+        if isResizingSelection || isDraggingSelection
+            || isToolbarMoveDragActive || isKeyboardMoveSelectionActive { return }
 
         let composition = beautifyFitReservationRect
         let available = bounds.insetBy(dx: Self.beautifyFitMargin, dy: Self.beautifyFitMargin)
@@ -5875,6 +5876,42 @@ class OverlayView: NSView {
         let origin = canvasToView(r.origin)
         let far = canvasToView(NSPoint(x: r.maxX, y: r.maxY))
         return NSRect(x: origin.x, y: origin.y, width: far.x - origin.x, height: far.y - origin.y)
+    }
+
+    /// True while the beautify fit zoom scales the overlay canvas.
+    var isCanvasScaled: Bool { !isInsideScrollView && zoomLevel != 1.0 }
+
+    /// The selection where it appears on screen. `selectionRect` is canvas space, and the two
+    /// differ whenever the beautify fit zoom scales the canvas. Every piece of screen chrome
+    /// that belongs to the selection — the corner brackets and edge handles, their hit areas
+    /// and cursors, the size box, the snap guide labels — goes by this rect, so it sits on the
+    /// selection as drawn and keeps its on-screen size. Drawing chrome at `selectionRect`
+    /// without the zoom put it where the window was before the canvas shrank.
+    var selectionViewRect: NSRect { canvasToView(selectionRect) }
+
+    /// The backdrop around the selection, in view space: the frozen screen, dimmed by the
+    /// scrim unless that is turned off — or plain black while the canvas is scaled. The screen
+    /// can't take part in that zoom: drawn at 1× it no longer lines up with the scaled preview,
+    /// and drawn scaled it shows the other apps as a miniature around the result (the external
+    /// preview layer is hidden then for the same reason). The beautify preview repaints parts
+    /// of the backdrop through this function too, so the two can never disagree.
+    func drawBackdrop(in rect: NSRect, dimmed: Bool, context: NSGraphicsContext) {
+        let cg = context.cgContext
+        cg.saveGState()
+        cg.clip(to: rect)
+        if isCanvasScaled {
+            cg.setFillColor(NSColor.black.cgColor)
+            cg.fill(rect)
+        } else if usesExternalScreenshotPreview {
+            cg.clear(rect)  // the preview layer behind this view shows the screen
+        } else if let image = screenshotImage {
+            image.draw(in: bounds, from: .zero, operation: .copy, fraction: 1.0)
+        }
+        if dimmed && !selectionOutsideShadowDisabled {
+            cg.setFillColor(NSColor.black.withAlphaComponent(Self.selectionScrimAlpha).cgColor)
+            cg.fill(rect)
+        }
+        cg.restoreGState()
     }
 
     /// Crop the screenshot to `viewRect` (view-space, within selectionRect),
@@ -7015,17 +7052,16 @@ class OverlayView: NSView {
         ]
     }
 
-    private func hitTestHandle(at viewPoint: NSPoint) -> ResizeHandle {
-        // Handle rects come from `selectionRect`, i.e. canvas space — convert the click.
-        let point = viewToCanvas(viewPoint)
-        // Hit slop is a screen-space affordance (how close the pointer must get, in points on
-        // the display). Dividing by the zoom keeps that distance constant on screen instead of
-        // shrinking along with the canvas.
-        let zoomCompensation = zoomLevel > 0 ? 1 / zoomLevel : 1
+    func hitTestHandle(at viewPoint: NSPoint) -> ResizeHandle {
+        // The handles as drawn: view space, around `selectionViewRect`, at their on-screen
+        // size. Testing canvas-space rects instead missed the brackets whenever the beautify
+        // fit zoom had moved the selection on screen.
+        let point = viewPoint
+        let r = selectionViewRect
         // Use the same hit area as resizeHandleCursor so cursor and click zones match
-        let hitPad: CGFloat = 2 * zoomCompensation  // handle rect is already handleSize; expand by 2 to match cursor zone
+        let hitPad: CGFloat = 2  // handle rect is already handleSize; expand by 2 to match cursor zone
         // Check corner handles first (they take priority over edges)
-        for (handle, rect) in allHandleRects(for: selectionRect) {
+        for (handle, rect) in allHandleRects(for: r) {
             switch handle {
             case .topLeft, .topRight, .bottomLeft, .bottomRight:
                 if rect.insetBy(dx: -hitPad, dy: -hitPad).contains(point) {
@@ -7037,8 +7073,7 @@ class OverlayView: NSView {
         }
 
         // Check full edges/borders (not just the handle dots)
-        let edgeThickness: CGFloat = 6 * zoomCompensation  // match resizeHandleCursor's edgeT
-        let r = selectionRect
+        let edgeThickness: CGFloat = 6  // match resizeHandleCursor's edgeT
         // Top edge
         if NSRect(x: r.minX, y: r.maxY - edgeThickness / 2, width: r.width, height: edgeThickness)
             .contains(point)
@@ -7332,7 +7367,9 @@ class OverlayView: NSView {
             if startsInSelectionMoveMode {
                 if pointIsInSelection(point) {
                     isDraggingSelection = true
-                    dragOffset = NSPoint(x: point.x - selectionRect.minX, y: point.y - selectionRect.minY)
+                    // Canvas space, like `selectionRect` (see the drag below).
+                    let canvasPoint = viewToCanvas(point)
+                    dragOffset = NSPoint(x: canvasPoint.x - selectionRect.minX, y: canvasPoint.y - selectionRect.minY)
                     NSCursor.closedHand.set()
                 }
                 return
@@ -7990,9 +8027,13 @@ class OverlayView: NSView {
                 cachedCompositedImage = nil
                 needsDisplay = true
             } else if isDraggingSelection {
+                // `selectionRect` is canvas space; the pointer is view space. They differ while
+                // the beautify fit zoom scales the canvas, and a raw view point moved the
+                // selection by the wrong amount.
+                let selectionPoint = viewToCanvas(point)
                 let previousRect = selectionRect
                 var moved = selectionRect
-                moved.origin = NSPoint(x: point.x - dragOffset.x, y: point.y - dragOffset.y)
+                moved.origin = NSPoint(x: selectionPoint.x - dragOffset.x, y: selectionPoint.y - dragOffset.y)
                 selectionRect = boundarySnappedMovedRect(moved, modifiers: event.modifierFlags)
                 if selectionIsWindowSnap && selectionRect != previousRect {
                     selectionIsWindowSnap = false
@@ -8004,16 +8045,19 @@ class OverlayView: NSView {
                 updateResolutionBox()
                 needsDisplay = true
             } else if isResizingSelection {
+                // Canvas space, as for the drag above: a raw view point put the grabbed edge
+                // where the pointer is on screen read as a canvas position, so it jumped.
+                let selectionPoint = viewToCanvas(point)
                 if spaceRepositioning {
-                    let dx = point.x - spaceRepositionLast.x
-                    let dy = point.y - spaceRepositionLast.y
+                    let dx = selectionPoint.x - spaceRepositionLast.x
+                    let dy = selectionPoint.y - spaceRepositionLast.y
                     var moved = selectionRect
                     moved.origin.x += dx
                     moved.origin.y += dy
                     selectionRect = boundarySnappedMovedRect(moved, modifiers: event.modifierFlags)
-                    spaceRepositionLast = point
+                    spaceRepositionLast = selectionPoint
                 } else {
-                    resizeSelection(to: point, modifiers: event.modifierFlags)
+                    resizeSelection(to: selectionPoint, modifiers: event.modifierFlags)
                 }
                 overlayDelegate?.overlayViewSelectionDidChange(selectionRect)
                 updateResolutionBox()
@@ -9470,7 +9514,8 @@ class OverlayView: NSView {
             moveButton = moveSelectionButtonView()
         }
 
-        let point = convert(win.mouseLocationOutsideOfEventStream, from: nil)
+        // Canvas space, like `selectionRect` (see `updateKeyboardMoveSelection`).
+        let point = viewToCanvas(convert(win.mouseLocationOutsideOfEventStream, from: nil))
         keyboardMoveSelectionOffset = NSPoint(
             x: point.x - selectionRect.origin.x,
             y: point.y - selectionRect.origin.y)
@@ -9483,8 +9528,11 @@ class OverlayView: NSView {
         return true
     }
 
-    private func updateKeyboardMoveSelection(to point: NSPoint, modifiers: NSEvent.ModifierFlags) {
+    private func updateKeyboardMoveSelection(to viewPoint: NSPoint, modifiers: NSEvent.ModifierFlags) {
         guard isKeyboardMoveSelectionActive else { return }
+        // The pointer is view space, the selection canvas space; they differ while the
+        // beautify fit zoom scales the canvas.
+        let point = viewToCanvas(viewPoint)
         var moved = selectionRect
         moved.origin = NSPoint(
             x: point.x - keyboardMoveSelectionOffset.x,
@@ -9514,6 +9562,7 @@ class OverlayView: NSView {
             self.clearToolbarHoverState(suppressUntilMouseMoved: true)
             self.setToolbarHoverSuppressed(false)
             self.isToolbarMoveDragActive = false
+            self.needsDisplay = true  // fit the beautify zoom to where the selection ended
         }
     }
 
@@ -10038,7 +10087,9 @@ class OverlayView: NSView {
             func overlayPoint(fromScreen screen: NSPoint) -> NSPoint {
                 convert(win.convertPoint(fromScreen: screen), from: nil)
             }
-            let startPoint = overlayPoint(fromScreen: NSEvent.mouseLocation)
+            // Canvas space, like `selectionRect`: the two differ while the beautify fit zoom
+            // scales the canvas, and view points moved the selection by the wrong amount.
+            let startPoint = viewToCanvas(overlayPoint(fromScreen: NSEvent.mouseLocation))
             let offset = NSPoint(x: startPoint.x - selectionRect.origin.x, y: startPoint.y - selectionRect.origin.y)
             lastDragPointer = nil
             raiseSnapGuideLabels()
@@ -10046,7 +10097,7 @@ class OverlayView: NSView {
             while true {
                 guard let event = NSApp.nextEvent(matching: [.leftMouseDragged, .leftMouseUp],
                                                   until: .distantFuture, inMode: .eventTracking, dequeue: true) else { break }
-                let point = overlayPoint(fromScreen: NSEvent.mouseLocation)
+                let point = viewToCanvas(overlayPoint(fromScreen: NSEvent.mouseLocation))
                 var moved = selectionRect
                 moved.origin = NSPoint(x: point.x - offset.x, y: point.y - offset.y)
                 // Snap the moved selection to nearby image edges (Option bypasses).
@@ -10073,6 +10124,7 @@ class OverlayView: NSView {
                 self.clearToolbarHoverState(suppressUntilMouseMoved: true)
                 self.setToolbarHoverSuppressed(false)
                 self.isToolbarMoveDragActive = false
+                self.needsDisplay = true  // fit the beautify zoom to where the selection ended
             }
         case .undo:
             undo()
@@ -11145,7 +11197,8 @@ class OverlayView: NSView {
                     } else if isResizingExistingAnnotation {
                         spaceRepositionLast = currentCanvasMousePoint ?? annotationResizeMouseStart
                     } else if isResizingCaptureSelection, let windowPoint = window?.mouseLocationOutsideOfEventStream {
-                        spaceRepositionLast = convert(windowPoint, from: nil)
+                        // Canvas space, as the resize drag compares it (see mouseDragged).
+                        spaceRepositionLast = viewToCanvas(convert(windowPoint, from: nil))
                     } else if let windowPoint = window?.mouseLocationOutsideOfEventStream {
                         spaceRepositionLast = convert(windowPoint, from: nil)
                     }
@@ -12343,6 +12396,12 @@ class OverlayView: NSView {
         toolBeforeCrop = nil
         hasChosenCaptureTool = false
         isDraggingSelection = false
+        // A capture can end mid-gesture (double-click to copy returns from mouseUp early, the
+        // keyboard can confirm while a bracket is held): don't carry the gesture, or the beautify
+        // fit zoom it holds, into the next capture.
+        isResizingSelection = false
+        resizeHandle = .none
+        resetZoom()
         numberCounter = 0
         showToolbars = false
         dismissResolutionBox()

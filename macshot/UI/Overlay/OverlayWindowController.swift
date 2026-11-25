@@ -50,6 +50,8 @@ private final class ScreenshotOverlayRootView: NSView {
         previewLayer.frame = bounds
         previewLayer.contentsScale = window?.backingScaleFactor ?? NSScreen.main?.backingScaleFactor ?? 2
         previewLayer.contents = cgImage
+        // A new screenshot is shown; the overlay hides it again only while its canvas is scaled.
+        previewLayer.isHidden = false
         CATransaction.commit()
         overlayView.usesExternalScreenshotPreview = true
     }
