@@ -1079,3 +1079,4 @@
 "Version %@ is available" = "Доступна је верзија %@";
 "Update" = "Ажурирај";
 "Click to update in Settings." = "Кликните да ажурирате у Подешавањима.";
+"This version is maintained by %@" = "Ову верзију одржава %@";

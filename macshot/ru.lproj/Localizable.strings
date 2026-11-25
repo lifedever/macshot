@@ -1077,3 +1077,4 @@
 "Version %@ is available" = "Доступна версия %@";
 "Update" = "Обновить";
 "Click to update in Settings." = "Нажмите, чтобы обновить в настройках.";
+"This version is maintained by %@" = "Эту версию поддерживает %@";

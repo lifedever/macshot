@@ -1078,3 +1078,4 @@
 "Version %@ is available" = "버전 %@ 사용 가능";
 "Update" = "업데이트";
 "Click to update in Settings." = "클릭하여 설정에서 업데이트하세요.";
+"This version is maintained by %@" = "이 버전은 %@이(가) 관리합니다";

@@ -92,6 +92,17 @@ struct AboutSettingsView: View {
                      destination: URL(string: "https://github.com/sw33tLie/macshot")!)
                     .font(.caption)
             }
+            // This fork: where its releases and updates come from.
+            HStack {
+                Text(String(format: L("This version is maintained by %@"), "lifedever"))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Spacer()
+                Link("github.com/lifedever/macshot",
+                     destination: URL(string: "https://github.com/lifedever/macshot")!)
+                    .font(.caption)
+            }
+            .padding(.top, 4)
         }
         .padding(.horizontal, 28)
         .padding(.top, 28)

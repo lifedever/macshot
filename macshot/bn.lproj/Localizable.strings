@@ -1082,3 +1082,4 @@
 "Version %@ is available" = "সংস্করণ %@ উপলব্ধ";
 "Update" = "আপডেট";
 "Click to update in Settings." = "সেটিংসে আপডেট করতে ক্লিক করুন।";
+"This version is maintained by %@" = "এই সংস্করণটি রক্ষণাবেক্ষণ করেন %@";

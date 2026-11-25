@@ -1084,3 +1084,4 @@
 "Version %@ is available" = "גרסה %@ זמינה";
 "Update" = "עדכון";
 "Click to update in Settings." = "יש ללחוץ כדי לעדכן בהגדרות.";
+"This version is maintained by %@" = "גרסה זו מתוחזקת על ידי %@";

@@ -1076,3 +1076,4 @@
 "Version %@ is available" = "Versjon %@ er tilgjengelig";
 "Update" = "Oppdater";
 "Click to update in Settings." = "Klikk for å oppdatere i Innstillinger.";
+"This version is maintained by %@" = "Denne versjonen vedlikeholdes av %@";

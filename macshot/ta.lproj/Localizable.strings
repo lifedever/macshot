@@ -1082,3 +1082,4 @@
 "Version %@ is available" = "பதிப்பு %@ கிடைக்கிறது";
 "Update" = "புதுப்பி";
 "Click to update in Settings." = "அமைப்புகளில் புதுப்பிக்க கிளிக் செய்யவும்.";
+"This version is maintained by %@" = "இந்தப் பதிப்பை %@ பராமரிக்கிறார்";

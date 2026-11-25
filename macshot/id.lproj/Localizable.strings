@@ -1076,3 +1076,4 @@
 "Version %@ is available" = "Versi %@ tersedia";
 "Update" = "Perbarui";
 "Click to update in Settings." = "Klik untuk memperbarui di Pengaturan.";
+"This version is maintained by %@" = "Versi ini dikelola oleh %@";

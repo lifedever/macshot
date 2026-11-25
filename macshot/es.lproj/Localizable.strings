@@ -1076,3 +1076,4 @@
 "Version %@ is available" = "La versión %@ está disponible";
 "Update" = "Actualizar";
 "Click to update in Settings." = "Haz clic para actualizar en Ajustes.";
+"This version is maintained by %@" = "Esta versión la mantiene %@";

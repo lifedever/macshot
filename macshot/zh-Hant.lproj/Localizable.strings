@@ -1075,3 +1075,4 @@
 "Version %@ is available" = "有新版本 %@";
 "Update" = "更新";
 "Click to update in Settings." = "點按後在設定中更新。";
+"This version is maintained by %@" = "這個版本由 %@ 維護";

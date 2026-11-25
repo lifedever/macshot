@@ -1080,3 +1080,4 @@
 "Version %@ is available" = "Versie %@ is beschikbaar";
 "Update" = "Werk bij";
 "Click to update in Settings." = "Klik om bij te werken in Instellingen.";
+"This version is maintained by %@" = "Deze versie wordt onderhouden door %@";

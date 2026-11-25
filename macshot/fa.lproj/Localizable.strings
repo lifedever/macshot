@@ -1084,3 +1084,4 @@
 "Version %@ is available" = "نسخهٔ %@ در دسترس است";
 "Update" = "به‌روزرسانی";
 "Click to update in Settings." = "برای به‌روزرسانی در تنظیمات کلیک کنید.";
+"This version is maintained by %@" = "این نسخه را %@ نگهداری می‌کند";

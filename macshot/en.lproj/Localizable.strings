@@ -1075,3 +1075,4 @@
 "Version %@ is available" = "Version %@ is available";
 "Update" = "Update";
 "Click to update in Settings." = "Click to update in Settings.";
+"This version is maintained by %@" = "This version is maintained by %@";

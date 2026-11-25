@@ -1080,3 +1080,4 @@
 "Version %@ is available" = "Elérhető a(z) %@ verzió";
 "Update" = "Frissítés";
 "Click to update in Settings." = "Kattintson a frissítéshez a Beállításokban.";
+"This version is maintained by %@" = "Ezt a verziót %@ tartja karban";

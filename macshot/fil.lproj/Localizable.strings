@@ -1078,3 +1078,4 @@
 "Version %@ is available" = "Available na ang bersyon %@";
 "Update" = "I-update";
 "Click to update in Settings." = "I-click para mag-update sa Settings.";
+"This version is maintained by %@" = "Ang bersyong ito ay pinapanatili ni %@";

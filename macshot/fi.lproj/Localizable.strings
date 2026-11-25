@@ -1076,3 +1076,4 @@
 "Version %@ is available" = "Versio %@ on saatavilla";
 "Update" = "Päivitä";
 "Click to update in Settings." = "Päivitä Asetuksissa napsauttamalla.";
+"This version is maintained by %@" = "Tätä versiota ylläpitää %@";

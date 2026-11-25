@@ -1076,3 +1076,4 @@
 "Version %@ is available" = "มีเวอร์ชัน %@ แล้ว";
 "Update" = "อัปเดต";
 "Click to update in Settings." = "คลิกเพื่ออัปเดตในการตั้งค่า";
+"This version is maintained by %@" = "เวอร์ชันนี้ดูแลโดย %@";

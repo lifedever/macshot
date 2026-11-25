@@ -1082,3 +1082,4 @@
 "Version %@ is available" = "Η έκδοση %@ είναι διαθέσιμη";
 "Update" = "Ενημέρωση";
 "Click to update in Settings." = "Κάντε κλικ για ενημέρωση στις Ρυθμίσεις.";
+"This version is maintained by %@" = "Συντηρητής αυτής της έκδοσης: %@";

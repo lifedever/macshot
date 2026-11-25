@@ -1084,3 +1084,4 @@
 "Version %@ is available" = "الإصدار %@ متاح";
 "Update" = "تحديث";
 "Click to update in Settings." = "انقر للتحديث من الإعدادات.";
+"This version is maintained by %@" = "يتولى صيانة هذا الإصدار %@";

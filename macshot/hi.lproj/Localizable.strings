@@ -1082,3 +1082,4 @@
 "Version %@ is available" = "संस्करण %@ उपलब्ध है";
 "Update" = "अपडेट करें";
 "Click to update in Settings." = "सेटिंग्स में अपडेट करने के लिए क्लिक करें।";
+"This version is maintained by %@" = "इस संस्करण का रखरखाव %@ करते हैं";

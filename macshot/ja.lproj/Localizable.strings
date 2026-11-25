@@ -1076,3 +1076,4 @@
 "Version %@ is available" = "バージョン %@ が利用可能です";
 "Update" = "アップデート";
 "Click to update in Settings." = "クリックして設定からアップデートします。";
+"This version is maintained by %@" = "このバージョンは %@ がメンテナンスしています";

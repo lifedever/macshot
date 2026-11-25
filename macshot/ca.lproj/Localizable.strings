@@ -1082,3 +1082,4 @@
 "Version %@ is available" = "La versió %@ està disponible";
 "Update" = "Actualitza";
 "Click to update in Settings." = "Fes clic per actualitzar a Configuració.";
+"This version is maintained by %@" = "Aquesta versió la manté %@";
