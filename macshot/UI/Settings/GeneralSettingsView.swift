@@ -8,6 +8,9 @@ import SwiftUI
 /// AppKit pane had to hand-build every one of those and still did not match.
 struct GeneralSettingsView: View {
     @ObservedObject var model: GeneralSettingsModel
+    /// History retention lives here rather than under Output: Output holds where and how files
+    /// are written, and with the recording library added there it no longer fit the window.
+    @ObservedObject var capture: CaptureSettingsModel
     @ObservedObject var updater: SoftwareUpdater = .shared
 
     /// The running version, or the update a check found; the button shows Sparkle's update
@@ -54,6 +57,23 @@ struct GeneralSettingsView: View {
                     // No "Check for beta updates": this fork publishes no beta channel.
                     Toggle(L("Check for updates automatically"), isOn: $model.autoUpdate)
                 }
+            }
+
+            Section(L("History")) {
+                Toggle(L("Unlimited"), isOn: $capture.historyUnlimited)
+                if !capture.historyUnlimited {
+                    LabeledContent(L("History size")) {
+                        HStack(spacing: 6) {
+                            TextField("", value: $capture.historySize, format: .number)
+                                .textFieldStyle(.roundedBorder)
+                                .frame(width: 60)
+                                .multilineTextAlignment(.trailing)
+                            Stepper("", value: $capture.historySize, in: 0...9999)
+                                .labelsHidden()
+                        }
+                    }
+                }
+                Toggle(L("Order history by last edit"), isOn: $capture.historyOrderByLastEdit)
             }
 
         }

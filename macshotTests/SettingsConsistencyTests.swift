@@ -144,7 +144,7 @@ final class SettingsConsistencyTests: XCTestCase {
         let capture = CaptureSettingsModel()
         let general = GeneralSettingsModel()
         var panes: [(String, AnyView)] = [
-            ("general", AnyView(GeneralSettingsView(model: general))),
+            ("general", AnyView(GeneralSettingsView(model: general, capture: capture))),
             ("appearance", AnyView(AppearanceSettingsView(model: general))),
             ("capture", AnyView(CaptureSettingsView(model: capture))),
             ("thumbnail", AnyView(ThumbnailSettingsView(model: capture))),

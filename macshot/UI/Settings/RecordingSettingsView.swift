@@ -6,10 +6,10 @@ struct RecordingSettingsView: View {
 
     var body: some View {
         Form {
-            // Where a recording lands and what it is called now come from the
-            // save folder and filename template under Output — recordings had
-            // their own pair, so the setting you edited was not necessarily
-            // the one that applied.
+            // Every path a recording uses — the save folder, the filename template
+            // and where the original takes are kept — is set under Output.
+            // Recordings once had their own pair, so the setting you edited was
+            // not necessarily the one that applied.
             Section(L("Output")) {
                 Picker(L("Frame rate"), selection: $model.frameRate) {
                     ForEach(RecordingSettingsModel.frameRates, id: \.self) { fps in
@@ -32,31 +32,6 @@ struct RecordingSettingsView: View {
                     Text(L("Editable pointer, clicks and keystrokes"))
                     Text(L("When recordings open in the editor, the pointer is recorded separately so you can smooth, resize, restyle or hide it, and add zooms that follow it."))
                 }
-            }
-
-            Section {
-                LabeledContent(L("Location")) {
-                    HStack(spacing: 8) {
-                        Text(model.libraryPath)
-                            .truncationMode(.middle)
-                            .lineLimit(1)
-                            .foregroundStyle(.secondary)
-                        Button(L("Change…")) { model.chooseLibraryLocation() }
-                    }
-                }
-                if model.libraryUnavailable {
-                    Text(L("Not connected. New recordings are saved to the default location."))
-                        .font(.caption)
-                        .foregroundStyle(.orange)
-                }
-                HStack {
-                    Button(L("Show in Finder")) { model.showLibraryInFinder() }
-                    Spacer()
-                    Button(L("Reset to default")) { model.useDefaultLibraryLocation() }
-                        .disabled(model.libraryIsDefault)
-                }
-            } header: {
-                Text(L("Recording Library"))
             }
 
             Section(L("Webcam")) {

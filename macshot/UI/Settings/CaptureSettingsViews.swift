@@ -171,6 +171,9 @@ struct ThumbnailSettingsView: View {
 /// Where captures go: save behaviour, file format, and history.
 struct OutputSettingsView: View {
     @ObservedObject var model: CaptureSettingsModel
+    /// Where the original recordings are kept. With the save folder and the filename above
+    /// it, every local path the app writes to is set on this one pane.
+    @StateObject private var library = RecordingLibrarySettingsModel()
 
     var body: some View {
         Form {
@@ -216,6 +219,31 @@ struct OutputSettingsView: View {
                     .foregroundStyle(.secondary)
             }
 
+            Section {
+                LabeledContent(L("Location")) {
+                    HStack(spacing: 8) {
+                        Text(library.path)
+                            .truncationMode(.middle)
+                            .lineLimit(1)
+                            .foregroundStyle(.secondary)
+                        Button(L("Change…")) { library.chooseLocation() }
+                    }
+                }
+                if library.isUnavailable {
+                    Text(L("Not connected. New recordings are saved to the default location."))
+                        .font(.caption)
+                        .foregroundStyle(.orange)
+                }
+                HStack {
+                    Button(L("Show in Finder")) { library.showInFinder() }
+                    Spacer()
+                    Button(L("Reset to default")) { library.useDefaultLocation() }
+                        .disabled(library.isDefault)
+                }
+            } header: {
+                Text(L("Recording Library"))
+            }
+
             Section(L("Image")) {
                 Picker(L("Image format"), selection: $model.imageFormat) {
                     ForEach(model.availableFormats, id: \.rawValue) { format in
@@ -241,23 +269,6 @@ struct OutputSettingsView: View {
                     Text(L("PNG is always included so every app can paste"))
                 }
                 Toggle(L("Save at standard resolution (1x)"), isOn: $model.downscaleRetina)
-            }
-
-            Section(L("History")) {
-                Toggle(L("Unlimited"), isOn: $model.historyUnlimited)
-                if !model.historyUnlimited {
-                    LabeledContent(L("History size")) {
-                        HStack(spacing: 6) {
-                            TextField("", value: $model.historySize, format: .number)
-                                .textFieldStyle(.roundedBorder)
-                                .frame(width: 60)
-                                .multilineTextAlignment(.trailing)
-                            Stepper("", value: $model.historySize, in: 0...9999)
-                                .labelsHidden()
-                        }
-                    }
-                }
-                Toggle(L("Order history by last edit"), isOn: $model.historyOrderByLastEdit)
             }
 
         }

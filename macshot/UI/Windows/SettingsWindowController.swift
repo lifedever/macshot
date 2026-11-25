@@ -271,7 +271,7 @@ class SettingsWindowController: NSWindowController, NSToolbarDelegate, NSWindowD
         let general = GeneralSettingsModel()
         generalSettingsModel = general
         tabContentViews["general"] = trackingPaneSize(
-            SettingsPaneHostingView(rootView: GeneralSettingsView(model: general))
+            SettingsPaneHostingView(rootView: GeneralSettingsView(model: general, capture: capture))
                 .configuredAsSettingsPane())
         tabContentViews["appearance"] = trackingPaneSize(
             SettingsPaneHostingView(rootView: AppearanceSettingsView(model: general))

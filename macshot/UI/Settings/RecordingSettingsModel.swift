@@ -62,33 +62,6 @@ final class RecordingSettingsModel: ObservableObject {
         didSet { store(webcamSnapsToCorners, WebcamPlacement.snapKey, oldValue) }
     }
 
-    // MARK: Library
-
-    @Published private(set) var libraryPath = RecordingLibrary.displayPath
-    @Published private(set) var libraryIsDefault = RecordingLibrary.usesDefaultLocation
-    @Published private(set) var libraryUnavailable = RecordingLibrary.isConfiguredLocationUnavailable
-    private var libraryObserver: NSObjectProtocol?
-
-    func chooseLibraryLocation() {
-        RecordingLibraryRelocation.chooseLocation { [weak self] in self?.refreshLibrary() }
-    }
-
-    func useDefaultLibraryLocation() {
-        RecordingLibraryRelocation.useDefaultLocation { [weak self] in self?.refreshLibrary() }
-    }
-
-    func showLibraryInFinder() {
-        let folder = RecordingLibrary.currentRoot
-        try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
-        NSWorkspace.shared.open(folder)
-    }
-
-    private func refreshLibrary() {
-        libraryPath = RecordingLibrary.displayPath
-        libraryIsDefault = RecordingLibrary.usesDefaultLocation
-        libraryUnavailable = RecordingLibrary.isConfiguredLocationUnavailable
-    }
-
     // MARK: Lifecycle
 
     init() {
@@ -102,15 +75,6 @@ final class RecordingSettingsModel: ObservableObject {
         webcamSize = Double(WebcamSize.savedPoints)
         webcamShape = defaults.string(forKey: "webcamShape") ?? "circle"
         webcamSnapsToCorners = WebcamPlacement.snapsToCorners
-        libraryObserver = NotificationCenter.default.addObserver(
-            forName: RecordingLibrary.didChangeNotification, object: nil, queue: .main
-        ) { [weak self] _ in
-            MainActor.assumeIsolated { self?.refreshLibrary() }
-        }
-    }
-
-    deinit {
-        if let libraryObserver { NotificationCenter.default.removeObserver(libraryObserver) }
     }
 
     private func store<T: Equatable>(_ value: T, _ key: String, _ oldValue: T) {
