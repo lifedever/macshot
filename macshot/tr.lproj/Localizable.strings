@@ -1085,3 +1085,5 @@
 "Update" = "Güncelle";
 "Click to update in Settings." = "Ayarlar'da güncellemek için tıklayın.";
 "This version is maintained by %@" = "Bu sürümün bakımını %@ yapıyor";
+"You're up to date" = "En son sürümü kullanıyorsunuz";
+"Current version: %@" = "Geçerli sürüm: %@";

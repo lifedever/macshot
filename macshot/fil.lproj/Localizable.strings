@@ -1079,3 +1079,5 @@
 "Update" = "I-update";
 "Click to update in Settings." = "I-click para mag-update sa Settings.";
 "This version is maintained by %@" = "Ang bersyong ito ay pinapanatili ni %@";
+"You're up to date" = "Pinakabagong bersyon na ang gamit mo";
+"Current version: %@" = "Kasalukuyang bersyon: %@";

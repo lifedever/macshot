@@ -1077,3 +1077,5 @@
 "Update" = "Päivitä";
 "Click to update in Settings." = "Päivitä Asetuksissa napsauttamalla.";
 "This version is maintained by %@" = "Tätä versiota ylläpitää %@";
+"You're up to date" = "Sinulla on uusin versio";
+"Current version: %@" = "Nykyinen versio: %@";

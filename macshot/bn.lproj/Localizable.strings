@@ -1083,3 +1083,5 @@
 "Update" = "আপডেট";
 "Click to update in Settings." = "সেটিংসে আপডেট করতে ক্লিক করুন।";
 "This version is maintained by %@" = "এই সংস্করণটি রক্ষণাবেক্ষণ করেন %@";
+"You're up to date" = "আপনার কাছে সর্বশেষ সংস্করণ আছে";
+"Current version: %@" = "বর্তমান সংস্করণ: %@";

@@ -1077,3 +1077,5 @@
 "Update" = "Uppdatera";
 "Click to update in Settings." = "Klicka för att uppdatera i Inställningar.";
 "This version is maintained by %@" = "Den här versionen underhålls av %@";
+"You're up to date" = "Du har den senaste versionen";
+"Current version: %@" = "Nuvarande version: %@";

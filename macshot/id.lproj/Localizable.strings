@@ -1077,3 +1077,5 @@
 "Update" = "Perbarui";
 "Click to update in Settings." = "Klik untuk memperbarui di Pengaturan.";
 "This version is maintained by %@" = "Versi ini dikelola oleh %@";
+"You're up to date" = "Anda sudah memakai versi terbaru";
+"Current version: %@" = "Versi saat ini: %@";

@@ -1077,3 +1077,5 @@
 "Update" = "アップデート";
 "Click to update in Settings." = "クリックして設定からアップデートします。";
 "This version is maintained by %@" = "このバージョンは %@ がメンテナンスしています";
+"You're up to date" = "最新バージョンです";
+"Current version: %@" = "現在のバージョン：%@";

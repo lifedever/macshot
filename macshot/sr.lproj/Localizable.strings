@@ -1080,3 +1080,5 @@
 "Update" = "Ажурирај";
 "Click to update in Settings." = "Кликните да ажурирате у Подешавањима.";
 "This version is maintained by %@" = "Ову верзију одржава %@";
+"You're up to date" = "Имате најновију верзију";
+"Current version: %@" = "Тренутна верзија: %@";

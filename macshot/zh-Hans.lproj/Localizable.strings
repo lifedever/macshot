@@ -1076,3 +1076,5 @@
 "Update" = "更新";
 "Click to update in Settings." = "点按后在设置中更新。";
 "This version is maintained by %@" = "这个版本由 %@ 维护";
+"You're up to date" = "已是最新版本";
+"Current version: %@" = "当前版本：%@";

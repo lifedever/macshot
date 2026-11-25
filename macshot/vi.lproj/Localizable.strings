@@ -1077,3 +1077,5 @@
 "Update" = "Cập nhật";
 "Click to update in Settings." = "Nhấp để cập nhật trong Cài đặt.";
 "This version is maintained by %@" = "Phiên bản này do %@ duy trì";
+"You're up to date" = "Bạn đang dùng phiên bản mới nhất";
+"Current version: %@" = "Phiên bản hiện tại: %@";

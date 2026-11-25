@@ -1081,3 +1081,5 @@
 "Update" = "Actualizează";
 "Click to update in Settings." = "Faceți clic pentru a actualiza din Setări.";
 "This version is maintained by %@" = "Această versiune este întreținută de %@";
+"You're up to date" = "Aveți cea mai nouă versiune";
+"Current version: %@" = "Versiunea curentă: %@";

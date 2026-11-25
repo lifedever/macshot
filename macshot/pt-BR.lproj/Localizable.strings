@@ -1077,3 +1077,5 @@
 "Update" = "Atualizar";
 "Click to update in Settings." = "Clique para atualizar nas Configurações.";
 "This version is maintained by %@" = "Esta versão é mantida por %@";
+"You're up to date" = "Você já tem a versão mais recente";
+"Current version: %@" = "Versão atual: %@";

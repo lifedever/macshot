@@ -1078,3 +1078,5 @@
 "Update" = "Оновити";
 "Click to update in Settings." = "Натисніть, щоб оновити в Налаштуваннях.";
 "This version is maintained by %@" = "Цю версію підтримує %@";
+"You're up to date" = "У вас остання версія";
+"Current version: %@" = "Поточна версія: %@";

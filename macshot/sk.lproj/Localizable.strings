@@ -1078,3 +1078,5 @@
 "Update" = "Aktualizovať";
 "Click to update in Settings." = "Kliknutím aktualizujete v Nastaveniach.";
 "This version is maintained by %@" = "Túto verziu udržiava %@";
+"You're up to date" = "Máte najnovšiu verziu";
+"Current version: %@" = "Aktuálna verzia: %@";

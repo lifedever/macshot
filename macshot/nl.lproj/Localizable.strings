@@ -1081,3 +1081,5 @@
 "Update" = "Werk bij";
 "Click to update in Settings." = "Klik om bij te werken in Instellingen.";
 "This version is maintained by %@" = "Deze versie wordt onderhouden door %@";
+"You're up to date" = "Je hebt de nieuwste versie";
+"Current version: %@" = "Huidige versie: %@";

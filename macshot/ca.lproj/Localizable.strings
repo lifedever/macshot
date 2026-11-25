@@ -1083,3 +1083,5 @@
 "Update" = "Actualitza";
 "Click to update in Settings." = "Fes clic per actualitzar a Configuració.";
 "This version is maintained by %@" = "Aquesta versió la manté %@";
+"You're up to date" = "Ja tens la versió més recent";
+"Current version: %@" = "Versió actual: %@";

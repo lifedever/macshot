@@ -1078,3 +1078,5 @@
 "Update" = "Ažuriraj";
 "Click to update in Settings." = "Kliknite za ažuriranje u Postavkama.";
 "This version is maintained by %@" = "Ovu verziju održava %@";
+"You're up to date" = "Imate najnoviju verziju";
+"Current version: %@" = "Trenutačna verzija: %@";

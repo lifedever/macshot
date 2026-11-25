@@ -1081,3 +1081,5 @@
 "Update" = "Frissítés";
 "Click to update in Settings." = "Kattintson a frissítéshez a Beállításokban.";
 "This version is maintained by %@" = "Ezt a verziót %@ tartja karban";
+"You're up to date" = "A legfrissebb verzió fut";
+"Current version: %@" = "Jelenlegi verzió: %@";

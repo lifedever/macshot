@@ -1085,3 +1085,5 @@
 "Update" = "به‌روزرسانی";
 "Click to update in Settings." = "برای به‌روزرسانی در تنظیمات کلیک کنید.";
 "This version is maintained by %@" = "این نسخه را %@ نگهداری می‌کند";
+"You're up to date" = "آخرین نسخه را دارید";
+"Current version: %@" = "نسخهٔ فعلی: %@";

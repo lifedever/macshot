@@ -1083,3 +1083,5 @@
 "Update" = "Ενημέρωση";
 "Click to update in Settings." = "Κάντε κλικ για ενημέρωση στις Ρυθμίσεις.";
 "This version is maintained by %@" = "Συντηρητής αυτής της έκδοσης: %@";
+"You're up to date" = "Έχετε την πιο πρόσφατη έκδοση";
+"Current version: %@" = "Τρέχουσα έκδοση: %@";

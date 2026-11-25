@@ -1085,3 +1085,5 @@
 "Update" = "עדכון";
 "Click to update in Settings." = "יש ללחוץ כדי לעדכן בהגדרות.";
 "This version is maintained by %@" = "גרסה זו מתוחזקת על ידי %@";
+"You're up to date" = "הגרסה העדכנית ביותר מותקנת";
+"Current version: %@" = "הגרסה הנוכחית: %@";

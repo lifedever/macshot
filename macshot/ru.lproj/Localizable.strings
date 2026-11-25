@@ -1078,3 +1078,5 @@
 "Update" = "Обновить";
 "Click to update in Settings." = "Нажмите, чтобы обновить в настройках.";
 "This version is maintained by %@" = "Эту версию поддерживает %@";
+"You're up to date" = "У вас последняя версия";
+"Current version: %@" = "Текущая версия: %@";

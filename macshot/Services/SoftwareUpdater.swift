@@ -29,7 +29,7 @@ final class SoftwareUpdater: NSObject, ObservableObject {
 
     func start() {
         guard BuildVariant.softwareUpdatesEnabled, updater == nil else { return }
-        let driver = InstallWithoutConfirmingUserDriver(hostBundle: .main, delegate: self)
+        let driver = MacShotUserDriver(hostBundle: .main, delegate: self)
         let updater = SPUUpdater(hostBundle: .main, applicationBundle: .main, userDriver: driver, delegate: self)
         do {
             try updater.start()
@@ -189,10 +189,39 @@ extension SoftwareUpdater: UNUserNotificationCenterDelegate {
     }
 }
 
-/// Sparkle's standard windows, minus the stop between download and install: after Install
-/// in the update window, the update installs and the app relaunches without asking again.
-final class InstallWithoutConfirmingUserDriver: SPUStandardUserDriver {
+/// Sparkle's standard windows, with two changes:
+/// - no stop between download and install: after Install in the update window, the update
+///   installs and the app relaunches without asking again;
+/// - "no update" on the latest (or a newer, locally installed) version is a short alert of our
+///   own — Sparkle's named the app, repeated the version and added the build number.
+final class MacShotUserDriver: SPUStandardUserDriver {
     override func showReady(toInstallAndRelaunch reply: @escaping (SPUUserUpdateChoice) -> Void) {
         DispatchQueue.main.async { reply(.install) }
+    }
+
+    override func showUpdateNotFoundWithError(_ error: Error, acknowledgement: @escaping () -> Void) {
+        let reason = ((error as NSError).userInfo[SPUNoUpdateFoundReasonKey] as? NSNumber)?.int32Value
+        let upToDate = reason == SPUNoUpdateFoundReason.onLatestVersion.rawValue
+            || reason == SPUNoUpdateFoundReason.onNewerThanLatestVersion.rawValue
+        guard upToDate else {
+            // An OS too old or too new, or no Apple silicon: Sparkle explains those.
+            super.showUpdateNotFoundWithError(error, acknowledgement: acknowledgement)
+            return
+        }
+        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? ""
+        let alert = NSAlert()
+        alert.messageText = L("You're up to date")
+        alert.informativeText = String(format: L("Current version: %@"), version)
+        alert.addButton(withTitle: L("OK"))
+        // Run the modal loop from the run loop, not from inside whatever main-queue block
+        // Sparkle called us from: a modal there holds up every other main-queue job.
+        RunLoop.main.perform(inModes: [.default]) {
+            MainActor.assumeIsolated {
+                NSApp.activate(ignoringOtherApps: true)
+                alert.runModal()
+                acknowledgement()
+            }
+        }
+        CFRunLoopWakeUp(CFRunLoopGetMain())
     }
 }
