@@ -51,8 +51,8 @@ struct GeneralSettingsView: View {
                 Toggle(L("Enable macshot:// URL scheme"), isOn: $model.urlSchemeEnabled)
                 if model.softwareUpdatesAvailable {
                     updateRow
+                    // No "Check for beta updates": this fork publishes no beta channel.
                     Toggle(L("Check for updates automatically"), isOn: $model.autoUpdate)
-                    Toggle(L("Check for beta updates"), isOn: $model.betaUpdates)
                 }
             }
 

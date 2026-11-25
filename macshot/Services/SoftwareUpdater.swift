@@ -84,11 +84,9 @@ final class SoftwareUpdater: NSObject, ObservableObject {
 
 // MARK: - SPUUpdaterDelegate
 
-extension SoftwareUpdater: SPUUpdaterDelegate {
-    func allowedChannels(for updater: SPUUpdater) -> Set<String> {
-        UserDefaults.standard.bool(forKey: "betaUpdatesEnabled") ? ["beta"] : []
-    }
-}
+/// No `allowedChannels(for:)`: this fork publishes no beta channel, so only the default
+/// channel is read, whatever an imported upstream `betaUpdatesEnabled` says.
+extension SoftwareUpdater: SPUUpdaterDelegate {}
 
 // MARK: - SPUStandardUserDriverDelegate (gentle reminders)
 
