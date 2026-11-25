@@ -1072,3 +1072,6 @@
 "Source" = "来源";
 "They are removed from history permanently." = "它们会从历史记录中永久删除。";
 "Today" = "今天";
+"Version %@ is available" = "有新版本 %@";
+"Update" = "更新";
+"Click to update in Settings." = "点按后在设置中更新。";

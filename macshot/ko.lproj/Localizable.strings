@@ -1075,3 +1075,6 @@
 "Source" = "출처";
 "They are removed from history permanently." = "기록에서 영구적으로 삭제됩니다.";
 "Today" = "오늘";
+"Version %@ is available" = "버전 %@ 사용 가능";
+"Update" = "업데이트";
+"Click to update in Settings." = "클릭하여 설정에서 업데이트하세요.";

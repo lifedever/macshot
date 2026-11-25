@@ -1079,3 +1079,6 @@
 "Source" = "மூலம்";
 "They are removed from history permanently." = "இவை வரலாற்றிலிருந்து நிரந்தரமாக நீக்கப்படும்.";
 "Today" = "இன்று";
+"Version %@ is available" = "பதிப்பு %@ கிடைக்கிறது";
+"Update" = "புதுப்பி";
+"Click to update in Settings." = "அமைப்புகளில் புதுப்பிக்க கிளிக் செய்யவும்.";

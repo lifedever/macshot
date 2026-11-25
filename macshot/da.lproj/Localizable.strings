@@ -1073,3 +1073,6 @@
 "Source" = "Kilde";
 "They are removed from history permanently." = "De fjernes permanent fra historikken.";
 "Today" = "I dag";
+"Version %@ is available" = "Version %@ er tilgængelig";
+"Update" = "Opdater";
+"Click to update in Settings." = "Klik for at opdatere i Indstillinger.";

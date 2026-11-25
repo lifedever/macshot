@@ -1073,3 +1073,6 @@
 "Source" = "Lähde";
 "They are removed from history permanently." = "Ne poistetaan historiasta pysyvästi.";
 "Today" = "Tänään";
+"Version %@ is available" = "Versio %@ on saatavilla";
+"Update" = "Päivitä";
+"Click to update in Settings." = "Päivitä Asetuksissa napsauttamalla.";

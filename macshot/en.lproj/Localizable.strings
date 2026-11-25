@@ -1072,3 +1072,6 @@
 "Source" = "Source";
 "They are removed from history permanently." = "They are removed from history permanently.";
 "Today" = "Today";
+"Version %@ is available" = "Version %@ is available";
+"Update" = "Update";
+"Click to update in Settings." = "Click to update in Settings.";

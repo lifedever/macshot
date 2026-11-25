@@ -8,6 +8,26 @@ import SwiftUI
 /// AppKit pane had to hand-build every one of those and still did not match.
 struct GeneralSettingsView: View {
     @ObservedObject var model: GeneralSettingsModel
+    @ObservedObject var updater: SoftwareUpdater = .shared
+
+    /// The running version, or the update a check found; the button shows Sparkle's update
+    /// window for it (where Install relaunches into the new version) or checks again.
+    @ViewBuilder
+    private var updateRow: some View {
+        LabeledContent {
+            Button(updater.availableVersion == nil ? L("Check for Updates...") : L("Update")) {
+                updater.checkForUpdates()
+            }
+        } label: {
+            if let version = updater.availableVersion {
+                Text(String(format: L("Version %@ is available"), version))
+            } else {
+                Text(String(format: L("Version %@ (%@)"),
+                            Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "?",
+                            Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "?"))
+            }
+        }
+    }
 
     var body: some View {
         Form {
@@ -30,6 +50,7 @@ struct GeneralSettingsView: View {
                 menuBarIconRows
                 Toggle(L("Enable macshot:// URL scheme"), isOn: $model.urlSchemeEnabled)
                 if model.softwareUpdatesAvailable {
+                    updateRow
                     Toggle(L("Check for updates automatically"), isOn: $model.autoUpdate)
                     Toggle(L("Check for beta updates"), isOn: $model.betaUpdates)
                 }

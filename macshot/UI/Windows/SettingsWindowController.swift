@@ -1763,6 +1763,14 @@ class SettingsWindowController: NSWindowController, NSToolbarDelegate, NSWindowD
         NSApp.activate(ignoringOtherApps: true)
     }
 
+    /// Opens the window on one pane (a `tabDefs` id), e.g. General for the update notification.
+    func showWindow(tab id: String) {
+        showWindow()
+        guard tabContentViews[id] != nil else { return }
+        window?.toolbar?.selectedItemIdentifier = NSToolbarItem.Identifier(id)
+        showTab(id: id)
+    }
+
     func windowWillClose(_ notification: Notification) {
         needsPaneRebuild = true
         stopShortcutRecording()

@@ -1073,3 +1073,6 @@
 "Source" = "Nguồn";
 "They are removed from history permanently." = "Chúng sẽ bị xóa vĩnh viễn khỏi lịch sử.";
 "Today" = "Hôm nay";
+"Version %@ is available" = "Đã có phiên bản %@";
+"Update" = "Cập nhật";
+"Click to update in Settings." = "Nhấp để cập nhật trong Cài đặt.";

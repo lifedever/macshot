@@ -1073,3 +1073,6 @@
 "Source" = "แหล่งที่มา";
 "They are removed from history permanently." = "ภาพเหล่านี้จะถูกลบออกจากประวัติถาวร";
 "Today" = "วันนี้";
+"Version %@ is available" = "มีเวอร์ชัน %@ แล้ว";
+"Update" = "อัปเดต";
+"Click to update in Settings." = "คลิกเพื่ออัปเดตในการตั้งค่า";

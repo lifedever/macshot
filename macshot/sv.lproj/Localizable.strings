@@ -1073,3 +1073,6 @@
 "Source" = "Källa";
 "They are removed from history permanently." = "De tas bort permanent från historiken.";
 "Today" = "Idag";
+"Version %@ is available" = "Version %@ är tillgänglig";
+"Update" = "Uppdatera";
+"Click to update in Settings." = "Klicka för att uppdatera i Inställningar.";

@@ -1081,3 +1081,6 @@
 "Source" = "Kaynak";
 "They are removed from history permanently." = "Geçmişten kalıcı olarak silinirler.";
 "Today" = "Bugün";
+"Version %@ is available" = "%@ sürümü kullanılabilir";
+"Update" = "Güncelle";
+"Click to update in Settings." = "Ayarlar'da güncellemek için tıklayın.";

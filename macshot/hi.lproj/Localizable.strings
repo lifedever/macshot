@@ -1079,3 +1079,6 @@
 "Source" = "स्रोत";
 "They are removed from history permanently." = "इन्हें इतिहास से स्थायी रूप से हटा दिया जाता है।";
 "Today" = "आज";
+"Version %@ is available" = "संस्करण %@ उपलब्ध है";
+"Update" = "अपडेट करें";
+"Click to update in Settings." = "सेटिंग्स में अपडेट करने के लिए क्लिक करें।";

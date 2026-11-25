@@ -1072,3 +1072,6 @@
 "Source" = "來源";
 "They are removed from history permanently." = "它們會從歷史記錄中永久刪除。";
 "Today" = "今天";
+"Version %@ is available" = "有新版本 %@";
+"Update" = "更新";
+"Click to update in Settings." = "點按後在設定中更新。";

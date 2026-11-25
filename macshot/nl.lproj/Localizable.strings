@@ -1077,3 +1077,6 @@
 "Source" = "Bron";
 "They are removed from history permanently." = "Ze worden definitief uit de geschiedenis verwijderd.";
 "Today" = "Vandaag";
+"Version %@ is available" = "Versie %@ is beschikbaar";
+"Update" = "Werk bij";
+"Click to update in Settings." = "Klik om bij te werken in Instellingen.";

@@ -1081,3 +1081,6 @@
 "Source" = "المصدر";
 "They are removed from history permanently." = "تُحذف من السجل نهائيًا.";
 "Today" = "اليوم";
+"Version %@ is available" = "الإصدار %@ متاح";
+"Update" = "تحديث";
+"Click to update in Settings." = "انقر للتحديث من الإعدادات.";

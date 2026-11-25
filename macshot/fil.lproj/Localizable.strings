@@ -1075,3 +1075,6 @@
 "Source" = "Pinagmulan";
 "They are removed from history permanently." = "Permanenteng inaalis ang mga ito sa history.";
 "Today" = "Ngayon";
+"Version %@ is available" = "Available na ang bersyon %@";
+"Update" = "I-update";
+"Click to update in Settings." = "I-click para mag-update sa Settings.";

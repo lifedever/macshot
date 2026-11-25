@@ -1076,3 +1076,6 @@
 "Source" = "Извор";
 "They are removed from history permanently." = "Трајно се уклањају из историје.";
 "Today" = "Данас";
+"Version %@ is available" = "Доступна је верзија %@";
+"Update" = "Ажурирај";
+"Click to update in Settings." = "Кликните да ажурирате у Подешавањима.";

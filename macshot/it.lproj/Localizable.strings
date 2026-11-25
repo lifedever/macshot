@@ -1054,3 +1054,6 @@
 "Source" = "Origine";
 "They are removed from history permanently." = "Vengono rimosse definitivamente dalla cronologia.";
 "Today" = "Oggi";
+"Version %@ is available" = "La versione %@ è disponibile";
+"Update" = "Aggiorna";
+"Click to update in Settings." = "Fai clic per aggiornare nelle Impostazioni.";

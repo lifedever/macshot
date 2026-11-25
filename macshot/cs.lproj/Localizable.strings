@@ -1074,3 +1074,6 @@
 "Source" = "Zdroj";
 "They are removed from history permanently." = "Z historie se trvale odstraní.";
 "Today" = "Dnes";
+"Version %@ is available" = "Je k dispozici verze %@";
+"Update" = "Aktualizovat";
+"Click to update in Settings." = "Kliknutím aktualizujete v Nastavení.";

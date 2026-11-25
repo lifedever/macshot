@@ -1079,3 +1079,6 @@
 "Source" = "Origen";
 "They are removed from history permanently." = "S’eliminen de l’historial de manera permanent.";
 "Today" = "Avui";
+"Version %@ is available" = "La versió %@ està disponible";
+"Update" = "Actualitza";
+"Click to update in Settings." = "Fes clic per actualitzar a Configuració.";

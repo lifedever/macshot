@@ -1074,3 +1074,6 @@
 "Source" = "Джерело";
 "They are removed from history permanently." = "Їх буде остаточно видалено з історії.";
 "Today" = "Сьогодні";
+"Version %@ is available" = "Доступна версія %@";
+"Update" = "Оновити";
+"Click to update in Settings." = "Натисніть, щоб оновити в Налаштуваннях.";

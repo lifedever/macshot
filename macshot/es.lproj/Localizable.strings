@@ -1073,3 +1073,6 @@
 "Source" = "Origen";
 "They are removed from history permanently." = "Se eliminan del historial de forma permanente.";
 "Today" = "Hoy";
+"Version %@ is available" = "La versión %@ está disponible";
+"Update" = "Actualizar";
+"Click to update in Settings." = "Haz clic para actualizar en Ajustes.";

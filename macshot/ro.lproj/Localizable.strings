@@ -1077,3 +1077,6 @@
 "Source" = "Sursă";
 "They are removed from history permanently." = "Sunt eliminate definitiv din istoric.";
 "Today" = "Astăzi";
+"Version %@ is available" = "Versiunea %@ este disponibilă";
+"Update" = "Actualizează";
+"Click to update in Settings." = "Faceți clic pentru a actualiza din Setări.";

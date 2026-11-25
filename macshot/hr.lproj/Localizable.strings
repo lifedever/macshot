@@ -1074,3 +1074,6 @@
 "Source" = "Izvor";
 "They are removed from history permanently." = "Trajno se uklanjaju iz povijesti.";
 "Today" = "Danas";
+"Version %@ is available" = "Dostupna je verzija %@";
+"Update" = "Ažuriraj";
+"Click to update in Settings." = "Kliknite za ažuriranje u Postavkama.";

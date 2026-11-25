@@ -1,6 +1,5 @@
 import Cocoa
 import Carbon
-import Sparkle
 import ServiceManagement
 import UniformTypeIdentifiers
 import AVFoundation
@@ -191,11 +190,10 @@ private final class CaptureTimingTrace: @unchecked Sendable {
 }
 
 @MainActor
-class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
+class AppDelegate: NSObject, NSApplicationDelegate {
 
     private var statusItem: NSStatusItem!
     private var hudAppearanceObserver: HUDSystemAppearanceObserver?
-    private var updaterController: SPUStandardUpdaterController!
     private var overlayControllers: [OverlayWindowController] = []
     private var settingsController: SettingsWindowController?
     private var onboardingController: PermissionOnboardingController?
@@ -324,13 +322,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
         // something references ScreenshotHistory.shared.
         _ = ScreenshotHistory.shared
 
-        if BuildVariant.softwareUpdatesEnabled {
-            updaterController = SPUStandardUpdaterController(startingUpdater: true, updaterDelegate: self, userDriverDelegate: nil)
-            // Disable silent update downloads — updates should only apply
-            // via explicit user action ("Check for Updates..." / Install),
-            // so an automatic update can't be mistaken for a silent crash.
-            updaterController.updater.automaticallyDownloadsUpdates = false
-        }
+        // No-op in builds without an update feed (BuildVariant.softwareUpdatesEnabled).
+        SoftwareUpdater.shared.openUpdateSettings = { [weak self] in self?.showSettings(tab: "general") }
+        SoftwareUpdater.shared.start()
         setupMainMenu()
         setupStatusBar()
         DistributedNotificationCenter.default().addObserver(
@@ -3135,6 +3129,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
     // MARK: - Settings
 
     @objc private func openSettings() {
+        showSettings(tab: nil)
+    }
+
+    /// Opens Settings, on `tab` when given (a `SettingsWindowController` pane id).
+    private func showSettings(tab: String?) {
         if settingsController == nil {
             settingsController = SettingsWindowController()
             settingsController?.onHotkeyChanged = { [weak self] in
@@ -3145,27 +3144,24 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
                 self?.setupMainMenu()
             }
         }
-        settingsController?.showWindow()
+        if let tab {
+            settingsController?.showWindow(tab: tab)
+        } else {
+            settingsController?.showWindow()
+        }
     }
 
     // MARK: - Quit
 
     @objc private func checkForUpdates() {
-        // `updaterController` is nil when updates are off; the menu item is hidden then, but
-        // the URL-scheme handler can also reach this.
-        guard BuildVariant.softwareUpdatesEnabled, let updaterController else { return }
-        NSApp.activate(ignoringOtherApps: true)
-        updaterController.checkForUpdates(nil)
+        // The menu item is hidden when updates are off, but the URL-scheme handler can also
+        // reach this; the updater ignores it then.
+        guard BuildVariant.softwareUpdatesEnabled else { return }
+        SoftwareUpdater.shared.checkForUpdates()
     }
 
     @objc private func quitApp() {
         NSApp.terminate(nil)
-    }
-
-    // MARK: - SPUUpdaterDelegate
-
-    func allowedChannels(for updater: SPUUpdater) -> Set<String> {
-        UserDefaults.standard.bool(forKey: "betaUpdatesEnabled") ? ["beta"] : []
     }
 }
 

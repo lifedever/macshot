@@ -1073,3 +1073,6 @@
 "Source" = "ソース";
 "They are removed from history permanently." = "履歴から完全に削除されます。";
 "Today" = "今日";
+"Version %@ is available" = "バージョン %@ が利用可能です";
+"Update" = "アップデート";
+"Click to update in Settings." = "クリックして設定からアップデートします。";

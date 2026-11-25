@@ -1081,3 +1081,6 @@
 "Source" = "منبع";
 "They are removed from history permanently." = "برای همیشه از تاریخچه حذف می‌شوند.";
 "Today" = "امروز";
+"Version %@ is available" = "نسخهٔ %@ در دسترس است";
+"Update" = "به‌روزرسانی";
+"Click to update in Settings." = "برای به‌روزرسانی در تنظیمات کلیک کنید.";

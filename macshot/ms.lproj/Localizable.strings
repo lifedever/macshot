@@ -1075,3 +1075,6 @@
 "Source" = "Sumber";
 "They are removed from history permanently." = "Ia dibuang daripada sejarah secara kekal.";
 "Today" = "Hari Ini";
+"Version %@ is available" = "Versi %@ tersedia";
+"Update" = "Kemas kini";
+"Click to update in Settings." = "Klik untuk mengemas kini dalam Tetapan.";

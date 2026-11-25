@@ -1081,3 +1081,6 @@
 "Source" = "מקור";
 "They are removed from history permanently." = "הם יוסרו מההיסטוריה לצמיתות.";
 "Today" = "היום";
+"Version %@ is available" = "גרסה %@ זמינה";
+"Update" = "עדכון";
+"Click to update in Settings." = "יש ללחוץ כדי לעדכן בהגדרות.";

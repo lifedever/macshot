@@ -100,11 +100,11 @@
 	<string>MacShot</string>
 	<key>CFBundleDisplayName</key>
 	<string>MacShot</string>
-	<!-- Sparkle is deliberately unconfigured in this fork. The upstream appcast advertises
-	     the official build: accepting an update would replace this locally-built, locally-signed
-	     app with sw33tLie's DMG, silently discarding every local change and resetting the TCC
-	     grants tied to our signing identity. Update by rebuilding from source instead
-	     (scripts/build-install.sh). Without SUFeedURL, Sparkle has nothing to check. -->
+	<!-- No SUFeedURL here on purpose. A local build (scripts/build-install.sh) keeps the upstream
+	     bundle ID, and the upstream appcast advertises the official build: accepting it would replace
+	     this locally-built app with sw33tLie's DMG. scripts/release.sh writes this fork's feed, its
+	     public EdDSA key and the installer-service flag into the distributed build only, which has
+	     its own bundle ID. BuildVariant.softwareUpdatesEnabled turns Sparkle on when SUFeedURL is set. -->
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>macshot transcribes your recordings on this Mac to create captions. Audio is not uploaded.</string>
 	<key>SUEnableAutomaticChecks</key>

@@ -1079,3 +1079,6 @@
 "Source" = "Προέλευση";
 "They are removed from history permanently." = "Αφαιρούνται οριστικά από το ιστορικό.";
 "Today" = "Σήμερα";
+"Version %@ is available" = "Η έκδοση %@ είναι διαθέσιμη";
+"Update" = "Ενημέρωση";
+"Click to update in Settings." = "Κάντε κλικ για ενημέρωση στις Ρυθμίσεις.";

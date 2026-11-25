@@ -1074,3 +1074,6 @@
 "Source" = "Източник";
 "They are removed from history permanently." = "Изтриват се от историята за постоянно.";
 "Today" = "Днес";
+"Version %@ is available" = "Версия %@ е налична";
+"Update" = "Обнови";
+"Click to update in Settings." = "Щракнете, за да обновите от Настройки.";

@@ -1073,3 +1073,6 @@
 "Source" = "Sumber";
 "They are removed from history permanently." = "Tangkapan ini dihapus dari riwayat secara permanen.";
 "Today" = "Hari Ini";
+"Version %@ is available" = "Versi %@ tersedia";
+"Update" = "Perbarui";
+"Click to update in Settings." = "Klik untuk memperbarui di Pengaturan.";
