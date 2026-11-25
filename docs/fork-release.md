@@ -37,10 +37,11 @@
 
 | 东西 | 在哪 | 丢了会怎样 |
 |---|---|---|
-| 证书「MacShot Dev Local」 | 本机登录钥匙串 | 只能换新证书，所有人下一次更新后都要重新授权 |
+| 证书「MacShot Dev Local」 | 本机登录钥匙串；备份在 1Password（`MacShot Dev Local.cer` 证书 + `MacShot Dev Local.p12` 私钥，同一项里记着 .p12 的导出密码） | 只能换新证书，所有人下一次更新后都要重新授权 |
 | Sparkle 更新签名私钥 | 钥匙串，账户 `macshot`；备份在 1Password「MacShot Sparkle 更新签名私钥」 | 已经装上的人都收不到更新 |
 
-- **证书还没有备份**（截至 2026-11-25）。在「钥匙串访问」里把证书导出成 .p12，存进 1Password。
+- 证书 2026-11-25 已备份。授权认的是证书指纹 `55:75:B1:05:AB:CD:69:B8:89:B3:5A:19:4A:8D:58:3D:08:24:0D:80`，有效期到 2046-09-15；同一把私钥重新签一张证书，指纹也会变，所以证书本身必须保住。
+- 证书恢复到新 Mac：双击 `.cer` 和 `.p12`（输入导出密码）导入「登录」钥匙串，再运行 `security add-trusted-cert -r trustRoot -p codeSign -k ~/Library/Keychains/login.keychain-db "MacShot Dev Local.cer"` 让它可用于代码签名；`security find-identity -v -p codesigning` 能列出「MacShot Dev Local」就好了。「钥匙串访问」在 `/System/Library/CoreServices/Applications/`，不是「密码」App（那里看不到证书）。
 - 私钥恢复到新 Mac：把 1Password 里的私钥存成文件，运行 `generate_keys --account macshot -f <文件>`（工具在构建后的 `…/SourcePackages/artifacts/sparkle/Sparkle/bin/`）。公钥写死在 `scripts/release.sh` 的 `SPARKLE_PUBLIC_KEY`，脚本会拒绝用别的私钥签名。
 - 证书重建方法写在 `scripts/build-install.sh` 文件开头（只有 .p12 也找不回来时才用）。
 
