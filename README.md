@@ -1,5 +1,14 @@
 # macshot
 
+> [!NOTE]
+> 这是 [sw33tLie/macshot](https://github.com/sw33tLie/macshot) 的分支版本，改动见 [Releases](https://github.com/lifedever/macshot/releases)。下文的介绍和安装方式说的是上游官方版。
+>
+> **下载**：[MacShot.dmg](https://github.com/lifedever/macshot/releases/latest/download/MacShot.dmg)，Apple 芯片和 Intel 的 Mac 都能用，需要 macOS 13 或更新。
+>
+> **第一次打开**：这个版本没有经过 Apple 公证，macOS 会拦下它。关掉弹出的提示，然后打开「系统设置 › 隐私与安全性」，往下翻到「安全性」，点 MacShot 那一行的「仍要打开」。之后有新版本时会收到系统通知，在 MacShot 的设置里更新。
+>
+> 装过官方版 macshot 的话，拖进「应用程序」会替换掉它；两者的设置和截图历史不共用。
+
 > [!IMPORTANT]
 > **Updating to 4.4.0 from 4.3.x or earlier?** macshot's developer signature changed in 4.4.0, so macOS may require you to grant permissions again. If Screen Recording looks enabled but capture fails, remove macshot with the minus button (−) in System Settings, then add it back from Applications with the plus button (+). Re-enable Accessibility or Input Monitoring if prompted. Your settings, history and recordings are preserved. If you already restored permissions on a 4.4.0 beta (beta.3 or later), you don't need to do this again.
 
