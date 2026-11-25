@@ -6,6 +6,14 @@
 #   scripts/release.sh 4.5.0-fork.2             build, sign and package; nothing leaves this Mac
 #   scripts/release.sh 4.5.0-fork.2 --publish   tag the built commit, push the tag and create
 #                                               the GitHub Release from the files built before
+#   scripts/release.sh --install                the current code, uncommitted changes included,
+#                                               installed into /Applications for this Mac
+#                                               (scripts/build-install.sh runs this)
+#
+# There is one app. A local install is built, signed and given its feed exactly like a release,
+# for this Mac's architecture only. It keeps the version of the latest release it contains (the
+# newest tag) while carrying newer code; its build number is the commit count, as a release's
+# is, so the next release is offered to it as an update like to anyone else.
 #
 # Before building: write release-notes/<version>.md (Markdown) and commit it. Sparkle shows
 # those notes in its update window; the GitHub Release gets them plus download and
@@ -34,8 +42,6 @@
 # The appcasts are assets of each release, read through releases/latest/download, so a
 # release commits nothing to the repository and never touches upstream's appcast.xml.
 #
-# The local build (scripts/build-install.sh) keeps upstream's bundle ID and has no feed,
-# so it never updates itself; see BuildVariant.softwareUpdatesEnabled.
 
 set -euo pipefail
 
@@ -60,18 +66,38 @@ dmg_name() {
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DERIVED="/tmp/macshot-release-build"
 
+INSTALL_DERIVED="/tmp/macshot-rel"      # kept between local installs: incremental builds
+INSTALL_TARGET="/Applications/$APP_NAME.app"
+INSTALL_LOG="/tmp/macshot-install.log"
+
 die() { echo "error: $*" >&2; exit 1; }
 step() { echo "==> $*"; }
-usage() { echo "usage: scripts/release.sh <version> [--publish]" >&2; exit 2; }
+usage() { echo "usage: scripts/release.sh <version> [--publish] | scripts/release.sh --install" >&2; exit 2; }
 
-[ $# -ge 1 ] && [ $# -le 2 ] || usage
-VERSION="$1"
-PUBLISH=0
-case "${2:-}" in
-    "") ;;
-    --publish) PUBLISH=1 ;;
-    *) usage ;;
-esac
+cd "$ROOT"
+
+# The version a local install shows: the newest release tag this commit contains.
+latest_release_version() {
+    local tag
+    tag="$(git describe --tags --abbrev=0 --match 'v[0-9]*-fork.*' 2>/dev/null)" \
+        || die "no release tag (v...-fork.N) in this commit's history to take the version from"
+    echo "${tag#v}"
+}
+
+MODE=build
+if [ "${1:-}" = "--install" ]; then
+    [ $# -eq 1 ] || usage
+    MODE=install
+    VERSION="$(latest_release_version)"
+else
+    [ $# -ge 1 ] && [ $# -le 2 ] || usage
+    VERSION="$1"
+    case "${2:-}" in
+        "") ;;
+        --publish) MODE=publish ;;
+        *) usage ;;
+    esac
+fi
 [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$ ]] \
     || die "version '$VERSION' should look like 4.5.0 or 4.5.0-fork.1"
 
@@ -79,10 +105,11 @@ TAG="v$VERSION"
 OUT="/tmp/macshot-release/$VERSION"
 NOTES="$ROOT/release-notes/$VERSION.md"
 
-cd "$ROOT"
-[ -s "$NOTES" ] || die "write the release notes first: release-notes/$VERSION.md"
-[ -z "$(git status --porcelain)" ] \
-    || die "the working tree has changes; a release is built from a commit, so commit them first"
+if [ "$MODE" != install ]; then
+    [ -s "$NOTES" ] || die "write the release notes first: release-notes/$VERSION.md"
+    [ -z "$(git status --porcelain)" ] \
+        || die "the working tree has changes; a release is built from a commit, so commit them first"
+fi
 
 tag_is_free() {
     if git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
@@ -164,24 +191,43 @@ if missing or not ent.get("com.apple.security.app-sandbox") or "com.apple.securi
         || die "the entitlements of $app are wrong"
 }
 
-# Split the universal build into one architecture, write the update feed into it, sign it,
-# package its DMG, check what people will download, and sign the DMG for Sparkle.
-package_arch() {
-    local arch="$1" built="$2" build_number="$3" entitlements="$4" sparkle_bin="$5"
-    local dir="$OUT/$arch"
-    local app="$dir/$APP_NAME.app"
-    local dmg
-    dmg="$OUT/$(dmg_name "$arch")"
+# Take a build product out of Launch Services. Every copy of the app it knows — Xcode's output,
+# the split per-architecture copies, a mounted DMG — is a candidate when something opens the app
+# by bundle ID (a notification click, System Settings' app list), and these copies are unsigned or
+# about to be deleted. Only /Applications/MacShot.app should be left.
+forget_app() {
+    /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister \
+        -u "$1" >/dev/null 2>&1 || true
+}
 
-    step "[$arch] Splitting out the $arch app"
-    mkdir -p "$dir"
-    ditto --arch "$arch" "$built" "$app"
-    local file archs
-    while IFS= read -r -d '' file; do
-        archs="$(lipo -archs "$file" 2>/dev/null)" || continue      # not Mach-O
-        [ "$archs" = "$arch" ] || die "$file is '$archs' after splitting out $arch"
-    done < <(find "$app" -type f -print0)
+require_identity() {
+    local signing
+    signing="$(security find-identity -v -p codesigning)"
+    [[ "$signing" == *"\"$IDENTITY\""* ]] \
+        || die "signing identity '$IDENTITY' is not in the keychain (see scripts/build-install.sh)"
+}
 
+# Sparkle's installer is reached through mach services named after the bundle ID. The
+# repository's entitlements spell them $(PRODUCT_BUNDLE_IDENTIFIER)-spks/-spki for Xcode to
+# expand; these builds are signed outside Xcode, so they are written out here.
+write_entitlements() {
+    python3 - "$ROOT/macshot/macshot.entitlements" "$1" "$BUNDLE_ID" <<'PY'
+import plistlib, sys
+src, dst, bundle_id = sys.argv[1:]
+with open(src, "rb") as f:
+    ent = plistlib.load(f)
+key = "com.apple.security.temporary-exception.mach-lookup.global-name"
+names = [n for n in ent.get(key, []) if not n.endswith(("-spks", "-spki"))]
+ent[key] = names + [f"{bundle_id}-spks", f"{bundle_id}-spki"]
+ent.pop("com.apple.security.get-task-allow", None)
+with open(dst, "wb") as f:
+    plistlib.dump(ent, f)
+PY
+}
+
+# Write the update feed into a built app and sign it: the same for a release and a local install.
+prepare_app() {
+    local app="$1" build_number="$2" entitlements="$3"
     python3 - "$app/Contents/Info.plist" "$BUNDLE_ID" "$VERSION" "$build_number" \
         "$FEED_URL" "$SPARKLE_PUBLIC_KEY" <<'PY'
 import plistlib, sys
@@ -204,9 +250,29 @@ info.update({
 with open(path, "wb") as f:
     plistlib.dump(info, f)
 PY
-
-    step "[$arch] Signing with $IDENTITY"
     sign_app "$app" "$entitlements"
+}
+
+# Split the universal build into one architecture, write the update feed into it, sign it,
+# package its DMG, check what people will download, and sign the DMG for Sparkle.
+package_arch() {
+    local arch="$1" built="$2" build_number="$3" entitlements="$4" sparkle_bin="$5"
+    local dir="$OUT/$arch"
+    local app="$dir/$APP_NAME.app"
+    local dmg
+    dmg="$OUT/$(dmg_name "$arch")"
+
+    step "[$arch] Splitting out the $arch app"
+    mkdir -p "$dir"
+    ditto --arch "$arch" "$built" "$app"
+    local file archs
+    while IFS= read -r -d '' file; do
+        archs="$(lipo -archs "$file" 2>/dev/null)" || continue      # not Mach-O
+        [ "$archs" = "$arch" ] || die "$file is '$archs' after splitting out $arch"
+    done < <(find "$app" -type f -print0)
+
+    step "[$arch] Writing the update feed and signing with $IDENTITY"
+    prepare_app "$app" "$build_number" "$entitlements"
 
     step "[$arch] Packaging $(basename "$dmg")"
     local stage="$dir/dmg"
@@ -226,8 +292,10 @@ PY
         = "$build_number" ] || mounted_ok=0
     [ "$(lipo -archs "$mount/$APP_NAME.app/Contents/MacOS/$APP_NAME")" = "$arch" ] || mounted_ok=0
     [ -L "$mount/Applications" ] || mounted_ok=0
+    forget_app "$mount/$APP_NAME.app"
     hdiutil detach "$mount" >/dev/null 2>&1
     rmdir "$mount"
+    forget_app "$app"
     [ "$mounted_ok" = 1 ] || die "the app inside $(basename "$dmg") failed its checks"
 
     step "[$arch] Signing the update for Sparkle"
@@ -239,10 +307,7 @@ PY
 }
 
 build() {
-    local signing
-    signing="$(security find-identity -v -p codesigning)"
-    [[ "$signing" == *"\"$IDENTITY\""* ]] \
-        || die "signing identity '$IDENTITY' is not in the keychain (see scripts/build-install.sh)"
+    require_identity
     tag_is_free
 
     local commit build_number previous
@@ -270,6 +335,7 @@ build() {
 
     local built="$DERIVED/Build/Products/Release/$APP_NAME.app"
     [ -d "$built" ] || die "the build produced no app at $built"
+    forget_app "$built"
     local archs
     archs="$(lipo -archs "$built/Contents/MacOS/$APP_NAME")"
     [[ " $archs " == *" arm64 "* && " $archs " == *" x86_64 "* ]] \
@@ -277,21 +343,8 @@ build() {
     local min_system
     min_system="$(/usr/libexec/PlistBuddy -c 'Print :LSMinimumSystemVersion' "$built/Contents/Info.plist")"
 
-    # Sparkle's installer is reached through mach services named after the bundle ID, so the
-    # sandbox exceptions in the repository's entitlements (upstream's ID) are rewritten.
     local entitlements="$OUT/macshot.entitlements"
-    python3 - "$ROOT/macshot/macshot.entitlements" "$entitlements" "$BUNDLE_ID" <<'PY'
-import plistlib, sys
-src, dst, bundle_id = sys.argv[1:]
-with open(src, "rb") as f:
-    ent = plistlib.load(f)
-key = "com.apple.security.temporary-exception.mach-lookup.global-name"
-names = [n for n in ent.get(key, []) if not n.endswith(("-spks", "-spki"))]
-ent[key] = names + [f"{bundle_id}-spks", f"{bundle_id}-spki"]
-ent.pop("com.apple.security.get-task-allow", None)
-with open(dst, "wb") as f:
-    plistlib.dump(ent, f)
-PY
+    write_entitlements "$entitlements"
 
     local sparkle_bin="$DERIVED/SourcePackages/artifacts/sparkle/Sparkle/bin"
     [ -x "$sparkle_bin/sign_update" ] || die "Sparkle's sign_update is missing from $sparkle_bin"
@@ -427,4 +480,71 @@ publish() {
     echo "Released: https://github.com/$REPO/releases/tag/$TAG"
 }
 
-if [ "$PUBLISH" = 1 ]; then publish; else build; fi
+# Running copies of MacShot. Builds before the MacShot rename shipped a lowercase executable.
+running_pids() { { pgrep -x "$APP_NAME" || true; pgrep -x macshot || true; } | tr '\n' ' '; }
+
+quit_running() {
+    osascript -e "quit app id \"$BUNDLE_ID\"" 2>/dev/null || true
+    local _
+    for _ in $(seq 10); do
+        [ -z "$(running_pids)" ] && break
+        sleep 0.3
+    done
+    # Quit can be swallowed by a modal panel. Fall back to SIGTERM on exactly the pids just
+    # resolved — never a name-pattern kill, which could hit unrelated processes.
+    local stragglers
+    stragglers="$(running_pids)"
+    if [ -n "$stragglers" ]; then
+        echo "    quit ignored; sending SIGTERM to: $stragglers"
+        kill $stragglers 2>/dev/null || true
+        sleep 0.5
+    fi
+    [ -z "$(running_pids)" ] || die "$APP_NAME is still running; quit it and retry"
+}
+
+install_local() {
+    require_identity
+    local arch build_number
+    arch="$(uname -m)"
+    build_number="$(git rev-list --count HEAD)"
+    step "Building $APP_NAME $VERSION ($build_number) for $arch from the current code (log: $INSTALL_LOG)"
+    xcodebuild -project "$ROOT/macshot.xcodeproj" -scheme macshot -configuration Release \
+        -derivedDataPath "$INSTALL_DERIVED" \
+        ARCHS="$arch" ONLY_ACTIVE_ARCH=NO \
+        MACSHOT_BUNDLE_ID="$BUNDLE_ID" \
+        MARKETING_VERSION="$VERSION" CURRENT_PROJECT_VERSION="$build_number" \
+        CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
+        build > "$INSTALL_LOG" 2>&1 \
+        || { tail -30 "$INSTALL_LOG" >&2; die "build failed (full log: $INSTALL_LOG)"; }
+
+    local built="$INSTALL_DERIVED/Build/Products/Release/$APP_NAME.app"
+    [ -d "$built" ] || die "the build produced no app at $built"
+    forget_app "$built"
+    local archs
+    archs="$(lipo -archs "$built/Contents/MacOS/$APP_NAME")"
+    [[ " $archs " == *" $arch "* ]] || die "the binary is '$archs', expected $arch"
+
+    local work
+    work="$(mktemp -d /tmp/macshot-install.XXXXXX)"
+    ditto "$built" "$work/$APP_NAME.app"
+    write_entitlements "$work/macshot.entitlements"
+    step "Writing the update feed and signing with $IDENTITY"
+    prepare_app "$work/$APP_NAME.app" "$build_number" "$work/macshot.entitlements"
+
+    step "Quitting the running copy"
+    quit_running
+    step "Replacing $INSTALL_TARGET"
+    rm -rf "$INSTALL_TARGET"
+    ditto "$work/$APP_NAME.app" "$INSTALL_TARGET"
+    forget_app "$work/$APP_NAME.app"
+    rm -rf "$work"
+    step "Launching"
+    open "$INSTALL_TARGET"
+    echo "Installed $APP_NAME $VERSION ($build_number)"
+}
+
+case "$MODE" in
+    install) install_local ;;
+    publish) publish ;;
+    *) build ;;
+esac
