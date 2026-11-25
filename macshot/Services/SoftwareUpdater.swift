@@ -86,7 +86,36 @@ final class SoftwareUpdater: NSObject, ObservableObject {
 
 /// No `allowedChannels(for:)`: this fork publishes no beta channel, so only the default
 /// channel is read, whatever an imported upstream `betaUpdatesEnabled` says.
-extension SoftwareUpdater: SPUUpdaterDelegate {}
+extension SoftwareUpdater: SPUUpdaterDelegate {
+    /// Each release ships one DMG per architecture, each with its own feed beside the
+    /// `SUFeedURL` one (`appcast.xml` → `appcast-arm64.xml` / `appcast-x86_64.xml`).
+    /// `SUFeedURL` itself lists both and is what builds without this method read.
+    func feedURLString(for updater: SPUUpdater) -> String? {
+        guard let base = Bundle.main.object(forInfoDictionaryKey: "SUFeedURL") as? String else { return nil }
+        return Self.architectureFeedURL(base: base, architecture: Self.hardwareArchitecture)
+    }
+
+    /// `…/appcast.xml` → `…/appcast-<architecture>.xml`; nil for a feed not named `.xml`.
+    static func architectureFeedURL(base: String, architecture: String) -> String? {
+        guard base.hasSuffix(".xml") else { return nil }
+        return String(base.dropLast(4)) + "-" + architecture + ".xml"
+    }
+
+    /// The Mac's architecture, not the build's: an Intel build running under Rosetta reads the
+    /// Apple silicon feed, so its next update installs the native build.
+    static let hardwareArchitecture: String = {
+        #if arch(arm64)
+        return "arm64"
+        #else
+        var translated: Int32 = 0
+        var size = MemoryLayout<Int32>.size
+        if sysctlbyname("sysctl.proc_translated", &translated, &size, nil, 0) == 0, translated == 1 {
+            return "arm64"
+        }
+        return "x86_64"
+        #endif
+    }()
+}
 
 // MARK: - SPUStandardUserDriverDelegate (gentle reminders)
 

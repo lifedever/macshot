@@ -3,7 +3,7 @@
 > [!NOTE]
 > 这是 [sw33tLie/macshot](https://github.com/sw33tLie/macshot) 的分支版本，改动见 [Releases](https://github.com/lifedever/macshot/releases)。下文的介绍和安装方式说的是上游官方版。
 >
-> **下载**：[MacShot.dmg](https://github.com/lifedever/macshot/releases/latest/download/MacShot.dmg)，Apple 芯片和 Intel 的 Mac 都能用，需要 macOS 13 或更新。
+> **下载**：Apple 芯片（M1、M2 等）的 Mac 下载 [MacShot-Apple-Silicon.dmg](https://github.com/lifedever/macshot/releases/latest/download/MacShot-Apple-Silicon.dmg)，Intel 芯片的 Mac 下载 [MacShot-Intel.dmg](https://github.com/lifedever/macshot/releases/latest/download/MacShot-Intel.dmg)。需要 macOS 13 或更新。不确定是哪种：点左上角苹果菜单 › 关于本机，「芯片」一行写着 Apple 就是 Apple 芯片，「处理器」一行写着 Intel 就是 Intel。
 >
 > **第一次打开**：这个版本没有经过 Apple 公证，macOS 会拦下它。关掉弹出的提示，然后打开「系统设置 › 隐私与安全性」，往下翻到「安全性」，点 MacShot 那一行的「仍要打开」。之后有新版本时会收到系统通知，在 MacShot 的设置里更新。
 >
