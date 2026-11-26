@@ -91,67 +91,6 @@ final class ScrollCaptureHUDPlacementTests: XCTestCase {
         XCTAssertLessThanOrEqual(hud.maxX, plainVisible.maxX)
     }
 
-    // MARK: - Under the pointer
-
-    /// The label's column of a HUD the size of `hudSize`.
-    private let restingArea = NSRect(x: 8, y: 0, width: 110, height: 44)
-
-    private func frame(under pointer: NSPoint, notched: Bool = true) -> NSRect? {
-        ScrollCaptureHUDPanel.hudFrame(
-            size: hudSize,
-            restingArea: restingArea,
-            under: pointer,
-            screenFrame: notched ? notchedScreen : plainScreen,
-            visibleFrame: notched ? notchedVisible : plainVisible,
-            topInset: notched ? notchInset : 0)
-    }
-
-    private func restingArea(of hud: NSRect) -> NSRect {
-        restingArea.offsetBy(dx: hud.minX, dy: hud.minY)
-    }
-
-    func testTheHUDGoesUnderThePointerWithThePointerOnItsLabel() {
-        // Where the toolbar's Scroll Capture button was: the pointer is left
-        // there and the HUD comes to it.
-        let pointer = NSPoint(x: 900, y: 300)
-        let hud = try? XCTUnwrap(frame(under: pointer))
-        XCTAssertEqual(hud?.size, hudSize)
-        XCTAssertEqual(hud.map { restingArea(of: $0).midX } ?? 0, pointer.x, accuracy: 0.001)
-        XCTAssertEqual(hud.map { restingArea(of: $0).midY } ?? 0, pointer.y, accuracy: 0.001)
-    }
-
-    func testNearAnEdgeTheHUDStaysOnScreenAndUnderThePointer() {
-        // Left edge: the HUD can't go further left, but its label still lies
-        // under the pointer.
-        let pointer = NSPoint(x: 30, y: 500)
-        let hud = try? XCTUnwrap(frame(under: pointer))
-        XCTAssertGreaterThanOrEqual(hud?.minX ?? -1, notchedVisible.minX)
-        XCTAssertTrue(hud.map { restingArea(of: $0).contains(pointer) } ?? false)
-    }
-
-    func testWhereTheLabelCantGoUnderThePointerTheHUDGoesBesideTheSelection() {
-        // Too close to the right edge (the buttons would be under the
-        // pointer), in the menu bar, under the notch, in the Dock, on
-        // another display.
-        for pointer in [NSPoint(x: notchedVisible.maxX - 10, y: 500),
-                        NSPoint(x: 900, y: notchedScreen.maxY - 10),
-                        NSPoint(x: 900, y: 20),
-                        NSPoint(x: 2500, y: 500)] {
-            XCTAssertNil(frame(under: pointer), "\(pointer)")
-        }
-    }
-
-    func testTheHUDUnderThePointerIsNeverInTheNotchBand() {
-        for x in stride(from: CGFloat(0), through: notchedScreen.maxX, by: 96) {
-            for y in stride(from: CGFloat(0), through: notchedScreen.maxY, by: 40) {
-                guard let hud = frame(under: NSPoint(x: x, y: y)) else { continue }
-                XCTAssertLessThanOrEqual(hud.maxY, notchBandBottom, "pointer \(x), \(y)")
-                XCTAssertTrue(notchedVisible.contains(hud), "pointer \(x), \(y)")
-                XCTAssertTrue(restingArea(of: hud).contains(NSPoint(x: x, y: y)), "pointer \(x), \(y)")
-            }
-        }
-    }
-
     // MARK: - Edges
 
     func testASelectionAtTheLeftEdgeKeepsTheHUDOnScreen() {

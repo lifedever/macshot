@@ -1005,8 +1005,10 @@ class OverlayView: NSView {
     /// is. See `ScrollCaptureEventTap`.
     ///
     /// The pointer is the user's and is never moved: it jumped onto the HUD,
-    /// or into the region, when a capture started. The HUD goes under it
-    /// instead (`startScrollCaptureMode`).
+    /// or into the region, when a capture started. It stays where it was,
+    /// usually on the toolbar button beside the selection. Left over the
+    /// region, the app may light up what scrolls under it, and that is
+    /// stitched in; moving it off the page is up to the user.
     ///
     /// The tap takes Accessibility access. A session doesn't start without
     /// it; should the tap fail all the same, the wheel scrolls whatever is
@@ -1111,11 +1113,7 @@ class OverlayView: NSView {
             maxScrollHeight: scrollCaptureMaxHeight,
             autoScrolling: scrollCaptureAutoScrolling)
         if let win = window {
-            // Under the pointer, which stays where it is — on the button that
-            // started the capture, or where the selection ended. Left over
-            // the page, it lit up whatever scrolled under it (a row, a link
-            // and a hand cursor), and that was stitched in.
-            panel.position(relativeTo: selectionRect, in: win, under: NSEvent.mouseLocation)
+            panel.position(relativeTo: selectionRect, in: win)
         }
         panel.orderFront(nil)
         scrollCaptureHUDPanel = panel

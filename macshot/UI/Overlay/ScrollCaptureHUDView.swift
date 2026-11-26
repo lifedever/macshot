@@ -127,12 +127,6 @@ class ScrollCaptureHUDView: NSView {
             x: totalW - pad - stopBtnW, y: (barH - btnH) / 2, width: stopBtnW, height: btnH)
     }
 
-    /// Where the pointer can rest on the HUD without being on a button: the
-    /// label's column, the height of the bar.
-    var pointerRestingArea: NSRect {
-        NSRect(x: infoLabel.frame.minX, y: 0, width: infoLabel.frame.width, height: bounds.height)
-    }
-
     @objc private func autoScrollClicked() {
         onToggleAutoScroll?()
     }
@@ -174,13 +168,6 @@ class ScrollCaptureHUDPanel: NSPanel {
     // nonactivating panel + acceptsFirstMouse.
     override var canBecomeKey: Bool { false }
 
-    /// Set when the HUD was put under the pointer at the start of a session.
-    /// It stays there, growing to the right with its label, so the pointer
-    /// stays on the label.
-    private var anchoredOrigin: NSPoint?
-
-    private static let edgeMargin: CGFloat = 4
-
     /// Where the HUD goes for a given selection.
     ///
     /// Below the selection when there's room, above it otherwise — and always
@@ -196,79 +183,40 @@ class ScrollCaptureHUDPanel: NSPanel {
                          screenFrame: NSRect,
                          visibleFrame: NSRect,
                          topInset: CGFloat) -> NSRect {
+        let margin: CGFloat = 4
         let gap: CGFloat = 6
 
         var y = selection.minY - size.height - gap
-        if y < visibleFrame.minY + edgeMargin {
+        if y < visibleFrame.minY + margin {
             y = selection.maxY + gap
         }
-        let origin = NSPoint(x: selection.midX - size.width / 2, y: y)
-        return NSRect(origin: clamped(origin, size: size, screenFrame: screenFrame,
-                                      visibleFrame: visibleFrame, topInset: topInset),
-                      size: size)
-    }
 
-    /// Where the HUD goes to lie under the pointer, which is left where it
-    /// is, with the pointer in the middle of `restingArea` (HUD coordinates).
-    /// With another app's window under the pointer, the app being captured
-    /// doesn't light up what scrolls under it. Nil when the screen's edge,
-    /// the menu bar or the notch would push that area out from under the
-    /// pointer — or the pointer is on another display.
-    static func hudFrame(size: NSSize,
-                         restingArea: NSRect,
-                         under pointer: NSPoint,
-                         screenFrame: NSRect,
-                         visibleFrame: NSRect,
-                         topInset: CGFloat) -> NSRect? {
-        let wanted = NSPoint(x: pointer.x - restingArea.midX, y: pointer.y - restingArea.midY)
-        let origin = clamped(wanted, size: size, screenFrame: screenFrame,
-                             visibleFrame: visibleFrame, topInset: topInset)
-        guard restingArea.offsetBy(dx: origin.x, dy: origin.y).contains(pointer) else { return nil }
-        return NSRect(origin: origin, size: size)
-    }
-
-    /// `origin` moved as little as needed to keep the HUD on screen, below the
-    /// menu bar and clear of the notch band.
-    private static func clamped(_ origin: NSPoint, size: NSSize, screenFrame: NSRect,
-                                visibleFrame: NSRect, topInset: CGFloat) -> NSPoint {
         // The highest the HUD may reach: below the notch band when there is
         // one, otherwise just under the menu bar.
         let topLimit = topInset > 0
-            ? screenFrame.maxY - topInset - edgeMargin
-            : visibleFrame.maxY - edgeMargin
-        var y = min(origin.y, topLimit - size.height)
-        y = max(y, visibleFrame.minY + edgeMargin)
-        let x = max(visibleFrame.minX + edgeMargin,
-                    min(origin.x, visibleFrame.maxX - size.width - edgeMargin))
-        return NSPoint(x: x, y: y)
+            ? screenFrame.maxY - topInset - margin
+            : visibleFrame.maxY - margin
+        y = min(y, topLimit - size.height)
+        y = max(y, visibleFrame.minY + margin)
+
+        var x = selection.midX - size.width / 2
+        x = max(visibleFrame.minX + margin, min(x, visibleFrame.maxX - size.width - margin))
+
+        return NSRect(x: x, y: y, width: size.width, height: size.height)
     }
 
-    /// Places the HUD for the selection. With `pointer` (at the start of a
-    /// session) it goes under the pointer if it can, and stays there.
-    func position(relativeTo selectionRect: NSRect, in overlayWindow: NSWindow,
-                  under pointer: NSPoint? = nil) {
+    func position(relativeTo selectionRect: NSRect, in overlayWindow: NSWindow) {
         hudView.layoutSubviews()
         let hudSize = hudView.frame.size
         let selScreen = overlayWindow.convertToScreen(selectionRect)
         let screen = overlayWindow.screen ?? NSScreen.main
-        let screenFrame = screen?.frame ?? selScreen
-        let visibleFrame = screen?.visibleFrame ?? selScreen
-        let topInset = screen?.safeAreaInsets.top ?? 0
 
-        if let pointer, let underPointer = Self.hudFrame(
-            size: hudSize, restingArea: hudView.pointerRestingArea, under: pointer,
-            screenFrame: screenFrame, visibleFrame: visibleFrame, topInset: topInset) {
-            anchoredOrigin = underPointer.origin
-        }
-        let frame: NSRect
-        if let anchoredOrigin {
-            frame = NSRect(origin: Self.clamped(anchoredOrigin, size: hudSize, screenFrame: screenFrame,
-                                                visibleFrame: visibleFrame, topInset: topInset),
-                           size: hudSize)
-        } else {
-            frame = Self.hudFrame(size: hudSize, selectionScreenRect: selScreen, screenFrame: screenFrame,
-                                  visibleFrame: visibleFrame, topInset: topInset)
-        }
+        let frame = Self.hudFrame(
+            size: hudSize,
+            selectionScreenRect: selScreen,
+            screenFrame: screen?.frame ?? selScreen,
+            visibleFrame: screen?.visibleFrame ?? selScreen,
+            topInset: screen?.safeAreaInsets.top ?? 0)
 
         setFrame(frame, display: true)
 

@@ -1,10 +1,10 @@
 import Cocoa
 import XCTest
 
-/// During a scroll capture the HUD lies under the pointer, which is never
-/// moved, and scrolling is sent into the region: an app lights up whatever
-/// scrolls under the pointer, and Mail's reply and delete buttons ended up in
-/// the long image.
+/// During a scroll capture scrolling is sent into the region wherever the
+/// pointer is, so the pointer, which is never moved, can stay off the page:
+/// an app lights up whatever scrolls under the pointer, and Mail's reply and
+/// delete buttons ended up in the long image.
 @MainActor
 final class ScrollCaptureEventTapTests: XCTestCase {
 
@@ -25,7 +25,7 @@ final class ScrollCaptureEventTapTests: XCTestCase {
 
     func testAScrollAnywhereElseGoesToTheMiddleOfTheRegion() {
         let middle = CGPoint(x: 700, y: 450)
-        XCTAssertEqual(destination(700, 724), middle, "on the HUD, under the pointer")
+        XCTAssertEqual(destination(700, 724), middle, "on the HUD")
         XCTAssertEqual(destination(120, 90), middle, "beside the window")
         XCTAssertEqual(destination(700, 199), middle, "just above the region")
         XCTAssertEqual(destination(1000, 450), middle, "on its right edge")
@@ -49,21 +49,5 @@ final class ScrollCaptureEventTapTests: XCTestCase {
 
     func testARegionWithNoAreaSendsNothingAnywhere() {
         XCTAssertNil(destination(700, 724, region: CGRect(x: 400, y: 200, width: 0, height: 500)))
-    }
-
-    func testThePointerRestsOnTheHUDClearOfItsButtons() {
-        let hud = ScrollCaptureHUDView()
-        // The label grows as the capture does; the buttons move with it.
-        for pixelSize in [CGSize.zero, CGSize(width: 1036, height: 24000)] {
-            hud.update(stripCount: 3, pixelSize: pixelSize, backingScale: 2)
-            let area = hud.pointerRestingArea
-            XCTAssertTrue(hud.bounds.contains(area), "\(pixelSize)")
-            for point in [NSPoint(x: area.midX, y: area.midY),
-                          NSPoint(x: area.minX + 0.5, y: area.minY + 0.5),
-                          NSPoint(x: area.maxX - 0.5, y: area.maxY - 0.5)] {
-                XCTAssertFalse(hud.hitTest(point) is NSButton,
-                               "a click at \(point) would stop the capture: \(pixelSize)")
-            }
-        }
     }
 }
