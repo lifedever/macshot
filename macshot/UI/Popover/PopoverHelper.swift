@@ -21,6 +21,15 @@ enum PopoverHelper {
         /// built for the editor (light text, dark controls) needs it: on a light
         /// toolbar theme the export panel came out white text on white.
         case videoEditor
+
+        var appearance: NSAppearance? {
+            self == .videoEditor ? NSAppearance(named: .darkAqua) : ToolbarLayout.appearance
+        }
+
+        var isDark: Bool { self == .videoEditor || ToolbarLayout.isDarkSurface }
+
+        /// Glyphs, text and selection rings drawn on this surface.
+        var glyphColor: NSColor { self == .videoEditor ? VideoEditorStyle.textPrimary : ToolbarLayout.iconColor }
     }
 
     private static var activePanel: ToolbarPopoverPanel?
@@ -218,9 +227,8 @@ private final class ToolbarPopoverPanel: NSPanel {
         isOpaque = false
         // The window server's shadow follows the rounded surface.
         hasShadow = true
-        let surfaceAppearance = surfaceStyle == .videoEditor ? NSAppearance(named: .darkAqua) : ToolbarLayout.appearance
-        appearance = surfaceAppearance
-        surface.appearance = surfaceAppearance
+        appearance = surfaceStyle.appearance
+        surface.appearance = surfaceStyle.appearance
         styleSurface()
         content.frame = NSRect(x: inset, y: inset, width: contentSize.width, height: contentSize.height)
         surface.addSubview(content)

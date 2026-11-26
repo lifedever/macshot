@@ -90,6 +90,27 @@ final class ToolbarPopoverPanelTests: XCTestCase {
         }
     }
 
+    /// The colour picker opened from the video editor's inspector draws its
+    /// glyphs and hex field for the editor's dark panel, not the toolbar theme.
+    func testTheColourPickerFollowsTheSurfaceItOpensOn() throws {
+        let white = try NSKeyedArchiver.archivedData(withRootObject: NSColor.white, requiringSecureCoding: true)
+        try withDefaults(["toolbarBgColor": white]) {
+            func hexField(of picker: ColorPickerView) throws -> NSTextField {
+                try XCTUnwrap(picker.subviews.compactMap { $0 as? NSTextField }.first)
+            }
+            func brightness(_ color: NSColor?) -> CGFloat {
+                (color?.usingColorSpace(.deviceRGB)?.brightnessComponent) ?? -1
+            }
+            let editorField = try hexField(of: ColorPickerView(surface: .videoEditor))
+            XCTAssertEqual(editorField.appearance?.name, .darkAqua)
+            XCTAssertGreaterThan(brightness(editorField.textColor), 0.8, "light text on the dark panel")
+
+            let toolbarField = try hexField(of: ColorPickerView())
+            XCTAssertEqual(toolbarField.appearance?.name, .aqua)
+            XCTAssertLessThan(brightness(toolbarField.textColor), 0.5, "dark text on the light toolbar theme")
+        }
+    }
+
     func testListsGetTheNarrowInset() throws {
         let list = ListPickerView()
         list.items = [.init(title: "One", isSelected: true), .init(title: "Two", isSelected: false)]

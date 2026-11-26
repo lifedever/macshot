@@ -109,7 +109,11 @@ class ColorPickerView: NSView, NSTextFieldDelegate {
 
     // MARK: - Init
 
-    init() {
+    /// The panel the picker opens on; its glyphs and fields follow it.
+    private let surface: PopoverHelper.Surface
+
+    init(surface: PopoverHelper.Surface = .toolbar) {
+        self.surface = surface
         super.init(frame: NSRect(origin: .zero, size: NSSize(width: 180, height: 400)))
         let size = preferredSize
         frame.size = size
@@ -117,7 +121,7 @@ class ColorPickerView: NSView, NSTextFieldDelegate {
         hexField.font = UIFonts.monospaced(ofSize: 11, weight: .medium)
         hexField.isBordered = false
         hexField.drawsBackground = false
-        // The field (text, caret, selection, placeholder) follows the toolbar
+        // The field (text, caret, selection, placeholder) follows the panel's
         // surface, like the bubble drawn behind it.
         applyHexFieldAppearance()
         hexField.focusRingType = .none
@@ -164,8 +168,8 @@ class ColorPickerView: NSView, NSTextFieldDelegate {
     }
 
     private func applyHexFieldAppearance() {
-        hexField.appearance = ToolbarLayout.appearance
-        hexField.textColor = ToolbarLayout.iconColor.withAlphaComponent(0.9)
+        hexField.appearance = surface.appearance
+        hexField.textColor = surface.glyphColor.withAlphaComponent(0.9)
     }
 
     override func viewDidChangeEffectiveAppearance() {
@@ -213,10 +217,10 @@ class ColorPickerView: NSView, NSTextFieldDelegate {
                 NSBezierPath(roundedRect: r, xRadius: 5, yRadius: 5).fill()
                 // A hairline on every swatch: white vanished into a light popover
                 // and black into a dark one.
-                Self.strokeEdge(of: NSBezierPath(roundedRect: r.insetBy(dx: 0.25, dy: 0.25), xRadius: 5, yRadius: 5))
+                strokeEdge(of: NSBezierPath(roundedRect: r.insetBy(dx: 0.25, dy: 0.25), xRadius: 5, yRadius: 5))
 
                 if colorsMatch(selectedColor, color) {
-                    ToolbarLayout.iconColor.setStroke()
+                    surface.glyphColor.setStroke()
                     let border = NSBezierPath(roundedRect: r.insetBy(dx: -2.5, dy: -2.5), xRadius: 7, yRadius: 7)
                     border.lineWidth = 2
                     border.stroke()
@@ -238,21 +242,21 @@ class ColorPickerView: NSView, NSTextFieldDelegate {
             if let saved = customColors[i] {
                 saved.setFill()
                 NSBezierPath(ovalIn: r).fill()
-                Self.strokeEdge(of: NSBezierPath(ovalIn: r.insetBy(dx: 0.25, dy: 0.25)))
+                strokeEdge(of: NSBezierPath(ovalIn: r.insetBy(dx: 0.25, dy: 0.25)))
                 if selectedColorSlot == i {
-                    ToolbarLayout.iconColor.setStroke()
+                    surface.glyphColor.setStroke()
                     let b = NSBezierPath(ovalIn: r.insetBy(dx: -2, dy: -2))
                     b.lineWidth = 2.5
                     b.stroke()
                 }
             } else {
                 if selectedColorSlot == i {
-                    ToolbarLayout.iconColor.withAlphaComponent(0.5).setStroke()
+                    surface.glyphColor.withAlphaComponent(0.5).setStroke()
                     let b = NSBezierPath(ovalIn: r.insetBy(dx: 1, dy: 1))
                     b.lineWidth = 2
                     b.stroke()
                 } else {
-                    ToolbarLayout.iconColor.withAlphaComponent(0.2).setStroke()
+                    surface.glyphColor.withAlphaComponent(0.2).setStroke()
                     let dash = NSBezierPath(ovalIn: r.insetBy(dx: 1, dy: 1))
                     dash.lineWidth = 1
                     dash.setLineDash([3, 3], count: 2, phase: 0)
@@ -274,7 +278,7 @@ class ColorPickerView: NSView, NSTextFieldDelegate {
         let gRect = NSRect(x: edge, y: cursorY - gradientSize, width: pickerWidth - edge * 2, height: gradientSize)
         gradientRect = gRect
         drawHSBGradient(in: gRect)
-        Self.strokeEdge(of: NSBezierPath(roundedRect: gRect.insetBy(dx: 0.25, dy: 0.25), xRadius: 5, yRadius: 5))
+        strokeEdge(of: NSBezierPath(roundedRect: gRect.insetBy(dx: 0.25, dy: 0.25), xRadius: 5, yRadius: 5))
 
         // Crosshair
         let cx = gRect.minX + hue * gRect.width
@@ -320,7 +324,7 @@ class ColorPickerView: NSView, NSTextFieldDelegate {
         let path = NSBezierPath(roundedRect: rect, xRadius: 4, yRadius: 4)
         NSGradient(starting: selectedColor.withAlphaComponent(0), ending: selectedColor.withAlphaComponent(1))?.draw(in: path, angle: 0)
 
-        Self.strokeEdge(of: NSBezierPath(roundedRect: rect.insetBy(dx: 0.25, dy: 0.25), xRadius: 4, yRadius: 4))
+        strokeEdge(of: NSBezierPath(roundedRect: rect.insetBy(dx: 0.25, dy: 0.25), xRadius: 4, yRadius: 4))
 
         // Label, on the side away from the thumb so the thumb never covers it.
         let label = "\(Int(opacity * 100))%" as NSString
@@ -346,8 +350,8 @@ class ColorPickerView: NSView, NSTextFieldDelegate {
 
     /// The hairline that gives swatches, the colour field and the bars an
     /// edge against the popover, from the glyph colour so it suits either look.
-    private static func strokeEdge(of path: NSBezierPath) {
-        ToolbarLayout.iconColor.withAlphaComponent(ToolbarLayout.isDarkSurface ? 0.25 : 0.18).setStroke()
+    private func strokeEdge(of path: NSBezierPath) {
+        surface.glyphColor.withAlphaComponent(surface.isDark ? 0.25 : 0.18).setStroke()
         path.lineWidth = 0.5
         path.stroke()
     }
@@ -410,7 +414,7 @@ class ColorPickerView: NSView, NSTextFieldDelegate {
         let currentHS = NSColor(calibratedHue: hue, saturation: saturation, brightness: 1, alpha: 1)
         let path = NSBezierPath(roundedRect: rect, xRadius: 4, yRadius: 4)
         NSGradient(starting: .black, ending: currentHS)?.draw(in: path, angle: 0)
-        Self.strokeEdge(of: NSBezierPath(roundedRect: rect.insetBy(dx: 0.25, dy: 0.25), xRadius: 4, yRadius: 4))
+        strokeEdge(of: NSBezierPath(roundedRect: rect.insetBy(dx: 0.25, dy: 0.25), xRadius: 4, yRadius: 4))
         drawThumb(at: rect.minX + brightness * rect.width, in: rect)
     }
 
@@ -419,16 +423,16 @@ class ColorPickerView: NSView, NSTextFieldDelegate {
         // A near-solid field: the popover is translucent glass, and a faint
         // tint let whatever sat behind it show through the hex. The text in
         // it takes the glyph colour, so the field follows the surface too.
-        (ToolbarLayout.isDarkSurface ? NSColor.black.withAlphaComponent(0.35) : NSColor.white.withAlphaComponent(0.85)).setFill()
+        (surface.isDark ? NSColor.black.withAlphaComponent(0.35) : NSColor.white.withAlphaComponent(0.85)).setFill()
         NSBezierPath(roundedRect: bubble, xRadius: 5, yRadius: 5).fill()
-        Self.strokeEdge(of: NSBezierPath(roundedRect: bubble.insetBy(dx: 0.25, dy: 0.25), xRadius: 5, yRadius: 5))
+        strokeEdge(of: NSBezierPath(roundedRect: bubble.insetBy(dx: 0.25, dy: 0.25), xRadius: 5, yRadius: 5))
 
         // Preview circle
         let circleRect = NSRect(x: rect.minX + hexBubbleInset, y: rect.midY - hexPreviewSize / 2,
                                 width: hexPreviewSize, height: hexPreviewSize)
         selectedColor.withAlphaComponent(opacity).setFill()
         NSBezierPath(ovalIn: circleRect).fill()
-        ToolbarLayout.iconColor.withAlphaComponent(0.3).setStroke()
+        surface.glyphColor.withAlphaComponent(0.3).setStroke()
         NSBezierPath(ovalIn: circleRect).stroke()
     }
 

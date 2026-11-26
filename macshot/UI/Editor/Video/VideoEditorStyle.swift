@@ -482,7 +482,7 @@ final class ColorSwatchButton: NSButton {
     }
 
     @objc private func open() {
-        let picker = ColorPickerView()
+        let picker = ColorPickerView(surface: .videoEditor)
         picker.setColor(color.withAlphaComponent(1), opacity: color.alphaComponent)
         picker.onColorChanged = { [weak self] c in
             guard let self else { return }
@@ -494,7 +494,8 @@ final class ColorSwatchButton: NSButton {
             self.color = self.color.withAlphaComponent(alpha)
             self.onChange?(self.color)
         }
-        PopoverHelper.show(picker, size: picker.frame.size, relativeTo: bounds, of: self, preferredEdge: .maxX)
+        PopoverHelper.show(picker, size: picker.frame.size, relativeTo: bounds, of: self, preferredEdge: .maxX,
+                           surface: .videoEditor)
     }
 }
 
