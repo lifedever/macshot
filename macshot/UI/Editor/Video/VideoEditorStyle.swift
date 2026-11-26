@@ -10,6 +10,9 @@ enum VideoEditorStyle {
     static let control = NSColor(white: 1, alpha: 0.07)
     static let controlHover = NSColor(white: 1, alpha: 0.11)
     static let separator = NSColor(white: 1, alpha: 0.07)
+    /// Hairline around a panel opened over the editor (export), so it stands
+    /// off the equally dark window behind it.
+    static let popoverEdge = NSColor(white: 1, alpha: 0.12)
     static let textPrimary = NSColor(white: 1, alpha: 0.92)
     static let textSecondary = NSColor(white: 1, alpha: 0.58)
     static let textTertiary = NSColor(white: 1, alpha: 0.36)

@@ -68,6 +68,28 @@ final class ToolbarPopoverPanelTests: XCTestCase {
         XCTAssertTrue(PopoverHelper.toggleClosedIfOpen())
     }
 
+    /// The video editor is always dark and its export panel is built for that
+    /// (light text). On a light toolbar theme it opened on a white surface.
+    func testAVideoEditorPanelStaysDarkOnALightToolbarTheme() throws {
+        let white = try NSKeyedArchiver.archivedData(withRootObject: NSColor.white, requiringSecureCoding: true)
+        try withDefaults(["toolbarBgColor": white]) {
+            XCTAssertFalse(ToolbarLayout.isDarkSurface)
+            let content = NSView(frame: NSRect(x: 0, y: 0, width: 100, height: 80))
+
+            PopoverHelper.show(content, size: content.frame.size, relativeTo: anchor.bounds, of: anchor,
+                               preferredEdge: .maxY, surface: .videoEditor)
+            let editorPanel = try XCTUnwrap(self.panel)
+            XCTAssertEqual(editorPanel.effectiveAppearance.bestMatch(from: [.aqua, .darkAqua]), .darkAqua)
+            XCTAssertEqual(editorPanel.contentView?.layer?.backgroundColor, VideoEditorStyle.panelRaised.cgColor)
+            PopoverHelper.dismiss()
+
+            PopoverHelper.show(content, size: content.frame.size, relativeTo: anchor.bounds, of: anchor, preferredEdge: .maxY)
+            let toolbarPanel = try XCTUnwrap(self.panel)
+            XCTAssertEqual(toolbarPanel.effectiveAppearance.bestMatch(from: [.aqua, .darkAqua]), .aqua)
+            XCTAssertEqual(toolbarPanel.contentView?.layer?.backgroundColor, NSColor.white.cgColor)
+        }
+    }
+
     func testListsGetTheNarrowInset() throws {
         let list = ListPickerView()
         list.items = [.init(title: "One", isSelected: true), .init(title: "Two", isSelected: false)]

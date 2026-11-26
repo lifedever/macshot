@@ -11,7 +11,8 @@ extension VideoEditorWindowController {
 
     @objc func showExportPanel(_ sender: NSView) {
         let panel = VideoExportPanel(settings: exportSettings, controller: self)
-        PopoverHelper.show(panel, size: panel.fittingSize, relativeTo: sender.bounds, of: sender, preferredEdge: .minY)
+        PopoverHelper.show(panel, size: panel.fittingSize, relativeTo: sender.bounds, of: sender, preferredEdge: .minY,
+                           surface: .videoEditor)
     }
 
     func exportSettingsChanged(_ settings: VideoExportSettings) {

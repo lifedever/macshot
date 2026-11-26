@@ -12,6 +12,17 @@ import Cocoa
 /// again.
 enum PopoverHelper {
 
+    /// What a panel is drawn on.
+    enum Surface {
+        /// The toolbar's theme: the system appearance or the colour picked in
+        /// Settings. Pickers that take their colours from `ToolbarLayout`.
+        case toolbar
+        /// The video editor's panel, dark whatever the toolbar theme. Content
+        /// built for the editor (light text, dark controls) needs it: on a light
+        /// toolbar theme the export panel came out white text on white.
+        case videoEditor
+    }
+
     private static var activePanel: ToolbarPopoverPanel?
     private static var localMouseDownMonitor: Any?
     private static var globalMouseDownMonitor: Any?
@@ -25,11 +36,11 @@ enum PopoverHelper {
 
     /// Show `contentView` (of `size`) in a panel beside `rect` of `view`.
     static func show(_ contentView: NSView, size: NSSize, relativeTo rect: NSRect, of view: NSView,
-                     preferredEdge: NSRectEdge = .minY, inset: CGFloat = contentInset) {
+                     preferredEdge: NSRectEdge = .minY, inset: CGFloat = contentInset, surface: Surface = .toolbar) {
         dismiss()
         guard let window = view.window else { return }
         let anchorOnScreen = window.convertToScreen(view.convert(rect, to: nil))
-        present(contentView, size: size, inset: inset, anchor: anchorOnScreen, parent: window,
+        present(contentView, size: size, inset: inset, surface: surface, anchor: anchorOnScreen, parent: window,
                 preferredEdge: preferredEdge)
     }
 
@@ -67,9 +78,9 @@ enum PopoverHelper {
         activePanel?.resize(toContentSize: size)
     }
 
-    private static func present(_ contentView: NSView, size: NSSize, inset: CGFloat, anchor: NSRect,
+    private static func present(_ contentView: NSView, size: NSSize, inset: CGFloat, surface: Surface, anchor: NSRect,
                                 parent: NSWindow, preferredEdge: NSRectEdge) {
-        let panel = ToolbarPopoverPanel(content: contentView, contentSize: size, inset: inset)
+        let panel = ToolbarPopoverPanel(content: contentView, contentSize: size, inset: inset, surface: surface)
         panel.anchor = anchor
         panel.preferredEdge = preferredEdge
         panel.collectionBehavior.formUnion(parent.collectionBehavior.intersection([.canJoinAllSpaces, .fullScreenAuxiliary]))
@@ -190,10 +201,12 @@ private final class ToolbarPopoverPanel: NSPanel {
     private let surface: ArrowCursorView
     private let content: NSView
     private let inset: CGFloat
+    private let surfaceStyle: PopoverHelper.Surface
 
-    init(content: NSView, contentSize: NSSize, inset: CGFloat) {
+    init(content: NSView, contentSize: NSSize, inset: CGFloat, surface surfaceStyle: PopoverHelper.Surface) {
         self.content = content
         self.inset = inset
+        self.surfaceStyle = surfaceStyle
         let frame = NSRect(x: 0, y: 0, width: contentSize.width + inset * 2, height: contentSize.height + inset * 2)
         surface = ArrowCursorView(frame: frame)
         super.init(contentRect: frame, styleMask: [.borderless, .nonactivatingPanel],
@@ -205,8 +218,9 @@ private final class ToolbarPopoverPanel: NSPanel {
         isOpaque = false
         // The window server's shadow follows the rounded surface.
         hasShadow = true
-        appearance = ToolbarLayout.appearance
-        surface.appearance = ToolbarLayout.appearance
+        let surfaceAppearance = surfaceStyle == .videoEditor ? NSAppearance(named: .darkAqua) : ToolbarLayout.appearance
+        appearance = surfaceAppearance
+        surface.appearance = surfaceAppearance
         styleSurface()
         content.frame = NSRect(x: inset, y: inset, width: contentSize.width, height: contentSize.height)
         surface.addSubview(content)
@@ -215,6 +229,10 @@ private final class ToolbarPopoverPanel: NSPanel {
 
     private func styleSurface() {
         surface.applyToolbarSurface()
+        if surfaceStyle == .videoEditor {
+            surface.layer?.backgroundColor = VideoEditorStyle.panelRaised.cgColor
+            surface.layer?.borderColor = VideoEditorStyle.popoverEdge.cgColor
+        }
         // Clip the content to the rounded corners; the window casts the shadow.
         surface.layer?.masksToBounds = true
         surface.layer?.shadowOpacity = 0
