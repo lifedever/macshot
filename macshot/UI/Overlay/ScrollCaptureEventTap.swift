@@ -11,9 +11,11 @@ import Cocoa
 /// Mail showed the reply and delete buttons of the message there, and they
 /// were stitched into the long image.
 ///
-/// So scrolling is sent into the region wherever the pointer is, and the
-/// pointer waits on the HUD. With another app's window under the pointer
-/// AppKit sends the page no `mouseEntered` at all, however it scrolls.
+/// So scrolling is sent into the region wherever the pointer is, and the HUD
+/// is put under the pointer. With another app's window under the pointer
+/// AppKit sends the page no `mouseEntered` at all, however it scrolls. The
+/// pointer itself is never moved: it was parked on the HUD at first, and
+/// users saw it jump away the moment a capture started.
 ///
 /// A scroll is sent elsewhere by giving the event another location here, in
 /// a session tap: the window server delivers it to the window at that
